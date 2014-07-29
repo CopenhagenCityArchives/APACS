@@ -1,0 +1,52 @@
+<?php
+use Phalcon\DI,
+    Phalcon\DI\FactoryDefault;
+
+ini_set('display_errors',1);
+error_reporting(E_ALL);
+
+define('ROOT_PATH', __DIR__);
+define('PATH_LIBRARY', __DIR__ . '/../app/library/');
+define('PATH_SERVICES', __DIR__ . '/../app/services/');
+define('PATH_RESOURCES', __DIR__ . '/../app/resources/');
+
+set_include_path(
+    ROOT_PATH . PATH_SEPARATOR . get_include_path()
+);
+
+// required for phalcon/incubator
+include __DIR__ . "/../vendor/autoload.php";
+
+// use the application autoloader to autoload the classes
+// autoload the dependencies found in composer
+$loader = new \Phalcon\Loader();
+
+$loader->registerDirs(array(
+    ROOT_PATH
+));
+
+$loader->registerNamespaces(array(
+    'Phalcon' => '../vendor/incubator/Library/Phalcon/'
+));
+
+$loader->register();
+
+$di = new FactoryDefault();
+DI::reset();
+
+/**
+* Database connection is created based in the parameters defined in the configuration file
+*//*
+$di->set('database', function() use ($config) {
+       return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
+               "host" => $config->database->host,
+               "username" => $config->database->username,
+               "password" => $config->database->password,
+               "dbname" => $config->database->dbname
+       ));
+},true);   */
+//var_dump($di);
+DI::setDefault($di);
+//var_dump(DI::getDefault());
+
+
