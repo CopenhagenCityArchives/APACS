@@ -125,7 +125,7 @@ $collectionsSettings = array(
                         'data' => array(
                             array(
                                 'text' => '1866',
-                                'id' => '1867'
+                                'id' => '1866'
                             ),
                             array(
                                 'text' => '1867',
@@ -150,7 +150,42 @@ $collectionsSettings = array(
                 )
             )
         )
-    )        
+    ),
+    array(
+        'id' => 3,
+        'info' => array(
+            'info' => 'Digitaliserede kort er et udsnit af Københavns Stadsarkivs kort- og tegningsamling, som er blevet digitaliseret i 2014',
+            'link' => 'http://www.kbharkiv.dk/wiki',
+            'short_name' => 'Digitaliserede kort og tegninger',
+            'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger'
+        ),        
+        'config' => array(            
+            'name' => 'Digitaliserede kort',
+            'dataLevel' => array(
+                'name' => 'kort',
+                //How to link the data level objects to images
+                'data_sql' => 'SELECT * FROM KORTTEG_eksemplar LEFT JOIN KORTTEG_data ON av_stam_id = KORTTEG_data.id WHERE :query'
+            ),            
+            'metadataLevels' => array(
+                'type' => 'flat',
+                'levels' => array(
+                    array(
+                        'order' => 1,
+                        'gui_name' => 'Detaljer',
+                        'gui_description' => 'Fritekstsøgning i kortinformationer',
+                        'gui_info_link' => false,
+                        'name' => 'av_beskrivelse',
+                        'type' => 'getallbyfilter',
+                        'data_sql' => 'SELECT * FROM KORTTEG_eksemplar LEFT JOIN KORTTEG_data ON av_stam_id = KORTTEG_data.id WHERE :query',
+                        'data' => false,
+                        'hideInMetadataString' => true,
+                        'required' => false,
+                        'required_filters' => array()
+                    )
+                )
+            )
+        )
+    )            
 );
 
 return $collectionsSettings;

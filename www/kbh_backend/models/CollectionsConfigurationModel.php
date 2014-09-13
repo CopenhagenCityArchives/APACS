@@ -28,36 +28,33 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
      * @param int collection id
      * @return array configuration array for the collection
      */
-    public function getConfigurationForCollection($collectionId){        
+    public function getConfigurationForCollection($collectionId, $publicData = false){        
         if(!$this->_configurationLoaded)
             return false;
         
+        $matchAll = !is_numeric($collectionId);
+        
+        $collectionInfo = array();
+        
         foreach($this->_configuration as $col){
-            if($col['id'] == $collectionId){
-                return $col;
+            if($col['id'] == $collectionId || $matchAll){
+                if($publicData){
+                    $info = array();
+                    $info = $col['info'];
+                    $info['id'] = $col['id'];
+                    $collectionInfo[] = $info;
+                }
+                else{
+                    $collectionInfo[] = $col;
+                }
             }
         }
         
-        return false;
-    }
-    
-    /**
-     * Gets metadatalevels for the given id, stripped for sensitive data
-     * @param int id
-     * @return array metadata levels
-     */
-    public function getPublicMetadataLevels($collectionId){
-        $config = $this->getConfigurationForCollection($collectionId);
-    
-        if(!$config)
-            return false;
-        
-        foreach($config['config']['metadataLevels']['levels'] as $key => $col){
-            if(isset($config['config']['metadataLevels']['levels'][$key]['data_sql']))
-                $config['config']['metadataLevels']['levels'][$key]['data_sql'] = false;
+        if(count($collectionInfo) == 0){
+            throw new Exception('Collection empty!');
         }
         
-        return $config['config']['metadataLevels'];
+        return $collectionInfo;
     }
     
     /**
@@ -68,12 +65,9 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
      */    
     public function getMetadataLevels($collectionId, $metadataLevelName = false){
         $config = $this->getConfigurationForCollection($collectionId);
-    
-        if(!$config)
-            return false;
         
         if($metadataLevelName){
-            foreach($config['config']['metadataLevels']['levels'] as $level){
+            foreach($config[0]['config']['metadataLevels']['levels'] as $level){
                 if($level['name'] == $metadataLevelName){
                     return $level;
                 }
@@ -82,7 +76,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             throw new Exception('Metadatalevel with given name not found!');
         }
         
-        return $config['config']['metadataLevels'];
+        return $config[0]['config']['metadataLevels'];
     }
     
     /**
@@ -92,11 +86,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
      */    
     public function getDataLevel($collectionId){
         $config = $this->getConfigurationForCollection($collectionId);
-    
-        if(!$config)
-            return false;
         
-        return $config['config']['dataLevel'];
+        return $config[0]['config']['dataLevel'];
     }    
     
     /**
@@ -108,7 +99,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $config = $this->getConfigurationForCollection($collectionId);
         $filters = array();
         
-        foreach($config['config']['metadataLevels']['levels'] as $curLevel){
+        foreach($config[0]['config']['metadataLevels']['levels'] as $curLevel){
             $filters[] = $curLevel['name'];
         }
         
@@ -119,7 +110,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $config = $this->getConfigurationForCollection($collectionId);
         $filters = array();
         
-        foreach($config['config']['metadataLevels']['levels'] as $curLevel){
+        foreach($config[0]['config']['metadataLevels']['levels'] as $curLevel){
             if($curLevel['required']){
                 $filters[] = $curLevel['name'];
             }

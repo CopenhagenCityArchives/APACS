@@ -8,8 +8,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     public function getMetadataLevels($collectionId = false, $metadataLevelName = false)
     {
         if(!is_numeric($collectionId)){
-            $this->returnError(404, "Wrong request");
-            return;
+            throw new Exception ('No collection id given');
         }
         
         $configuration = $this->initConfiguration();
@@ -25,7 +24,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     
     private function initConfiguration(){
         if(!$this->configurationLocation)
-            throw new Exception ('No configuration location given!');
+            throw new Exception ('No configuration location given');
         
         if(!$this->_configuration){
             try{
@@ -44,13 +43,13 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         }
     }
     
-    public function getCollectionInfo($collectionId)
+    public function getCollectionInfo($collectionId = false)
     {
         $configuration = $this->initConfiguration();
         
-        $collectionData = $configuration->getConfigurationForCollection($collectionId);
+        $collectionData = $configuration->getConfigurationForCollection($collectionId, true);
         
-        $this->returnJson($collectionData['info']);
+        $this->returnJson($collectionData);
     }
  
     //Should load data from a metadata level, either by query or at once, defined by the filter
@@ -90,6 +89,11 @@ echo $sql;
         
         $request = new Phalcon\Http\Request();
         $callback = $request->get('callback');
+        
+        //Converts single item arrays to object
+        if(count($data) == 1){
+            $data = $data[0];
+        }
         
         //Set the content of the response
         if($callback){

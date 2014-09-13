@@ -15,8 +15,9 @@ class MetadataModel extends \Phalcon\Mvc\Model
         //$pattern = "/%[-+]?(?:[ 0]|['].)?[a]?\d*(?:[.]\d*)?[%bcdeEufFgGosxX][^%]/";
         $pattern = "/%d|%s/";
 
-        if(preg_match_all($pattern, $metadataLevel['data_sql']) != count($searchString))
+        if(preg_match_all($pattern, $metadataLevel['data_sql']) != count($searchString)){
             throw new Exception('The number of arguments does not match the data_sql!');
+        }
         
         $query = '';
         if($metadataLevel['type'] == 'getallbyfilter'){
@@ -36,19 +37,25 @@ class MetadataModel extends \Phalcon\Mvc\Model
      * @return array search parameters
      */
     public function getMetadataSearchParameters($metadataLevel){
+        if(!isset($metadataLevel['required_filters'])){
+            throw new Exception('The variable required_filters is not set!');
+        }
+        
         $request = new Phalcon\Http\Request();
         $parameters = array();
         
-        $requiredParameters = count($metadataLevel['required_filters']);
-        $i = 0;
+        //$requiredParameters = count($metadataLevel['required_filters']);
         
         foreach($metadataLevel['required_filters'] as $filter){
-            $parameters[$filter] = $request->getQuery($filter);
-            $i++;
+            $par = $request->getQuery($filter);
+            if(isset($par)){
+                $parameters[$filter] = $par;
+            }
         }
         
-        if($requiredParameters != $i)
+        if(count($metadataLevel['required_filters']) != count($parameters)){
             throw new Exception ('The number of parameters does not match the number of required filters!');
+        }
         
         return $parameters;
     }

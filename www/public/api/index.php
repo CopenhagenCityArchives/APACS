@@ -36,38 +36,32 @@
         $posts->setHandler($metadataLevelsHandler);
 
         //Set a common prefix for all routes
-        $posts->setPrefix('/data');
+        //$posts->setPrefix('/data');
         
-        $posts->get('/getcollectioninfo/{collection:[0-9]+}', 'getcollectioninfo');
-        $posts->get('/getmetadatalevels/{collection:[0-9]+}/{metadatalevel}', 'getmetadatalevels');
-        $posts->get('/getmetadatalevels/{collection:[0-9]+}', 'getmetadatalevels');
-        $posts->get('/getmetadata/{collection:[0-9]+}/{metadatalevel}', 'getmetadata');
+        //Collection info
+        $posts->get('/collections', 'getcollectioninfo');
+        $posts->get('/collections/{collection:[0-9]+}', 'getcollectioninfo');
+        
+        //Metadata levels
+        $posts->get('/levels/{collection:[0-9]+}', 'getmetadatalevels');
+        $posts->get('/levels/{collection:[0-9]+}/{metadatalevel}', 'getmetadatalevels');
+        
+        //Metadata
+        $posts->get('/metadata/{collection:[0-9]+}/{metadatalevel}', 'getmetadata');
+        
         //Mangler:
-        $posts->get('/getobjects/{collection:[0-9]+}', 'getobjectdata');
+        //Object data
+        $posts->get('/data/{collection:[0-9]+}', 'getobjectdata');
         $app->mount($posts);
-/*
-        //Default routes
-        $app->get('/isup', function(){
-            echo 'ok';
-        });
-        
-        //Test
-        $app->get('/test/:params', function() use ($app) {
-            var_dump( $app->request->getQuery () );
-            
-        });
 
-        $app->get('/say/welcome/{name}', function ($name) {
-            echo "<h1>Welcome $name!</h1>";
-        });
-        */
         $app->notFound(function () use ($app) {
             $app->response->setStatusCode(404, "Not Found")->sendHeaders();
-            echo 'Page not found!';
+            echo '<h1>Page not found!</h1>';
         });        
 
         $app->handle();
 
     } catch(\Phalcon\Exception $e) {
-         echo "PhalconException: ", $e->getMessage();
+        $app->response->setStatusCode(500, "Not Found")->sendHeaders();
+        echo "PhalconException: ", $e->getMessage();
     }
