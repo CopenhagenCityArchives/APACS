@@ -55,9 +55,33 @@ class MetadataModelTest extends \UnitTestCase {
         $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array(1,2,3));        
     }
     
-    public function testMetadataSearchQueryGeneration(){
-        
+    public function testGetMetadataSearchParameters(){
+        $_GET['required_level_data'] = 'value';
+        $metadataLevel = array();
+        $metadataLevel['required_filters'] = array('required_level_data');
+        $this->assertEquals(
+                $this->_model->getMetadataSearchParameters($metadataLevel),
+                array('required_level_data' => 'value'),
+                'should return an array with all required fields given in the metadata level configuration'
+        );
+    }    
+    
+    public function testGetMetadataSearchParametersEmptyFiltersException(){
+        $this->setExpectedException('Exception');
+        $metadataLevel = array();
+        //Should throw exception when metadataLevel['required_levels'] is not set
+        $this->_model->getMetadataSearchParameters($metadataLevel);         
     }
+    
+    public function testGetMetadataSearchParametersCountMismatchException(){
+        $this->setExpectedException('Exception');
+        $_GET['required_level_data'] = 'value';
+        $metadataLevel = array();
+        $metadataLevel['required_filters'] = array('required_level_data', 'non_existing_get_var');
+        //Should throw exception when metadataLevel['required_levels'] is not set
+        $this->_model->getMetadataSearchParameters($metadataLevel);         
+    }    
+    
     /*
     public function testMetadataDatabaseService()
     {

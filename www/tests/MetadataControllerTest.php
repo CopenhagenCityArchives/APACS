@@ -17,28 +17,19 @@ class MetadataControllerTest extends \UnitTestCase {
         $this->_controller = null;
     }
     
-    public function testInitialization() 
-    {
+    public function testInitialization(){
         $this->assertInstanceOf('MetadataLevelsController', $this->_controller);
     }
     
-    public function testResponseOnFalseRequests()
-    {
-        $return = $this->_controller->getMetadataLevels(false,false);
-        $this->assertEmpty($return, 'Return should be empty');
-        
-        $return = $this->_controller->getMetadataLevels(-1,false);
-        $this->assertEmpty($return, 'Return should be empty');
-        
-        $return = $this->_controller->getMetadataLevels(-1,'falsedsf');
-        $this->assertEmpty($return, 'Return should be empty');
+    public function testResponseOnFalseRequests(){
+        $this->setExpectedException('Exception');
+        $this->_controller->getMetadataLevels(false,false);
     }
     
     public function testEmptyLocation(){
-        $tester = new MetadataLevelsController();
-        
         //Should throw exception when location is not loaded
         $this->setExpectedException('Exception');
+        $tester = new MetadataLevelsController();
         $tester->getMetadataLevels(1,false);
     }
 }

@@ -30,21 +30,15 @@ class CollectionsConfigurationModelTest extends \UnitTestCase {
     public function testLoadOfConfiguration()
     {       
         $this->assertNotEmpty(
-                $this->_model->getConfigurationForCollection(1), 
-                'Should return metadatalevels for an existing collection'
+            $this->_model->getConfigurationForCollection(1), 
+            'Should return metadatalevels for an existing collection'
         );
         
-        $this->assertEquals(
-                false,
-                $this->_model->getConfigurationForCollection(-1), 
-                'Should return empty array for nonexisting collection'
-        );
+        $publicConfig = $this->_model->getConfigurationForCollection(1, true);
+        $this->assertFalse(isset($publicConfig[0]['config']));
         
-        $this->assertNotEquals(
-                $this->_model->getPublicMetadataLevels(1), 
-                $this->_model->getConfigurationForCollection(1), 
-                'should return reduced metadatalevels for public use'
-        );
+        $this->setExpectedException('Exception');
+        $this->_model->getConfigurationForCollection(-1);        
     }
     
     public function testLoadOfMetadataLevels()
@@ -52,34 +46,36 @@ class CollectionsConfigurationModelTest extends \UnitTestCase {
         $configuration = $this->_model->getConfigurationForCollection(1);
         
         $this->assertEquals(
-                $this->_model->getMetadataLevels(1), 
-                $configuration['config']['metadataLevels'], 
-                'should retrieve all metadatalevels when no level name is given'
+            $this->_model->getMetadataLevels(1), 
+            $configuration[0]['config']['metadataLevels'], 
+            'should retrieve all metadatalevels when no level name is given'
         );
         
         $this->assertEquals(
-                $this->_model->getMetadataLevels(1, 'roll'), 
-                $configuration['config']['metadataLevels']['levels'][0],
-                'should retrieve a concrete level when level name is set'
-        );
-        
+            $this->_model->getMetadataLevels(1, 'roll'), 
+            $configuration[0]['config']['metadataLevels']['levels'][0],
+            'should retrieve a concrete level when level name is set'
+        );  
+    }
+    
+    public function testLoadOfMetadatalevelsOnEmptyConfiguration(){
         //Should throw error when loading metadata levels without loading the configuration
         $this->setExpectedException('Exception');
         $model = new MetadataModel();
-        $model->CollectionsConfigurationModel(1);
-        
+        $model->CollectionsConfigurationModel(1);        
+    }
+    
+    public function testLoadOfMetadatalevelOnEmptyConfiguration(){
         //Should throw error when loading a metadata level without loading the configuration
         $this->setExpectedException('Exception');
         $model = new MetadataModel();
-        $model->CollectionsConfigurationModel(1, 'rolls');        
-        
-        //Should throw exception when level doesn't exist
+        $model->CollectionsConfigurationModel(1, 'rolls');          
+    }
+    
+    public function testLoadOfNonexistingMetadatalevel(){
+        //Should throw exception when loading a non-existing metadatalevel
         $this->setExpectedException('Exception');
-        $this->_model->getMetadataLevels(1, 'this level does not exist');
-        
-        //Should throw exception when loading level for a non-existing collection
-        $this->setExpectedException('Exception');
-        $this->assertEquals($this->_model->getMetadataLevels(-1, 'roll'));         
+        $this->_model->getMetadataLevels(1, 'this level does not exist');        
     }
     
     public function testLoadOfAllFilters()
@@ -101,6 +97,14 @@ class CollectionsConfigurationModelTest extends \UnitTestCase {
             $this->_model->getRequiredFilters(1),
             $requiredFilters,
             'should get names of required filters'
+        );
+    }
+    
+    public function testLoadData(){
+        $this->_model->getConfigurationForCollection(1);
+        $this->assertEquals(
+            count($this->_model->getDataLevel(1)),
+            4
         );
     }
 }
