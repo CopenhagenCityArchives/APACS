@@ -1,0 +1,101 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>kbhkilder.dk API 0.1</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Latest compiled and minified CSS, Twitter Bootstrap -->
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="row-fluid">
+                <div class="span9">
+                    <h2>KSA Backend, API v. 0.1</h2>
+                    <p>The infrastructure behind web solutions from The City Archive of Copenhagen</p>
+                </div>
+                <div class="span9">
+                    <h4>Collections</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/collections</strong>
+                    </p>
+                    <p>Retrives a list of all collections.</p>
+
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/collections">http://www.kbhkilder.dk/api/collections</a>
+                </div>
+                <div class="span9">&nbsp;</div>
+                <div class="span9">
+                    <h4>Collection</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/collections/:id</strong>
+                    </p>
+                    <p>Retrives data for a single collection.</p>
+                    <p>
+                        Parameters:
+                    </p>
+                    <ul>
+                        <li><strong>:id</strong> The id of the collection</li>
+                    </ul>
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/collections/2">http://www.kbhkilder.dk/api/collections/2</a>
+                </div>
+                <div class="span9">&nbsp;</div>                
+                <div class="span9">
+                    <h4>Levels</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/levels/:id</strong>
+                    </p>
+                    <p>Retrives a list of all metadata levels for a given collection.</p>
+                    <p>
+                        Parameters:
+                    </p>
+                    <ul>
+                        <li><strong>:id</strong> The id of the collection</li>
+                    </ul>
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/levels/2">http://www.kbhkilder.dk/api/levels/2</a>
+                </div>
+                <div class="span9">&nbsp;</div>      
+                <div class="span9">
+                    <h4>Level</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/levels/:id/:name</strong>
+                    </p>
+                    <p>Retrives data for a single metadata level with a given name for a given collection.</p>
+                    <p>
+                        Parameters:
+                    </p>
+                    <ul>
+                        <li><strong>:id</strong> The id of the collection</li>
+                        <li><strong>:name</strong> The name of the specific level</li>
+                    </ul>
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/levels/2/month">http://www.kbhkilder.dk/api/levels/2/month</a>
+                </div>
+                <div class="span9">&nbsp;</div>           
+                <div class="span9">
+                    <h4>Metadata</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/metadata/:id/:name?:required_filters</strong>
+                    </p>
+                    <p>Retrives metadata for a given metadata level a given collection with a given name.</p>
+                    <p>
+                        Parameters:
+                    </p>
+                    <ul>
+                        <li><strong>:id</strong> The id of the collection</li>
+                        <li><strong>:name</strong> The name of the specific level</li>
+                        <li><strong>:required_filters</strong> Required filters and their value (for example year=1866)</li>
+                    </ul>
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/metadata/2/month">http://www.kbhkilder.dk/api/metadata/2/month</a>
+                </div>
+                <div class="span9">&nbsp;</div>                     
+            </div>
+        </div>
+    </body>
+</html>
