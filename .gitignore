@@ -5,3 +5,5 @@
 .settings
 .vagrant*
 www/vendor*
+www/tests/test-coverage.html
+www/xdebug.log
