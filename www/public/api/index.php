@@ -21,7 +21,8 @@
                 "host" => "localhost",
                 "username" => "kbharkiv",
                 "password" => "***REMOVED***",
-                "dbname" => "kbharkiv"
+                "dbname" => "kbharkiv",
+                'charset' => 'utf8'
             ));
         });        
         
@@ -47,6 +48,7 @@
         $posts->get('/levels/{collection:[0-9]+}/{metadatalevel}', 'getmetadatalevels');
         
         //Metadata
+        //What about this: $posts->('/metadata/{collection:[0-9]+}, should get all metadata for all levels?);
         $posts->get('/metadata/{collection:[0-9]+}/{metadatalevel}', 'getmetadata');
         
         //Mangler:
@@ -55,13 +57,13 @@
         $app->mount($posts);
 
         $app->notFound(function () use ($app) {
-            $app->response->setStatusCode(404, "Not Found")->sendHeaders();
-            echo '<h1>Page not found!</h1>';
+            $app->response->setStatusCode(400, "Not Found")->sendHeaders();
+            echo '<h1>Bad request!</h1>';
         });        
 
         $app->handle();
 
     } catch(\Phalcon\Exception $e) {
-        $app->response->setStatusCode(500, "Not Found")->sendHeaders();
+        $app->response->setStatusCode(500, "Server error (Phalcon exception)")->sendHeaders();
         echo "PhalconException: ", $e->getMessage();
     }

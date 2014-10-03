@@ -39,10 +39,12 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         foreach($this->_configuration as $col){
             if($col['id'] == $collectionId || $matchAll){
                 if($publicData){
-                    $info = array();
+                    /*$info = array();
                     $info = $col['info'];
                     $info['id'] = $col['id'];
-                    $collectionInfo[] = $info;
+                    $collectionInfo[] = $info;*/
+                    unset($col['data_sql']);
+                    $collectionInfo[] = $col;
                 }
                 else{
                     $collectionInfo[] = $col;
@@ -54,7 +56,94 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             throw new Exception('Collection empty!');
         }
         
+        $i = 0;
+        foreach($collectionInfo as $col){
+            $collectionInfo[$i] = $this->setDefaults($collectionInfo[$i]);
+            $i++;
+        }
+        
         return $collectionInfo;
+    }
+    
+    /**
+     * Set defaults in configuration arrays.
+     * TODO: Not implemented. Suggests a new structure of the over complicated configuration structure
+     * 
+     * @param Array A collection configuration
+     */
+    private function setDefaults($collectionConfig){
+        $DefaultInfo= array(
+            //Id of the collection. Main entrance for API requests
+            'id' => -1,
+            //Description of the collection
+            'description' => false,
+            //Link for further information about the collection
+            'link' => false,
+            //Short name of collection
+            'short_name' => false,
+            //Long name of collection
+            'long_name' => false,
+            //Name of the collection
+            'primary_table_name' => 'name',
+            //Type of levels. Can be flat or hierarkic
+            'levels_type' => false,
+            //Query for loading objects. Should at least include the field "image"
+            'data_sql' => false,
+            //Textual description of the required fields needed for object search
+            'gui_required_fields_text' => false,            
+            //An array of levels of metadata
+            'levels' => array()
+        );
+        
+        $DefaultMetadataLevel = array(
+            //Ordering of levels in hierarkic metadata structures. Also used in GUI for form field ordering
+            'order' => -1,
+            //Name in GUI
+            'gui_name' => false,
+            //Description in GUI
+            'gui_description' => false,
+            //Link to further information, GUI
+            'gui_info_link' => false,
+            //Internal name, also used in requests
+            'name' => false,
+            //GUI type, preset, getallbyfilter, typehead
+            'gui_type' => false,
+            //Query for receiving data for this field (for example adresses). Digits written as %d, strings as %
+            //(Example: SELECT id, name WHERE id = %d AND name LIKE %s)
+            'data_sql' => false,
+            //Data for the field. Required if no data_sql is given. Format: array(id, text)
+            'data' => false,
+            //Wheter or not the data should be visible in the metadata info when displaying images
+            'gui_hide' => false,
+            //Is this a required field when searching objects?
+            'required' => false,
+            //Is this a searchable field when searching objects?
+            'searchable' => false,
+            //Other levels required to get data from this level
+            'required_levels' => array()
+        );
+        
+        $collectionConfig = array_merge($DefaultInfo, $collectionConfig);
+        
+        $i = 0;
+        foreach($collectionConfig['levels'] as $metadataLevel){
+            $collectionConfig['levels'][$i] = array_merge($DefaultMetadataLevel, $metadataLevel);
+            
+            //Logic validation
+            
+            //Either data or data_sql has to be filled out
+            if(!$collectionConfig['levels'][$i]['data'] && !$collectionConfig['levels'][$i]['data_sql']){
+                throw new Exception('Invalid configuration format. Either data or data_sql should be set.');
+            }
+            
+            //If gui_type is preset, the data field has to by filled
+            if($collectionConfig['levels'][$i]['gui_type'] == 'preset' && count($collectionConfig['levels'][$i]['data']) == 0){
+                throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
+            }
+            $i++;
+        }
+        
+        return $collectionConfig;
     }
     
     /**
@@ -67,7 +156,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $config = $this->getConfigurationForCollection($collectionId);
         
         if($metadataLevelName){
-            foreach($config[0]['config']['metadataLevels']['levels'] as $level){
+            foreach($config[0]['levels'] as $level){
                 if($level['name'] == $metadataLevelName){
                     return $level;
                 }
@@ -76,19 +165,19 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             throw new Exception('Metadatalevel with given name not found!');
         }
         
-        return $config[0]['config']['metadataLevels'];
+        return $config[0]['levels'];
     }
     
     /**
      * Gets data level for the given id
      * @param int id of the collection
      * @return array data level for the collection
-     */    
+     */    /*
     public function getDataLevel($collectionId){
         $config = $this->getConfigurationForCollection($collectionId);
         
-        return $config[0]['config']['dataLevel'];
-    }    
+        return $config[0]['dataLevel'];
+    }    */
     
     /**
      * Gets all possible filters for collection
@@ -99,7 +188,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $config = $this->getConfigurationForCollection($collectionId);
         $filters = array();
         
-        foreach($config[0]['config']['metadataLevels']['levels'] as $curLevel){
+        foreach($config[0]['levels'] as $curLevel){
             $filters[] = $curLevel['name'];
         }
         
@@ -110,7 +199,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $config = $this->getConfigurationForCollection($collectionId);
         $filters = array();
         
-        foreach($config[0]['config']['metadataLevels']['levels'] as $curLevel){
+        foreach($config[0]['levels'] as $curLevel){
             if($curLevel['required']){
                 $filters[] = $curLevel['name'];
             }

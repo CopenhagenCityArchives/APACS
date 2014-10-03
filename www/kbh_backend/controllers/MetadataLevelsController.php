@@ -61,25 +61,43 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         $metadataLevel = $configuration->getMetadataLevels($collectionId, $metadataLevelName);
         
         $metadataModel = new MetadataModel();
-        $sql = $metadataModel->createMetadataSearchQuery(
-                $metadataLevel, 
-                $metadataModel->getMetadataSearchParameters($metadataLevel)
-        );
-echo $sql;
+        
+        if($metadataLevel['data']){
+            $this->returnJson($metadataLevel['data']);
+            return;
+        }
+        
+        $searchParameters = $metadataModel->getMetadataSearchParameters($metadataLevel);
+        
+        $sql = $metadataModel->createMetadataSearchQuery($metadataLevel, $searchParameters);
+
         $this->returnJson($metadataModel->getData($sql));
     }
     
     public function getObjectData($collectionId){
         $configuration = $this->initConfiguration();
-        $dataLevel = $configuration->getDataLevel($collectionId);
+        $config = $configuration->getConfigurationForCollection($collectionId);
         $allFilters = $configuration->getAllFilters($collectionId);
                 
         $objectsModel = new ObjectsModel();
         $incomingFilters = $objectsModel->getFilters($allFilters, $configuration->getRequiredFilters($collectionId));
         
-        if($incomingFilters){
-            $results = $objectsModel->getData($objectsModel->createObjectQuery($dataLevel['data_sql'], $incomingFilters));
+        if(!$incomingFilters){
+            $incomingFilters = $objectsModel->getFilters(['id'], ['id']);
+            if(isset($incomingFilters['id'])){
+                $incomingFilters[$config[0]['primary_table_name'] .'.id'] = $incomingFilters['id'];
+                unset($incomingFilters['id']);
+            }
+        }
+        
+        if(count($incomingFilters) > 0){
+            $query = $objectsModel->createObjectQuery($config[0]['data_sql'], $incomingFilters);
+            $results = $objectsModel->getData($query);
             $this->returnJson($objectsModel->convertResultToObjects($results, $allFilters));
+            //$this->returnJson($results);
+        }
+        else{
+            $this->returnError(404, 'No filters given');
         }
     }
     
@@ -91,20 +109,24 @@ echo $sql;
         $callback = $request->get('callback');
         
         //Converts single item arrays to object
-        if(count($data) == 1){
+      /*  if(count($data) == 1){
             $data = $data[0];
-        }
-        
-        //Set the content of the response
-        if($callback){
-            $response->setContent($callback . '(' . json_encode($data) . ')');
-        }
-        else{
-            $response->setContent(json_encode($data));    
-        }
+        }*/
+        try{
+            //Set the content of the response
+            if($callback){
+                $response->setContent($callback . '(' . json_encode($data) . ')');
+            }
+            else{
+                $response->setContent(json_encode($data));    
+            }
 
-        //Return the response
-        $response->send();     
+            //Return the response
+            $response->send();     
+        }
+        catch(Exception $e){
+             $this->returnError(404, 'Could not load data: ' . $e);
+        }
     }
     
     /**

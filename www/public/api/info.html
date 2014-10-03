@@ -16,6 +16,10 @@ and open the template in the editor.
                 <div class="span9">
                     <h2>KSA Backend, API v. 0.1</h2>
                     <p>The infrastructure behind web solutions from The City Archive of Copenhagen</p>
+                    <p>The structure of the data is as follows: Each collection consists of a large amount of images. These images are filtered down based on one or more <i>levels</i>. As an example, Politiets Mandtaller consists of 3 such levels (<i>year</i>, <i>month</i> and <i>streetname</i>).</p>
+                    <p>Depending on the collection, those levels can work as "tags" (when there is no interdependence between the different levels), or as a hierarchy, in which one level acts as a filter for possible values in other levels. </p>
+                    <p>Each level has an amount of predefined filter values, used to get to the images. These values are received using the <i>metadata</i> service.</p>
+                    <p>To get images and their metadata, get the collection and its levels, fill out mandatory levels with a value, and enjoy the returned data, using the <i>data</i> service.</p>
                 </div>
                 <div class="span9">
                     <h4>Collections</h4>
@@ -82,7 +86,7 @@ and open the template in the editor.
                     <p>
                         <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/metadata/:id/:name?:required_filters</strong>
                     </p>
-                    <p>Retrives metadata for a given metadata level a given collection with a given name.</p>
+                    <p>Retrives the possible outcome of metadata for a given metadata level based on required filter, if any.</p>
                     <p>
                         Parameters:
                     </p>
@@ -94,7 +98,24 @@ and open the template in the editor.
                     <span class="label label-info">Example</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/metadata/2/month">http://www.kbhkilder.dk/api/metadata/2/month</a>
                 </div>
-                <div class="span9">&nbsp;</div>                     
+                <div class="span9">&nbsp;</div>  
+                <div class="span9">
+                    <h4>Data</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/data/:id?:required_filters</strong>
+                    </p>
+                    <p>Retrives data for a given collection based on metadata filters.</p>
+                    <p>
+                        Parameters:
+                    </p>
+                    <ul>
+                        <li><strong>:id</strong> The id of the collection</li>
+                        <li><strong>:required_filters</strong> Required filters and their value (for example year=1866)</li>
+                    </ul>
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/data/2?year=1867&amp;road_name=vandkunsten">http://www.kbhkilder.dk/api/data/2?year=1867&amp;road_name=vandkunsten</a>
+                </div>
+                <div class="span9">&nbsp;</div>                 
             </div>
         </div>
     </body>

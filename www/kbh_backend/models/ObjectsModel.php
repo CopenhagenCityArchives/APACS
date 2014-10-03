@@ -12,71 +12,13 @@ class ObjectsModel extends \Phalcon\Mvc\Model
     public function getData($sql)
     {
         try{
-        $result = $this->getDI()->getDatabase()->query($sql);
-        $result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-        
-        return $result->fetchAll();
+            $result = $this->getDI()->getDatabase()->query($sql);
+            $result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+
+            return $result->fetchAll();
         }
         catch(Exception $e){
-            $arr = array(
-                array(
-                    'id' => 0, 
-                    'year' => 1897, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00004.jpg'
-                ),
-                array(
-                    'id' => 1, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00005.jpg'
-                ),
-                array(
-                    'id' => 2, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00006.jpg'
-                ),
-                array(
-                    'id' => 3, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00007.jpg'
-                ),
-                array(
-                    'id' => 4, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00008.jpg'
-                ),
-                array(
-                    'id' => 5, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00009.jpg'
-                ),
-                array(
-                    'id' => 6, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00010.jpg'
-                ),
-                array(
-                    'id' => 7, 
-                    'year' => 1867, 
-                    'month' => 'maj', 
-                    'streetname' => 'Vognmagergade',
-                    'imageURL' => 'http://www.kbhkilder.dk/collections/mandtal/donor_0001/project_4804/007529669_1367345514/007529669_00011.jpg'
-                )                
-                );
-            return $arr;           
+            die('Could not execute query: ' . $e);
         }
     }
     
@@ -96,19 +38,19 @@ class ObjectsModel extends \Phalcon\Mvc\Model
             
             if($incommingFilter){
                 $collectedFilters[$filter] = $incommingFilter;
-            }
-            
-            if(in_array($filter, $requiredFilters)){
-                $i++;
-            }            
+
+                if(in_array($filter, $requiredFilters)){
+                    $i++;
+                }   
+            }         
         }
         
         if($i == count($requiredFilters)){
             return $collectedFilters;
-        }
+        }/*
         else{
             throw new Exception('Not all required filters are set!');
-        }
+        }*/
     }
     
     /**
@@ -120,7 +62,7 @@ class ObjectsModel extends \Phalcon\Mvc\Model
     public function createObjectQuery($sql, $parameters){
         $searchString = '';
         foreach($parameters as $name => $value){
-            $searchString = $searchString . $name . ' LIKE ' . $value . ' AND ';
+            $searchString = $searchString . $name . ' = \'' . $value . '\' AND ';
         }
         
         $searchString = substr($searchString, 0, strlen($searchString)-5);
@@ -142,12 +84,15 @@ class ObjectsModel extends \Phalcon\Mvc\Model
      */
     public function convertResultToObjects($results, $metadataLevels){
         $objects = array();
+        $i = 0;
         foreach($results as $curRow){
-            $objects[$curRow['id']]['id'] = $curRow['id'];
+            $objects[$i]['id'] = $curRow['id'];
             foreach($metadataLevels as $curLevel){
-                $objects[$curRow['id']]['metadata'][$curLevel] = $curRow[$curLevel];
+                $objects[$i]['metadata'][$curLevel] = $curRow[$curLevel];
             }
-            $objects[$curRow['id']]['images'][] = $curRow['imageURL'];
+            //$objects[$i]['images'][] = 'http://' . $_SERVER['HTTP_HOST'] . $curRow['imageURL'];
+            $objects[$i]['images'][] = 'http://www.kbhkilder.dk/' . $curRow['imageURL'];
+            $i++;
         }
         
         return $objects;

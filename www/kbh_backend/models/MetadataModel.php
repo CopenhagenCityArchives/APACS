@@ -20,13 +20,14 @@ class MetadataModel extends \Phalcon\Mvc\Model
         }
         
         $query = '';
-        if($metadataLevel['type'] == 'getallbyfilter'){
+        if($metadataLevel['gui_type'] == 'getallbyfilter'){
             //checks if needed arguments match the supplied number
             $query = vsprintf($metadataLevel['data_sql'], $searchString);
             return $query;
         }
-        else if($metadataLevel['type'] == 'typeahead'){
-            $query = vsprintf($metadataLevel['data_sql'], $searchString) . ' LIMIT 10';
+        else if($metadataLevel['gui_type'] == 'typeahead'){
+            //$query = vsprintf($metadataLevel['data_sql'], $searchString) . ' LIMIT 10';
+            $query = $metadataLevel['data_sql'];
             return $query;
         }
     }
@@ -37,27 +38,32 @@ class MetadataModel extends \Phalcon\Mvc\Model
      * @return array search parameters
      */
     public function getMetadataSearchParameters($metadataLevel){
-        if(!isset($metadataLevel['required_filters'])){
-            throw new Exception('The variable required_filters is not set!');
+        if(!isset($metadataLevel['required_levels'])){
+            throw new Exception('The variable required_levels is not set!');
         }
         
-        $request = new Phalcon\Http\Request();
-        $parameters = array();
+        if($metadataLevel['required_levels']){
         
-        //$requiredParameters = count($metadataLevel['required_filters']);
-        
-        foreach($metadataLevel['required_filters'] as $filter){
-            $par = $request->getQuery($filter);
-            if(isset($par)){
-                $parameters[$filter] = $par;
+            $request = new Phalcon\Http\Request();
+            $parameters = array();
+
+            //$requiredParameters = count($metadataLevel['required_filters']);
+
+            foreach($metadataLevel['required_levels'] as $filter){
+                $par = $request->getQuery($filter);
+                if(isset($par)){
+                    $parameters[$filter] = $par;
+                }
             }
+
+            if($metadataLevel['required_levels'] !== false && count($metadataLevel['required_levels']) != count($parameters)){
+                throw new Exception ('The number of parameters does not match the number of required levels!');
+            }
+
+            return $parameters;
         }
         
-        if(count($metadataLevel['required_filters']) != count($parameters)){
-            throw new Exception ('The number of parameters does not match the number of required filters!');
-        }
-        
-        return $parameters;
+        return array();
     }
     
     /**
@@ -74,7 +80,7 @@ class MetadataModel extends \Phalcon\Mvc\Model
             return $result->fetchAll();
         }
         catch(Exception $e){
-            return null;
+            die('Could not execute query: ' . $e);
         }
     }
 }

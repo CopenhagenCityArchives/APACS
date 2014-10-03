@@ -20,6 +20,7 @@
  * typeahead: The values are loaded as the user types in the field
  * 
  */
+/*
 $collectionsSettings = array(
     array(
         'id' => 1,
@@ -47,7 +48,7 @@ $collectionsSettings = array(
                         'name' => 'roll',
                         'type' => 'getallbyfilter',
                         'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d',
-                        'required_filters' => array('station'),
+                        'required_levels' => array('station'),
                         'data' => false,
                         'required' => true
                     ),
@@ -86,9 +87,9 @@ $collectionsSettings = array(
         'config' => array(            
             'name' => 'Mandtaller',
             'dataLevel' => array(
-                'name' => 'mandtalssider',
+                'name' => 'MAND_mandtaller',
                 //How to link the data level objects to images
-                'data_sql' => 'select image from MAND_images LEFT JOIN MAND_mandtaller ON MAND_mandtaller.id = MAND_images.object_id WHERE :query'
+                'data_sql' => 'select MAND_mandtaller.id, image, year, month, streetname FROM MAND_images LEFT JOIN MAND_mandtaller ON MAND_mandtaller.id = MAND_images.object_id WHERE :query'
             ),            
             'metadataLevels' => array(
                 'type' => 'flat',
@@ -164,7 +165,7 @@ $collectionsSettings = array(
             'dataLevel' => array(
                 'name' => 'kort',
                 //How to link the data level objects to images
-                'data_sql' => 'SELECT * FROM KORTTEG_eksemplar LEFT JOIN KORTTEG_data ON av_stam_id = KORTTEG_data.id WHERE :query'
+                'data_sql' => 'SELECT av_beskrivelse, av_sted, IF(av_aar IS NULL OR av_aar = 0, CONCAT(av_aar_fra,\'-\', av_aar_til), av_aar) as aar FROM KORTTEG_eksemplar LEFT JOIN KORTTEG_data ON av_stam_id = KORTTEG_data.id WHERE :query'
             ),            
             'metadataLevels' => array(
                 'type' => 'flat',
@@ -180,12 +181,160 @@ $collectionsSettings = array(
                         'data' => false,
                         'hideInMetadataString' => true,
                         'required' => false,
-                        'required_filters' => array()
+                        'required_levels' => array()
                     )
                 )
             )
         )
     )            
+);*/
+
+/*
+ * New structure
+ */
+
+$collectionsSettings = array(
+    array(
+        'id' => 1,
+        'description' => 'Politiets registerblade indeholder registreringer af alle københavnere fra 1890 til 1923.',
+        'link' => 'http://www.kbharkiv.dk/wiki',
+        'name' => 'Politiets registerblade for København 1890-1923',
+        'short_name' => 'Polle',
+        'levels_type' => 'hierarki',
+        'object_sql' => 'select image from PRB_images LEFT JOIN PRB_registerblade ON PRB_registerblade.registerblad_id = PRB_images.object_id WHERE :query',
+        'levels' => array(
+            array(
+                'order' => 2,
+                'gui_name' => 'Filmruller',
+                'gui_description' => 'Der er mellem 20 og 50 filmruller pr. station. Opdelingen skyldes begrænsningen i antallet af billeder på en gammeldags fotofilm',
+                'gui_info_link' => 'http://www.kbharkiv.dk/wiki/registerbladenes-filmruller',
+                'name' => 'roll',
+                'gui_type' => 'getallbyfilter',
+                'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d',
+                'required_levels' => array('station'),
+                'data' => false,
+                'required' => true
+            ),
+            array(
+                'order' => 1,
+                'gui_name' => 'Stationer',
+                'gui_description' => 'Der findes seks stationer baseret på politidistrikternes inddeling, og to baseret på alfabetisk sortering',
+                'gui_info_link' => 'http://www.kbharkiv.dk/registerblade/om-stationerne',
+                'name' => 'station',
+                'gui_type' => 'preset',
+                'data_sql' => false,
+                'data' => array(
+                    array(
+                        'name' => 'Station 1',
+                        'id' => '26'
+                    ),
+                    array(
+                        'name' => 'Station 2',
+                        'id' => '29'
+                    )
+                ),
+                'required' => true
+            )                  
+        )
+    ),
+    array(
+        'id' => 2,
+        'info' => 'Politiets mandtaller 1866-1899 er skemaer over personer over 10 år bosat i København, registreret to gange årligt af Københavns Politi.',
+        'link' => 'http://www.kbharkiv.dk/wiki',
+        'short_name' => 'Politiets Mandtal',
+        'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
+        'gui_required_fields_text' => 'Udfyld som minimum vej og år',
+        //How to link the data level objects to images
+        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal/\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query',
+        'primary_table_name' => 'MAND_files', 
+        'levels_type' => 'flat',
+        'levels' => array(
+            array(
+                'order' => 3,
+                'gui_name' => 'Måned',
+                'gui_description' => 'Folketællingerne blev ajourført to gange om året, maj og november',
+                'gui_info_link' => false,
+                'name' => 'month',
+                'gui_type' => 'preset',
+                'data_sql' => false,
+                'data' => array(
+                    array(
+                        'text' => 'MAJ',
+                        'id' => 'maj'
+                    ),
+                    array(
+                        'text' => 'NOV',
+                        'id' => 'nov'
+                    )                            
+                ),
+                'gui_hide' => true,
+                'required' => false
+            ),
+            array(
+                'order' => 2,
+                'gui_name' => 'År',
+                'gui_description' => 'Mandtallerne blev ført fra 1862 til 1923',
+                'gui_info_link' => 'http://www.kbharkiv.dk/mandtaller',
+                'name' => 'year',
+                'gui_type' => 'preset',
+                'data_sql' => false,
+                'data' => array(
+                    array(
+                        'text' => '1866',
+                        'id' => '1866'
+                    ),
+                    array(
+                        'text' => '1867',
+                        'id' => '1867'
+                    ),
+                    array(
+                        'text' => '1909',
+                        'id' => '1909'
+                    )
+                ),
+                'gui_hide' => true,
+                'required' => true
+            ),
+            array(
+                'order' => 1,
+                'gui_name' => 'Gadenavn',
+                'gui_description' => 'Mandtallerne blev ført fra 1862 til 1923',
+                'gui_info_link' => 'http://www.kbharkiv.dk/mandtaller',
+                'name' => 'road_name',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'select navn as id, navn as text from MAND_streets WHERE 1',// navn LIKE \'%s%%\'',
+                'data' => false,
+                'gui_hide' => true,
+                'required' => true,
+                'required_levels' => false//array('streetname')
+            )
+        )
+    ),
+    array(
+        'id' => 3,
+        'info' => 'Digitaliserede kort er et udsnit af Københavns Stadsarkivs kort- og tegningsamling, som er blevet digitaliseret i 2014',
+        'link' => 'http://www.kbharkiv.dk/wiki',
+        'short_name' => 'Digitaliserede kort og tegninger',
+        'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger',    
+        //How to link the data level objects to images
+        'data_sql' => 'SELECT av_beskrivelse, av_sted, IF(av_aar IS NULL OR av_aar = 0, CONCAT(av_aar_fra,\'-\', av_aar_til), av_aar) as aar FROM KORTTEG_eksemplar LEFT JOIN KORTTEG_data ON av_stam_id = KORTTEG_data.id WHERE :query',        
+        'levels_type' => 'flat',
+        'levels' => array(
+            array(
+                'order' => 1,
+                'gui_name' => 'Detaljer',
+                'gui_description' => 'Fritekstsøgning i kortinformationer',
+                'gui_info_link' => false,
+                'name' => 'av_beskrivelse',
+                'type' => 'getallbyfilter',
+                'data_sql' => 'SELECT * FROM KORTTEG_eksemplar LEFT JOIN KORTTEG_data ON av_stam_id = KORTTEG_data.id WHERE :query',
+                'data' => false,
+                'hideInMetadataString' => true,
+                'required' => false,
+                'required_levels' => array()
+            )
+        )
+    )       
 );
 
 return $collectionsSettings;
