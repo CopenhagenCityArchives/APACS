@@ -117,8 +117,6 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'data' => false,
             //Wheter or not the data should be visible in the metadata info when displaying images
             'gui_hide' => true,
-            //The level is used for technical purposes only, and should not be displayed for the user
-            'technical_info' => false,
             //Is this a required field when searching objects?
             'required' => false,
             //Is this a searchable field when searching objects?

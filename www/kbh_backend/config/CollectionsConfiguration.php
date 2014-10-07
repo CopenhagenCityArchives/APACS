@@ -347,29 +347,17 @@ $collectionsSettings = array(
                     array(
                         'id'=>1900,
                         'text'=>1900
-                    )
+                    ),
+                    array(
+                        'id'=>1901,
+                        'text'=>1901
+                    )                    
                 ),
                 'hideInMetadataString' => false,
                 'required' => true,
                 'searchable' => true,
                 'required_levels' => array()
-            ),
-            array(
-                'order' => 2,
-                'name' => 'width',
-                'type' => 'preset',
-                'data_sql' => false,
-                'data' => array('id'=>1),
-                'technical_info' => true
-            ),
-            array(
-                'order' => 3,
-                'name' => 'height',
-                'type' => 'preset',
-                'data_sql' => false,
-                'data' => array('id'=>1),
-                'technical_info' => true
-            )            
+            )        
         )
     )    
 );

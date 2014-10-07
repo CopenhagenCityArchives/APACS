@@ -87,8 +87,14 @@ class ObjectsModel extends \Phalcon\Mvc\Model
         $i = 0;
         foreach($results as $curRow){
             $objects[$i]['id'] = $curRow['id'];
+
+                
             foreach($metadataLevels as $curLevel){
                 $objects[$i]['metadata'][$curLevel] = $curRow[$curLevel];
+                if(isset($curRow['height']) && isset($curRow['width'])){
+                    $objects[$i]['metadata']['height'] = $curRow['height'];
+                    $objects[$i]['metadata']['width'] = $curRow['width'];
+                }
             }
             //$objects[$i]['images'][] = 'http://' . $_SERVER['HTTP_HOST'] . $curRow['imageURL'];
             $objects[$i]['images'][] = 'http://www.kbhkilder.dk' . $curRow['imageURL'];
