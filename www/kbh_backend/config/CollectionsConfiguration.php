@@ -332,7 +332,7 @@ $collectionsSettings = array(
         'image_type' => 'tile',
         'primary_table_name' => 'kortteg_examples',
         //How to link the data level objects to images
-        'data_sql' => 'select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year FROM kortteg_examples WHERE :query',
+        'data_sql' => 'select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width FROM kortteg_examples WHERE :query',
         'levels_type' => 'flat',
         'levels' => array(
             array(
@@ -353,7 +353,23 @@ $collectionsSettings = array(
                 'required' => true,
                 'searchable' => true,
                 'required_levels' => array()
-            )
+            ),
+            array(
+                'order' => 2,
+                'name' => 'width',
+                'type' => 'preset',
+                'data_sql' => false,
+                'data' => array('id'=>1),
+                'technical_info' => true
+            ),
+            array(
+                'order' => 3,
+                'name' => 'height',
+                'type' => 'preset',
+                'data_sql' => false,
+                'data' => array('id'=>1),
+                'technical_info' => true
+            )            
         )
     )    
 );
