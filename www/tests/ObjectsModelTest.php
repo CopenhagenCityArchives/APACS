@@ -37,7 +37,7 @@ class ObjectsModelTest extends \UnitTestCase {
             'roll' => '23'
         );
         $sql = 'SELECT * FROM PRB_registerblade WHERE :query';
-        $expectedQuery = 'SELECT * FROM PRB_registerblade WHERE station LIKE 1 AND roll LIKE 23';
+        $expectedQuery = 'SELECT * FROM PRB_registerblade WHERE station LIKE \'%1%\' AND roll LIKE \'%23%\'';
         $this->assertEquals(
             $expectedQuery,
             $this->_model->createObjectQuery($sql, $filters),

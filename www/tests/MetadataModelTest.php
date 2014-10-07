@@ -81,10 +81,4 @@ class MetadataModelTest extends \UnitTestCase {
         //Should throw exception when metadataLevel['required_levels'] is not set
         $this->_model->getMetadataSearchParameters($metadataLevel);         
     }    
-    
-    /*
-    public function testMetadataDatabaseService()
-    {
-        $this->_model->getData(null);
-    }*/
 }

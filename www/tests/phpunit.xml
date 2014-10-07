@@ -10,7 +10,9 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="true">
-    <testsuite name="Phalcon - Testsuite">
-        <directory>./</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite name="All tests">
+          <directory>./</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

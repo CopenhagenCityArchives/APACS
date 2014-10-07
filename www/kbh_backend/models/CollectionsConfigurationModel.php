@@ -77,6 +77,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'id' => -1,
             //Description of the collection
             'description' => false,
+            //Image type (image or tile)
+            'image_type' => 'image',
             //Link for further information about the collection
             'link' => false,
             //Short name of collection

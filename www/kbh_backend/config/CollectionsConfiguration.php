@@ -194,7 +194,7 @@ $collectionsSettings = array(
  */
 
 $collectionsSettings = array(
-    array(
+    /*array(
         'id' => 1,
         'description' => 'Politiets registerblade indeholder registreringer af alle københavnere fra 1890 til 1923.',
         'link' => 'http://www.kbharkiv.dk/wiki',
@@ -236,7 +236,7 @@ $collectionsSettings = array(
                 'required' => true
             )                  
         )
-    ),
+    ),*/
     array(
         'id' => 2,
         'info' => 'Politiets mandtaller 1866-1899 er skemaer over personer over 10 år bosat i København, registreret to gange årligt af Københavns Politi.',
@@ -245,7 +245,7 @@ $collectionsSettings = array(
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Udfyld som minimum vej og år',
         //How to link the data level objects to images
-        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal/\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query',
+        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query',
         'primary_table_name' => 'MAND_files', 
         'levels_type' => 'flat',
         'levels' => array(
@@ -273,27 +273,14 @@ $collectionsSettings = array(
             array(
                 'order' => 2,
                 'gui_name' => 'År',
-                'gui_description' => 'Mandtallerne blev ført fra 1862 til 1923',
+                'gui_description' => 'Mandtallerne blev ført fra 1866 til 1923',
                 'gui_info_link' => 'http://www.kbharkiv.dk/mandtaller',
                 'name' => 'year',
-                'gui_type' => 'preset',
-                'data_sql' => false,
-                'data' => array(
-                    array(
-                        'text' => '1866',
-                        'id' => '1866'
-                    ),
-                    array(
-                        'text' => '1867',
-                        'id' => '1867'
-                    ),
-                    array(
-                        'text' => '1909',
-                        'id' => '1909'
-                    )
-                ),
+                'gui_type' => 'typeahead',
+                'data_sql' => 'select id, year as text FROM mand_years',
+                'data' => false,
                 'gui_hide' => true,
-                'required' => true
+                'required' => false
             ),
             array(
                 'order' => 1,
@@ -302,14 +289,14 @@ $collectionsSettings = array(
                 'gui_info_link' => 'http://www.kbharkiv.dk/mandtaller',
                 'name' => 'road_name',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'select navn as id, navn as text from MAND_streets WHERE 1',// navn LIKE \'%s%%\'',
+                'data_sql' => 'select navn as id, navn as text from MAND_streets WHERE mand_is_used = 1',// navn LIKE \'%s%%\'',
                 'data' => false,
                 'gui_hide' => true,
                 'required' => true,
                 'required_levels' => false//array('streetname')
             )
         )
-    ),
+    )/*,
     array(
         'id' => 3,
         'info' => 'Digitaliserede kort er et udsnit af Københavns Stadsarkivs kort- og tegningsamling, som er blevet digitaliseret i 2014',
@@ -334,7 +321,41 @@ $collectionsSettings = array(
                 'required_levels' => array()
             )
         )
-    )       
+    )  */     
+    ,array(
+        'id' => 3,
+        'info' => 'Test af visning af digitaliserede kort i forskellige størrelser',
+        'link' => 'http://www.kbharkiv.dk/wiki',
+        'short_name' => 'Kort og tegninger',
+        'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger',
+        'gui_required_fields_text' => 'År skal udfyldes, men det er bare et dummy-felt',
+        'image_type' => 'tile',
+        'primary_table_name' => 'kortteg_examples',
+        //How to link the data level objects to images
+        'data_sql' => 'select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year FROM kortteg_examples WHERE :query',
+        'levels_type' => 'flat',
+        'levels' => array(
+            array(
+                'order' => 1,
+                'gui_name' => 'År',
+                'gui_description' => 'Kortets år',
+                'gui_info_link' => false,
+                'name' => 'year',
+                'type' => 'getallbyfilter',
+                'data_sql' => false,
+                'data' => array(
+                    array(
+                        'id'=>1900,
+                        'text'=>1900
+                    )
+                ),
+                'hideInMetadataString' => false,
+                'required' => true,
+                'searchable' => true,
+                'required_levels' => array()
+            )
+        )
+    )    
 );
 
 return $collectionsSettings;
