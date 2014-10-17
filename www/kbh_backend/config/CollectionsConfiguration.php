@@ -324,39 +324,30 @@ $collectionsSettings = array(
     )  */     
     ,array(
         'id' => 3,
-        'info' => 'Test af visning af digitaliserede kort i forskellige størrelser',
+        'info' => 'Et uddrag af kort og tegninger fra Stadsarkivets samlinger',
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Kort og tegninger',
         'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger',
-        'gui_required_fields_text' => 'År skal udfyldes, men det er bare et dummy-felt',
+        'gui_required_fields_text' => 'Vælg en kategori for at fortsætte',
         'image_type' => 'tile',
         'primary_table_name' => 'kortteg_examples',
         //How to link the data level objects to images
-        'data_sql' => 'select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width FROM kortteg_examples WHERE :query',
+        'data_sql' => 'select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, description FROM kortteg_examples LEFT JOIN kortteg_tags ON kortteg_examples.tag = kortteg_tags.id WHERE :query',
         'levels_type' => 'flat',
         'levels' => array(
             array(
                 'order' => 1,
-                'gui_name' => 'År',
-                'gui_description' => 'Kortets år',
+                'gui_name' => 'Kategori',
+                'gui_description' => 'Kort og tegninger er kategoriseret efter indhold',
                 'gui_info_link' => false,
-                'name' => 'year',
-                'type' => 'getallbyfilter',
-                'data_sql' => false,
-                'data' => array(
-                    array(
-                        'id'=>1900,
-                        'text'=>1900
-                    ),
-                    array(
-                        'id'=>1901,
-                        'text'=>1901
-                    )                    
-                ),
+                'name' => 'description',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT id, description as text FROM kortteg_tags WHERE is_used = 1',
+                'data' => false,
                 'hideInMetadataString' => false,
                 'required' => true,
                 'searchable' => true,
-                'required_levels' => array()
+                'required_levels' => false
             )        
         )
     )    
