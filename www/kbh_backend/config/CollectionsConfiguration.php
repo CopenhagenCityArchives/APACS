@@ -243,20 +243,25 @@ $collectionsSettings = array(
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Politiets Mandtal',
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
-        'gui_required_fields_text' => 'Udfyld som minimum vej og år',
+        'gui_required_fields_text' => 'Vælg minimum gade og år',
         //How to link the data level objects to images
-        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query',
+        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query ORDER BY year, month, fileName',
         'primary_table_name' => 'MAND_files', 
-        'levels_type' => 'flat',
+        'levels_type' => 'hierarchy',
         'levels' => array(
             array(
                 'order' => 3,
                 'gui_name' => 'Måned',
-                'gui_description' => 'Folketællingerne blev ajourført to gange om året, maj og november',
+                'gui_description' => 'Mandtallerne blev ført to gange årligt',
                 'gui_info_link' => false,
                 'name' => 'month',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'select distinct month as text, month as id from mand_files where road_name = "%s" AND year = "%s" order by month',
+                'data' => false,
+                'searchable' => true,
+                'required_levels' => array('road_name', 'year'),
+                /*'data_sql' => false,
                 'gui_type' => 'preset',
-                'data_sql' => false,
                 'data' => array(
                     array(
                         'text' => 'MAJ',
@@ -266,7 +271,7 @@ $collectionsSettings = array(
                         'text' => 'NOV',
                         'id' => 'nov'
                     )                            
-                ),
+                ),*/
                 'gui_hide' => true,
                 'required' => false
             ),
@@ -277,15 +282,17 @@ $collectionsSettings = array(
                 'gui_info_link' => 'http://www.kbharkiv.dk/mandtaller',
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'select id, year as text FROM mand_years',
+                'data_sql' => 'select distinct year as text, year as id from mand_files WHERE road_name = "%s" order by year',// WHERE :query',//'select id, year as text FROM mand_years',
                 'data' => false,
                 'gui_hide' => true,
-                'required' => false
+                'required' => false,
+                'searchable' => true,
+                'required_levels' => array('road_name')
             ),
             array(
                 'order' => 1,
                 'gui_name' => 'Gadenavn',
-                'gui_description' => 'Mandtallerne blev ført fra 1862 til 1923',
+                'gui_description' => 'Gader, der optræder i mandtallerne',
                 'gui_info_link' => 'http://www.kbharkiv.dk/mandtaller',
                 'name' => 'road_name',
                 'gui_type' => 'typeahead',
@@ -293,6 +300,7 @@ $collectionsSettings = array(
                 'data' => false,
                 'gui_hide' => true,
                 'required' => true,
+                'searchable' => true,
                 'required_levels' => false//array('streetname')
             )
         )
@@ -332,9 +340,17 @@ $collectionsSettings = array(
         'image_type' => 'tile',
         'primary_table_name' => 'kortteg_examples',
         //How to link the data level objects to images
-        'data_sql' => 'select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, description FROM kortteg_examples LEFT JOIN kortteg_tags ON kortteg_examples.tag = kortteg_tags.id WHERE :query',
+        'data_sql' => ' select ex.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, 
+                        description, 
+                        av_beskrivelse as beskrivelse,
+                        if(av_aar_fra is not null AND av_aar_fra != 0, CONCAT(av_aar_fra, " - ", av_aar_til), av_aar) as time_desc 
+                        FROM kortteg_examples ex
+                        LEFT JOIN kortteg_tags ON ex.tag = kortteg_tags.id
+                        left join kortteg_eksemplar eks on ex.eksemplar_id = eks.id 
+                        left join kortteg_data dat on eks.id = dat.id WHERE :query',
         'levels_type' => 'flat',
         'levels' => array(
+            //Kategori, søgebar
             array(
                 'order' => 1,
                 'gui_name' => 'Kategori',
@@ -348,7 +364,37 @@ $collectionsSettings = array(
                 'required' => true,
                 'searchable' => true,
                 'required_levels' => false
-            )        
+            ),
+            //Beskrivelse, ikke søgebar
+            array(
+                'order' => 3,
+                'gui_name' => 'besk',
+                'gui_description' => 'besk',
+                'gui_info_link' => false,
+                'name' => 'beskrivelse',
+                'gui_type' => 'preset',
+                'data_sql' => "sesf",
+                'data' => false,
+                'hideInMetadataString' => false,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            ),
+            //Årstal eller spænd, afhængig af data, ikke søgebart
+            array(
+                'order' => 2,
+                'gui_name' => 'time_desc',
+                'gui_description' => 'time_desc',
+                'gui_info_link' => false,
+                'name' => 'time_desc',
+                'gui_type' => 'preset',
+                'data_sql' => "sc",
+                'data' => false,
+                'hideInMetadataString' => false,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            )              
         )
     )    
 );
