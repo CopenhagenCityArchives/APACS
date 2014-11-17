@@ -26,8 +26,8 @@ class MetadataModel extends \Phalcon\Mvc\Model
             return $query;
         }
         else if($metadataLevel['gui_type'] == 'typeahead'){
-            //$query = vsprintf($metadataLevel['data_sql'], $searchString) . ' LIMIT 10';
-            $query = $metadataLevel['data_sql'];
+            $query = vsprintf($metadataLevel['data_sql'], $searchString);// . ' LIMIT 10';
+            //$query = $metadataLevel['data_sql'];
             return $query;
         }
     }
