@@ -94,7 +94,13 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Textual description of the required fields needed for object search
             'gui_required_fields_text' => false,            
             //An array of levels of metadata
-            'levels' => array()
+            'levels' => array(),
+            //Text used to introduce the error reporting
+            'error_intro' => '',
+            //Text presented to the user when an error report is submitted
+            'error_confirm' => '',
+            //An array of possible error reports
+            'error_reports' => array()
         );
         
         $DefaultMetadataLevel = array(
@@ -120,7 +126,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Is this a required field when searching objects?
             'required' => false,
             //Is this a searchable field when searching objects?
-            'searchable' => false,
+            'searchable' => true,
             //Other levels required to get data from this level
             'required_levels' => array()
         );
@@ -142,6 +148,19 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             if($collectionConfig['levels'][$i]['gui_type'] == 'preset' && count($collectionConfig['levels'][$i]['data']) == 0){
                 throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
             }
+            $i++;
+        }
+        
+        $DefaultErrorConfig = array(
+            'id' => -1,
+            'name' => '',
+            'sql' => false,
+            'order' => -1,
+        );
+        
+        $i = 0;
+        foreach($collectionConfig['error_reports'] as $errorReport){
+            $collectionConfig['error_reports'][$i] = array_merge($DefaultErrorConfig, $errorReport);
             $i++;
         }
         
@@ -171,6 +190,16 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
     }
     
     /**
+     * Returns an array with possible error reports for a given collection
+     * @param int Id of the collection
+     * @return Array Array holding the error reports for the collection
+     */
+    public function getErrorReports($collectionId){
+        $config = $this->getConfigurationForCollection($collectionId);
+        return $config[0]['error_reports'];
+    }
+    
+    /**
      * Gets data level for the given id
      * @param int id of the collection
      * @return array data level for the collection
@@ -191,11 +220,24 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $filters = array();
         
         foreach($config[0]['levels'] as $curLevel){
-            $filters[] = $curLevel['name'];
+                $filters[] = $curLevel['name'];
         }
         
         return $filters;
     }      
+    
+    public function getSearchableFilters($collectionId){
+        $config = $this->getConfigurationForCollection($collectionId);
+        $filters = array();
+        
+        foreach($config[0]['levels'] as $curLevel){
+            if($curLevel['searchable'] == true){
+                $filters[] = $curLevel['name'];
+            }
+        }
+        
+        return $filters;
+    }        
     
     public function getRequiredFilters($collectionId){
         $config = $this->getConfigurationForCollection($collectionId);

@@ -34,6 +34,7 @@ class ObjectsModel extends \Phalcon\Mvc\Model
         $i = 0;
         
         foreach($allFilters as $filter){
+            
             $incommingFilter = $request->getQuery($filter);
             
             if($incommingFilter){

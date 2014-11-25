@@ -51,11 +51,14 @@
         //What about this: $posts->('/metadata/{collection:[0-9]+}, should get all metadata for all levels?);
         $posts->get('/metadata/{collection:[0-9]+}/{metadatalevel}', 'getmetadata');
         
-        //Mangler:
         //Object data
         $posts->get('/data/{collection:[0-9]+}', 'getobjectdata');
+        
+        //Error reports
+        $posts->get('/error/{collection:[0-9]+}/{item:[0-9]+}/{error:[0-9]+}','reporterror');
+        
         $app->mount($posts);
-
+        
         $app->notFound(function () use ($app) {
             $app->response->setStatusCode(400, "Not Found")->sendHeaders();
             echo '<h1>Bad request!</h1>';

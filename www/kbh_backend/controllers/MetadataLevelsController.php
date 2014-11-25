@@ -77,10 +77,10 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     public function getObjectData($collectionId){
         $configuration = $this->initConfiguration();
         $config = $configuration->getConfigurationForCollection($collectionId);
-        $allFilters = $configuration->getAllFilters($collectionId);
+        $searchableFilters = $configuration->getSearchableFilters($collectionId);
                 
         $objectsModel = new ObjectsModel();
-        $incomingFilters = $objectsModel->getFilters($allFilters, $configuration->getRequiredFilters($collectionId));
+        $incomingFilters = $objectsModel->getFilters($searchableFilters, $configuration->getRequiredFilters($collectionId));
         
         if(!$incomingFilters){
             $incomingFilters = $objectsModel->getFilters(['id'], ['id']);
@@ -93,12 +93,22 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         if(count($incomingFilters) > 0){
             $query = $objectsModel->createObjectQuery($config[0]['data_sql'], $incomingFilters);
             $results = $objectsModel->getData($query);
-            $this->returnJson($objectsModel->convertResultToObjects($results, $allFilters));
+            $this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getAllFilters($collectionId)));
             //$this->returnJson($results);
         }
         else{
             $this->returnError(404, 'No filters given');
         }
+    }
+    
+    public function reportError($collectionId, $itemId, $errorId){
+        $configuration = $this->initConfiguration();
+        $errorReports = $configuration->getErrorReports($collectionId);
+        
+        $errorModel = new ErrorReportsModel();
+        !$errorModel->setError($errorReports, $itemId, $errorId) ? $this->returnError(500, 'Could not set error') : $this->returnError(200, 'Error set');
+        
+        
     }
     
     private function returnJson($data){

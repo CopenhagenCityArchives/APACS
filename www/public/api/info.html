@@ -115,7 +115,25 @@ and open the template in the editor.
                     <span class="label label-info">Example</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/data/2?year=1867&amp;road_name=vandkunsten">http://www.kbhkilder.dk/api/data/2?year=1867&amp;road_name=vandkunsten</a>
                 </div>
-                <div class="span9">&nbsp;</div>                 
+                <div class="span9">&nbsp;</div>          
+                <div class="span9">
+                    <h4>Error reporting</h4>
+                    <p>
+                        <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/error/:collectionId/:itemId/:errorId</strong>
+                    </p>
+                    <p>Sets a specific error report for a given item.</p>
+                    <p>
+                        Parameters:
+                    </p>
+                    <ul>
+                        <li><strong>:collectionId</strong> The id of the collection</li>
+                        <li><strong>:itemId</strong> The item that has the given error</li>
+                        <li><strong>:errorId</strong> The id of the error</li>
+                    </ul>
+                    <span class="label label-info">Example</span>
+                    <a target="_blank" href="http://www.kbhkilder.dk/api/error/2/2/12312">http://www.kbhkilder.dk/api/error/2/2/12312</a>
+                </div>
+                <div class="span9">&nbsp;</div>                
             </div>
         </div>
     </body>
