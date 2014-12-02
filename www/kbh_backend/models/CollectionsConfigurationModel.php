@@ -24,6 +24,20 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
     }
     
     /**
+     * Appends configuration to existing configuration
+     * @params array configuration to append
+     */
+    public function removeTestData(){
+        $i = 0;
+        foreach($this->_configuration as $conf){
+            if($conf['test'] == true){
+                unset($this->_configuration[$i]);
+            }
+            $i++;
+        }
+    }
+    
+    /**
      * Returns the configuration for a specified collection
      * @param int collection id
      * @return array configuration array for the collection
@@ -75,6 +89,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $DefaultInfo= array(
             //Id of the collection. Main entrance for API requests
             'id' => -1,
+            //Is the collection in test or public?
+            'test' => true,
             //Description of the collection
             'description' => false,
             //Image type (image or tile)
