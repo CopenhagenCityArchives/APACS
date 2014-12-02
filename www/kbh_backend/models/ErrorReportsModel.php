@@ -13,8 +13,10 @@ class ErrorReportsModel extends \Phalcon\Mvc\Model
                 $conf = $report;
                 break;
             }
-            return false;
         }
+        
+        if(!$conf)
+            return false;
         
         $conf['sql'] = str_replace(':itemId', $itemId, $conf['sql']);
         
