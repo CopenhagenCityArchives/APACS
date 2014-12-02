@@ -31,6 +31,14 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
                 $configuration = new CollectionsConfigurationModel();
                 $configuration->loadConfig(require($this->configurationLocation));  
                 $this->_configuration = $configuration;
+                
+                //We will load test configuration, if requested
+                $request = new Phalcon\Http\Request();
+                $getTestData = $request->get('getTestConf');
+                if(!$getTestData){
+                    $configuration->removeTestData();
+                }
+                
             } catch (Exception $ex) {
                 throw new Exception('Could not load configuration!');
                 //$this->returnError(404, 'Could not load data');
@@ -44,7 +52,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     }
     
     public function getCollectionInfo($collectionId = false)
-    {
+    {       
         $configuration = $this->initConfiguration();
         
         $collectionData = $configuration->getConfigurationForCollection($collectionId, true);
@@ -106,7 +114,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         $errorReports = $configuration->getErrorReports($collectionId);
         
         $errorModel = new ErrorReportsModel();
-        !$errorModel->setError($errorReports, $itemId, $errorId) ? $this->returnError(500, 'Could not set error') : $this->returnError(200, 'Error set');
+        !$errorModel->setError($errorReports, $itemId, $errorId) ? $this->returnError(500, 'Could not set error') : $this->returnJson('Error set');
         
         
     }
