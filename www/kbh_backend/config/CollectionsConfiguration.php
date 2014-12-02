@@ -28,8 +28,9 @@
 $collectionsSettings = array(
     array(
         'id' => 2,
-        'info' => 'Politiets mandtaller 1866-1899 er skemaer over personer over 10 år bosat i København, registreret to gange årligt af Københavns Politi.',
-        'link' => 'http://www.kbharkiv.dk/wiki',
+        'test' => false,
+        'info' => 'Politiets mandtaller 1866-1923 består af skemaer, hvor Københavns befolkning over 10 år er registreret. Vælg gade, år og måned, hvorefter du kan bladre i mandtallerne. <p><a href="http://www.kbharkiv.dk/wiki/Politiets_mandtaller" target="_blank">Mere om oplysningerne i Politiets mandtaller</a></p>',
+        'video_link' => 'ZdQfxegC06E',
         'short_name' => 'Politiets Mandtal',
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Vælg minimum gade og år',
@@ -61,7 +62,7 @@ $collectionsSettings = array(
                         'id' => 'nov'
                     )                            
                 ),*/
-                'gui_hide' => true,
+                'gui_hide_name' => true,
                 'required' => false
             ),
             array(
@@ -73,7 +74,7 @@ $collectionsSettings = array(
                 'gui_type' => 'typeahead',
                 'data_sql' => 'select distinct year as text, year as id from mand_files WHERE road_name = "%s" order by year',// WHERE :query',//'select id, year as text FROM mand_years',
                 'data' => false,
-                'gui_hide' => true,
+                'gui_hide_name' => true,
                 'required' => false,
                 'searchable' => true,
                 'required_levels' => array('road_name')
@@ -87,7 +88,7 @@ $collectionsSettings = array(
                 'gui_type' => 'typeahead',
                 'data_sql' => 'select navn as id, navn as text from MAND_streets WHERE mand_is_used = 1',// navn LIKE \'%s%%\'',
                 'data' => false,
-                'gui_hide' => true,
+                'gui_hide_name' => true,
                 'required' => true,
                 'searchable' => true,
                 'required_levels' => false//array('streetname')
@@ -112,22 +113,25 @@ $collectionsSettings = array(
     ),
     array(
         'id' => 3,
+        'test' => true,
         'info' => 'Et uddrag af kort og tegninger fra Stadsarkivets samlinger',
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Kort og tegninger',
         'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger',
         'gui_required_fields_text' => 'Vælg en kategori for at fortsætte',
         'image_type' => 'tile',
-        'primary_table_name' => 'kortteg_examples',
+        'primary_table_name' => 'kortteg_files',
+        'starbas_field_name' => 'av_stam_id',
         //How to link the data level objects to images
-        'data_sql' => ' select kortteg_examples.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, 
+        'data_sql' => 'select kortteg_files.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, 
                         description, 
                         av_beskrivelse,
+                        av_stam_id,
                         if(av_aar_fra is not null AND av_aar_fra != 0, CONCAT(av_aar_fra, " - ", av_aar_til), av_aar) as time_desc 
-                        FROM kortteg_examples
-                        LEFT JOIN kortteg_tags ON kortteg_examples.tag = kortteg_tags.id
-                        left join kortteg_eksemplar eks on kortteg_examples.eksemplar_id = eks.id 
-                        left join kortteg_data dat on eks.id = dat.id WHERE :query',
+                        FROM kortteg_files
+                        LEFT JOIN kortteg_new_tags ON kortteg_files.new_tag_id = kortteg_new_tags.id
+                        LEFT JOIN kortteg_starbas_data on kortteg_files.eksemplar_id = kortteg_starbas_data.eks_id
+                        WHERE :query',
         'levels_type' => 'flat',
         'levels' => array(
             //Kategori, søgebar
@@ -138,10 +142,11 @@ $collectionsSettings = array(
                 'gui_info_link' => false,
                 'name' => 'description',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, description as text FROM kortteg_tags WHERE is_used = 1',
+                'data_sql' => 'SELECT id, description as text FROM kortteg_new_tags WHERE is_used = 1',
                 'data' => false,
-                'hideInMetadataString' => false,
-                'required' => true,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => false,
                 'searchable' => true,
                 'required_levels' => false
             ),
@@ -149,32 +154,65 @@ $collectionsSettings = array(
             array(
                 'order' => 3,
                 'gui_name' => 'besk',
-                'gui_description' => 'besk',
+                'gui_description' => '',
                 'gui_info_link' => false,
                 'name' => 'av_beskrivelse',
                 'gui_type' => 'preset',
                 'data_sql' => "sesf",
                 'data' => false,
-                'hideInMetadataString' => false,
+                'gui_hide_name' => true,
                 'required' => false,
                 'searchable' => false,
                 'required_levels' => false
             ),
+            //Starbas-reference, ikke søgebar
+            array(
+                'order' => 4,
+                'gui_name' => '',
+                'gui_description' => '',
+                'gui_info_link' => false,
+                'name' => 'av_stam_id',
+                'gui_type' => 'preset',
+                'data_sql' => "sesf",
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            ),            
             //Årstal eller spænd, afhængig af data, ikke søgebart
             array(
                 'order' => 2,
                 'gui_name' => 'time_desc',
-                'gui_description' => 'time_desc',
+                'gui_description' => '',
                 'gui_info_link' => false,
                 'name' => 'time_desc',
                 'gui_type' => 'preset',
                 'data_sql' => "sc",
                 'data' => false,
-                'hideInMetadataString' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
                 'required' => false,
                 'searchable' => false,
                 'required_levels' => false
             )              
+        ),
+        'error_intro' => 'Har du opdaget en fejl i et kort eller en beskrivelse, kan du give os besked.',
+        'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
+        'error_reports' => array(
+            array(
+                'id' => 1,
+                'name' => 'Kortet vender forkert',
+                'sql' => 'UPDATE kortteg_data SET error_ratation = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 1
+            ),
+            array(
+                'id' => 2,
+                'name' => 'Beskrivelsen passer ikke',
+                'sql' => 'UPDATE kortteg_data SET error_description = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 2
+            )
         )
     )    
 );
