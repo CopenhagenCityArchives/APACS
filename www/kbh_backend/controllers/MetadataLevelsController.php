@@ -30,14 +30,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             try{
                 $configuration = new CollectionsConfigurationModel();
                 $configuration->loadConfig(require($this->configurationLocation));  
-                $this->_configuration = $configuration;
-                
-                //We will load test configuration, if requested
-                $request = new Phalcon\Http\Request();
-                $getTestData = $request->get('getTestConf');
-                if(!$getTestData){
-                    $configuration->removeTestData();
-                }
+                $this->_configuration = $configuration;              
                 
             } catch (Exception $ex) {
                 throw new Exception('Could not load configuration!');

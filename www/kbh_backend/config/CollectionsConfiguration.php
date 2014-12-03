@@ -114,7 +114,7 @@ $collectionsSettings = array(
     ),
     array(
         'id' => 3,
-        'test' => false,
+        'test' => true,
         'info' => 'Et uddrag af kort og tegninger fra Stadsarkivets samlinger',
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Kort og tegninger',
