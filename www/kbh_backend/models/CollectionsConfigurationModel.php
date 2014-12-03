@@ -103,6 +103,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'long_name' => false,
             //Name of the collection
             'primary_table_name' => 'name',
+            //Starbs field name, if any
+            'starbas_field_name' => false,
             //Type of levels. Can be flat or hierarkic
             'levels_type' => false,
             //Query for loading objects. Should at least include the field "image"
