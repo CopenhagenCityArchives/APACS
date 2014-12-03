@@ -37,6 +37,7 @@ $collectionsSettings = array(
         //How to link the data level objects to images
         'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query ORDER BY year, month, fileName',
         'primary_table_name' => 'MAND_files', 
+        'starbas_field_name' => false,
         'levels_type' => 'hierarchy',
         'levels' => array(
             array(
@@ -113,7 +114,7 @@ $collectionsSettings = array(
     ),
     array(
         'id' => 3,
-        'test' => true,
+        'test' => false,
         'info' => 'Et uddrag af kort og tegninger fra Stadsarkivets samlinger',
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Kort og tegninger',
@@ -149,7 +150,7 @@ $collectionsSettings = array(
                 'required' => false,
                 'searchable' => true,
                 'required_levels' => false
-            ),
+            ),           
             //Beskrivelse, ikke søgebar
             array(
                 'order' => 3,
@@ -192,7 +193,7 @@ $collectionsSettings = array(
                 'data_sql' => "sc",
                 'data' => false,
                 'gui_hide_name' => true,
-                'gui_hide_value' => true,
+                'gui_hide_value' => false,
                 'required' => false,
                 'searchable' => false,
                 'required_levels' => false
