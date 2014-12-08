@@ -35,7 +35,7 @@ $collectionsSettings = array(
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Vælg minimum gade og år',
         //How to link the data level objects to images
-        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query ORDER BY year, month, fileName',
+        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE error_image = 0 AND :query ORDER BY year, month, fileName',
         'primary_table_name' => 'MAND_files', 
         'starbas_field_name' => false,
         'levels_type' => 'hierarchy',
@@ -115,7 +115,9 @@ $collectionsSettings = array(
     array(
         'id' => 3,
         'test' => true,
-        'info' => 'Et uddrag af kort og tegninger fra Stadsarkivets samlinger',
+        'info' => '<p>Udvalgte kort og tegninger fra Stadsarkivets samling.</p> <p>Vælg mellem forskellige kategorier, hvorefter du kan bladre i kort og tegninger fra kategorien.</p>
+Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starbas.net/avmateriale_soeg.php?a_id=1&aar_soeg=&soeg_term=" target="_blank">Stadsarkivets arkivdatabase, Starbas</a>.
+<p><a href="http://www.kbharkiv.dk/wiki/Kort_og_tegninger" target="_blank">Vejledning til Stadsarkivets kort og tegninger</a></p>',
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Kort og tegninger',
         'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger',
@@ -204,14 +206,14 @@ $collectionsSettings = array(
         'error_reports' => array(
             array(
                 'id' => 1,
-                'name' => 'Kortet vender forkert',
-                'sql' => 'UPDATE kortteg_data SET error_ratation = 1 WHERE id = :itemId LIMIT 1',
+                'name' => 'Billedet vender forkert',
+                'sql' => 'UPDATE kortteg_files SET error_rotation = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 1
             ),
             array(
                 'id' => 2,
                 'name' => 'Beskrivelsen passer ikke',
-                'sql' => 'UPDATE kortteg_data SET error_description = 1 WHERE id = :itemId LIMIT 1',
+                'sql' => 'UPDATE kortteg_files SET error_description = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 2
             )
         )
