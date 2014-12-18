@@ -125,8 +125,10 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'data_sql' => false,
             //Data for the field. Required if no data_sql is given. Format: array(id, text)
             'data' => false,
+            //Wheter or not the field name should be visible in the metadata info when displaying images
+            'gui_hide_name' => false,
             //Wheter or not the data should be visible in the metadata info when displaying images
-            'gui_hide' => true,
+            'gui_hide_value' => false,
             //Is this a required field when searching objects?
             'required' => false,
             //Is this a searchable field when searching objects?
