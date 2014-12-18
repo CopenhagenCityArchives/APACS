@@ -114,7 +114,7 @@ $collectionsSettings = array(
     ),
     array(
         'id' => 3,
-        'test' => true,
+        'test' => false,
         'info' => '<p>Udvalgte kort og tegninger fra Stadsarkivets samling.</p> <p>Vælg mellem forskellige kategorier, hvorefter du kan bladre i kort og tegninger fra kategorien.</p>
 Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starbas.net/avmateriale_soeg.php?a_id=1&aar_soeg=&soeg_term=" target="_blank">Stadsarkivets arkivdatabase, Starbas</a>.
 <p><a href="http://www.kbharkiv.dk/wiki/Kort_og_tegninger" target="_blank">Vejledning til Stadsarkivets kort og tegninger</a></p>',
