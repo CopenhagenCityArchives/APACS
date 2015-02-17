@@ -217,7 +217,107 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'order' => 2
             )
         )
-    )    
+    ),
+    array(
+        'id' => 4,
+        'test' => true,
+        'info' => 'Skoleprotokoller fra københavnske skoler',
+        'link' => false,
+        'short_name' => 'Skoleprotokoller',
+        'long_name' => 'Skoleprotokoller fra københavnske skoler',
+        'gui_required_fields_text' => 'Vælg en skole for at fortsætte',
+        'primary_table_name' => 'kortteg_files',
+        //How to link the data level objects to images
+       // 'data_sql' => 'select tblSkoleKilde.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL from tblskoleprotokol_images WHERE :query',
+        'data_sql' => 'SELECT SkoleKildeOpslagId as id, Navn, Kildenavn, kilde.AarstalTil, kilde.AarstalFra, skole.SkoleId as skoleid, skole.navn as skole, opslag.Kildeid as kildeid, kilde.SkoleKildeID as SkoleKildeId, CONCAT(\'/collections/skoleprotokoller/\',FuldFilNavn) as imageURL
+                        FROM tblSkoleKildeOpslag as opslag 
+                        LEFT JOIN tblSkoleKilde as kilde ON opslag.kildeid = kilde.SkoleKildeId
+                        LEFT JOIN tblSkole as skole ON kilde.SkoleId = skole.SkoleId
+                        WHERE :query',
+        'levels_type' => 'hierarchy',
+        'levels' => array(
+            //Skole id
+            array(
+                'order' => 1,
+                'gui_name' => 'Skole',
+                'gui_description' => 'Protokollerne er arrangeret efter skole',
+                'gui_info_link' => false,
+                'name' => 'skoleid',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT SkoleId as id, Navn as text FROM tblSkole',
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            ),
+            //Skolenavn, søgebar
+            array(
+                'order' => 2,
+                'gui_name' => 'Skole',
+                'gui_description' => 'Protokollerne er arrangeret efter skole',
+                'gui_info_link' => false,
+                'name' => 'skole',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT SkoleId as id, Navn as text FROM tblSkole',
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => false,
+                'searchable' => true,
+                'required_levels' => false
+            ),            
+            //Protokol id, søgebar
+            array(
+                'order' => 3,
+                'gui_name' => 'Protokol',
+                'gui_description' => 'Hver skole har et antal protokoller',
+                'gui_info_link' => false,
+                'name' => 'SkoleKildeId',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT SkoleKildeId as id, CONCAT(Kildenavn, " ", AarstalFra, "-", AarstalTil) as text FROM tblSkoleKilde WHERE register = 0 AND SkoleId = "%d"',
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => true,
+                'searchable' => true,
+                'required_levels' => array('skoleid'),
+            ),
+            //Protokol navn, søgebar
+            array(
+                'order' => 4,
+                'gui_name' => 'Protokol',
+                'gui_description' => 'Hver skole har et antal protokoller',
+                'gui_info_link' => false,
+                'name' => 'Kildenavn',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT SkoleKildeId as id, CONCAT(Kildenavn, " ", AarstalFra, "-", AarstalTil) as text FROM tblSkoleKilde WHERE register = 0 AND SkoleId = "%d"',
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => array('skole'),
+            )              
+        ),
+        'error_intro' => 'Har du opdaget en fejl på et billede eller i metadata, kan du give os besked.',
+        'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
+        'error_reports' => array(
+            array(
+                'id' => 1,
+                'name' => 'Billedet kan ikke ses',
+                'sql' => 'UPDATE kortteg_files SET error_rotation = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 1
+            ),
+            array(
+                'id' => 2,
+                'name' => 'Metadata er forkert',
+                'sql' => 'UPDATE kortteg_files SET error_description = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 2
+            )
+        )
+    )     
 );
 
 return $collectionsSettings;

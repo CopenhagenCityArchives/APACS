@@ -40,6 +40,7 @@
         //$posts->setPrefix('/data');
         
         //Collection info
+        $posts->get('/collections/{collection:[0-9]+}/info', 'displayinfo');
         $posts->get('/collections', 'getcollectioninfo');
         $posts->get('/collections/{collection:[0-9]+}', 'getcollectioninfo');
         

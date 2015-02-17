@@ -87,6 +87,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'short_name' => false,
             //Long name of collection
             'long_name' => false,
+            //Link to API documentation
+            'api_documentation_url' => '',
             //Name of the collection
             'primary_table_name' => 'name',
             //Starbs field name, if any
@@ -104,7 +106,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Text presented to the user when an error report is submitted
             'error_confirm' => '',
             //An array of possible error reports
-            'error_reports' => array()
+            'error_reports' => array(),
         );
         
         $DefaultMetadataLevel = array(
@@ -114,6 +116,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'gui_name' => false,
             //Description in GUI
             'gui_description' => false,
+            //Description in API
+            'api_description' => false,
             //Link to further information, GUI
             'gui_info_link' => false,
             //Internal name, also used in requests
@@ -154,6 +158,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             if($collectionConfig['levels'][$i]['gui_type'] == 'preset' && count($collectionConfig['levels'][$i]['data']) == 0){
                 throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
             }
+            
+            $collectionConfig['api_documentation_url'] = 'http://www.kbhkilder.dk/api/info/' . $collectionConfig['id'];
             $i++;
         }
         

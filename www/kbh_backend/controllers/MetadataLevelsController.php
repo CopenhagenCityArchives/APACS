@@ -52,6 +52,50 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         
         $this->returnJson($collectionData);
     }
+    
+    public function displayInfo($collectionId = false)
+    {
+        if($collectionId){
+            $configuration = $this->initConfiguration();
+            
+            $obj = $configuration->getConfigurationForCollection($collectionId, true)[0];
+
+            $i = 0;
+            foreach($obj['levels'] as $level){
+                $obj['levels'][$i]['url'] = 'http://www.kbhkilder.dk/api/metadata/'. $obj['id'] . '/' . $level['name'];
+                $obj['levels'][$i]['required_levels_url'] = '';
+                if($level['required_levels']){
+                   $url = '?';
+                   
+                   foreach($level['required_levels'] as $req){
+                       $url = $url . $req . '=:' . $req . '&';
+                   }
+                   $url = substr($url, 0, strlen($url)-1);
+                   $obj['levels'][$i]['required_levels_url'] = $url;
+                }
+                $i++;
+            }
+            
+            $obj['data_filters'] = $configuration->getAllFilters($collectionId);
+            
+            $i = 0;
+            $url = 'http://www.kbhkilder.dk/api/data/'. $obj['id'] . '?';
+            foreach($obj['data_filters'] as $level){          
+                $obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level);
+                if($obj['data_filters'][$i]['required'])
+                    $url = $url . $level . '=:' . $level . '&';
+                $i++;
+            }
+            
+            $url = substr($url, 0, strlen($url)-1);
+            
+            $obj['data_url'] = $url;
+          
+            require '../../kbh_backend/templates/info.php';
+            
+            die();
+        }
+    }
  
     //Should load data from a metadata level, either by query or at once, defined by the filter
     public function getMetadata($collectionId, $metadataLevelName){
