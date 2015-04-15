@@ -18,7 +18,7 @@ class MetadataModel extends \Phalcon\Mvc\Model
         if(preg_match_all($pattern, $metadataLevel['data_sql']) != count($searchString)){
             throw new Exception('The number of arguments does not match the data_sql!');
         }
-        
+
         $query = '';
         if($metadataLevel['gui_type'] == 'getallbyfilter'){
             //checks if needed arguments match the supplied number
