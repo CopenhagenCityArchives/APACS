@@ -48,7 +48,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     {       
         $configuration = $this->initConfiguration();
         
-        $collectionData = $configuration->getConfigurationForCollection($collectionId, false);
+        $collectionData = $configuration->getConfigurationForCollection($collectionId, true);
         
         $this->returnJson($collectionData);
     }

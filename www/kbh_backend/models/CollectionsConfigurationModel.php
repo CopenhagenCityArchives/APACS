@@ -38,19 +38,13 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         
         foreach($this->_configuration as $col){
             if($col['id'] == $collectionId || $matchAll){
-                if(!$publicData){
+                if($publicData){
                     /*$info = array();
                     $info = $col['info'];
                     $info['id'] = $col['id'];
                     $collectionInfo[] = $info;*/
                     unset($col['data_sql']);
-                    
-                    foreach($col['levels'] as $key => $level){
-                        unset($col['levels'][$key]['data_sql']);
-                    }
-                    
                     $collectionInfo[] = $col;
-                    
                 }
                 else{
                     $collectionInfo[] = $col;
@@ -156,9 +150,9 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Logic validation
             
             //Either data or data_sql has to be filled out
-         /*   if(!$collectionConfig['levels'][$i]['data'] && !$collectionConfig['levels'][$i]['data_sql']){
+            if(!$collectionConfig['levels'][$i]['data'] && !$collectionConfig['levels'][$i]['data_sql']){
                 throw new Exception('Invalid configuration format. Either data or data_sql should be set.');
-            }*/
+            }
             
             //If gui_type is preset, the data field has to by filled
             if($collectionConfig['levels'][$i]['gui_type'] == 'preset' && count($collectionConfig['levels'][$i]['data']) == 0){
