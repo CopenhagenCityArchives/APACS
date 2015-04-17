@@ -16,7 +16,10 @@ class MetadataModel extends \Phalcon\Mvc\Model
         $pattern = "/%d|%s/";
 
         if(preg_match_all($pattern, $metadataLevel['data_sql']) != count($searchString)){
-            throw new Exception('The number of arguments does not match the data_sql!');
+            $query = '';
+            
+            return str_replace('%d', $searchString[$metadataLevel['required_levels'][0]], $metadataLevel['data_sql']);
+         //   throw new Exception('The number of arguments does not match the data_sql!');
         }
 
         $query = '';
