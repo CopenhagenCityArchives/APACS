@@ -35,7 +35,7 @@ $collectionsSettings = array(
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Vælg minimum gade og år',
         //How to link the data level objects to images
-        'data_sql' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE error_image = 0 AND :query ORDER BY year, month, fileName',
+        'objects_query' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE error_image = 0 AND :query ORDER BY year, month, fileName',
         'primary_table_name' => 'MAND_files', 
         'starbas_field_name' => false,
         'levels_type' => 'hierarchy',
@@ -126,7 +126,7 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         'primary_table_name' => 'kortteg_files',
         'starbas_field_name' => 'av_stam_id',
         //How to link the data level objects to images
-        'data_sql' => 'select kortteg_files.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, 
+        'objects_query' => 'select kortteg_files.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width, 
                         description, 
                         av_beskrivelse,
                         av_stam_id,
@@ -228,8 +228,8 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         'gui_required_fields_text' => 'Vælg en skole for at fortsætte',
         'primary_table_name' => 'kortteg_files',
         //How to link the data level objects to images
-       // 'data_sql' => 'select tblSkoleKilde.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL from tblskoleprotokol_images WHERE :query',
-        'data_sql' => 'SELECT SkoleKildeOpslagId as id, Navn, Kildenavn, kilde.AarstalTil, kilde.AarstalFra, skole.SkoleId as skoleid, skole.navn as skole, opslag.Kildeid as kildeid, kilde.SkoleKildeID as SkoleKildeId, CONCAT(\'/collections/skoleprotokoller/\',FuldFilNavn) as imageURL
+       // 'objects_query' => 'select tblSkoleKilde.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL from tblskoleprotokol_images WHERE :query',
+        'objects_query' => 'SELECT SkoleKildeOpslagId as id, Navn, Kildenavn, kilde.AarstalTil, kilde.AarstalFra, skole.SkoleId as skoleid, skole.navn as skole, opslag.Kildeid as kildeid, kilde.SkoleKildeID as SkoleKildeId, CONCAT(\'/collections/skoleprotokoller/\',FuldFilNavn) as imageURL
                         FROM tblSkoleKildeOpslag as opslag 
                         LEFT JOIN tblSkoleKilde as kilde ON opslag.kildeid = kilde.SkoleKildeId
                         LEFT JOIN tblSkole as skole ON kilde.SkoleId = skole.SkoleId
@@ -328,9 +328,9 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         'gui_required_fields_text' => 'Vælg et år',
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
-        'starbas_field_name' => 'starbas_id',
+     //   'starbas_field_name' => 'starbas_id',
         //How to link the data level objects to images
-        'data_sql' => 'select begrav_page.id, year_to, year_from, nicetitle, begrav_page.starbas_id, CONCAT(\'/collections/\',relative_filename) as imageURL
+        'objects_query' => 'select begrav_page.id, year_to, year_from, nicetitle, begrav_page.starbas_id, CONCAT(\'/collections/\',relative_filename) as imageURL
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
                         WHERE volumetype_id = 1 AND is_public = 1 AND :query',
@@ -345,11 +345,14 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'name' => 'year',
                 'gui_type' => 'typeahead',
                 'data_sql' => 'SELECT DISTINCT year_from as id, year_from as text FROM begrav_volume WHERE is_public = 1 ORDER BY year_from',
+                'sql_alias' => false,
+                'sql_condition' => '%d >= year_from AND %d <= year_to',                
                 'data' => false,
                 'gui_hide_name' => true,
                 'gui_hide_value' => false,
                 'required' => true,
                 'searchable' => true,
+                'returnable' => false,
                 'required_levels' => false
             ),           
             //Periode, søgebar
@@ -360,7 +363,7 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
-                'data_sql' => "SELECT id as id, nicetitle as text FROM begrav_volume WHERE year_from <= %d",
+                'data_sql' => "SELECT id as id, nicetitle as text FROM begrav_volume WHERE %d <= year_to AND %d >= year_from",                
                 'data' => false,
                 'gui_hide_name' => true,
                 'required' => false,
