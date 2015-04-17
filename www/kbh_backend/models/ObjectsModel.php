@@ -75,7 +75,7 @@ class ObjectsModel extends \Phalcon\Mvc\Model
     public function createObjectQuery($sql, $levels){
         $searchString = '';
         foreach($levels as $level){
-            if($level['sql_condition']){
+            if(isset($level['sql_condition']) && $level['sql_condition']){
                // $searchString = $searchString . vsprintf($level['sql_condition'],$level['value']);
                 $searchString = $searchString . str_replace('%d', $level['value'], $level['sql_condition']) . ' AND ';
                // $searchString = $searchString . str_replace('%s', $level['value'], $level['sql_condition']);

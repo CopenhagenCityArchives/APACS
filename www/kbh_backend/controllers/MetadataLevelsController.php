@@ -126,12 +126,17 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
                 
         $objectsModel = new ObjectsModel();
         $incomingFilters = $objectsModel->getFilters($searchableFilters, $configuration->getRequiredFilters($collectionId));
-        
-        if(!$incomingFilters){
-            $incomingFilters = $objectsModel->getFilters(array('name' => 'id'), array('name' => 'id'));
-            if(isset($incomingFilters['id'])){
-                $incomingFilters[$config[0]['primary_table_name'] .'.id'] = $incomingFilters['id'];
-                unset($incomingFilters['id']);
+        //Filters no set, id filter assumed
+        if(count($incomingFilters) == 0){
+            $incomingFilters = $objectsModel->getFilters(array(array('name' => 'id')), array(array('name' => 'id')));
+            if($incomingFilters[0]['name'] == 'id'){
+                $newFilter = array();
+                $newFilter['name'] = $config[0]['primary_table_name'] .'.id';
+                $newFilter['value'] = $incomingFilters[0]['value'];
+                
+                //$incomingFilters[][$config[0]['primary_table_name'] .'.id'] = $incomingFilters[0]['value'];
+                unset($incomingFilters[0]);
+                $incomingFilters[] = $newFilter;
             }
         }
         
