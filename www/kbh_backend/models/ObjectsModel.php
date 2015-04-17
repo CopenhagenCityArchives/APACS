@@ -35,9 +35,9 @@ class ObjectsModel extends \Phalcon\Mvc\Model
         
         foreach($allFilters as $filter){
             
-            $incommingFilter = $request->getQuery($filter['name']);
+            $incommingFilter = $request->getQuery($filter['name'], null, false);
             
-            if($incommingFilter){
+            if($incommingFilter !== false){
                 $filter['value'] = $incommingFilter;
                 $collectedFilters[] = $filter;
 

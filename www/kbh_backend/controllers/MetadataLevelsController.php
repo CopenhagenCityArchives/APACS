@@ -129,7 +129,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         //Filters no set, id filter assumed
         if(count($incomingFilters) == 0){
             $incomingFilters = $objectsModel->getFilters(array(array('name' => 'id')), array(array('name' => 'id')));
-            if($incomingFilters[0]['name'] == 'id'){
+            if(count($incomingFilters) > 0 && $incomingFilters[0]['name'] == 'id'){
                 $newFilter = array();
                 $newFilter['name'] = $config[0]['primary_table_name'] .'.id';
                 $newFilter['value'] = $incomingFilters[0]['value'];
@@ -143,7 +143,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         if(count($incomingFilters) > 0){
             $query = $objectsModel->createObjectQuery($config[0]['objects_query'], $incomingFilters);
             $results = $objectsModel->getData($query);
-            $this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getFilters($collectionId, 'returnable', true)));
+            $this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getFilters($collectionId)));
             //$this->returnJson($results);
         }
         else{

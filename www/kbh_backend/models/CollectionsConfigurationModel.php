@@ -126,11 +126,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'gui_type' => false,
             //Query for receiving data for this field (for example adresses). Digits written as %d, strings as %s
             //(Example: SELECT id, name WHERE id = %d AND name LIKE %s)
-            'data_sql' => false,
-            //Alias when receiving the data in the collections data search. Used when several fields across tables have the same name (for example 'id')
-            'sql_alias' => false,
-            //Special condition when receiving the data in the collections data search. If not set, this is used: name = value. This is a special condition: 'year_from >= %d AND year_to <= %d'. Digits written as %d, strings as %s
-            'sql_condition' => false,            
+            'data_sql' => false,            
             //Data for the field. Required if no data_sql is given. Format: array(id, text)
             'data' => false,
             //Wheter or not the field name should be visible in the metadata info when displaying images
@@ -142,9 +138,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Is this a searchable field when searching objects?
             'searchable' => true,
             //Other levels required to get data from this level
-            'required_levels' => array(),
-            //Should this level be returned when displaying data?
-            'returnable' => true
+            'required_levels' => array()
         );
         
         $collectionConfig = array_merge($DefaultInfo, $collectionConfig);
@@ -280,11 +274,11 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
      * @param string The key in which to search for a value
      * @param string The value of the key. If not given, all filters are returned.
      */
-    public function getFilters($collectionId, $key, $value = null){
+    public function getFilters($collectionId, $key = null, $value = null){
         $config = $this->getConfigurationForCollection($collectionId);
         $filters = array();
         
-        if($value == null){
+        if($key == null && $value == null){
             foreach($config[0]['levels'] as $curLevel){
                     $filters[] = $curLevel;
             }
