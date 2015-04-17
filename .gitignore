@@ -6,6 +6,4 @@
 .vagrant*
 www/vendor*
 www/tests/test-coverage.html
-www/xdebug.log
-www/xdebug.log
-www/xdebug.log
+xdebug.log
