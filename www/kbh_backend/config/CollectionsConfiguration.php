@@ -330,9 +330,10 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         'primary_table_name' => 'begrav_page',
      //   'starbas_field_name' => 'starbas_id',
         //How to link the data level objects to images
-        'objects_query' => 'select begrav_page.id, year_to, year_from, nicetitle, begrav_page.starbas_id, CONCAT(\'/collections/\',relative_filename) as imageURL
+        'objects_query' => 'select begrav_page.id, year, nicetitle, begrav_page.starbas_id, CONCAT(\'/collections/\',relative_filename_converted) as imageURL
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+                        LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
                         WHERE volumetype_id = 1 AND is_public = 1 AND :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
@@ -344,15 +345,12 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'gui_info_link' => false,
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, text FROM begrav_help_years',
-                'sql_alias' => false,
-                'sql_condition' => '%d >= year_from AND %d <= year_to',                
+                'data_sql' => 'SELECT id, text FROM begrav_help_years',                
                 'data' => false,
                 'gui_hide_name' => true,
-                'gui_hide_value' => false,
+                'gui_hide_value' => true,
                 'required' => true,
                 'searchable' => true,
-                'returnable' => false,
                 'required_levels' => false
             ),           
             //Periode, søgebar
@@ -363,7 +361,7 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
-                'data_sql' => "SELECT id as id, nicetitle as text FROM begrav_volume WHERE %d <= year_to AND %d >= year_from",                
+                'data_sql' => "SELECT id as id, nicetitle as text FROM begrav_volume WHERE volumetype_id = 1 AND %d <= year_to AND %d >= year_from",                
                 'data' => false,
                 'gui_hide_name' => true,
                 'required' => false,
@@ -409,9 +407,10 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
         //How to link the data level objects to images
-        'objects_query' => 'select begrav_page.id, year_to, year_from, sex, begrav_page.starbas_id, CONCAT(\'/collections/\',relative_filename) as imageURL
+        'objects_query' => 'select begrav_page.id, year, sex, begrav_page.starbas_id, nicetitle, CONCAT(\'/collections/\',relative_filename_converted) as imageURL
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+                        LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
                         WHERE volumetype_id = 2 AND is_public = 1 AND :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
@@ -423,15 +422,12 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'gui_info_link' => false,
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, text FROM begrav_help_years',
-                'sql_alias' => false,
-                'sql_condition' => '%d >= year_from AND %d <= year_to',                
+                'data_sql' => 'SELECT id, text FROM begrav_help_years',                
                 'data' => false,
                 'gui_hide_name' => true,
-                'gui_hide_value' => false,
+                'gui_hide_value' => true,
                 'required' => true,
                 'searchable' => true,
-                'returnable' => false,
                 'required_levels' => false
             ),           
             //Periode, søgebar
@@ -453,13 +449,29 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                     )                            
                 ),
                 'gui_hide_name' => true,
+                'gui_hide_value' => true,
                 'required' => false,
                 'searchable' => true,
                 'required_levels' => array('year')
             ),
-            //Starbas-reference, ikke søgebar
+            //Aggregeret titel, ikke søgebar
             array(
                 'order' => 3,
+                'gui_name' => 'beskrivelse',
+                'gui_description' => 'Hvert år er inddelt i op til tre perioder',
+                'gui_info_link' => false,
+                'name' => 'nicetitle',
+                'gui_type' => 'typeahead',
+                'data_sql' => "*",                
+                'data' => false,
+                'gui_hide_name' => true,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => array()
+            ),            
+            //Starbas-reference, ikke søgebar
+            array(
+                'order' => 4,
                 'gui_name' => '',
                 'gui_description' => '',
                 'gui_info_link' => false,
