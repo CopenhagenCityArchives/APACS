@@ -321,7 +321,7 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
     array(
         'id' => 5,
         'test' => true,
-        'info' => 'Begravelsesprotokoller for København for perioden 1812 til 1940',
+        'info' => 'Begravelsesprotokoller for København for perioden 1861 til 1940',
         'link' => 'http://www.kbharkiv.dk/wiki',
         'short_name' => 'Begravelsesprotokoller',
         'long_name' => 'Københavns Stadsarkivs begravelsesprotokoller',
@@ -344,7 +344,7 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'gui_info_link' => false,
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT DISTINCT year_from as id, year_from as text FROM begrav_volume WHERE is_public = 1 ORDER BY year_from',
+                'data_sql' => 'SELECT id, text FROM begrav_help_years',
                 'sql_alias' => false,
                 'sql_condition' => '%d >= year_from AND %d <= year_to',                
                 'data' => false,
@@ -387,23 +387,104 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'required_levels' => false
             )          
         ),
-        'error_intro' => 'Har du opdaget en fejl i et kort eller en beskrivelse, kan du give os besked.',
+        'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
         'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
         'error_reports' => array(
             array(
                 'id' => 1,
-                'name' => 'Billedet vender forkert',
-                'sql' => 'UPDATE kortteg_files SET error_rotation = 1 WHERE id = :itemId LIMIT 1',
+                'name' => 'Billedet er ikke en begravelsesprotokol',
+                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 1
-            ),
-            array(
-                'id' => 2,
-                'name' => 'Beskrivelsen passer ikke',
-                'sql' => 'UPDATE kortteg_files SET error_description = 1 WHERE id = :itemId LIMIT 1',
-                'order' => 2
             )
         )
-    )    
+    ),
+    array(
+        'id' => 6,
+        'test' => true,
+        'info' => 'Registre for begravelsesprotokoller for København for perioden 1812 til 1940',
+        'link' => 'http://www.kbharkiv.dk/wiki',
+        'short_name' => 'Registre for begravelsesprotokoller',
+        'long_name' => 'Registre for Københavns Stadsarkivs begravelsesprotokoller',
+        'gui_required_fields_text' => 'Vælg et år',
+        'image_type' => 'image',
+        'primary_table_name' => 'begrav_page',
+        //How to link the data level objects to images
+        'objects_query' => 'select begrav_page.id, year_to, year_from, sex, begrav_page.starbas_id, CONCAT(\'/collections/\',relative_filename) as imageURL
+                        FROM begrav_page
+                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+                        WHERE volumetype_id = 2 AND is_public = 1 AND :query',
+        'levels_type' => 'hierarchy',
+        'levels' => array(
+            //År, søgebar
+            array(
+                'order' => 1,
+                'gui_name' => 'År',
+                'gui_description' => 'Året for registret',
+                'gui_info_link' => false,
+                'name' => 'year',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT id, text FROM begrav_help_years',
+                'sql_alias' => false,
+                'sql_condition' => '%d >= year_from AND %d <= year_to',                
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => true,
+                'searchable' => true,
+                'returnable' => false,
+                'required_levels' => false
+            ),           
+            //Periode, søgebar
+            array(
+                'order' => 2,
+                'gui_name' => 'Køn',
+                'gui_description' => 'Hvert år er opdelt efter køn',
+                'gui_info_link' => false,
+                'name' => 'sex',
+                'gui_type' => 'typeahead',               
+                'data' => array(
+                    array(
+                        'text' => 'Mænd',
+                        'id' => 'mænd'
+                    ),
+                    array(
+                        'text' => 'Kvinder',
+                        'id' => 'kvinder'
+                    )                            
+                ),
+                'gui_hide_name' => true,
+                'required' => false,
+                'searchable' => true,
+                'required_levels' => array('year')
+            ),
+            //Starbas-reference, ikke søgebar
+            array(
+                'order' => 3,
+                'gui_name' => '',
+                'gui_description' => '',
+                'gui_info_link' => false,
+                'name' => 'starbas_id',
+                'gui_type' => 'preset',
+                'data_sql' => "sesf",
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            )          
+        ),
+        'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
+        'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
+        'error_reports' => array(
+            array(
+                'id' => 1,
+                'name' => 'Billedet er ikke et register',
+                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 1
+            )
+        )
+    )     
 );
 
 return $collectionsSettings;
