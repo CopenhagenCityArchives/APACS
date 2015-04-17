@@ -35,12 +35,13 @@ class ObjectsModel extends \Phalcon\Mvc\Model
         
         foreach($allFilters as $filter){
             
-            $incommingFilter = $request->getQuery($filter);
+            $incommingFilter = $request->getQuery($filter['name']);
             
             if($incommingFilter){
-                $collectedFilters[$filter] = $incommingFilter;
+                $filter['value'] = $incommingFilter;
+                $collectedFilters[] = $filter;
 
-                if(in_array($filter, $requiredFilters)){
+                if(count($this->_searchArrayForValue($requiredFilters, 'name', $filter['name'])) > 0){
                     $i++;
                 }   
             }         
@@ -48,10 +49,21 @@ class ObjectsModel extends \Phalcon\Mvc\Model
         
         if($i == count($requiredFilters)){
             return $collectedFilters;
-        }/*
+        }
         else{
             throw new Exception('Not all required filters are set!');
-        }*/
+        }
+    }
+    
+    private function _searchArrayForValue($array, $key, $val){
+        $results = array();
+        foreach($array as $row){
+            if($row[$key] == $val){
+                $results[] = $row;
+            }
+        }
+        
+        return $results;
     }
     
     /**
@@ -60,10 +72,17 @@ class ObjectsModel extends \Phalcon\Mvc\Model
      * @param array Array of inputs
      * @return string search query
      */
-    public function createObjectQuery($sql, $parameters){
+    public function createObjectQuery($sql, $levels){
         $searchString = '';
-        foreach($parameters as $name => $value){
-            $searchString = $searchString . $name . ' = \'' . $value . '\' AND ';
+        foreach($levels as $level){
+            if($level['sql_condition']){
+               // $searchString = $searchString . vsprintf($level['sql_condition'],$level['value']);
+                $searchString = $searchString . str_replace('%d', $level['value'], $level['sql_condition']) . ' AND ';
+               // $searchString = $searchString . str_replace('%s', $level['value'], $level['sql_condition']);
+            }
+            else{
+                $searchString = $searchString . $level['name'] . ' = \'' . $level['value'] . '\' AND ';
+            }
         }
         
         $searchString = substr($searchString, 0, strlen($searchString)-5);
@@ -91,7 +110,7 @@ class ObjectsModel extends \Phalcon\Mvc\Model
 
                 
             foreach($metadataLevels as $curLevel){
-                $objects[$i]['metadata'][$curLevel] = $curRow[$curLevel];
+                $objects[$i]['metadata'][$curLevel['name']] = $curRow[$curLevel['name']];
                 if(isset($curRow['height']) && isset($curRow['width'])){
                     $objects[$i]['metadata']['height'] = $curRow['height'];
                     $objects[$i]['metadata']['width'] = $curRow['width'];

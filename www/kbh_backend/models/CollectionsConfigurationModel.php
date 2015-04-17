@@ -43,7 +43,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
                     $info = $col['info'];
                     $info['id'] = $col['id'];
                     $collectionInfo[] = $info;*/
-                    unset($col['data_sql']);
+                    unset($col['objects_query']);
                     $collectionInfo[] = $col;
                 }
                 else{
@@ -96,7 +96,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Type of levels. Can be flat or hierarkic
             'levels_type' => false,
             //Query for loading objects. Should at least include the field "image"
-            'data_sql' => false,
+            'objects_query' => false,
             //Textual description of the required fields needed for object search
             'gui_required_fields_text' => false,            
             //An array of levels of metadata
@@ -124,9 +124,13 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'name' => false,
             //GUI type, preset, getallbyfilter, typehead
             'gui_type' => false,
-            //Query for receiving data for this field (for example adresses). Digits written as %d, strings as %
+            //Query for receiving data for this field (for example adresses). Digits written as %d, strings as %s
             //(Example: SELECT id, name WHERE id = %d AND name LIKE %s)
             'data_sql' => false,
+            //Alias when receiving the data in the collections data search. Used when several fields across tables have the same name (for example 'id')
+            'sql_alias' => false,
+            //Special condition when receiving the data in the collections data search. If not set, this is used: name = value. This is a special condition: 'year_from >= %d AND year_to <= %d'. Digits written as %d, strings as %s
+            'sql_condition' => false,            
             //Data for the field. Required if no data_sql is given. Format: array(id, text)
             'data' => false,
             //Wheter or not the field name should be visible in the metadata info when displaying images
@@ -138,7 +142,9 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Is this a searchable field when searching objects?
             'searchable' => true,
             //Other levels required to get data from this level
-            'required_levels' => array()
+            'required_levels' => array(),
+            //Should this level be returned when displaying data?
+            'returnable' => true
         );
         
         $collectionConfig = array_merge($DefaultInfo, $collectionConfig);
@@ -232,7 +238,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $filters = array();
         
         foreach($config[0]['levels'] as $curLevel){
-                $filters[] = $curLevel['name'];
+                $filters[] = $curLevel;
         }
         
         return $filters;
@@ -244,7 +250,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         
         foreach($config[0]['levels'] as $curLevel){
             if($curLevel['searchable'] == true){
-                $filters[] = $curLevel['name'];
+                $filters[] = $curLevel;
             }
         }
         
@@ -257,8 +263,38 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         
         foreach($config[0]['levels'] as $curLevel){
             if($curLevel['required']){
-                $filters[] = $curLevel['name'];
+                $filters[] = $curLevel;
             }
+        }
+        
+        return $filters;
+    }
+    
+    /**
+     * 
+     * Generic search for filters. Gets filters by key and value
+     * If no value is given, all filters are returned
+     * Example (get all required filters): getFilters(2, 'required', true)
+     * 
+     * @param int The id of the collection
+     * @param string The key in which to search for a value
+     * @param string The value of the key. If not given, all filters are returned.
+     */
+    public function getFilters($collectionId, $key, $value = null){
+        $config = $this->getConfigurationForCollection($collectionId);
+        $filters = array();
+        
+        if($value == null){
+            foreach($config[0]['levels'] as $curLevel){
+                    $filters[] = $curLevel;
+            }
+        }
+        else{
+            foreach($config[0]['levels'] as $curLevel){
+                if($curLevel[$key] == $value){
+                    $filters[] = $curLevel;
+                }
+            }  
         }
         
         return $filters;

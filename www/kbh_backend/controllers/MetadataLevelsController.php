@@ -81,9 +81,9 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             $i = 0;
             $url = 'http://www.kbhkilder.dk/api/data/'. $obj['id'] . '?';
             foreach($obj['data_filters'] as $level){          
-                $obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level);
+                $obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
                 if($obj['data_filters'][$i]['required'])
-                    $url = $url . $level . '=:' . $level . '&';
+                    $url = $url . $level['name'] . '=:' . $level['name'] . '&';
                 $i++;
             }
             
@@ -128,7 +128,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         $incomingFilters = $objectsModel->getFilters($searchableFilters, $configuration->getRequiredFilters($collectionId));
         
         if(!$incomingFilters){
-            $incomingFilters = $objectsModel->getFilters(['id'], ['id']);
+            $incomingFilters = $objectsModel->getFilters(array('name' => 'id'), array('name' => 'id'));
             if(isset($incomingFilters['id'])){
                 $incomingFilters[$config[0]['primary_table_name'] .'.id'] = $incomingFilters['id'];
                 unset($incomingFilters['id']);
@@ -136,9 +136,9 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         }
         
         if(count($incomingFilters) > 0){
-            $query = $objectsModel->createObjectQuery($config[0]['data_sql'], $incomingFilters);
+            $query = $objectsModel->createObjectQuery($config[0]['objects_query'], $incomingFilters);
             $results = $objectsModel->getData($query);
-            $this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getAllFilters($collectionId)));
+            $this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getFilters($collectionId, 'returnable', true)));
             //$this->returnJson($results);
         }
         else{
