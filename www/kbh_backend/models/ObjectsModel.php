@@ -51,7 +51,8 @@ class ObjectsModel extends \Phalcon\Mvc\Model
             return $collectedFilters;
         }
         else{
-            throw new Exception('Not all required filters are set!');
+            //throw new Exception('Not all required filters are set!');
+            return array();
         }
     }
     
