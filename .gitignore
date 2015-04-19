@@ -7,3 +7,4 @@
 www/vendor*
 www/tests/test-coverage.html
 xdebug.log
+node_modules*
