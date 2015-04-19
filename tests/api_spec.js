@@ -1,10 +1,16 @@
+/*
+  Testing ksa_backend API.
+  Run: jasmine-node ./tests
+  The test are based on concrete data of collection 2.
+*/
+
 var frisby = require('frisby');
 
 var url = 'http://www.kbhkilder.dk/api';
 //var url = 'http://192.168.10.129';
 
 frisby.create('Collection metadata')
-  .get(url + '/collections/4')
+  .get(url + '/collections/2')
   .expectStatus(200)
   .afterJSON(function(data){
     expect(data.length > 0).toBe(true);
