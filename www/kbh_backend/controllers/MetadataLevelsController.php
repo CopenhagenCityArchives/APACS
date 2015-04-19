@@ -147,7 +147,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             //$this->returnJson($results);
         }
         else{
-            $this->returnError(404, 'No filters given');
+            $this->returnError(400, 'No filters given');
         }
     }
     
@@ -185,7 +185,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             $response->send();     
         }
         catch(Exception $e){
-             $this->returnError(404, 'Could not load data: ' . $e);
+             $this->returnError(500, 'Could not load data: ' . $e);
         }
     }
     
@@ -194,7 +194,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
      * @param int Error code. Defaults to 404 (not found)
      * @param string Error message. Defaults to blank
      */
-    private function returnError($errorCode = 404, $errorMessage = ''){
+    private function returnError($errorCode = 400, $errorMessage = ''){
         //Getting a response instance
         $response = new \Phalcon\Http\Response();
 
