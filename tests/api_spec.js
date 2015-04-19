@@ -7,7 +7,7 @@
 var frisby = require('frisby');
 
 var url = 'http://www.kbhkilder.dk/api';
-//var url = 'http://192.168.10.129';
+//var url = 'http://192.168.10.129/api';
 
 frisby.create('Collection metadata')
   .get(url + '/collections/2')
