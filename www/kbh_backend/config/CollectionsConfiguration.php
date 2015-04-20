@@ -29,7 +29,8 @@ $collectionsSettings = array(
     array(
         'id' => 2,
         'test' => false,
-        'info' => 'Politiets mandtaller 1866-1923 består af skemaer, hvor Københavns befolkning over 10 år er registreret. Vælg gade, år og måned, hvorefter du kan bladre i mandtallerne. <p><a href="http://www.kbharkiv.dk/wiki/Politiets_mandtaller" target="_blank">Mere om oplysningerne i Politiets mandtaller</a></p>',
+        'info' => 'Københavns befolkning over 10 år er registreret i mandtallerne. Vælg gade, år og måned, hvorefter du kan bladre dig frem til husnummer',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/politiets-mandtaller',
         'video_link' => 'ZdQfxegC06E',
         'short_name' => 'Politiets Mandtal',
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
@@ -115,10 +116,8 @@ $collectionsSettings = array(
     array(
         'id' => 3,
         'test' => false,
-        'info' => '<p>Udvalgte kort og tegninger fra Stadsarkivets samling.</p> <p>Vælg mellem forskellige kategorier, hvorefter du kan bladre i kort og tegninger fra kategorien.</p>
-Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starbas.net/avmateriale_soeg.php?a_id=1&aar_soeg=&soeg_term=" target="_blank">Stadsarkivets arkivdatabase, Starbas</a>.
-<p><a href="http://www.kbharkiv.dk/wiki/Kort_og_tegninger" target="_blank">Vejledning til Stadsarkivets kort og tegninger</a></p>',
-        'link' => 'http://www.kbharkiv.dk/wiki',
+        'info' => 'Udvalgte kort og tegninger fra Stadsarkivets samling.',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/kort-og-tegninger',
         'short_name' => 'Kort og tegninger',
         'long_name' => 'Københavns Stadsarkivs digitaliserede kort og tegninger',
         'gui_required_fields_text' => 'Vælg en kategori for at fortsætte',
@@ -321,10 +320,10 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
     array(
         'id' => 5,
         'test' => true,
-        'info' => 'Begravelsesprotokoller for København for perioden 1861 til 1940',
+        'info' => 'Brug år og nummer fra  det alfabetiske register til at finde begravelsen.',
         'link' => 'http://www.kbharkiv.dk/wiki',
-        'short_name' => 'Begravelsesprotokoller',
-        'long_name' => 'Københavns Stadsarkivs begravelsesprotokoller',
+        'short_name' => 'Begravelsesprotokoller 1861-1940',
+        'long_name' => 'Begravelsesprotokoller 1861-1940',
         'gui_required_fields_text' => 'Vælg et år',
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
@@ -387,22 +386,22 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         ),
         'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
         'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
-        'error_reports' => array(
+        /*'error_reports' => array(
             array(
                 'id' => 1,
                 'name' => 'Billedet er ikke en begravelsesprotokol',
                 'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 1
             )
-        )
+        )*/
     ),
     array(
         'id' => 6,
         'test' => true,
-        'info' => 'Registre for begravelsesprotokoller for København for perioden 1812 til 1940',
+        'info' => 'Alfabetisk navneregister. Noter år og nummer ved den valgte person.',
         'link' => 'http://www.kbharkiv.dk/wiki',
-        'short_name' => 'Registre for begravelsesprotokoller',
-        'long_name' => 'Registre for Københavns Stadsarkivs begravelsesprotokoller',
+        'short_name' => 'Registre til begravelsesprotokoller 1861-1940',
+        'long_name' => 'Registre til begravelsesprotokoller 1861-1940',
         'gui_required_fields_text' => 'Vælg et år',
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
@@ -422,7 +421,7 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
                 'gui_info_link' => false,
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, text FROM begrav_help_years',                
+                'data_sql' => 'SELECT id, text FROM begrav_help_years WHERE is_public = 1',                
                 'data' => false,
                 'gui_hide_name' => true,
                 'gui_hide_value' => true,
@@ -488,14 +487,14 @@ Søger du et bestemt kort, så brug søgefunktionen i <a href="http://www.starba
         ),
         'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
         'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
-        'error_reports' => array(
+       /* 'error_reports' => array(
             array(
                 'id' => 1,
                 'name' => 'Billedet er ikke et register',
                 'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 1
             )
-        )
+        )*/
     )     
 );
 
