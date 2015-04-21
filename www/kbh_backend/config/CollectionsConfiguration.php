@@ -344,7 +344,7 @@ $collectionsSettings = array(
                 'gui_info_link' => false,
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, text FROM begrav_help_years',                
+                'data_sql' => 'SELECT id, text FROM begrav_help_years where is_public = 1',                
                 'data' => false,
                 'gui_hide_name' => true,
                 'gui_hide_value' => true,
