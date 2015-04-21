@@ -31,7 +31,6 @@ $collectionsSettings = array(
         'test' => false,
         'info' => 'Københavns befolkning over 10 år er registreret i mandtallerne. Vælg gade, år og måned, hvorefter du kan bladre dig frem til husnummer',
         'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/politiets-mandtaller',
-        'video_link' => 'ZdQfxegC06E',
         'short_name' => 'Politiets Mandtal',
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Vælg minimum gade og år',
