@@ -75,10 +75,11 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         $DefaultInfo= array(
             //Id of the collection. Main entrance for API requests
             'id' => -1,
+            //Description of the collection (NOT USED, see info instead)
+        //    'description' => false,
+            'info' => false,
             //Is the collection in test or public?
-            'test' => true,
-            //Description of the collection
-            'description' => false,
+            'test' => true,            
             //Image type (image or tile)
             'image_type' => 'image',
             //Link for further information about the collection
