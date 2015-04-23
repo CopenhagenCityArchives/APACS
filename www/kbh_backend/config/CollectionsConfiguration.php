@@ -280,7 +280,7 @@ $collectionsSettings = array(
                 'gui_hide_value' => false,
                 'required' => true,
                 'searchable' => true,
-                'required_levels' => array('skoleid'),
+                'required_levels' => array('skole'),
             ),
             //Protokol navn, søgebar
             array(
