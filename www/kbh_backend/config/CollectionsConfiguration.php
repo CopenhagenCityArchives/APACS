@@ -211,7 +211,7 @@ $collectionsSettings = array(
             array(
                 'id' => 2,
                 'name' => 'Beskrivelsen passer ikke',
-                'sql' => 'UPDATE kortteg_files SET error_description = 1 WHERE id = :itemId LIMIT 1',
+                'sql' => 'UPDATE kortteg_files SET error_metadata = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 2
             )
         )
