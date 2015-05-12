@@ -35,7 +35,7 @@ $collectionsSettings = array(
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Vælg minimum gade og år',
         //How to link the data level objects to images
-        'objects_query' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE error_image = 0 AND :query ORDER BY year, month, fileName',
+        'objects_query' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query ORDER BY year, month, fileName',
         'primary_table_name' => 'MAND_files', 
         'starbas_field_name' => false,
         'levels_type' => 'hierarchy',
@@ -103,13 +103,13 @@ $collectionsSettings = array(
                 'name' => 'Gade, årstal eller måned er forkert',
                 'sql' => 'UPDATE mand_files SET error_metadata = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 1
-            ),
+            )/*,
             array(
                 'id' => 2,
                 'name' => 'Billedet er ikke et mandtal',
                 'sql' => 'UPDATE mand_files SET error_image = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 2
-            )
+            )*/
         )
     ),
     array(
