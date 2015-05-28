@@ -359,7 +359,7 @@ $collectionsSettings = array(
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT begrav_volume.id as id, nicetitle as text FROM begrav_volume LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id WHERE volumetype_id = 1 AND year = %d ORDER BY number_from' /* volumetype_id = 1 AND %d <= year_to AND %d >= year_from"*/,                
+                'data_sql' => 'SELECT begrav_volume.id as id, nicetitle as text FROM begrav_volume LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id WHERE volumetype_id = 1 AND year = %d ORDER BY volume_sort' /* volumetype_id = 1 AND %d <= year_to AND %d >= year_from"*/,                
                 'data' => false,
                 'gui_hide_name' => true,
                 'required' => false,
@@ -409,7 +409,7 @@ $collectionsSettings = array(
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
-                        WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY volume_sort',
+                        WHERE volumetype_id = 2 AND is_public = 1 AND :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
             //År, søgebar
