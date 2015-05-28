@@ -409,7 +409,7 @@ $collectionsSettings = array(
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
-                        WHERE volumetype_id = 2 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY volume_sort',
         'levels_type' => 'hierarchy',
         'levels' => array(
             //År, søgebar
