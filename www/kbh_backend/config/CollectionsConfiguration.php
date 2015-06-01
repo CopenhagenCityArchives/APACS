@@ -355,7 +355,7 @@ $collectionsSettings = array(
             array(
                 'order' => 2,
                 'gui_name' => 'Periode',
-                'gui_description' => 'Hvert år er inddelt i op til tre perioder',
+                'gui_description' => 'Hvert år er inddelt i flere perioder',
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
@@ -414,7 +414,7 @@ $collectionsSettings = array(
         'levels' => array(
             //År, søgebar
             array(
-                'order' => 1,
+                'order' => 2,
                 'gui_name' => 'År',
                 'gui_description' => 'Året for registret',
                 'gui_info_link' => false,
@@ -426,11 +426,11 @@ $collectionsSettings = array(
                 'gui_hide_value' => true,
                 'required' => true,
                 'searchable' => true,
-                'required_levels' => false
+                'required_levels' => array('sex')
             ),           
             //Periode, søgebar
             array(
-                'order' => 2,
+                'order' => 1,
                 'gui_name' => 'Køn',
                 'gui_description' => 'Hvert år er opdelt efter køn',
                 'gui_info_link' => false,
@@ -450,7 +450,7 @@ $collectionsSettings = array(
                 'gui_hide_value' => true,
                 'required' => false,
                 'searchable' => true,
-                'required_levels' => array('year')
+                'required_levels' => false
             ),
             //Aggregeret titel, ikke søgebar
             array(
