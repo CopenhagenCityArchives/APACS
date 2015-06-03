@@ -343,7 +343,7 @@ $collectionsSettings = array(
                 'gui_info_link' => false,
                 'name' => 'year',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, text FROM begrav_help_years where is_public = 1',                
+                'data_sql' => 'SELECT DISTINCT id, text FROM begrav_help_years where is_public = 1',                
                 'data' => false,
                 'gui_hide_name' => true,
                 'gui_hide_value' => true,
@@ -412,22 +412,6 @@ $collectionsSettings = array(
                         WHERE volumetype_id = 2 AND is_public = 1 AND :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
-            //År, søgebar
-            array(
-                'order' => 2,
-                'gui_name' => 'År',
-                'gui_description' => 'Året for registret',
-                'gui_info_link' => false,
-                'name' => 'year',
-                'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT id, text FROM begrav_help_years WHERE is_public = 1',                
-                'data' => false,
-                'gui_hide_name' => true,
-                'gui_hide_value' => true,
-                'required' => true,
-                'searchable' => true,
-                'required_levels' => array('sex')
-            ),           
             //Periode, søgebar
             array(
                 'order' => 1,
@@ -451,12 +435,28 @@ $collectionsSettings = array(
                 'required' => false,
                 'searchable' => true,
                 'required_levels' => false
-            ),
+            ),            
+            //År, søgebar
+            array(
+                'order' => 2,
+                'gui_name' => 'Periode',
+                'gui_description' => 'Registrets periode',
+                'gui_info_link' => false,
+                'name' => 'period',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT DISTINCT id, riv_1 AS text FROM begrav_volume WHERE is_public = 1 AND sex = %d ORDER BY text',                
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
+                'required' => true,
+                'searchable' => true,
+                'required_levels' => array('sex')
+            ),           
             //Aggregeret titel, ikke søgebar
             array(
                 'order' => 3,
                 'gui_name' => 'beskrivelse',
-                'gui_description' => 'Hvert år er inddelt i op til tre perioder',
+                'gui_description' => 'Hvert år er inddelt i flere perioder',
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
