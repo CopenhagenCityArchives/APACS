@@ -8,8 +8,8 @@
 
 var frisby = require('frisby');
 
-var url = 'http://www.kbhkilder.dk/api';
-//var url = 'http://192.168.10.129/api';
+//var url = 'http://www.kbhkilder.dk/api';
+var url = 'http://192.168.10.129/api';
 var collectionsToTest = [2,3,4,5,6];
 
 
