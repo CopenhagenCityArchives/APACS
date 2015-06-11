@@ -405,10 +405,9 @@ $collectionsSettings = array(
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
         //How to link the data level objects to images
-        'objects_query' => 'select begrav_page.id, year, sex, begrav_page.starbas_id, nicetitle, CONCAT(\'/collections/\',relative_filename_converted) as imageURL
+        'objects_query' => 'select DISTINCT begrav_page.id, riv_1, sex, begrav_page.starbas_id, nicetitle, CONCAT(\'/collections/\',relative_filename_converted) as imageURL
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
-                        LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
                         WHERE volumetype_id = 2 AND is_public = 1 AND :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
@@ -432,17 +431,17 @@ $collectionsSettings = array(
                 ),
                 'gui_hide_name' => true,
                 'gui_hide_value' => true,
-                'required' => false,
+                'required' => true,
                 'searchable' => true,
                 'required_levels' => false
             ),            
-            //År, søgebar
+            //Periode, søgebar
             array(
                 'order' => 2,
                 'gui_name' => 'Periode',
                 'gui_description' => 'Registrets periode',
                 'gui_info_link' => false,
-                'name' => 'period',
+                'name' => 'riv_1',
                 'gui_type' => 'typeahead',
                 'data_sql' => 'SELECT DISTINCT id, riv_1 AS text FROM begrav_volume WHERE is_public = 1 AND sex = %d ORDER BY text',                
                 'data' => false,
