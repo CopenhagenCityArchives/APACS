@@ -18,7 +18,7 @@ class ObjectsModel extends \Phalcon\Mvc\Model
             return $result->fetchAll();
         }
         catch(Exception $e){
-            die('Could not execute query: ' . $e);
+            die('Could not execute query: ' . $sql);
         }
     }
     
