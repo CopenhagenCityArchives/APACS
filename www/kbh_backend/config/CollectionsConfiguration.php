@@ -36,7 +36,7 @@ $collectionsSettings = array(
         'long_name' => 'Politiets Mandtal for København 1866 - 1923',  
         'gui_required_fields_text' => 'Vælg minimum gade og år',
         //How to link the data level objects to images
-        'objects_query' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query ORDER BY year, month, fileName',
+        'objects_query' => 'select MAND_files.id, CONCAT(\'/collections/mandtal\',path, fileName) as imageURL, year, month, road_name FROM MAND_files LEFT JOIN MAND_folders ON MAND_folders.id = MAND_files.folder_id WHERE :query AND error_image != 1 ORDER BY year, month, fileName',
         'primary_table_name' => 'MAND_files', 
         'starbas_field_name' => false,
         'levels_type' => 'hierarchy',
@@ -96,7 +96,7 @@ $collectionsSettings = array(
                 'required_levels' => false//array('streetname')
             )
         ),
-        'error_intro' => 'Har du opdaget at et billede er registreret forkert eller billedet ikke passer ind, kan du give os besked. Hvis det er hele vejen, der er registreret forkert, behøver du kun at rapportere et af billederne.',
+        'error_intro' => 'Har du opdaget, at et billede er registreret forkert eller ikke passer ind, kan du give os besked. Hvert enkelt billede skal fejlmeldes. Tak for hjælpen.',
         'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
         'error_reports' => array(
             array(
@@ -104,13 +104,13 @@ $collectionsSettings = array(
                 'name' => 'Gade, årstal eller måned er forkert',
                 'sql' => 'UPDATE mand_files SET error_metadata = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 1
-            )/*,
+            ),
             array(
                 'id' => 2,
-                'name' => 'Billedet er ikke et mandtal',
+                'name' => 'Viser ikke et mandtal',
                 'sql' => 'UPDATE mand_files SET error_image = 1 WHERE id = :itemId LIMIT 1',
                 'order' => 2
-            )*/
+            )
         )
     ),
     array(
@@ -498,9 +498,9 @@ $collectionsSettings = array(
     array(
         'id' => 7,
         'test' => true,
-        'info' => 'Brug år og nummer fra  det alfabetiske register til at finde begravelsen.',
-        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
-        'short_name' => 'Registre til Lysningsjournaler',
+        'info' => 'Alfabetisk navneregister. Noter nummeret, der står ved den valgte person.',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/agteskab/lysninger-provelse-af-aegteskab',
+        'short_name' => 'Registre til lysninger',
         'long_name' => 'Registre for lysningsjournaler for København 1923 - 1965',
         'gui_required_fields_text' => 'Vælg et år',
         'image_type' => 'image',
@@ -517,7 +517,7 @@ $collectionsSettings = array(
             array(
                 'order' => 1,
                 'gui_name' => 'År',
-                'gui_description' => 'Året for protokollen',
+                'gui_description' => 'Registre opdelt efter år',
                 'gui_info_link' => false,
                 'name' => 'riv_1',
                 'gui_type' => 'typeahead',
@@ -560,9 +560,9 @@ $collectionsSettings = array(
     array(
         'id' => 8,
         'test' => true,
-        'info' => 'Alfabetisk navneregister. Noter år og nummer ved den valgte person.',
-        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
-        'short_name' => 'Lysningsjournaler',
+        'info' => 'Brug nummeret fra registret til at vælge den rigtige protokol',
+        'link' => ' http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/agteskab/lysninger-provelse-af-aegteskab',
+        'short_name' => 'Lysningsprotokoller',
         'long_name' => 'Lysningsjournaler for København 1923 - 1965',
         'gui_required_fields_text' => 'Vælg et år',
         'image_type' => 'image',
@@ -578,7 +578,7 @@ $collectionsSettings = array(
             array(
                 'order' => 1,
                 'gui_name' => 'År',
-                'gui_description' => 'Året for journalen',
+                'gui_description' => 'Protokollens år',
                 'gui_info_link' => false,
                 'name' => 'riv_1',
                 'gui_type' => 'typeahead',
@@ -594,7 +594,7 @@ $collectionsSettings = array(
             array(
                 'order' => 2,
                 'gui_name' => 'Løbenummer',
-                'gui_description' => 'Registrets periode',
+                'gui_description' => 'Nummerintervaller under et år',
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
@@ -632,7 +632,193 @@ $collectionsSettings = array(
                 'order' => 1
             )
         )*/
-    )     
+    ),
+    array(
+        'id' => 9,
+        'test' => true,
+        'info' => 'Brug år og nummer fra  det alfabetiske register til at finde begravelsen.',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
+        'short_name' => 'Registre til borgerlige vielser for København 1851 - 1922',
+        'long_name' => 'Registre til borgerlige vielser for København 1851 - 1922',
+        'gui_required_fields_text' => 'Vælg et år',
+        'image_type' => 'image',
+        'primary_table_name' => 'begrav_page',
+     //   'starbas_field_name' => 'starbas_id',
+        //How to link the data level objects to images
+        'objects_query' => 'select begrav_page.id, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
+                        FROM begrav_page
+                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+                        WHERE volumetype_id = 6 AND is_public = 1 AND :query',
+        'levels_type' => 'hierarchy',
+        'levels' => array(
+            //År, søgebar
+            array(
+                'order' => 1,
+                'gui_name' => 'År',
+                'gui_description' => 'Periode for registret',
+                'gui_info_link' => false,
+                'name' => 'nicetitle',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT DISTINCT id, nicetitle as text FROM begrav_volume where is_public = 1 AND volumetype_id = 6 ORDER BY nicetitle',                
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => true,
+                'searchable' => true,
+                'required_levels' => false
+            ),           
+            //Starbas-reference, ikke søgebar
+            array(
+                'order' => 2,
+                'gui_name' => '',
+                'gui_description' => '',
+                'gui_info_link' => false,
+                'name' => 'starbas_id',
+                'gui_type' => 'preset',
+                'data_sql' => "sesf",
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            )          
+        ),
+        'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
+        'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
+        /*'error_reports' => array(
+            array(
+                'id' => 1,
+                'name' => 'Billedet er ikke en begravelsesprotokol',
+                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 1
+            )
+        )*/
+    ),
+    array(
+        'id' => 10,
+        'test' => true,
+        'info' => 'Brug år og nummer fra  det alfabetiske register til at finde vielsen.',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
+        'short_name' => 'Borgerlige vielser for København 1851 - 1922',
+        'long_name' => 'Borgerlige vielser for København 1851 - 1922',
+        'gui_required_fields_text' => 'Vælg et år',
+        'image_type' => 'image',
+        'primary_table_name' => 'begrav_page',
+     //   'starbas_field_name' => 'starbas_id',
+        //How to link the data level objects to images
+        'objects_query' => 'select begrav_page.id, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
+                        FROM begrav_page
+                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+                        WHERE volumetype_id = 5 AND is_public = 1 AND :query',
+        'levels_type' => 'hierarchy',
+        'levels' => array(
+            //År, søgebar
+            array(
+                'order' => 1,
+                'gui_name' => 'År',
+                'gui_description' => 'Periode for protokollen',
+                'gui_info_link' => false,
+                'name' => 'nicetitle',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT DISTINCT id, nicetitle as text FROM begrav_volume where is_public = 1 AND volumetype_id = 5 ORDER BY nicetitle',                
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => true,
+                'searchable' => true,
+                'required_levels' => false
+            ),           
+            //Starbas-reference, ikke søgebar
+            array(
+                'order' => 2,
+                'gui_name' => '',
+                'gui_description' => '',
+                'gui_info_link' => false,
+                'name' => 'starbas_id',
+                'gui_type' => 'preset',
+                'data_sql' => "sesf",
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            )          
+        ),
+        'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
+        'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
+        /*'error_reports' => array(
+            array(
+                'id' => 1,
+                'name' => 'Billedet er ikke en begravelsesprotokol',
+                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 1
+            )
+        )*/
+    ),
+    array(
+        'id' => 11,
+        'test' => true,
+        'info' => 'Brug år og nummer fra  det alfabetiske register til at finde vielsen.',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
+        'short_name' => 'Skoleprotokoller for København xxxx - xxxx',
+        'long_name' => 'Skoleprotokoller for København xxxx - xxxx',
+        'gui_required_fields_text' => 'Vælg et år',
+        'image_type' => 'image',
+        'primary_table_name' => 'begrav_page',
+     //   'starbas_field_name' => 'starbas_id',
+        //How to link the data level objects to images
+        'objects_query' => 'select begrav_page.id, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
+                        FROM begrav_page
+                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+                        WHERE volumetype_id = 7 AND is_public = 1 AND :query',
+        'levels_type' => 'hierarchy',
+        'levels' => array(
+            //År, søgebar
+            array(
+                'order' => 1,
+                'gui_name' => 'År',
+                'gui_description' => 'Periode for protokollen',
+                'gui_info_link' => false,
+                'name' => 'nicetitle',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT DISTINCT id, nicetitle as text FROM begrav_volume where is_public = 1 AND volumetype_id = 7 ORDER BY nicetitle',                
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => true,
+                'searchable' => true,
+                'required_levels' => false
+            ),           
+            //Starbas-reference, ikke søgebar
+            array(
+                'order' => 2,
+                'gui_name' => '',
+                'gui_description' => '',
+                'gui_info_link' => false,
+                'name' => 'starbas_id',
+                'gui_type' => 'preset',
+                'data_sql' => "sesf",
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => true,
+                'required' => false,
+                'searchable' => false,
+                'required_levels' => false
+            )          
+        ),
+        'error_intro' => 'Har du opdaget en fejl kan du give os besked.',
+        'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
+        /*'error_reports' => array(
+            array(
+                'id' => 1,
+                'name' => 'Billedet er ikke en begravelsesprotokol',
+                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+                'order' => 1
+            )
+        )*/
+    )    
 );
 
 return $collectionsSettings;
