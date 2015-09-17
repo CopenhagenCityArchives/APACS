@@ -33,11 +33,11 @@ class ObjectsModelTest extends \UnitTestCase {
     
     public function testCreateObjectQuery(){
         $filters = array(
-            'station' => '1',
-            'roll' => '23'
+            array('name' => 'station', 'value' => '1'),
+            array('name' => 'roll', 'value' => '23')
         );
         $sql = 'SELECT * FROM PRB_registerblade WHERE :query';
-        $expectedQuery = 'SELECT * FROM PRB_registerblade WHERE station LIKE \'%1%\' AND roll LIKE \'%23%\'';
+        $expectedQuery = 'SELECT * FROM PRB_registerblade WHERE station = \'1\' AND roll = \'23\'';
         $this->assertEquals(
             $expectedQuery,
             $this->_model->createObjectQuery($sql, $filters),
@@ -46,26 +46,26 @@ class ObjectsModelTest extends \UnitTestCase {
     }
     
     public function testConvertResultToObjects(){
-        $metadataLevels = array('station', 'roll');
+        $metadataLevels = array(array('name' => 'station'),array('name' => 'roll'));
         $results = array(
-            array('id' => 341, 'station' => 1, 'roll' => '23', 'imageURL' => 'test/0001.jpg'),
-            array('id' => 341, 'station' => 1, 'roll' => '23', 'imageURL' => 'test/0002.jpg'),
-            array('id' => 2, 'station' => 3, 'roll' => '24', 'imageURL' => 'test/0003.jpg'),
-            array('id' => 2, 'station' => 3, 'roll' => '24', 'imageURL' => 'test/0004.jpg')
+            //array('id' => 341, 'station' => 1, 'roll' => '23', 'imageURL' => '/test/0001.jpg'),
+            array('id' => 341, 'station' => 1, 'roll' => '23', 'imageURL' => '/test/0002.jpg'),
+           // array('id' => 2, 'station' => 3, 'roll' => '24', 'imageURL' => '/test/0003.jpg'),
+            array('id' => 2, 'station' => 3, 'roll' => '24', 'imageURL' => '/test/0004.jpg')
         );
         $expectedResult = array(
-            '341' => array(
+            array(
                 'id' => 341,
                 'metadata' => array('station' => 1, 'roll' => '23'),
-                'images' => array('test/0001.jpg', 'test/0002.jpg')
+                'images' => array('http://www.kbhkilder.dk/test/0002.jpg')
             ),
-            '2' => array(
+            array(
                 'id' => 2,
                 'metadata' => array('station' => 3, 'roll' => '24'),
-                'images' => array('test/0003.jpg', 'test/0004.jpg')                
+                'images' => array('http://www.kbhkilder.dk/test/0004.jpg')                
             )
         );
-        
+
         $this->assertEquals(
             $expectedResult,
             $this->_model->convertResultToObjects($results, $metadataLevels),                

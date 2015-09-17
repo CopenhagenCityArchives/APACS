@@ -24,15 +24,15 @@ class MetadataModelTest extends \UnitTestCase {
     
     public function testMetadataSearchSQLCreation()
     {
-        $testConfigTypeahead = array('type'=>'typeahead', 'data_sql' => "select id, gadenavn from MAND_gader WHERE gadenavn LIKE \'%s%%\'");
+        $testConfigTypeahead = array('gui_type'=>'typeahead', 'data_sql' => "select id, gadenavn from MAND_gader WHERE gadenavn LIKE \'%s%%\'");
         
         $this->assertEquals(
-                "select id, gadenavn from MAND_gader WHERE gadenavn LIKE \'adelga%\' LIMIT 10",
+                "select id, gadenavn from MAND_gader WHERE gadenavn LIKE \'adelga%\'",
                 $this->_model->createMetadataSearchQuery($testConfigTypeahead, array('adelga')),
                 'should create typeahead sql based on sql_data and searchstring with a limit'
         );
         
-        $testConfigGetallbyfilter = array('type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d', 'required_filters' => array('station'));
+        $testConfigGetallbyfilter = array('gui_type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d', 'required_filters' => array('station'));
         
         $this->assertEquals(
                 "SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = 1",
@@ -40,7 +40,7 @@ class MetadataModelTest extends \UnitTestCase {
                 'should create getallbyfilter sql based on sql_data, searchstring and required fields'
         );
         
-        $testConfigGetallbyfilter = array('type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d AND filmrulle = %d', 'required_filters' => array('station', 'roll'));
+        $testConfigGetallbyfilter = array('gui_type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d AND filmrulle = %d', 'required_filters' => array('station', 'roll'));
         
         $this->assertEquals(
                 "SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = 1 AND filmrulle = 2",
@@ -58,7 +58,7 @@ class MetadataModelTest extends \UnitTestCase {
     public function testGetMetadataSearchParameters(){
         $_GET['required_level_data'] = 'value';
         $metadataLevel = array();
-        $metadataLevel['required_filters'] = array('required_level_data');
+        $metadataLevel['required_levels'] = array('required_level_data');
         $this->assertEquals(
                 $this->_model->getMetadataSearchParameters($metadataLevel),
                 array('required_level_data' => 'value'),
