@@ -39,4 +39,12 @@ class ValidationRuleSetTest extends \UnitTestCase {
         $Validator = new Validator($ValidationRule);
         $this->assertEquals(true, $Validator->Validate(''), 'should return true if input is not required and empty');
     }
+
+    public function testGetErrorMessage()
+    {
+        $ValidationRule = new ValidationRuleSet('', false, 'ErrorMessage');
+        $Validator = new Validator($ValidationRule);
+
+        $this->assertEquals('ErrorMessage', $Validator->GetErrorMessage(), 'should return error message for the given validation rule');
+    }
 }

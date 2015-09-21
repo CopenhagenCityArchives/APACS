@@ -23,4 +23,9 @@
 
 			return false;
 		}
+
+		public function GetErrorMessage()
+		{
+			return $this->_validationRule->errorMessage;
+		}
 	}
