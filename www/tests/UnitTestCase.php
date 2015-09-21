@@ -22,22 +22,12 @@ abstract class UnitTestCase extends PhalconTestCase {
 
     public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
 
-        // Load any additional services that might be required during testing
-        $di = DI::getDefault();
+        //If no DI is given, use the factory default
+        if($di == null){
+            //$di = DI::getDefault();
+            $di = new FactoryDefault();
+        }        
 
-    $di = new FactoryDefault();        
-//This works...
-    /*
-    $di->set('database', function() {
-          return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-          "host" => null,
-          "username" => null,
-          "password" => null,
-          "dbname" => null
-                ));
-    });        
-      */  
-        // get any DI components here. If you have a config, be sure to pass it to the parent
         parent::setUp($di);
 
         $this->_loaded = true;

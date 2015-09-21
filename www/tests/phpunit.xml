@@ -15,4 +15,11 @@
           <directory>./</directory>
         </testsuite>
     </testsuites>
+    <!-- Database connection settings -->
+    <php>
+        <var name="DB_DSN" value="mysql:dbname=unit_tests;host=localhost" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASSWD" value="" />
+        <var name="DB_DBNAME" value="unit_tests" />
+    </php>
 </phpunit>
