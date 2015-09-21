@@ -14,7 +14,6 @@ class InsertStatementBuilderTest extends \UnitTestCase {
 
     public function testBuildInsertQuery()
     {
-
     	$qb1 = new InsertStatementBuilder("tableName", ['field1']);
 
     	$this->assertEquals("INSERT INTO tableName `field1` VALUES (:field1)", $qb1->GetStatement(), 'should build statement with single field');
