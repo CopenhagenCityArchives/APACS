@@ -4,25 +4,24 @@ class InsertStatementBuilder
 {
 	private $tableName;
 	private $fields;
+	public $statement;
 
 	/**
 	 * Constructor. Takes a table name and an array of fieldss
-	 * @param string $tableName The name of the table in which to insert data
-	 * @param Array $fields An array of field names
+	 * @param array An array containing the entry type from which the statement is built
 	 */
-	function __construct($tableName, Array $fields)
+	function __construct($entryType)
 	{
-		$this->tableName = $tableName;
-		$this->fields = $fields;
+		$this->tableName = $entryType['dbTableName'];
+		$this->fields = $entryType['fields'];
 	}
 
 	/**
 	 * Returns a statement based on the given table name and fields
 	 * @return string A statement based on the given table name and fields
 	 */
-	public function GetStatement(){
-		$query = "INSERT INTO " . $this->tableName . " " . $this->getFieldNames() . " VALUES " . $this->getFieldPlaceholders();
-		return $query;
+	public function BuildStatement(){
+		$this->statement = "INSERT INTO " . $this->tableName . " (" . $this->getFieldNames() . ") VALUES " . $this->getFieldPlaceholders();
 	}
 
 	private function getFieldNames()
@@ -30,7 +29,7 @@ class InsertStatementBuilder
 		$fieldNames = "";
 
 		foreach($this->fields as $field){
-			$fieldNames .= '`' . $field . '`, ';
+			$fieldNames .= '`' . $field['name'] . '`, ';
 		}
 
 		return substr($fieldNames, 0, strlen($fieldNames)-2);
@@ -40,8 +39,8 @@ class InsertStatementBuilder
 	{
 		$values = "(";
 
-		foreach($this->fields as $fields){
-			$values .= ':' . $fields . ', ';
+		foreach($this->fields as $field){
+			$values .= ':' . $field['name'] . ', ';
 		}
 
 		return substr($values, 0, strlen($values)-2) . ')';
