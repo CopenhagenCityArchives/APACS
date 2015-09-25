@@ -32,10 +32,10 @@ class DataReceiver
 		return $values;
 	}
 
-	public function GetData($requestType, $field){
+	public function Get($requestType, $field){
 		$methodName = $this->setGetMethodName($requestType);
 
-		return [$field => $this->_requestObj->$methodName($field, null, null)];
+		return $this->_requestObj->$methodName($field, null, null);
 	}
 
 	private function setGetMethodName($requestType){
@@ -53,6 +53,8 @@ class DataReceiver
 			case 'put':
 				$methodName = 'getPut';
 				break;
+			default:
+				throw new Exception('Could not get data in DataReceiver. Request type not found: ' . $requestType);
 		}
 
 		return $methodName;		

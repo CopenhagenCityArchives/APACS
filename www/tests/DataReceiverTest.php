@@ -45,8 +45,8 @@ class DataReceiverTest extends \UnitTestCase {
         $_POST['id'] = 'test_id';
 
         $dr = new DataReceiver(new Phalcon\Http\Request());
-        $expectedData = ['id' => 'test_id'];
+        $expectedData = 'test_id';
 
-        $this->assertEquals($dr->GetData('post', 'id'), $expectedData, 'should retrieve data for single fields');
+        $this->assertEquals($dr->Get('post', 'id'), $expectedData, 'should retrieve data for single fields');
     }
 }
