@@ -2,6 +2,11 @@
 	
 class IndexDataModel extends \Phalcon\Mvc\Model
 {   
+
+	private $_errorInfo;
+	private $_db;
+	private $_entryType;
+
 	/**
 	 * Insert indexed data based on collection, volume and page ids and entry type.
 	 * Both collection, page and entry are dynamic.
@@ -11,7 +16,7 @@ class IndexDataModel extends \Phalcon\Mvc\Model
 	 * @param  int $pageId       The id of the page on which the data belongs
 	 * @param  array   $entryId      The type of entry to insert
 	 */
-	public function insert($collectionId, $volumeId, $pageId, array $entryType)
+	public function Insert($collectionId, $volumeId, $pageId, array $entryType)
 	{
 		/*
 		Flow:
@@ -20,7 +25,40 @@ class IndexDataModel extends \Phalcon\Mvc\Model
 			Save data
 			return true on success
 		 */
+		$this->_entryType = $entryType;
+		if(!$this->getAndValidateData('get'))
+			return false;
 
+		//Let's build a prepared statement
+		$sb = new InsertStatementBuilder($entryType);
+		$sb->BuildStatement();
+
+		//Retrieving the database, which is used to prepare and run the statement
+		$db = $this->getDatabase();
+
+		//$statement = $db->prepare($sb->statement);
+ 		$result = $db->execute($sb->statement, $this->getKeysAndValuesFromFields());
+
+ 		return true;
+	}
+
+	public function GetErrors()
+	{
+		return $this->_errorInfo;
+	}
+
+	private function getDatabase(){
+		return $this->getDI()->get('db');
+	}
+
+	private function getKeysAndValuesFromFields()
+	{
+		$arr = [];
+		foreach($this->_entryType['fields'] as $field){
+			$arr[':'.$field['name']] = $field['value']; 
+		}
+
+		return $arr;
 	}
 
 	/**
@@ -29,24 +67,26 @@ class IndexDataModel extends \Phalcon\Mvc\Model
 	 * @param  string $type HTTP Request type
 	 * @return bool Returns true if all data was received and valid
 	 */
-	private function getAndValidateData(array $fields, $type, $response){
-		$errors = [];
+	private function getAndValidateData($type){
+		$this->_errorInfo = [];
 		$errorsFound = false;
 		$requestObject = new Phalcon\Http\Request();
 		$i = 0;
-		foreach($fields as $field){
+		foreach($this->_entryType['fields'] as $field){
 			$validator = new Validator(new ValidationRuleSet($field['validationRegularExpression'], $field['required'], $field['validationErrorMessage']));
-			$value = (new DataReceiver($requestObject))->get($type, $field['name']);
+			$value = (new DataReceiver($requestObject))->Get($type, $field['name']);
 
 			if(!$validator->Validate($value)){
-				$errors[$field['name']] = $validator->getErrorMessage();
+				$this->_errorInfo[$field['name']] = ['error' => $validator->GetErrorMessage(), 'value' => $value];
+				$this->_entryType['fields'][$i]['value'] = NULL;
+
 				$errorsFound = true;
 			}
 			else{
-				$fields[$i]['value'] = $value;
+				$this->_entryType['fields'][$i]['value'] = $value;
 			}
+			$i++;
 		}
-
-		return $errorsFound;
+		return !$errorsFound;
 	}
 }

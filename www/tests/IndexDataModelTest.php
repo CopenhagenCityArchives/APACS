@@ -14,12 +14,12 @@ class IndexDataModelTest extends \UnitTestCase {
         $this->testDatabase->getConnection()->createQueryTable('insert_table', 'SELECT * FROM insert_table');
 
         //Test specific database, Phalcon
-        $di->set('database', function(){
+        $di->set('db', function(){
             return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
                 "host" => "localhost",
                 "username" => "root",
                 "password" => "",
-                "dbname" => "unit_test",
+                "dbname" => "unit_tests",
                 'charset' => 'utf8'
                 ));
             }
@@ -29,25 +29,33 @@ class IndexDataModelTest extends \UnitTestCase {
     }
     
     public function tearDown() {
+        $this->getDI()->get('db')->query('DELETE FROM insert_table');
         parent::tearDown();
     }
+
+    public function testReturnErrorOnValidationError()
+    {
+        $idm = new IndexDataModel();
+
+        $done = $idm->Insert(1,1,1, GetEntryConfMock());
+
+        $this->assertEquals(false, $done, 'should return false when no data added');
+        $this->assertEquals(2, count($idm->GetErrors()), 'should return a number of errors corresponding with number of required fields');
+    }
+
     public function testInsertData()
     {
         $idm = new IndexDataModel();
         
         //Expecting 0 rows
-        $this->AssertEquals(0, $this->testDatabase->getConnection()->getRowCount('insert_table'), 'Test table should have 0 rows');
+        $this->assertEquals(0, $this->testDatabase->getConnection()->getRowCount('insert_table'), 'Test table should have 0 rows');
         
-        $idm->insert(1,1,1, GetEntryConfMock());
+        $_GET['firstname'] = 'jens';
+        $_GET['lastname'] = 'hansen';
+
+        $this->assertEquals(true, $idm->Insert(0,0,0, GetEntryConfMock()), 'should return true');
 
         //Insert should give an extra row
-      //  $this->AssertEquals(1, $this->testDatabase->getConnection()->getRowCount('insert_table'), 'Test table should have 1 row');
-    }
-
-    public function testValidateData()
-    {
-        $idm = new IndexDataModel();
-
- //       $idm->ValidateData();
+        $this->assertEquals(1, $this->testDatabase->getConnection()->getRowCount('insert_table'), 'Test table should have 1 row');
     }
 }
