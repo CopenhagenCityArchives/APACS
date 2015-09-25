@@ -10,5 +10,3 @@ xdebug.log
 node_modules*
 www/composer.lock
 www/composer.phar
-www/composer.lock
-www/composer.lock
