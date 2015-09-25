@@ -23,12 +23,23 @@ class ValidationRuleSetTest extends \UnitTestCase {
         $this->assertEquals(false, $Validator->Validate("a"), 'Should return false when data is invalid');
     }
 
+    public function testSupportForFalseRegularExpression()
+    {
+        $validationRule = new ValidationRuleSet(false, false, 'Really not a required field');
+        $Validator = new Validator($validationRule);
+
+        $this->assertEquals(true, $Validator->Validate(1));
+    }
+
     public function testValidateWhenRequired()
     {
         $validationRule = new ValidationRuleSet('/\w{0,1}/', true, 'Input should contain zero to one character');
         $Validator = new Validator($validationRule);
 
         $this->assertEquals(false, $Validator->Validate(null), 'should return false if input required and null is given');
+
+        $this->assertEquals(false, $Validator->Validate(NULL), 'should return false if input required and null is given');
+
 
         $this->assertEquals(false, $Validator->Validate(""), 'should return false if input required and empty string is given');
     }

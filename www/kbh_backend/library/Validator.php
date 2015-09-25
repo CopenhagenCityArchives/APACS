@@ -14,9 +14,12 @@
 		 */
 		public function Validate($dataToValidate){
 			if($this->_validationRule->required){
-				if(!isset($dataToValidate) || $dataToValidate === null || trim($dataToValidate) == "")
+				if(!isset($dataToValidate) || $dataToValidate === NULL  || $dataToValidate === null || trim($dataToValidate) == "")
 					return false;
 			}
+
+			if($this->_validationRule->regularExpression === false)
+				return true;
 
 			if(preg_match($this->_validationRule->regularExpression, $dataToValidate) == 1)
 				return true;	
