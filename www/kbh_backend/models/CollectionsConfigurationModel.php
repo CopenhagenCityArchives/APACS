@@ -19,6 +19,9 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         if(!$config)
             throw new Exception('A config input must be given!');
         
+        if(gettype($config) !== 'array')
+            throw new Exception('Could not load configuration: The given configuration is not an array.');
+
         $this->_configuration = $config;
         $this->_configurationLoaded = true;
     }
@@ -177,6 +180,38 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             $i++;
         }
         
+        $defaultIndexConfig = [
+            'id' => -1,
+            'name' => '',
+            'description' => '',
+            'entities' => []
+        ];
+
+        $defaultEntityConfig = [
+            'id' => -1,
+            'name' => '',
+            'required' => '',
+            'dbTableName' => '',
+            'isMarkable' => '',
+            'countPerEntry' => 'one',
+            'fields' => []
+
+        ];
+
+        $defaultEntityField = [
+            'id' => -1,
+            'name' => '',
+            'defaultValue' => null,
+            'placeholder' => '',
+            'helpText' => '',
+            'helpLink' => '',
+            'dbFieldName' => '',
+            'required' => false,
+            'validationRegularExpression' => false,
+            'validationErrorMessage' => '',
+        ];
+
+
         return $collectionConfig;
     }
     
@@ -293,5 +328,25 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         }
         
         return $filters;
+    }
+
+    /**
+     * Returns a configuration for a specific entity.
+     * All entities are indentified by unique ids, which are used 
+     * to retrieve them.
+     * @param  int $entityId The id of the entity
+     * @return array Returns an array containing the entity configuration
+     */
+    public function getIndexEntity($entityId){
+        foreach($this->_configuration as $collection){
+            foreach($collection['indexes'] as $index){
+                foreach($index['entities'] as $entity){
+                    if($entity['id'] == $entityId)
+                        return $entity;
+                }
+            }
+        }
+
+        return false;
     }
 }
