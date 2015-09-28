@@ -2,24 +2,39 @@
 
 class GenericIndexModel extends \Phalcon\Mvc\Model
 {
-	public function getSource()
+    private $_entity;
+
+    public function initialize()
     {
-    	return $this->getDI()->get('tableNameHolder');
-        return "insert_table";
+        $this->_entity = $this->
+        getDI()->
+        get('collectionConfigurationLoader')->
+        getIndexEntity(
+            $this->getDI()->get('currentEntityId')
+        );
     }
 
-    public function setTable($table)
+	public function getSource()
     {
-    	$this->_source = $table;
+    	return $this->_entity['dbTableName'];
     }
 
     public function validation(){
-        $this->validate(new \Phalcon\Mvc\Model\Validator\Regex(array(
-          "field" => 'lastname',
-          'pattern' => '/^[0-9]{4}[-\/](0[1-9]|1[12])[-\/](0[1-9]|[12][0-9]|3[01])/'
-        )));
-         if ($this->validationHasFailed() == true) {
+
+        foreach($this->_entity['fields'] as $field){
+            if($field['validationRegularExpression'] !== false){
+                $this->validate(new \Phalcon\Mvc\Model\Validator\Regex([
+                    'field' => $field['name'],
+                    'pattern' => $field['validationRegularExpression'],
+                    'message' => $field['validationErrorMessage']
+                ]));
+            }
+        }
+
+        if($this->validationHasFailed() == true){
             return false;
         }
+
+        return true;
     }
 }  
