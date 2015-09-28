@@ -27,6 +27,10 @@
     //ini_set('display_errors',1);
     //error_reporting(E_ALL);
 $collectionsSettings = array(
+
+    /**
+     * Politiets mandtal
+     */    
     array(
         'id' => 2,
         'test' => false,
@@ -113,6 +117,10 @@ $collectionsSettings = array(
             )
         )
     ),
+
+    /**
+     * Kort og tegninger
+     */
     array(
         'id' => 3,
         'test' => false,
@@ -217,6 +225,10 @@ $collectionsSettings = array(
             )
         )
     ),
+
+    /**
+     * Skoleprotokoller, protokoller
+     */
     array(
         'id' => 4,
         'test' => true,
@@ -317,6 +329,10 @@ $collectionsSettings = array(
             )
         )
     ),
+
+    /**
+     * Begravelser, registre
+     */
     array(
         'id' => 5,
         'test' => true,
@@ -395,6 +411,10 @@ $collectionsSettings = array(
             )
         )*/
     ),
+
+    /**
+     * Begravelser, protokoller
+     */
     array(
         'id' => 6,
         'test' => true,
@@ -495,6 +515,10 @@ $collectionsSettings = array(
             )
         )*/
     ),
+
+    /**
+     * Lysninger, registre
+     */
     array(
         'id' => 7,
         'test' => true,
@@ -557,6 +581,10 @@ $collectionsSettings = array(
             )
         )*/
     ),
+
+    /**
+     * Lysninger, protokoller
+     */
     array(
         'id' => 8,
         'test' => true,
@@ -633,6 +661,10 @@ $collectionsSettings = array(
             )
         )*/
     ),
+
+    /**
+     * Borgerlige vielser, registre
+     */
     array(
         'id' => 9,
         'test' => true,
@@ -695,6 +727,10 @@ $collectionsSettings = array(
             )
         )*/
     ),
+
+    /**
+     * Borgerlige vielser, protokoller
+     */
     array(
         'id' => 10,
         'test' => true,
@@ -757,6 +793,10 @@ $collectionsSettings = array(
             )
         )*/
     ),
+
+    /**
+     * Skoleprotokoller, registre
+     */
     array(
         'id' => 11,
         'test' => true,
