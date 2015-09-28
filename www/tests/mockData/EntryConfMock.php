@@ -1,9 +1,6 @@
 <?php
 
-
-function GetEntryConfMock()
-{
-	return array(
+	$mockConf = [
 		'required' => true,
 		'dbTableName' => 'insert_table',
 		'isMarkable' => true,
@@ -66,5 +63,5 @@ function GetEntryConfMock()
 				'maxLength' => false
 			]				
 		]
-	);
-}
+	];
+return $mockConf;
