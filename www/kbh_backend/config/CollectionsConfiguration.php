@@ -622,7 +622,7 @@ $collectionsSettings = array(
             array(
                 'order' => 2,
                 'gui_name' => 'Løbenummer',
-                'gui_description' => 'Nummerintervaller under et år',
+                'gui_description' => 'År og løbenummer',
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
                 'gui_type' => 'typeahead',
