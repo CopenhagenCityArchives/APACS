@@ -2,7 +2,6 @@
 include '../kbh_backend/models/GenericIndexModel.php';
 
 class GenericIndexModelTest extends \UnitTestCase {
-    private $testDatabase;
 
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         $di = new \Phalcon\Di\FactoryDefault;
@@ -34,7 +33,10 @@ class GenericIndexModelTest extends \UnitTestCase {
         parent::tearDown();
     }
 
-    public function testDatabaseAccess()
+    /**
+     * @expectedException \Phalcon\Mvc\Model\Exception
+     */
+    public function testSingleDatabaseAccess()
     {
 
         $this->getDI()->set('currentEntityId', function(){
@@ -48,7 +50,19 @@ class GenericIndexModelTest extends \UnitTestCase {
             throw new Exception("could not save data!");    
 
         $this->assertEquals(1,count($model->find("lastname = '" . $model->lastname . "'")), 'should retrieve data from insert_table');
-    
+        
+        $this->getDI()->set('currentEntityId', function(){
+            return 235;
+        });
+
+        $model2 = new GenericIndexModel();
+
+        $model2->firstname2 = 'test';
+        $model2->lastname2 = 'test';
+        $model2->save();
+        
+        //Should throw exception, as two different models cannot be handled at the same time
+        $model2->find("lastname2 = '" . $model2->lastname2 . "'");
     }
 
     public function testAnotherDatabaseAccess()
@@ -63,7 +77,7 @@ class GenericIndexModelTest extends \UnitTestCase {
         if(!$model->save())
             throw new Exception("could not save data!");
 
-        $this->assertEquals(1,count($model->find("lastname2 = '" . $model->lastname2 . "'")), 'should retrieve data from insert_table2');
+        $this->assertEquals(1,count($model->find("lastname2 = '" . $model->lastname2 . "'")), 'should retrieve data from insert_table2');        
 
     }
 

@@ -4,10 +4,14 @@ class GenericIndexModel extends \Phalcon\Mvc\Model
 {
     private $_entity;
 
-
-
     public function initialize()
     {
+        $this->useDynamicUpdate(true);
+    }
+
+    public function onConstruct()
+    {
+
         $this->_entity = $this->
         getDI()->
         get('collectionConfigurationLoader')->

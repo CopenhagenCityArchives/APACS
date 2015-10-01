@@ -80,7 +80,7 @@
 						],
 						[
 							//Another entity
-							'id' => '235',
+							'id' => 235,
 							'required' => 'true',
 							'dbTableName' => 'insert_table2',
 							'fields' => [
