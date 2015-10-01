@@ -30,16 +30,16 @@ class IndexDataController extends \Phalcon\Mvc\Controller
 		//if(!$user->isAuthorized)
 		//	throw new Exception("Unauthorized access!");
 
+		//Setting the entity id for usage in controller and models
         $this->getDI()->set('currentEntityId', function() use ($entityId){
             return $entityId;
         });
 
+		$this->response = new \Phalcon\Http\Response();
 		$entity = new GenericIndexModel();
 		$dataReceiver = new DataReceiver(new Phalcon\Http\Request());
 
 		$valuesFieldsMap = $dataReceiver->GetDataFromFields('POST', $this->config->getIndexEntity($entityId)['fields']);
-
-		$this->response = new \Phalcon\Http\Response();
 
 		if(!$entity->save($valuesFieldsMap)){
 			foreach($entity->getMessages() as $message){
