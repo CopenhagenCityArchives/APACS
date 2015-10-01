@@ -1,12 +1,13 @@
 <?php
+/**
+ *
+ * This test is not run at the moment. The IndexDataModel may be obsolete (GenericIndexModel)
+ */
 include '../kbh_backend/models/IndexDataModel.php';
-include_once '../kbh_backend/models/CollectionsConfigurationModel.php';
-include './mockData/EntryConfMock.php';
 include 'TestDatabaseConnection.php';
 
 class IndexDataModelTest extends \UnitTestCase {
     private $testDatabase;
-    private $configuration;
 
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         $di = new \Phalcon\Di\FactoryDefault;
@@ -29,11 +30,10 @@ class IndexDataModelTest extends \UnitTestCase {
 
         $di->set('collectionConfigurationLoader', function(){
             $conf = new CollectionsConfigurationModel();
-            $conf->loadConfig('./mockData/MockCollectionsConfiguration.php');
+            $conf->loadConfig(require('./mockData/EntryConfMock.php'));
             return $conf;
         });
 
-        $this->configuration = (new CollectionsConfigurationModel())->loadConfig('./mockData/EntryConfMock.php');
         parent::setUp($di, $config);
     }
     
