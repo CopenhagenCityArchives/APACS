@@ -3,10 +3,12 @@
 class IndexDataController extends \Phalcon\Mvc\Controller
 {
 	private $config;
+	private $response;
 
 	public function onConstruct()
 	{
 		$this->config = $this->getDI()->get('collectionConfigurationLoader');
+		$this->response = $this->getDI()->get('response');
 	}
 	
 	public function insert($entityId)
@@ -37,15 +39,16 @@ class IndexDataController extends \Phalcon\Mvc\Controller
 
 		$valuesFieldsMap = $dataReceiver->GetDataFromFields('POST', $this->config->getIndexEntity($entityId)['fields']);
 
-		$errorMessage = [];
+		$this->response = new \Phalcon\Http\Response();
 
 		if(!$entity->save($valuesFieldsMap)){
 			foreach($entity->getMessages() as $message){
-				$errorMessage[] = $message;
+				$errorMessages[] = $message;
 			}
 
-			if(count($errorMessage) > 0){
-				array_unshift($errorMessage, 'Validateringsfejl!');
+			if(count($errorMessages) > 0){
+				$this->response->setStatusCode('??', 'validation error');
+				$this->response->setJsonContent($errorMessages);
 			}
 
 			return false;
