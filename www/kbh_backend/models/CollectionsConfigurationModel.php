@@ -15,7 +15,6 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
     public function loadConfig($config = false){
         $this->_configuration = null;
         $this->_configurationLoaded = false;
-        
         if(!$config)
             throw new Exception('A config input must be given!');
         
@@ -105,6 +104,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'gui_required_fields_text' => false,            
             //An array of levels of metadata
             'levels' => array(),
+            //Indexes are used to configure the indexing of the collection
+            'indexes' => [],
             //Text used to introduce the error reporting
             'error_intro' => '',
             //Text presented to the user when an error report is submitted
@@ -211,6 +212,25 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'validationErrorMessage' => '',
         ];
 
+        $i = 0;
+        foreach($collectionConfig['indexes'] as $index){
+            $collectionInfo['indexes'][$i] = array_merge($defaultIndexConfig, $index);
+
+            $j = 0;
+            foreach($index['entities'] as $entity){
+                $collectionInfo['indexes'][$i]['entities'][$j] = array_merge($defaultEntityConfig, $entity);
+
+                $k = 0;
+                foreach($entity['fields'] as $field){
+                    $collectionInfo['indexes'][$i]['entities'][$j]['fields'] = array_merge($defaultEntityField, $field);
+                    $k++;
+                }
+
+                $j++;
+            }
+
+            $i++;
+        }
 
         return $collectionConfig;
     }
@@ -338,6 +358,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
      * @return array Returns an array containing the entity configuration
      */
     public function getIndexEntity($entityId){
+
         foreach($this->_configuration as $collection){
             foreach($collection['indexes'] as $index){
                 foreach($index['entities'] as $entity){
@@ -347,6 +368,6 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             }
         }
 
-        return false;
+        throw new Exception('Could not load configuration for entity id '  . $entityId);
     }
 }
