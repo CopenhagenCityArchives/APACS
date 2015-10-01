@@ -31,7 +31,7 @@ $loader->registerNamespaces(array(
 
 $loader->register();
 
-$di = new FactoryDefault();
+/*$di = new FactoryDefault();
 DI::reset();
 
-DI::setDefault($di);
+DI::setDefault($di);*/

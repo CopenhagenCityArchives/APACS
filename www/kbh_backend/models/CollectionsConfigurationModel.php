@@ -15,10 +15,12 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
     public function loadConfig($config = false){
         $this->_configuration = null;
         $this->_configurationLoaded = false;
-        
         if(!$config)
             throw new Exception('A config input must be given!');
         
+        if(gettype($config) !== 'array')
+            throw new Exception('Could not load configuration: The given configuration is not an array.');
+
         $this->_configuration = $config;
         $this->_configurationLoaded = true;
     }
@@ -102,6 +104,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'gui_required_fields_text' => false,            
             //An array of levels of metadata
             'levels' => array(),
+            //Indexes are used to configure the indexing of the collection
+            'indexes' => [],
             //Text used to introduce the error reporting
             'error_intro' => '',
             //Text presented to the user when an error report is submitted
@@ -177,6 +181,57 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             $i++;
         }
         
+        $defaultIndexConfig = [
+            'id' => -1,
+            'name' => '',
+            'description' => '',
+            'entities' => []
+        ];
+
+        $defaultEntityConfig = [
+            'id' => -1,
+            'name' => '',
+            'required' => '',
+            'dbTableName' => '',
+            'isMarkable' => '',
+            'countPerEntry' => 'one',
+            'fields' => []
+
+        ];
+
+        $defaultEntityField = [
+            'id' => -1,
+            'name' => '',
+            'defaultValue' => null,
+            'placeholder' => '',
+            'helpText' => '',
+            'helpLink' => '',
+            'dbFieldName' => '',
+            'required' => false,
+            'validationRegularExpression' => false,
+            'validationErrorMessage' => '',
+        ];
+
+        $i = 0;
+        foreach($collectionConfig['indexes'] as $index){
+            $collectionInfo['indexes'][$i] = array_merge($defaultIndexConfig, $index);
+
+            $j = 0;
+            foreach($index['entities'] as $entity){
+                $collectionInfo['indexes'][$i]['entities'][$j] = array_merge($defaultEntityConfig, $entity);
+
+                $k = 0;
+                foreach($entity['fields'] as $field){
+                    $collectionInfo['indexes'][$i]['entities'][$j]['fields'] = array_merge($defaultEntityField, $field);
+                    $k++;
+                }
+
+                $j++;
+            }
+
+            $i++;
+        }
+
         return $collectionConfig;
     }
     
@@ -293,5 +348,26 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         }
         
         return $filters;
+    }
+
+    /**
+     * Returns a configuration for a specific entity.
+     * All entities are indentified by unique ids, which are used 
+     * to retrieve them.
+     * @param  int $entityId The id of the entity
+     * @return array Returns an array containing the entity configuration
+     */
+    public function getIndexEntity($entityId){
+
+        foreach($this->_configuration as $collection){
+            foreach($collection['indexes'] as $index){
+                foreach($index['entities'] as $entity){
+                    if($entity['id'] == $entityId)
+                        return $entity;
+                }
+            }
+        }
+
+        throw new Exception('Could not load configuration for entity id '  . $entityId);
     }
 }

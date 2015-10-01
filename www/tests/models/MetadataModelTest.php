@@ -32,7 +32,7 @@ class MetadataModelTest extends \UnitTestCase {
                 'should create typeahead sql based on sql_data and searchstring with a limit'
         );
         
-        $testConfigGetallbyfilter = array('gui_type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d', 'required_filters' => array('station'));
+        $testConfigGetallbyfilter = array('gui_type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d', 'required_levels' => array('station'));
         
         $this->assertEquals(
                 "SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = 1",
@@ -40,19 +40,19 @@ class MetadataModelTest extends \UnitTestCase {
                 'should create getallbyfilter sql based on sql_data, searchstring and required fields'
         );
         
-        $testConfigGetallbyfilter = array('gui_type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d AND filmrulle = %d', 'required_filters' => array('station', 'roll'));
+        $testConfigGetallbyfilter = array('gui_type'=>'getallbyfilter', 'data_sql' => 'SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = %d AND filmrulle = %d', 'required_levels' => array('station', 'name' => 'roll'));
         
         $this->assertEquals(
                 "SELECT id, filmrulle_navn from PRB_filmrulle WHERE station_id = 1 AND filmrulle = 2",
-                $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array(1,2)),
+                $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array('station' => 1,'filmrulle' => 2)),
                 'should create getallbyfilter sql based on sql_data, searchstring and required fields'
         );
         
-        $this->setExpectedException('Exception');
-        $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array(1));      
+  //      $this->setExpectedException('Exception');
+        $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array('station' => '1'));      
         
-        $this->setExpectedException('Exception');
-        $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array(1,2,3));        
+    //    $this->setExpectedException('Exception');
+        $this->_model->createMetadataSearchQuery($testConfigGetallbyfilter, array('station' => 1,'filmrulle' => 2, 'andet' => 3));        
     }
     
     public function testGetMetadataSearchParameters(){

@@ -1,6 +1,9 @@
 <?php
+/**
+ *
+ * This test is not run at the moment. The IndexDataModel may be obsolete (GenericIndexModel)
+ */
 include '../kbh_backend/models/IndexDataModel.php';
-include './mockData/EntryConfMock.php';
 include 'TestDatabaseConnection.php';
 
 class IndexDataModelTest extends \UnitTestCase {
@@ -25,6 +28,12 @@ class IndexDataModelTest extends \UnitTestCase {
             }
         );
 
+        $di->set('collectionConfigurationLoader', function(){
+            $conf = new CollectionsConfigurationModel();
+            $conf->loadConfig(require('./mockData/EntryConfMock.php'));
+            return $conf;
+        });
+
         parent::setUp($di, $config);
     }
     
@@ -37,7 +46,7 @@ class IndexDataModelTest extends \UnitTestCase {
     {
         $idm = new IndexDataModel();
 
-        $done = $idm->Insert(1,1,1, GetEntryConfMock());
+        $done = $idm->Insert(1,1,1, $this->configuration);
 
         $this->assertEquals(false, $done, 'should return false when no data added');
         $this->assertEquals(2, count($idm->GetErrors()), 'should return a number of errors corresponding with number of required fields');
@@ -53,7 +62,7 @@ class IndexDataModelTest extends \UnitTestCase {
         $_GET['firstname'] = 'jens';
         $_GET['lastname'] = 'hansen';
 
-        $this->assertEquals(true, $idm->Insert(0,0,0, GetEntryConfMock()), 'should return true');
+        $this->assertEquals(true, $idm->Insert(0,0,0, $this->configuration), 'should return true');
 
         //Insert should give an extra row
         $this->assertEquals(1, $this->testDatabase->getConnection()->getRowCount('insert_table'), 'Test table should have 1 row');
