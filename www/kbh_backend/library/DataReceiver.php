@@ -26,7 +26,7 @@ class DataReceiver
 		$values = [];
 
 		foreach($fields as $field){
-			$values[$field] = $this->_requestObj->$methodName($field, null, null);
+			$values[$field['name']] = $this->_requestObj->$methodName($field['name'], null, null);
 		}
 
 		return $values;

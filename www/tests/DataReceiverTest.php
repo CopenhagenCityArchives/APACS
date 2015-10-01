@@ -20,14 +20,14 @@ class DataReceiverTest extends \UnitTestCase {
 		
 		$expectedData = ['id' => 'testId'];
 		
-		$this->assertEquals( $dr->GetDataFromFields('get', ['id']), $expectedData, 'should receive an array of the field name and the received value');
+		$this->assertEquals( $dr->GetDataFromFields('get', [['name' => 'id']]), $expectedData, 'should receive an array of the field name and the received value');
 
     	$_GET['id'] = 'testId';
     	$_GET['id2'] = 'testId2';
 
     	$expectedData = ['id' => 'testId', 'id2' => 'testId2'];
     	
-    	$this->assertEquals( $dr->GetDataFromFields('GET', ['id', 'id2']), $expectedData, 'should receive and array of names and values for all the fields');		
+    	$this->assertEquals( $dr->GetDataFromFields('GET', [['name' => 'id'], ['name' => 'id2']]), $expectedData, 'should receive and array of names and values for all the fields');		
     }
 
     public function testReturnNullWhenNoDataInRequest()
@@ -37,7 +37,7 @@ class DataReceiverTest extends \UnitTestCase {
 		$dr = new DataReceiver(new Phalcon\Http\Request());
 		$expectedData = ['id' => null];
 		
-		$this->assertEquals( $dr->GetDataFromFields('get', ['id']), $expectedData, 'should return an array with the value of null if no data is given for the field');
+		$this->assertEquals( $dr->GetDataFromFields('get', [['name' => 'id']]), $expectedData, 'should return an array with the value of null if no data is given for the field');
     }
 
     public function testGetSingleField()
