@@ -752,7 +752,7 @@ $collectionsSettings = array(
             //År, søgebar
             array(
                 'order' => 1,
-                'gui_name' => 'År og dato',
+                'gui_name' => 'År og løbenummer',
                 'gui_description' => 'Protokollens periode',
                 'gui_info_link' => false,
                 'name' => 'nicetitle',
