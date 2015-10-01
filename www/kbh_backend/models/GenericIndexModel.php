@@ -4,6 +4,8 @@ class GenericIndexModel extends \Phalcon\Mvc\Model
 {
     private $_entity;
 
+
+
     public function initialize()
     {
         $this->_entity = $this->
@@ -20,7 +22,6 @@ class GenericIndexModel extends \Phalcon\Mvc\Model
     }
 
     public function validation(){
-
         foreach($this->_entity['fields'] as $field){
             if($field['validationRegularExpression'] !== false){
                 $this->validate(new \Phalcon\Mvc\Model\Validator\Regex([
