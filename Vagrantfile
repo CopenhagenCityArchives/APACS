@@ -18,7 +18,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Forward to Port
   # --------------------
   config.vm.network :forwarded_port, guest: 3306, host: 33306
-
+  config.vm.network :forwarded_port, guest: 80, host: 8080
+  
   # Optional (Remove if desired)
   config.vm.provider :virtualbox do |v|
     # How much RAM to give the VM (in MB)
