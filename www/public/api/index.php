@@ -2,9 +2,9 @@
 
     use Phalcon\Mvc\Micro\Collection as MicroCollection;
 
-    try {
-        $app = new Phalcon\Mvc\Micro();
-        
+    $app = new Phalcon\Mvc\Micro();
+
+    try {       
         //Register an autoloader
         $loader = new \Phalcon\Loader();
         $loader->registerDirs(array(
@@ -25,6 +25,10 @@
                 'charset' => 'utf8'
             ));
         });        
+
+        $di->setShared('response', function(){
+            return new  \Phalcon\Http\Response();
+        });
         
         //Controller 1
         $posts = new MicroCollection();
@@ -60,14 +64,18 @@
         
         $app->mount($posts);
         
-        $app->notFound(function () use ($app) {
-            $app->response->setStatusCode(400, "Not Found")->sendHeaders();
-            echo '<h1>Bad request!</h1>';
+        $app->notFound(function () use ($app, $di) {
+            $di->get('response')->setStatusCode(400, "Not Found");
+            $di->get('response')->setContent('<h1>Bad request!</h1>');
         });        
 
         $app->handle();
 
-    } catch(\Phalcon\Exception $e) {
-        $app->response->setStatusCode(500, "Server error (Phalcon exception)")->sendHeaders();
-        echo "PhalconException: ", $e->getMessage();
+        //Send any responses collected in the controllers
+        $di->get('response')->send();
+
+    } catch(Exception $e) {
+        $app->response->setStatusCode(500, "Server error");
+        $app->response->setContent("Global exception: ". $e->getMessage());
+        $app->response->send();
     }
