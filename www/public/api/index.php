@@ -2,9 +2,9 @@
 
     use Phalcon\Mvc\Micro\Collection as MicroCollection;
 
-    try {
-        $app = new Phalcon\Mvc\Micro();
-        
+    $app = new Phalcon\Mvc\Micro();
+
+    try {       
         //Register an autoloader
         $loader = new \Phalcon\Loader();
         $loader->registerDirs(array(
@@ -71,7 +71,11 @@
 
         $app->handle();
 
-    } catch(\Phalcon\Exception $e) {
-        $app->response->setStatusCode(500, "Server error (Phalcon exception)")->sendHeaders();
-        echo "PhalconException: ", $e->getMessage();
+        //Send any responses collected in the controllers
+        $di->get('response')->send();
+
+    } catch(Exception $e) {
+        $app->response->setStatusCode(500, "Server error");
+        $app->response->setContent("Global exception: ". $e->getMessage());
+        $app->response->send();
     }
