@@ -9,7 +9,7 @@ $collectionsSettings = array(
         'short_name' => 'mandtaller',       
         'name' => 'Politiets registerblade',
         //How to get instances of data level objects. Not sure if this is even necessary. When do you need to get data objects without images...?
-        'objects_query' => 'select * from RRB_registerblade WHERE :query',
+        'objects_query' => 'select * from PRB_registerblade WHERE :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
             array(
