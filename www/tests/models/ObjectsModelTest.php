@@ -7,12 +7,27 @@ class ObjectsModelTest extends \UnitTestCase {
     private $_model;
     
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+        $di = new \Phalcon\Di\FactoryDefault;   
+
+        //Test specific database, Phalcon
+        $di->set('database', function(){
+            return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
+                "host" => "localhost",
+                "username" => "root",
+                "password" => "",
+                "dbname" => "unit_tests",
+                'charset' => 'utf8'
+                ));
+            }
+        ); 
+
         parent::setUp($di, $config);
+
         $this->_model = new ObjectsModel();
-        //$this->_model->loadConfig(include "./mockData/MockCollectionsConfiguration.php");
     }
     
     public function tearDown() {
+        $this->getDI()->get('database')->query('DELETE FROM insert_table');
         parent::tearDown();
         $this->_model = null;
     }
@@ -71,5 +86,52 @@ class ObjectsModelTest extends \UnitTestCase {
             $this->_model->convertResultToObjects($results, $metadataLevels),                
             'should convert two dimensional result set to multidimensional array'
         );
+    }
+
+    public function testSetHeightAndWidthIfInResult()
+    {
+        $metadataLevels = [['name' => 'station'], ['name' => 'roll']];
+        $results = [
+            ['id' => 1, 'station' => 1, 'roll' => 2, 'width' => '1024', 'height' => '960', 'imageURL' => '/url']
+        ];
+        $expectedResult = [
+            [
+                'id' => 1, 
+                'metadata' => ['station' => 1, 'roll' => 2, 'width' => '1024', 'height' => '960'], 
+                'images' => ['http://www.kbhkilder.dk/url']
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $this->_model->convertResultToObjects($results, $metadataLevels), 'should add width and height as metadata');
+    }
+
+    public function testGetQueryParameters()
+    {
+        $potentialFilters = [['name' => 'name'], ['name' => 'street']];
+        $requiredFilters = [['name' => 'name']];
+        $_GET['name'] = 'name_var';
+        $_GET['street'] = 'street_var';
+
+        $this->assertEquals([['name' => 'name', 'value' => 'name_var'],['name' => 'street', 'value' => 'street_var']], $this->_model->getFilters($potentialFilters, $requiredFilters), 'should retrieve GET parameters for all filters');
+    }
+
+    public function testGetQueryRequiredNotSet()
+    {
+        $potentialFilters = [['name' => 'name'], ['name' => 'street']];
+        $requiredFilters = [['name' => 'name']];
+        unset($_GET['name']);
+        $_GET['street'] = 'street_var';
+
+        $this->assertEquals([], $this->_model->getFilters($potentialFilters, $requiredFilters), 'should return empty array when required filters are not set');
+    }
+
+    public function testGetData()
+    {
+        $this->getDI()->get('database')->query("INSERT INTO insert_table (firstname) VALUES ('firstnameOne')");
+
+        $sql = $this->_model->createObjectQuery('select * from insert_table WHERE :query', [['name' => 'firstname', 'value' => 'firstnameOne']]);
+
+        $result = $this->_model->getData($sql);
+        $this->assertEquals(1, count($result), 'should retrieve row from database');
     }
 }
