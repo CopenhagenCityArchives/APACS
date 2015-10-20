@@ -7,6 +7,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
 {      
     private $_configuration;
     private $_configurationLoaded;
+    private $_configurationCache;
     
     /**
      * Loads a configuration array
@@ -36,6 +37,9 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
         
         $matchAll = !is_numeric($collectionId);
         
+        if(is_numeric($collectionId) && isset($this->_configurationCache[$collectionId]))
+            return $this->_configurationCache[$collectionId];
+
         $collectionInfo = array();
         
         foreach($this->_configuration as $col){
@@ -63,6 +67,10 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             $collectionInfo[$i] = $this->setDefaults($collectionInfo[$i]);
             $i++;
         }
+
+        //Let's save the configuration so we dont have to go through all that again!
+        if(is_numeric($collectionId))
+            $this->_configurationCache[$collectionId] = $collectionInfo;
         
         return $collectionInfo;
     }
@@ -185,6 +193,8 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'id' => -1,
             'name' => '',
             'description' => '',
+            'layout_columns' => 1,
+            'layout_rows' => 1,            
             'entities' => []
         ];
 
@@ -193,15 +203,16 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'name' => '',
             'required' => '',
             'dbTableName' => '',
-            'isMarkable' => '',
+            'isMarkable' => true,
             'countPerEntry' => 'one',
+            'serviceUrl' => 'http://' . $_SERVER['HTTP_HOST'] . '/api/indexing/',
             'fields' => []
-
         ];
 
         $defaultEntityField = [
             'id' => -1,
             'name' => '',
+            'guiName' => '',
             'defaultValue' => null,
             'placeholder' => '',
             'helpText' => '',
@@ -209,20 +220,58 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             'dbFieldName' => '',
             'required' => false,
             'validationRegularExpression' => false,
-            'validationErrorMessage' => '',
+            'validationErrorMessage' => ''
         ];
 
         $i = 0;
         foreach($collectionConfig['indexes'] as $index){
-            $collectionInfo['indexes'][$i] = array_merge($defaultIndexConfig, $index);
+            $collectionConfig['indexes'][$i] = array_merge($defaultIndexConfig, $index);
 
             $j = 0;
             foreach($index['entities'] as $entity){
-                $collectionInfo['indexes'][$i]['entities'][$j] = array_merge($defaultEntityConfig, $entity);
+
+                $collectionConfig['indexes'][$i]['entities'][$j] = array_merge($defaultEntityConfig, $entity);
+                $collectionConfig['indexes'][$i]['entities'][$j]['serviceUrl'] .= $entity['id'];
+                //If marking is required, add marking parameters as ordinary parameters
+                if($collectionConfig['indexes'][$i]['entities'][$j]['isMarkable'] == true){
+                    $entity['fields'][] = [
+                        'name' => 'entity_topleft',
+                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'required' => true,
+                        'dbFieldName' => 'entity_topleft',
+
+                    ];
+                    $entity['fields'][] = [
+                        'name' => 'entity_bottomleft',
+                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'required' => true,
+                        'dbFieldName' => 'entity_bottomleft',
+                    ];
+                    $entity['fields'][] = [
+                        'name' => 'entity_topright',
+                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'required' => true,
+                        'dbFieldName' => 'entity_topright',
+                    ];   
+                    $entity['fields'][] = [
+                        'name' => 'entity_bottomright',
+                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'required' => true,
+                        'dbFieldName' => 'entity_bottomright',  
+                    ];  
+                }
+
+                //Adding an id field. Needed for updating existing posts
+                $entity['fields'][] = [
+                    'name' => 'id',
+                    'validationRegularExpression' => '^d{0,}$',
+                    'required' => false,
+                    'dbFieldName' => 'id',
+                ];
 
                 $k = 0;
                 foreach($entity['fields'] as $field){
-                    $collectionInfo['indexes'][$i]['entities'][$j]['fields'] = array_merge($defaultEntityField, $field);
+                    $collectionConfig['indexes'][$i]['entities'][$j]['fields'][$k] = array_merge($defaultEntityField, $field);
                     $k++;
                 }
 
