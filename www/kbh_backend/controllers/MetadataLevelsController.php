@@ -163,7 +163,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     
     private function returnJson($data){
         //Create a response instance
-        $response = new \Phalcon\Http\Response();
+        $response = $this->getDI()->get('response');
         
         $request = new Phalcon\Http\Request();
         $callback = $request->get('callback');
@@ -179,10 +179,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             }
             else{
                 $response->setContent(json_encode($data));    
-            }
-
-            //Return the response
-            $response->send();     
+            }    
         }
         catch(Exception $e){
              $this->returnError(500, 'Could not load data: ' . $e);
@@ -196,15 +193,12 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
      */
     private function returnError($errorCode = 400, $errorMessage = ''){
         //Getting a response instance
-        $response = new \Phalcon\Http\Response();
+        $response = $this->getDI()->get('response');
 
         //Set status code
         $response->setStatusCode($errorCode, '');
 
         //Set the content of the response
-        $response->setContent($errorMessage);
-
-        //Send response to the client
-        $response->send();        
+        $response->setContent($errorMessage);     
     }
 }
