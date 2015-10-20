@@ -52,10 +52,9 @@ class MetadataControllerTest extends \UnitTestCase {
     public function testGetObjectData(){
         $_GET['station'] = 1;
         $this->getDI()->getDatabase()->query('insert into PRB_registerblade (id, station) values (1,1)');
-//$response = new \Phalcon\Http\Response();
 
         $this->_controller->getObjectData(1);
-        //$this->assertEquals('',$response->getContent(), 'should return an array of data');
+        $this->assertEquals(1,count($this->getDI()->get('response')->getContent()), 'should return an array of data');
 
     }
 }
