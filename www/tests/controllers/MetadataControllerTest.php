@@ -7,12 +7,28 @@ class MetadataControllerTest extends \UnitTestCase {
     private $_controller;
     
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+        $di = new \Phalcon\Di\FactoryDefault; 
+
+        //Test specific database, Phalcon
+        $di->set('database', function(){
+            return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
+                "host" => "localhost",
+                "username" => "root",
+                "password" => "",
+                "dbname" => "unit_tests",
+                'charset' => 'utf8'
+                ));
+            }
+        ); 
+
         parent::setUp($di, $config);
+        
         $this->_controller = new MetadataLevelsController();
         $this->_controller->configurationLocation = './mockData/MockCollectionsConfiguration.php';
     }
     
     public function tearDown() {
+        $this->getDI()->getDatabase()->query('delete from PRB_registerblade');
         parent::tearDown();
         $this->_controller = null;
     }
@@ -31,5 +47,13 @@ class MetadataControllerTest extends \UnitTestCase {
         $this->setExpectedException('Exception');
         $tester = new MetadataLevelsController();
         $tester->getMetadataLevels(1,false);
+    }
+
+    public function testGetObjectData(){
+        $_GET['station'] = 1;
+        
+        $this->getDI()->getDatabase()->query('insert into PRB_registerblade (id, station) values (1,1)');
+        $this->assertEquals(1,count($this->getDI()->get('response')->getContent()), 'should return an array of data');
+
     }
 }
