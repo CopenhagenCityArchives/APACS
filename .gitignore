@@ -5,6 +5,6 @@
 .settings
 .vagrant*
 www/vendor*
-www/tests/test-coverage.html
+www/coverage
 xdebug.log
 node_modules*
