@@ -9,6 +9,8 @@
 			'indexes' => [
 				[
 					'id' => 1,
+					'guiName' => 'Grundregistrering',
+					'info' => 'Registrering af basale oplysninger på denne kildesamling.',
 					//The entities of the index
 					'entities' => [
 						[
@@ -18,6 +20,7 @@
 							'required' => true,
 							'dbTableName' => 'insert_table',
 							'isMarkable' => true,
+							'guiName' => 'Personer',
 							'fields' => [
 								[
 									'id' => 231,

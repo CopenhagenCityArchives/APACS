@@ -18,6 +18,7 @@
                     <!--<span class="label label-info">Example</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/collections">http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
                 </span>
+                <div class="span9">&nbsp;</div>
                 <span class='span9'>
                     <h2>Metadata</h2>
                 </span>
@@ -49,7 +50,6 @@
                 </div>
                 <?php } ?>
                 <?php } ?>
-                <div class="span9">&nbsp;</div>
                 <?php } ?>
                 <div class="span9">
                     <h2>Billeder</h2>
@@ -76,7 +76,33 @@
                     <span class="label label-info">Example</span>
                     <a target="_blank" href="<?php echo $obj['data_url']; ?>"><?php echo $obj['data_url']; ?></a>
                 </div>
-
+                <div class="span9">&nbsp;</div>
+                <div class='span9'>
+                    <h2>Indeksering</h2>
+                    <p>Indekseringen er konfigureret i tre lag:
+                    <ul>
+                        <li><strong>Entry</strong>: Én måde at registrere samlingen på. Eksempelvis er registreringen af personer i denne samling en entry.</li>
+                        <li><strong>Entity</strong>: En delinformation på en kilde. En entity kan eksempelvis være en person eller en adresse.</li>
+                        <li><strong>Felter</strong>: Hver entity består af et eller flere felter. Eksempelvis fornavn, efternavn og fødested.</li>
+                    </ul>Indeksering er kun muligt hvis brugeren er logget ind.</p>
+                    <?php foreach($obj['indexes'] as $index){ ?>
+                        <h3>Entry: <?php echo $index['guiName']; ?></h3>
+                        <p><?php echo $index['info']; ?> Sidelayout: <?php echo $index['layout_columns']; ?>x<?php echo $index['layout_rows']; ?>.</p>
+                        <?php foreach($index['entities'] as $entity){ ?>
+                            <h4>Entity: <?php echo $entity['guiName']; ?></h4>
+                            <p>
+                                <span class="label label-success">Service</span> <strong><?php echo $entity['serviceUrl'] ?></strong>
+                            </p>
+                            <p>Nyoprettelse sker med POST, opdateringer med PUT (med angivelse af postens <strong>id</strong>). Maksimalt antal per entry: <?php echo $entity['countPerEntry']; ?>.</p>
+                            <p>Parametre:</p>
+                            <ul>
+                                <?php foreach($entity['fields'] as $field){ ?>
+                                    <li><strong>:<?php echo $field['name']; ?></strong> <?php if($field['required'] == true){?>  <span class="label label-warning">Påkrævet</span> <?php } ?></li>
+                                <?php } ?>
+                            </ul>
+                        <?php } ?>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </body>

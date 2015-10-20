@@ -62,7 +62,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
 
             $i = 0;
             foreach($obj['levels'] as $level){
-                $obj['levels'][$i]['url'] = 'http://www.kbhkilder.dk/api/metadata/'. $obj['id'] . '/' . $level['name'];
+                $obj['levels'][$i]['url'] = 'http://' . $_SERVER['HTTP_HOST'] . '/api/metadata/'. $obj['id'] . '/' . $level['name'];
                 $obj['levels'][$i]['required_levels_url'] = '';
                 if($level['required_levels']){
                    $url = '?';
@@ -79,7 +79,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             $obj['data_filters'] = $configuration->getAllFilters($collectionId);
             
             $i = 0;
-            $url = 'http://www.kbhkilder.dk/api/data/'. $obj['id'] . '?';
+            $url = 'http://' . $_SERVER['HTTP_HOST'] . '/api/data/'. $obj['id'] . '?';
             foreach($obj['data_filters'] as $level){          
                 $obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
                 if($obj['data_filters'][$i]['required'])
@@ -90,7 +90,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             $url = substr($url, 0, strlen($url)-1);
             
             $obj['data_url'] = $url;
-          
+
             require '../../kbh_backend/templates/info.php';
             
             die();
