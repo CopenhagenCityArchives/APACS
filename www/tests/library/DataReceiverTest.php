@@ -49,4 +49,13 @@ class DataReceiverTest extends \UnitTestCase {
 
         $this->assertEquals($dr->Get('post', 'id'), $expectedData, 'should retrieve data for single fields');
     }
+
+    /**
+     * @expectedException Exception
+     */
+    public function testThrowErrorOnUnknowRequestType()
+    {
+        $dr = new DataReceiver(new Phalcon\Http\Request());
+        $dr->Get('unknowRequestType', 'id');
+    }
 }
