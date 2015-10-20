@@ -25,6 +25,10 @@
                 'charset' => 'utf8'
             ));
         });        
+
+        $di->setShared('response', function(){
+            return new  \Phalcon\Http\Response();
+        });
         
         //Controller 1
         $posts = new MicroCollection();
@@ -60,9 +64,9 @@
         
         $app->mount($posts);
         
-        $app->notFound(function () use ($app) {
-            $app->response->setStatusCode(400, "Not Found")->sendHeaders();
-            echo '<h1>Bad request!</h1>';
+        $app->notFound(function () use ($app, $di) {
+            $di->get('response')->setStatusCode(400, "Not Found");
+            $di->get('response')->setContent('<h1>Bad request!</h1>');
         });        
 
         $app->handle();
