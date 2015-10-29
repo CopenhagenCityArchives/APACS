@@ -126,6 +126,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
                 
         $objectsModel = new ObjectsModel();
         $incomingFilters = $objectsModel->getFilters($searchableFilters, $configuration->getRequiredFilters($collectionId));
+        
         //Filters no set, id filter assumed
         if(count($incomingFilters) == 0){
             $incomingFilters = $objectsModel->getFilters(array(array('name' => 'id')), array(array('name' => 'id')));
@@ -138,8 +139,11 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
                 unset($incomingFilters[0]);
                 $incomingFilters[] = $newFilter;
             }
+            else{
+                $this->returnError(400, 'No filters given');
+            }
         }
-        
+   
         if(count($incomingFilters) > 0){
             $query = $objectsModel->createObjectQuery($config[0]['objects_query'], $incomingFilters);
             $results = $objectsModel->getData($query);
