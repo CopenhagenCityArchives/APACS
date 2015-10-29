@@ -1,5 +1,5 @@
 /*
-  Testing ksa_backend API.
+  Testing APACS API.
   Run: jasmine-node ./tests
   These tests runs through all collection, receiving data from all searchable metadata levels
   and then receives data, both by parameters and by id.

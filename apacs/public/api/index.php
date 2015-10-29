@@ -8,8 +8,8 @@
         //Register an autoloader
         $loader = new \Phalcon\Loader();
         $loader->registerDirs(array(
-            '../../kbh_backend/controllers/',
-            '../../kbh_backend/models/'
+            '../../apacs/controllers/',
+            '../../apacs/models/'
         ))->register();
 
         //Create a DI
@@ -35,7 +35,7 @@
         
         $metadataLevelsHandler = new MetadataLevelsController();
         //Loading the almighty configuration array
-        $metadataLevelsHandler->configurationLocation = '../../kbh_backend/config/CollectionsConfiguration.php';
+        $metadataLevelsHandler->configurationLocation = '../../apacs/config/CollectionsConfiguration.php';
         
         //Set the main handler. ie. a controller instance
         $posts->setHandler($metadataLevelsHandler);
