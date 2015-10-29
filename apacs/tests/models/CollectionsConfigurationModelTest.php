@@ -1,6 +1,6 @@
 <?php
 
-include '../kbh_backend/models/CollectionsConfigurationModel.php';
+include '../lib/models/CollectionsConfigurationModel.php';
 
 class CollectionsConfigurationModelTest extends \UnitTestCase {
     

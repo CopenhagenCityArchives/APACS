@@ -1,5 +1,5 @@
 <?php
-include '../kbh_backend/controllers/IndexDataController.php';
+include '../lib/controllers/IndexDataController.php';
 
 class IndexDataControllerTest extends \UnitTestCase {
 

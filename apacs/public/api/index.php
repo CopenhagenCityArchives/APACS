@@ -8,22 +8,18 @@
         //Register an autoloader
         $loader = new \Phalcon\Loader();
         $loader->registerDirs(array(
-            '../../kbh_backend/controllers/',
-            '../../kbh_backend/models/'
+            '../../lib/controllers/',
+            '../../lib/models/'
         ))->register();
 
         //Create a DI
         $di = new Phalcon\DI\FactoryDefault();
 
+        require '../../lib/config/config.php';
+
         //Setup the database service
-        $di->set('database', function(){
-            return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-                "host" => "localhost",
-                "username" => "kbharkiv",
-                "password" => "***REMOVED***",
-                "dbname" => "kbharkiv",
-                'charset' => 'utf8'
-            ));
+        $di->set('database', function() use ($di){
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
         });        
 
         $di->setShared('response', function(){
@@ -35,7 +31,7 @@
         
         $metadataLevelsHandler = new MetadataLevelsController();
         //Loading the almighty configuration array
-        $metadataLevelsHandler->configurationLocation = '../../kbh_backend/config/CollectionsConfiguration.php';
+        $metadataLevelsHandler->configurationLocation = '../../lib/config/CollectionsConfiguration.php';
         
         //Set the main handler. ie. a controller instance
         $posts->setHandler($metadataLevelsHandler);

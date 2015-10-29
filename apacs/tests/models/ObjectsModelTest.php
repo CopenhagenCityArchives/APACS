@@ -1,6 +1,6 @@
 <?php
 
-include '../kbh_backend/models/ObjectsModel.php';
+include '../lib/models/ObjectsModel.php';
 
 class ObjectsModelTest extends \UnitTestCase {
     

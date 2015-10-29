@@ -4,8 +4,8 @@
 .project
 .settings
 .vagrant*
-www/vendor*
-www/coverage
-www/tests/coverage
+apacs/vendor*
+apacs/tests/coverage
 xdebug.log
 node_modules*
+apacs/lib/config/config.php

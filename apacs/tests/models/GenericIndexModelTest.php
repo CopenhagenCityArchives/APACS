@@ -1,5 +1,5 @@
 <?php
-include '../kbh_backend/models/GenericIndexModel.php';
+include '../lib/models/GenericIndexModel.php';
 
 class GenericIndexModelTest extends \UnitTestCase {
 

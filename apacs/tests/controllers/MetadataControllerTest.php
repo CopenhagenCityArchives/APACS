@@ -1,6 +1,6 @@
 <?php
 
-include '../kbh_backend/controllers/MetadataLevelsController.php';
+include '../lib/controllers/MetadataLevelsController.php';
 
 class MetadataControllerTest extends \UnitTestCase {
     

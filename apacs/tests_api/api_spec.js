@@ -1,5 +1,5 @@
 /*
-  Testing ksa_backend API.
+  Testing APACS API.
   Run: jasmine-node ./tests
   The test are based on concrete data of collection 2.
 */
