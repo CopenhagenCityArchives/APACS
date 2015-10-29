@@ -1,6 +1,8 @@
 ##APACS (Archival presentation and crowsourcing system)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
+The system runs on Ubuntu using PHP and MySQL.
+
 ##
 Dependencies:
 
