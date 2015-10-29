@@ -1,6 +1,6 @@
 <?php
 
-include '../kbh_backend/library/DataReceiver.php';
+include '../lib/library/DataReceiver.php';
 
 class DataReceiverTest extends \UnitTestCase {
     

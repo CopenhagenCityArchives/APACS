@@ -3,7 +3,7 @@
  *
  * This test is not run at the moment. The IndexDataModel may be obsolete (GenericIndexModel)
  */
-include '../kbh_backend/models/IndexDataModel.php';
+include '../lib/models/IndexDataModel.php';
 include 'TestDatabaseConnection.php';
 
 class IndexDataModelTest extends \UnitTestCase {

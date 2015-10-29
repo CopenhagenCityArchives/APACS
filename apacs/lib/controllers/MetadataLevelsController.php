@@ -91,7 +91,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             
             $obj['data_url'] = $url;
 
-            require '../../kbh_backend/templates/info.php';
+            require '../../lib/templates/info.php';
             
             die();
         }

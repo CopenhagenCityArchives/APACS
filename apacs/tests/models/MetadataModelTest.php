@@ -1,6 +1,6 @@
 <?php
 
-include '../kbh_backend/models/MetadataModel.php';
+include '../lib/models/MetadataModel.php';
 
 class MetadataModelTest extends \UnitTestCase {
     

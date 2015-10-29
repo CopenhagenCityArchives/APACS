@@ -1,6 +1,6 @@
 <?php
 
-include '../kbh_backend/library/InsertStatementBuilder.php';
+include '../lib/library/InsertStatementBuilder.php';
 
 class InsertStatementBuilderTest extends \UnitTestCase {
     

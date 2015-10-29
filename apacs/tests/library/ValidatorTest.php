@@ -1,7 +1,7 @@
 <?php
 
-include '../kbh_backend/library/ValidationRuleSet.php';
-include '../kbh_backend/library/Validator.php';
+include '../lib/library/ValidationRuleSet.php';
+include '../lib/library/Validator.php';
 
 class ValidationRuleSetTest extends \UnitTestCase {
     
