@@ -15,15 +15,11 @@
         //Create a DI
         $di = new Phalcon\DI\FactoryDefault();
 
+        require '../../lib/config/_config.php';
+
         //Setup the database service
-        $di->set('database', function(){
-            return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-                "host" => "localhost",
-                "username" => "kbharkiv",
-                "password" => "***REMOVED***",
-                "dbname" => "kbharkiv",
-                'charset' => 'utf8'
-            ));
+        $di->set('database', function() use ($di){
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
         });        
 
         $di->setShared('response', function(){
