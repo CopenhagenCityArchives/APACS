@@ -7,6 +7,9 @@ The system runs on Ubuntu using PHP and MySQL.
 Dependencies:
 
 * Phalcon: A C-extension library for PHP (find it [here](https://phalconphp.com/en/))
+* Composer (for installing dependencies)
+* PHP Unit (for tests)
+* XDEBUG (only required for PHPUnit code coverage)
 
 ##Unit testing
 
