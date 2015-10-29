@@ -76,6 +76,7 @@
                     <span class="label label-info">Example</span>
                     <a target="_blank" href="<?php echo $obj['data_url']; ?>"><?php echo $obj['data_url']; ?></a>
                 </div>
+                <?php if(count($obj['indexes'])> 0){ ?>
                 <div class="span9">&nbsp;</div>
                 <div class='span9'>
                     <h2>Indeksering</h2>
@@ -103,6 +104,7 @@
                         <?php } ?>
                     <?php } ?>
                 </div>
+                <?php } ?>
             </div>
         </div>
     </body>
