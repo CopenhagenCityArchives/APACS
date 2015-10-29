@@ -6,7 +6,7 @@ Copenhagen City Archives' configurable backend system used to present and crowds
 
 ###Unit tests
 
-Unit testing is performed with the phpunit command while being in the /tests directory. The test is configured using phpunit.xml.
+The test is configured using phpunit.xml.
 
 Go to /vagrant/www/tests
 
@@ -17,9 +17,6 @@ phpunit -c phpunit.xml
 ```
 
 ###Code coverage
-
-
-Unit test code coverage report is generated with the following command:
 
 Go to /vagrant/www/tests/
 
