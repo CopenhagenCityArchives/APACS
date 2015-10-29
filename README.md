@@ -1,6 +1,10 @@
 ##APACS (Archival presentation and crowsourcing system)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
+##
+Dependencies:
+
+* Phalcon: A C-extension library for PHP (find it [here](https://phalconphp.com/en/))
 
 ##Unit testing
 
