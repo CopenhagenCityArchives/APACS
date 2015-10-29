@@ -15,7 +15,7 @@
         //Create a DI
         $di = new Phalcon\DI\FactoryDefault();
 
-        require '../../lib/config/_config.php';
+        require '../../lib/config/config.php';
 
         //Setup the database service
         $di->set('database', function() use ($di){

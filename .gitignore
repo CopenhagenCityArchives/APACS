@@ -8,4 +8,4 @@ apacs/vendor*
 apacs/tests/coverage
 xdebug.log
 node_modules*
-apacs/lib/config/_config.php
+apacs/lib/config/config.php
