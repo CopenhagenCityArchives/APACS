@@ -1,8 +1,11 @@
-###APACS (Archival presentation and crowsourcing system)
+##APACS (Archival presentation and crowsourcing system)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
 
 ##Unit testing
+
+###Unit tests
+
 Unit testing is performed with the phpunit command while being in the /tests directory. The test is configured using phpunit.xml.
 
 Go to /vagrant/www/tests
@@ -12,6 +15,9 @@ Run:
 ```
 phpunit -c phpunit.xml
 ```
+
+###Code coverage
+
 
 Unit test code coverage report is generated with the following command:
 
