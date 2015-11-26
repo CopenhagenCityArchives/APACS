@@ -22,7 +22,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     
     public function getCollectionInfo($collectionId = false)
     {        
-        $collectionData = $this->getConfig()->getConfigurationForCollection($collectionId, true);
+        $collectionData = $this->getConfig()->getCollection($collectionId, true);
         
         $this->returnJson($collectionData);
     }
@@ -30,7 +30,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     public function displayInfo($collectionId = false)
     {
         if($collectionId){           
-            $obj = $this->getConfig()->getConfigurationForCollection($collectionId, true)[0];
+            $obj = $this->getConfig()->getCollection($collectionId, true)[0];
 
             $i = 0;
             foreach($obj['levels'] as $level){
@@ -94,7 +94,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     }
     
     public function getObjectData($collectionId){
-        $config = $this->getConfig()->getConfigurationForCollection($collectionId);
+        $config = $this->getConfig()->getCollection($collectionId);
         $searchableFilters = $this->getConfig()->getSearchableFilters($collectionId);
                 
         $objectsModel = new ObjectsModel();

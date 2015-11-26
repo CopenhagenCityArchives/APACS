@@ -2,7 +2,7 @@
 
 include '../lib/library/ConfigurationLoader.php';
 
-class ConfigurationLoader extends \UnitTestCase {
+class ConfigurationLoaderTest extends \UnitTestCase {
     
     private $_model;
     
@@ -30,20 +30,20 @@ class ConfigurationLoader extends \UnitTestCase {
     public function testLoadOfConfiguration()
     {       
         $this->assertNotEmpty(
-            $this->_model->getConfigurationForCollection(1), 
+            $this->_model->getConfig(1), 
             'Should return metadatalevels for an existing collection'
         );
         
-        $publicConfig = $this->_model->getConfigurationForCollection(1, true);
+        $publicConfig = $this->_model->getConfig(1, true);
         $this->assertFalse(isset($publicConfig[0]['config']));
         
         $this->setExpectedException('Exception');
-        $this->_model->getConfigurationForCollection(-1);        
+        $this->_model->getConfig(-1);        
     }
     
     public function testLoadOfMetadataLevels()
     {
-        $configuration = $this->_model->getConfigurationForCollection(1);
+        $configuration = $this->_model->getConfig(1);
         
         $this->assertEquals(
             $this->_model->getMetadataLevels(1), 

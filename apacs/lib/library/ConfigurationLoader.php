@@ -38,7 +38,7 @@ class ConfigurationLoader
      * @param int collection id
      * @return array configuration array for the collection
      */
-    public function getConfigurationForCollection($collectionId, $publicData = false){        
+    public function getCollection($collectionId, $publicData = false){        
         if(!$this->_configurationLoaded)
             return false;
         
@@ -298,7 +298,7 @@ class ConfigurationLoader
      * @return array metadata levels or specific level
      */    
     public function getMetadataLevels($collectionId, $metadataLevelName = false){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         
         if($metadataLevelName){
             foreach($config[0]['levels'] as $level){
@@ -319,7 +319,7 @@ class ConfigurationLoader
      * @return Array Array holding the error reports for the collection
      */
     public function getErrorReports($collectionId){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         return $config[0]['error_reports'];
     }
     
@@ -329,7 +329,7 @@ class ConfigurationLoader
      * @return array data level for the collection
      */    /*
     public function getDataLevel($collectionId){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         
         return $config[0]['dataLevel'];
     }    */
@@ -340,7 +340,7 @@ class ConfigurationLoader
      * @return array all filters for the collection
      */    
     public function getAllFilters($collectionId){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         $filters = array();
         
         foreach($config[0]['levels'] as $curLevel){
@@ -351,7 +351,7 @@ class ConfigurationLoader
     }      
     
     public function getSearchableFilters($collectionId){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         $filters = array();
         
         foreach($config[0]['levels'] as $curLevel){
@@ -364,7 +364,7 @@ class ConfigurationLoader
     }        
     
     public function getRequiredFilters($collectionId){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         $filters = array();
         
         foreach($config[0]['levels'] as $curLevel){
@@ -387,7 +387,7 @@ class ConfigurationLoader
      * @param string The value of the key. If not given, all filters are returned.
      */
     public function getFilters($collectionId, $key = null, $value = null){
-        $config = $this->getConfigurationForCollection($collectionId);
+        $config = $this->getCollection($collectionId);
         $filters = array();
         
         if($key == null && $value == null){
