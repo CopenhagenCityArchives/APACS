@@ -1,7 +1,7 @@
 <?php
-namespace Benchmark;
-require_once './vendor/autoload.php';
-require_once './lib/library/TestClass.php';
+//namespace Benchmark;
+require_once 'vendor/autoload.php';
+require_once 'lib/library/TestClass.php';
 
 use Athletic\AthleticEvent;
 
