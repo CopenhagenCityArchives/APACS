@@ -33,38 +33,34 @@
             return new  \Phalcon\Http\Response();
         });
         
-        //Controller 1
-        $posts = new MicroCollection();
-        
-        $metadataLevelsHandler = new MetadataLevelsController();
-  
-        //Set the main handler. ie. a controller instance
-        $posts->setHandler($metadataLevelsHandler);
+        //Metadata routes collection
+        $metadata = new MicroCollection();
 
-        //Set a common prefix for all routes
-        //$posts->setPrefix('/data');
+        //Set the main handler. ie. a controller instance
+        $metadata->setHandler(new MetadataLevelsController());
         
         //Collection info
-        $posts->get('/collections/{collection:[0-9]+}/info', 'displayinfo');
-        $posts->get('/collections', 'getcollectioninfo');
-        $posts->get('/collections/{collection:[0-9]+}', 'getcollectioninfo');
+        $metadata->get('/collections/{collection:[0-9]+}/info', 'displayinfo');
+        $metadata->get('/collections', 'getcollectioninfo');
+        $metadata->get('/collections/{collection:[0-9]+}', 'getcollectioninfo');
         
         //Metadata levels
-        $posts->get('/levels/{collection:[0-9]+}', 'getmetadatalevels');
-        $posts->get('/levels/{collection:[0-9]+}/{metadatalevel}', 'getmetadatalevels');
+        $metadata->get('/levels/{collection:[0-9]+}', 'getmetadatalevels');
+        $metadata->get('/levels/{collection:[0-9]+}/{metadatalevel}', 'getmetadatalevels');
         
         //Metadata
-        //What about this: $posts->('/metadata/{collection:[0-9]+}, should get all metadata for all levels?);
-        $posts->get('/metadata/{collection:[0-9]+}/{metadatalevel}', 'getmetadata');
+        //What about this: $metadata->('/metadata/{collection:[0-9]+}, should get all metadata for all levels?);
+        $metadata->get('/metadata/{collection:[0-9]+}/{metadatalevel}', 'getmetadata');
         
         //Object data
-        $posts->get('/data/{collection:[0-9]+}', 'getobjectdata');
+        $metadata->get('/data/{collection:[0-9]+}', 'getobjectdata');
         
         //Error reports
-        $posts->get('/error/{collection:[0-9]+}/{item:[0-9]+}/{error:[0-9]+}','reporterror');
+        $metadata->get('/error/{collection:[0-9]+}/{item:[0-9]+}/{error:[0-9]+}','reporterror');
 
-        $app->mount($posts);
+        $app->mount($metadata);
         
+        //Indexing routes collection
         $indexing = new MicroCollection();
         $indexing->setHandler(new CommonInformationsController());
 
@@ -73,6 +69,7 @@
 
         $app->mount($indexing);
         
+        //Not found-handling
         $app->notFound(function () use ($app, $di) {
             $di->get('response')->setStatusCode(400, "Not Found");
             $di->get('response')->setContent('<h1>Bad request!</h1>');
