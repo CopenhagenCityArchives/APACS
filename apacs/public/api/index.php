@@ -20,6 +20,7 @@
 
         //Setup the configuration service
         $di->setShared('configuration', function() use ($di){
+            //Loading the almighty configuration array
             return new ConfigurationLoader('../../lib/config/CollectionsConfiguration.php');
         });
 
@@ -36,9 +37,7 @@
         $posts = new MicroCollection();
         
         $metadataLevelsHandler = new MetadataLevelsController();
-        //Loading the almighty configuration array
-        $metadataLevelsHandler->configurationLocation = '../../lib/config/CollectionsConfiguration.php';
-        
+  
         //Set the main handler. ie. a controller instance
         $posts->setHandler($metadataLevelsHandler);
 
