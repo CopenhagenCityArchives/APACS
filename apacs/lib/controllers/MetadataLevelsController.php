@@ -96,6 +96,10 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
             die();
         }
     }
+
+    public function displayAllInfo(){
+        require '../../lib/templates/info.php';
+    }
  
     //Should load data from a metadata level, either by query or at once, defined by the filter
     public function getMetadata($collectionId, $metadataLevelName){
