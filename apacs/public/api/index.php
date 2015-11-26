@@ -1,7 +1,7 @@
 <?php
 
     use Phalcon\Mvc\Micro\Collection as MicroCollection;
-
+ 
     $app = new Phalcon\Mvc\Micro();
 
     try {       
@@ -57,8 +57,17 @@
         
         //Error reports
         $posts->get('/error/{collection:[0-9]+}/{item:[0-9]+}/{error:[0-9]+}','reporterror');
-        
+
         $app->mount($posts);
+        
+        $indexing = new MicroCollection();
+        $indexing->setHandler(new CommonInformationsController());
+        $indexing->setPrefix('/v2');
+
+        $indexing->get('/protocols', 'GetProtocols');
+        $indexing->get('/protocols/{protocol:[0-9]+}', 'GetProtocol');
+
+        $app->mount($indexing);
         
         $app->notFound(function () use ($app, $di) {
             $di->get('response')->setStatusCode(400, "Not Found");
