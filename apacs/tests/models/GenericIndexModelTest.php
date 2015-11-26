@@ -1,5 +1,6 @@
 <?php
 include '../lib/models/GenericIndexModel.php';
+include_once '../lib/library/ConfigurationLoader.php';
 
 class GenericIndexModelTest extends \UnitTestCase {
 
@@ -7,8 +8,7 @@ class GenericIndexModelTest extends \UnitTestCase {
         $di = new \Phalcon\Di\FactoryDefault;
 
         $di->set('collectionConfigurationLoader', function(){
-            $conf = new CollectionsConfigurationModel();
-            $conf->loadConfig(require('./mockData/EntryConfMock.php'));
+            $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
             return $conf;
         });    
 

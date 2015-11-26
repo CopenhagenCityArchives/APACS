@@ -1,5 +1,6 @@
 <?php
 include '../lib/controllers/IndexDataController.php';
+include '../lib/library/ConfigurationLoader.php';
 
 class IndexDataControllerTest extends \UnitTestCase {
 
@@ -7,8 +8,7 @@ class IndexDataControllerTest extends \UnitTestCase {
         $di = new \Phalcon\Di\FactoryDefault;
 
         $di->set('collectionConfigurationLoader', function(){
-            $conf = new CollectionsConfigurationModel();
-            $conf->loadConfig(require('./mockData/EntryConfMock.php'));
+            $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
             return $conf;
         });    
 

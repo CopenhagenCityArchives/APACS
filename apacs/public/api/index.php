@@ -9,13 +9,19 @@
         $loader = new \Phalcon\Loader();
         $loader->registerDirs(array(
             '../../lib/controllers/',
-            '../../lib/models/'
+            '../../lib/models/',
+            '../../lib/library/'
         ))->register();
 
         //Create a DI
         $di = new Phalcon\DI\FactoryDefault();
 
         require '../../lib/config/config.php';
+
+        //Setup the configuration service
+        $di->setShared('configuration', function() use ($di){
+            return new ConfigurationLoader('../../lib/config/CollectionsConfiguration.php');
+        });
 
         //Setup the database service
         $di->set('database', function() use ($di){
@@ -62,7 +68,6 @@
         
         $indexing = new MicroCollection();
         $indexing->setHandler(new CommonInformationsController());
-        $indexing->setPrefix('/v2');
 
         $indexing->get('/protocols', 'GetProtocols');
         $indexing->get('/protocols/{protocol:[0-9]+}', 'GetProtocol');

@@ -1,8 +1,8 @@
 <?php
 
-include '../lib/models/CollectionsConfigurationModel.php';
+include '../lib/library/ConfigurationLoader.php';
 
-class CollectionsConfigurationModelTest extends \UnitTestCase {
+class ConfigurationLoader extends \UnitTestCase {
     
     private $_model;
     

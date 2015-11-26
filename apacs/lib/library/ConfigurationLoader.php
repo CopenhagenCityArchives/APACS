@@ -3,12 +3,19 @@
 /*
  * Handles the loading of the whole configuration object, as well as specified parts
  */
-class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
+class ConfigurationLoader
 {      
     private $_configuration;
     private $_configurationLoaded;
     private $_configurationCache;
+    private $_configFileLocation;
     
+    public function __construct($filePath)
+    {
+        $this->_configFileLocation = $filePath;
+        $this->loadConfig(require($filePath)); 
+    }
+
     /**
      * Loads a configuration array
      * @param array configuration array
@@ -101,7 +108,7 @@ class CollectionsConfigurationModel extends \Phalcon\Mvc\Model
             //Link to API documentation
             'api_documentation_url' => '',
             //Name of the collection
-            'primary_table_name' => 'name',
+            'primary_table_name' => 'primary_table_name',
             //Starbs field name, if any
             'starbas_field_name' => false,
             //Type of levels. Can be flat or hierarkic
