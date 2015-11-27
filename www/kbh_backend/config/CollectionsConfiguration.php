@@ -800,37 +800,53 @@ $collectionsSettings = array(
     array(
         'id' => 11,
         'test' => true,
-        'info' => 'Brug år og nummer fra  det alfabetiske register til at finde vielsen.',
-        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
-        'short_name' => 'Skoleprotokoller for København xxxx - xxxx',
-        'long_name' => 'Skoleprotokoller for København xxxx - xxxx',
-        'gui_required_fields_text' => 'Vælg et år',
+        'info' => 'Brug år og nummer fra det alfabetiske navneregister til at finde eleven i protokollen.',
+        'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/skoler',
+        'short_name' => 'Skoleprotokoller og registre 1753-1937',
+        'long_name' => 'Skoleprotokoller og registre 1753-1937',
+        'gui_required_fields_text' => 'Vælg en skole',
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
      //   'starbas_field_name' => 'starbas_id',
         //How to link the data level objects to images
-        'objects_query' => 'select begrav_page.id, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
+        'objects_query' => 'select begrav_page.id, creator_name, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
                         FROM begrav_page
                         LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
                         WHERE volumetype_id = 7 AND is_public = 1 AND :query',
         'levels_type' => 'hierarchy',
         'levels' => array(
-            //År, søgebar
+            //Skole, søgebar
             array(
                 'order' => 1,
-                'gui_name' => 'År',
-                'gui_description' => 'Periode for protokollen',
+                'gui_name' => 'Skole',
+                'gui_description' => 'Alfabetisk liste over skoler',
                 'gui_info_link' => false,
-                'name' => 'nicetitle',
+                'name' => 'creator_name',
                 'gui_type' => 'typeahead',
-                'data_sql' => 'SELECT DISTINCT id, nicetitle as text FROM begrav_volume where is_public = 1 AND volumetype_id = 7 ORDER BY nicetitle',                
+                'data_sql' => 'SELECT distinct (creator_name) as text, (creator_name) as id FROM begrav_volume where is_public = 1 AND volumetype_id = 7 ORDER BY creator_name',                
                 'data' => false,
                 'gui_hide_name' => true,
                 'gui_hide_value' => false,
                 'required' => true,
                 'searchable' => true,
                 'required_levels' => false
-            ),           
+            ),   
+            //Protokol, søgebar
+            array(
+                'order' => 2,
+                'gui_name' => 'Elevprotokol eller register',
+                'gui_description' => 'Vælg register eller elevprotokol',
+                'gui_info_link' => false,
+                'name' => 'nicetitle',
+                'gui_type' => 'typeahead',
+                'data_sql' => 'SELECT DISTINCT id, nicetitle AS text FROM begrav_volume WHERE is_public = 1 AND volumetype_id = 7 AND creator_name = "%s" ORDER BY nicetitle',                
+                'data' => false,
+                'gui_hide_name' => true,
+                'gui_hide_value' => false,
+                'required' => false,
+                'searchable' => true,
+                'required_levels' => array('creator_name')
+            ),                      
             //Starbas-reference, ikke søgebar
             array(
                 'order' => 2,
