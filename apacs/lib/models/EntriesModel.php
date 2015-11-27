@@ -8,6 +8,11 @@ class EntriesModel extends \Phalcon\Mvc\Model
 	protected $tasksId;
 	protected $collectionId;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'entries';
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'Errors', 'entries_id');

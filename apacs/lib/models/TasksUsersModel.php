@@ -9,6 +9,11 @@ class TasksUsersModel extends \Phalcon\Mvc\Model
     protected $usersId;
     protected $tasksId;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'tasks_users';
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'Users', 'users_id');

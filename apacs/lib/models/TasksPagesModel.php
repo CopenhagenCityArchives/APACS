@@ -9,6 +9,11 @@ class TasksPagesModel extends \Phalcon\Mvc\Model
     protected $pagesId;
     protected $tasksId;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'tasks_pages';
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'Pages', 'pages_id');

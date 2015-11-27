@@ -7,6 +7,11 @@ class UsersModel extends \Phalcon\Mvc\Model
 	protected $name;
 	protected $password;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'users';
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'Errors', 'reporting_user_id');

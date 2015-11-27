@@ -10,6 +10,11 @@ class ErrorsModel extends \Phalcon\Mvc\Model
 	protected $reportedTime;
 	protected $toSuperuser;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'errors';
+    }
+
     public function initialize()
     {
         $this->belongsTo('unit_id', 'Errors', 'id');

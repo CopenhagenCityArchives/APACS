@@ -1,6 +1,6 @@
 <?php
 
-class TasksPagesModel extends \Phalcon\Mvc\Model
+class TasksUnitsModel extends \Phalcon\Mvc\Model
 {
 
 	protected $id;
@@ -9,6 +9,11 @@ class TasksPagesModel extends \Phalcon\Mvc\Model
     protected $entryLayout;
     protected $unitsId;
     protected $tasksId;
+
+    public function getSource()
+    {
+        return 'apacs_' . 'tasks_units';
+    }
 
     public function initialize()
     {

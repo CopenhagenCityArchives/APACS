@@ -7,6 +7,11 @@ class TasksModel extends \Phalcon\Mvc\Model
 	protected $name;
     protected $description;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'tasks';
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'TasksUnits', 'tasks_id');

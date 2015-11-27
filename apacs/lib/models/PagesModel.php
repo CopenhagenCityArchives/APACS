@@ -7,6 +7,11 @@ class PagesModel extends \Phalcon\Mvc\Model
 	protected $unitsId;
 	protected $collectionId;
 
+    public function getSource()
+    {
+        return 'apacs_' . 'pages';
+    }
+
     public function initialize()
     {
         $this->hasMany('id', 'Entries', 'pages_id');
