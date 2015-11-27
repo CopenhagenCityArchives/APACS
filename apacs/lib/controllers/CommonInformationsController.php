@@ -7,13 +7,13 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 
 	public function onConstruct()
 	{
-		$this->config = $this->getDI()->get('collectionConfigurationLoader');
+	//	$this->config = $this->getDI()->get('configuration');
 		$this->response = $this->getDI()->get('response');
 	}
 	
 	public function GetProtocols()
 	{
-		
+
 	}
 
 	public function GetProtocol($id)

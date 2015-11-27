@@ -7,10 +7,10 @@ class UnitsModelTest extends \UnitTestCase {
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         $di = new \Phalcon\Di\FactoryDefault;
 
-        $di->set('collectionConfigurationLoader', function(){
+        $di->set('configuration', function(){
             $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
             return $conf;
-        }); 
+        });
 
         parent::setUp($di, $config);
     }
@@ -23,6 +23,6 @@ class UnitsModelTest extends \UnitTestCase {
     {
         $cic = new UnitsModel();
 
-        $this->assertGreaterThan(count($cic->GetUnits(1,1)), 0, 'should load list of protocols');
+        $this->assertGreaterThan(count($cic->GetUnits(3,1)), 0, 'should load list of protocols');
     }
 }
