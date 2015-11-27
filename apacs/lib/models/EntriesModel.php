@@ -4,8 +4,8 @@ class EntriesModel extends \Phalcon\Mvc\Model
 {
 
 	protected $id;
-	protected $pageId;
-	protected $taskId;
+	protected $pagesId;
+	protected $tasksId;
 	protected $collectionId;
 
     public function initialize()

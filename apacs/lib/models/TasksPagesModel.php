@@ -1,11 +1,13 @@
 <?php
 
-class TasksPages extends \Phalcon\Mvc\Model
+class TasksPagesModel extends \Phalcon\Mvc\Model
 {
 
 	protected $id;
 	protected $isActive;
     protected $isDone;
+    protected $pagesId;
+    protected $tasksId;
 
     public function initialize()
     {

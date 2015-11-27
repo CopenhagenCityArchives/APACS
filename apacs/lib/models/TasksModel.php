@@ -11,6 +11,6 @@ class TasksModel extends \Phalcon\Mvc\Model
     {
         $this->hasMany('id', 'TasksUnits', 'tasks_id');
         $this->hasMany('id', 'Entries', 'tasks_id');
-        $this->hasMany('id', 'TasksPages', 'id');
+        $this->hasMany('id', 'TasksPages', 'tasks_id');
     }
 }
