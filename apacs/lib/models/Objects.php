@@ -2,7 +2,7 @@
 /**
  * Handles loading of metadata from tables as configured
  */
-class ObjectsModel extends \Phalcon\Mvc\Model
+class Objects extends \Phalcon\Mvc\Model
 {       
     /**
      * Loads and returns the results from the database based on the sql

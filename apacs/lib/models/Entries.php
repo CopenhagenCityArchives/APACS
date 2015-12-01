@@ -1,6 +1,6 @@
 <?php
 
-class EntriesModel extends \Phalcon\Mvc\Model
+class Entries extends \Phalcon\Mvc\Model
 {
 
 	protected $id;

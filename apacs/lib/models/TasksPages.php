@@ -1,6 +1,6 @@
 <?php
 
-class TasksPagesModel extends \Phalcon\Mvc\Model
+class TasksPages extends \Phalcon\Mvc\Model
 {
 
 	protected $id;

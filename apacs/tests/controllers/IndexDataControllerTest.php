@@ -46,7 +46,7 @@ class IndexDataControllerTest extends \UnitTestCase {
         $_POST['lastname'] = 'lastname';
         $ctrl->insert(234);
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
         $this->assertEquals(2, count($model->find("lastname = 'lastname'")),'GenericModel should be affiliated with the controller entity id');
     }
 
@@ -59,7 +59,7 @@ class IndexDataControllerTest extends \UnitTestCase {
 
         $this->assertEquals(false, $ctrl->insert(235), 'should return false on error');
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
         $this->assertEquals(0, count($model->find("lastname2 = 'lastname'")), 'should not save data on error');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-include '../lib/models/ObjectsModel.php';
+include '../lib/models/Objects.php';
 
 class ObjectsModelTest extends \UnitTestCase {
     
@@ -23,7 +23,7 @@ class ObjectsModelTest extends \UnitTestCase {
 
         parent::setUp($di, $config);
 
-        $this->_model = new ObjectsModel();
+        $this->_model = new Objects();
     }
     
     public function tearDown() {
@@ -34,7 +34,7 @@ class ObjectsModelTest extends \UnitTestCase {
     
     public function testInitialization() 
     {
-        $this->assertInstanceOf('ObjectsModel', $this->_model);
+        $this->assertInstanceOf('Objects', $this->_model);
     }
     
     public function testRequiredLevelChecker(){

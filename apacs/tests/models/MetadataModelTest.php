@@ -1,6 +1,6 @@
 <?php
 
-include '../lib/models/MetadataModel.php';
+include '../lib/models/Metadata.php';
 
 class MetadataModelTest extends \UnitTestCase {
     
@@ -8,7 +8,7 @@ class MetadataModelTest extends \UnitTestCase {
     
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         parent::setUp($di, $config);
-        $this->_model = new MetadataModel();
+        $this->_model = new Metadata();
         //$this->_model->loadConfig(include "./mockData/MockCollectionsConfiguration.php");
     }
     
@@ -19,7 +19,7 @@ class MetadataModelTest extends \UnitTestCase {
     
     public function testInitialization() 
     {
-        $this->assertInstanceOf('MetadataModel', $this->_model);
+        $this->assertInstanceOf('Metadata', $this->_model);
     }
     
     public function testMetadataSearchSQLCreation()

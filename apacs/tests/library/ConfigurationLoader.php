@@ -8,7 +8,7 @@ class ConfigurationLoaderTest extends \UnitTestCase {
     
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         parent::setUp($di, $config);
-        $this->_model = new CollectionsConfigurationModel("inputtest");
+        $this->_model = new CollectionsConfiguration("inputtest");
         $this->_model->loadConfig(include "./mockData/MockCollectionsConfiguration.php");
     }
     
@@ -23,7 +23,7 @@ class ConfigurationLoaderTest extends \UnitTestCase {
         
         //Should throw exception when running loadConfig without input
         $this->setExpectedException('Exception');
-        $testModel = new CollectionsConfigurationModel();
+        $testModel = new CollectionsConfiguration();
         $testModel->loadConfig();
     }
     
@@ -61,14 +61,14 @@ class ConfigurationLoaderTest extends \UnitTestCase {
     public function testLoadOfMetadatalevelsOnEmptyConfiguration(){
         //Should throw error when loading metadata levels without loading the configuration
         $this->setExpectedException('Exception');
-        $model = new MetadataModel();
+        $model = new Metadata();
         $model->CollectionsConfigurationModel(1);        
     }
     
     public function testLoadOfMetadatalevelOnEmptyConfiguration(){
         //Should throw error when loading a metadata level without loading the configuration
         $this->setExpectedException('Exception');
-        $model = new MetadataModel();
+        $model = new Metadata();
         $model->CollectionsConfigurationModel(1, 'rolls');          
     }
     

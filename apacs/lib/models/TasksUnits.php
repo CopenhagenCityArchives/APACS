@@ -1,14 +1,14 @@
 <?php
 
-class TasksUnitsModel extends \Phalcon\Mvc\Model
+class TasksUnits extends \Phalcon\Mvc\Model
 {
 
 	protected $id;
 	protected $pagesDone;
     protected $isActive;
     protected $entryLayout;
-    protected $unitsId;
-    protected $tasksId;
+    protected $unitId;
+    protected $taskId;
 
     public function getSource()
     {
@@ -17,7 +17,7 @@ class TasksUnitsModel extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->hasMany('id', 'Units', 'units_id');
-        $this->hasMany('id', 'Tasks', 'tasks_id');
+        $this->hasMany('id', 'Units', 'unit_id');
+        $this->hasMany('id', 'Tasks', 'task_id');
     }
 }

@@ -1,6 +1,6 @@
 <?php 
 
-class GenericIndexModel extends \Phalcon\Mvc\Model
+class GenericIndex extends \Phalcon\Mvc\Model
 {
     private $_entity;
 
