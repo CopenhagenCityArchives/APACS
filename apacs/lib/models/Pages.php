@@ -8,6 +8,7 @@ class Pages extends \Phalcon\Mvc\Model
 	protected $collectionId;
 
     private $status = [];
+    static $publicFields = ['id','collection_id','unit_id'];
 
     const OPERATION_TYPE_CREATE = 'create';
     const OPERATION_TYPE_UPDATE = 'update';

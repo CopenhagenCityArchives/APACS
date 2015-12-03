@@ -8,6 +8,7 @@ class Units extends \Phalcon\Mvc\Model
 	protected $collectionId;
 
     private $status = [];
+    static $publicFields = ['id','collection_id','pages','description','index_active'];
 
     const OPERATION_TYPE_CREATE = 'create';
     const OPERATION_TYPE_UPDATE = 'update';
@@ -29,7 +30,7 @@ class Units extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->hasMany('id', 'Pages', 'units_id');
+        $this->hasMany('id', 'Pages', 'unit_id');
         $this->hasMany('id', 'TasksUnits', 'unit_id');
     }
 
