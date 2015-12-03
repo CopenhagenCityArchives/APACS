@@ -14,7 +14,7 @@ class GenericIndex extends \Phalcon\Mvc\Model
 
         $this->_entity = $this->
         getDI()->
-        get('collectionConfigurationLoader')->
+        get('configuration')->
         getIndexEntity(
             $this->getDI()->get('currentEntityId')
         );
