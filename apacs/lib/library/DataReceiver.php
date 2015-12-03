@@ -32,7 +32,7 @@ class DataReceiver
 		return $values;
 	}
 
-	public function Get($requestType, $field){
+	public function Value($requestType, $field){
 		$methodName = $this->setGetMethodName($requestType);
 
 		return $this->_requestObj->$methodName($field, null, null);

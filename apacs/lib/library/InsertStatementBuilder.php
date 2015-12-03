@@ -10,10 +10,10 @@ class InsertStatementBuilder
 	 * Constructor. Takes a table name and an array of fieldss
 	 * @param array An array containing the entry type from which the statement is built
 	 */
-	function __construct($entryType)
+	function __construct($tableName, $fields)
 	{
-		$this->tableName = $entryType['dbTableName'];
-		$this->fields = $entryType['fields'];
+		$this->tableName = $tableName;
+		$this->fields = $fields;
 	}
 
 	/**
@@ -29,7 +29,7 @@ class InsertStatementBuilder
 		$fieldNames = "";
 
 		foreach($this->fields as $field){
-			$fieldNames .= '`' . $field['name'] . '`, ';
+			$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
 		}
 
 		return substr($fieldNames, 0, strlen($fieldNames)-2);
