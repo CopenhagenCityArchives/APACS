@@ -12,13 +12,13 @@
 		 * Validates a given input based on the ValidationRuleSet.
 		 * @return bool Wether or not the input is valid
 		 */
-		public function Validate($dataToValidate){
+		public function IsValid($dataToValidate){
 			if($this->_validationRule->required){
 				if(!isset($dataToValidate) || $dataToValidate === NULL  || $dataToValidate === null || trim($dataToValidate) == "")
 					return false;
 			}
 
-			if($this->_validationRule->regularExpression === false)
+			if($this->_validationRule->regularExpression == false)
 				return true;
 
 			if(preg_match($this->_validationRule->regularExpression, $dataToValidate) == 1)
