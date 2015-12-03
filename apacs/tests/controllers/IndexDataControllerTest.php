@@ -7,7 +7,7 @@ class IndexDataControllerTest extends \UnitTestCase {
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         $di = new \Phalcon\Di\FactoryDefault;
 
-        $di->set('collectionConfigurationLoader', function(){
+        $di->set('configuration', function(){
             $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
             return $conf;
         });    
