@@ -3,12 +3,44 @@
 class CommonInformationsController extends \Phalcon\Mvc\Controller
 {
 	private $response;
+	private $request;
 
 	public function onConstruct()
 	{
 		$this->response = $this->getDI()->get('response');
+		$this->request = $this->getDI()->get('request');
 	}
-	
+
+	private function error($error_message)
+	{
+		$this->response->setStatusCode(400, 'Wrong parameters');
+		$this->response->setJsonContent(['message' => $error_message]);
+	}
+
+	public function GetCollections()
+	{
+		$confLoader = new DBConfigurationLoader();
+		$this->response->setJsonContent($confLoader->GetCollections());
+	}
+
+	public function GetCollection($collectionId)
+	{
+		$confLoader = new DBConfigurationLoader();
+		$this->response->setJsonContent($confLoader->GetCollection($collectionId));
+	}
+
+	public function GetTasks()
+	{
+		$confLoader = new DBConfigurationLoader();
+		$this->response->setJsonContent($confLoader->GetTasks());		
+	}
+
+	public function GetTask($taskId)
+	{
+		$confLoader = new DBConfigurationLoader();
+		$this->response->setJsonContent($confLoader->GetTask($taskId));
+	}	
+
 	public function GetUnit($unitId)
 	{
 		$unit = Units::findFirst([
@@ -43,8 +75,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 
 		if(!$collectionId)
 		{
-			$this->response->setStatusCode(400, 'Wrong parameters');
-			$this->response->setJsonContent(['message' => 'collection_id is required']);
+			$this->error('collection_id is required');
 			return;
 		}
 
@@ -73,8 +104,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 
 		if(!$unitId)
 		{
-			$this->response->setStatusCode(400, 'Wrong parameters');
-			$this->response->setJsonContent(['message' => 'unit_id is required']);
+			$this->error('unit_id is required');
 			return;
 		}
 
@@ -102,8 +132,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 		$collectionId = $request->getPost('collection_id', null, false);
 
 		if(!$collectionId){
-			$this->response->setStatusCode('401', 'Wrong parameters');
-			$this->response->setJsonContent(['message' => 'Collection id not set']);
+			$this->error('collection_id is required');
 			return;
 		}
 
@@ -130,8 +159,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 		$collectionId = $request->getPost('collection_id', null, false);
 
 		if(!$collectionId){
-			$this->response->setStatusCode('401', 'Wrong parameters');
-			$this->response->setJsonContent(['message' => 'Collection id not set']);
+			$this->error('collection_id is required');
 			return;
 		}
 

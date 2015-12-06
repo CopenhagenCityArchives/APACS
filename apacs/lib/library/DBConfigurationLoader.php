@@ -2,6 +2,12 @@
 
 class DBConfigurationLoader
 {
+	public function GetCollections()
+	{
+		$collections = Collections::find();
+		return $collections->toArray();
+	}
+
 	public function GetCollection($collectionId)
 	{
 		$data = [];
@@ -27,6 +33,12 @@ class DBConfigurationLoader
 		}
 
 		return $data;
+	}
+
+	public function GetTasks()
+	{
+		$tasks = Tasks::find();
+		return $tasks->toArray();
 	}
 
 	public function GetTask($taskId)

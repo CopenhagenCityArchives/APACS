@@ -76,6 +76,11 @@
         $info->get('/pages/{page:[0-9]+}', 'GetPage');
         $info->post('/pages', 'ImportPages');
 
+        $info->get('/tasks', 'GetTasks');
+        $info->get('/tasks/{taskId:[0-9]+}', 'GetTask');
+        $info->get('/collections2', 'GetCollections');
+        $info->get('/collections2/{collectionId:[0-9]+}', 'GetCollection');
+
         $app->mount($info);
 
         //Indexing routes collection
@@ -84,6 +89,8 @@
 
         $indexing->post('/entries', 'CreateEntry');
         $indexing->get('/entries/{entry:[0-9]+}', 'GetEntry');
+
+$indexing->get('/new_collections/{collectionId:[0-9]+}', 'test');
 
         $app->mount($indexing);        
         
