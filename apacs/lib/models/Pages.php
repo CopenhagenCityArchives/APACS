@@ -20,8 +20,8 @@ class Pages extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->hasMany('id', 'Entries', 'pages_id');
-        $this->hasMany('id', 'TasksPages', 'pages_id');
+        $this->hasMany('id', 'Entries', 'page_id');
+        $this->hasMany('id', 'TasksPages', 'page_id');
         $this->belongsTo('unit_id', 'Units', 'id');
     }
 

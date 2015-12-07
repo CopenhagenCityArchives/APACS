@@ -10,6 +10,6 @@ class EntitiesFields extends \Phalcon\Mvc\Model
     public function initialize()
     {
     	$this->belongsTo('field_id', 'Fields', 'id');
-    	$this->belongsTo('entities_id', 'Entities', 'id');
+    	$this->belongsTo('entity_id', 'Entities', 'id');
     }
 }

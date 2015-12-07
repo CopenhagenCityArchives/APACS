@@ -16,7 +16,7 @@ class TasksUsers extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->hasMany('id', 'Users', 'users_id');
-        $this->hasMany('id', 'Tasks', 'tasks_id');
+        $this->hasMany('id', 'Users', 'user_id');
+        $this->hasMany('id', 'Tasks', 'task_id');
     }
 }

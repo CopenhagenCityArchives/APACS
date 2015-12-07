@@ -15,8 +15,8 @@ class Entries extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->hasMany('id', 'Errors', 'entries_id');
-        $this->belongsTo('pages_id', 'Pages', 'id');
-        $this->belongsTo('tasks_id', 'Tasks', 'id');
+        $this->hasMany('id', 'Errors', 'entry_id');
+        $this->belongsTo('page_id', 'Pages', 'id');
+        $this->belongsTo('task_id', 'Tasks', 'id');
     }
 }
