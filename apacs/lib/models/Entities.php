@@ -2,8 +2,7 @@
 
 class Entities extends \Phalcon\Mvc\Model
 {
-	public $id;
-	public $task_id;
+    public static $publicFields = ['id', 'required', 'countPerEntry', 'isMarkable','guiName', 'task_id'];
 
     public function getSource()
     {
