@@ -2,10 +2,7 @@
 
 class Users extends \Phalcon\Mvc\Model
 {
-
-	protected $id;
-	protected $name;
-	protected $password;
+    public static $publicFields = ['id', 'userName', 'imageUrl'];
 
     public function getSource()
     {
@@ -16,5 +13,6 @@ class Users extends \Phalcon\Mvc\Model
     {
         $this->hasMany('id', 'Errors', 'reporting_user_id');
         $this->hasMany('id', 'TasksUsers', 'user_id');
+        $this->hasMany('id', 'Entries', 'user_id');
     }
 }

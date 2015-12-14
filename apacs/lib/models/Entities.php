@@ -2,8 +2,7 @@
 
 class Entities extends \Phalcon\Mvc\Model
 {
-	public $id;
-	public $task_id;
+    public static $publicFields = ['id', 'required', 'countPerEntry', 'isMarkable','guiName', 'task_id'];
 
     public function getSource()
     {
@@ -12,7 +11,7 @@ class Entities extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-  	 	$this->hasMany('id', 'EntitiesFields', 'entities_id');
+  	 	$this->hasMany('id', 'EntitiesFields', 'entity_id');
     	$this->belongsTo('task_id', 'Task', 'id');
     }
 }

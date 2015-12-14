@@ -13,47 +13,30 @@ class IndexDataController extends \Phalcon\Mvc\Controller
 		$this->request = $this->getDI()->get('request');
 	}
 
-	public function CreateEntry()
+	public function test()
 	{
-		$taskId = $this->request->getPost('task_id', 'int', false);
-		$pageId = $this->request->getPost('page_id', 'int', false);
-
-		if($taskId == false || $pageId == false)
+/*		$task = Tasks::findFirst(1);
+		$fields = Fieldgroups::findFirst(1);
+		foreach($task->fieldgroups as $fg)
 		{
-			$this->response->setStatusCode(401, 'Wrong request');
-			$this->response->setJsonContent(['error' => 'task_id and page_id must be set']);
-			return;
+			echo 'hejj' . $fg->id;
 		}
 
-		$fields = $this->config->getCollection(5)[0]['indexes'][0]['entities'][0]['fields'];
-		$table = $this->config->getCollection(5)[0]['indexes'][0]['entities'][0]['dbTableName'];
-
-		$genericEntry = new GenericEntry($table, $fields, $this->getDI());
-		//Saving data, return error messages if not possible or input is invalid
-		if(!$genericEntry->Save())
+		foreach($fields->fieldsFieldgroups as $field)
 		{
-			$this->response->setStatusCode(401, 'Could not save entry');
-			$this->response->setJsonContent($genericEntry->GetErrorMessages());
-			return;
+			echo 'hejj' . $field->id;
 		}
-/*
-		//Saving the generic entry
-		//Needed: collection id, task id, page id	
-		$metaInfo = $dataReceiver->GetDataFromFields('POST', ['collection_id', 'task_id', 'page_id']);
+*/
+		$confLoader = new DBConfigurationLoader();
 		
-		$entity = new Entries();
-		$entity->collection_id = $metaInfo['collection_id'];
-		$entity->task_id = $metaInfo['task_id'];
-		$entity->page_id = $metaInfo['page_id'];
-		$entity->data = json_encode($genericEntry->GetData(), true);
-
-		if(!$entity->save()){
-			$this->response->setStatusCode(500, 'Could not save meta entry');
-			return $this->response;
+		$this->response->setJsonContent($confLoader->GetCollection(1));
+		/*$EntitiesFields = EntitiesFields::find(['condition' => 'entities_id = ' . 1]);
+		
+		foreach($EntitiesFields as $field)
+		{
+			//Here we have it!
+			$field->getFields()->toArray();
 		}*/
-
-		$this->response->setStatusCode(201, 'Data saved');
-		$this->response->setJsonContent($genericEntry->GetData());		
 	}
 
 	public function Create()

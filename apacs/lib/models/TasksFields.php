@@ -13,7 +13,7 @@ class TasksFields extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->belongsTo('fields_id', 'Fields', 'id');
-        $this->belongsTo('tasks_id', 'Tasks', 'id');
+        $this->belongsTo('field_id', 'Fields', 'id');
+        $this->belongsTo('task_id', 'Tasks', 'id');
     }
 }

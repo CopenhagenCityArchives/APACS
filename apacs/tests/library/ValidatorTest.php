@@ -46,9 +46,17 @@ class ValidationRuleSetTest extends \UnitTestCase {
 
     public function testValidateWhenNotRequired()
     {
-        $ValidationRule = new ValidationRuleSet('/\w{0,1}/', false, 'Input is not required');
+        $validationRule = new ValidationRuleSet('/\w{0,1}/', false, 'Input should contain zero to one character');
+        $Validator = new Validator($validationRule);
+
+        $this->assertEquals(true, $Validator->IsValid(null), 'should return false if input required and null is given');
+    }
+
+    public function testValidationWhenNullValuesAreIgnored()
+    {
+        $ValidationRule = new ValidationRuleSet('/\w{1,10}/', true, 'Should contain 1 to 10 characters', true);
         $Validator = new Validator($ValidationRule);
-        $this->assertEquals(true, $Validator->IsValid(''), 'should return true if input is not required and empty');
+        $this->assertEquals(true, $Validator->IsValid(null, true), 'should return true if input is not required and empty');        
     }
 
     public function testGetErrorMessage()
