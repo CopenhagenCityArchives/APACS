@@ -16,7 +16,7 @@ class TasksPages extends \Phalcon\Mvc\Model
 
     public function initialize()
     {
-        $this->hasMany('id', 'Pages', 'pages_id');
-        $this->hasMany('id', 'Tasks', 'tasks_id');
+        $this->hasMany('id', 'Pages', 'page_id');
+        $this->hasMany('id', 'Tasks', 'task_id');
     }
 }

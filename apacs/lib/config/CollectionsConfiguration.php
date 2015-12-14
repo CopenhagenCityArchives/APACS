@@ -335,6 +335,7 @@ $collectionsSettings = array(
         'pages_id_field' => 'id',
         'pages_unit_id_field' => 'volume_id',
         'pages_info_condition' => NULL,
+        'pages_image_url' => 'CONCAT(\'/getfile.php?fileId=\', begrav_page.id)',
         
      //   'starbas_field_name' => 'starbas_id',
         //How to link the data level objects to images

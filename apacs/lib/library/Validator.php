@@ -12,7 +12,10 @@
 		 * Validates a given input based on the ValidationRuleSet.
 		 * @return bool Wether or not the input is valid
 		 */
-		public function IsValid($dataToValidate){
+		public function IsValid($dataToValidate, $ignoreNullValues = false){
+			if($dataToValidate == null && $ignoreNullValues == true)
+				return true;
+
 			if($this->_validationRule->required){
 				if(!isset($dataToValidate) || $dataToValidate === NULL  || $dataToValidate === null || trim($dataToValidate) == "")
 					return false;
