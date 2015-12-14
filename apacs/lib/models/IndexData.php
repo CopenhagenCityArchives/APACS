@@ -1,6 +1,6 @@
 <?php
 	
-class IndexDataModel extends \Phalcon\Mvc\Model
+class IndexData extends \Phalcon\Mvc\Model
 {   
 
 	private $_errorInfo;

@@ -79,7 +79,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         
         $metadataLevel = $this->getConfig()->getMetadataLevels($collectionId, $metadataLevelName);
         
-        $metadataModel = new MetadataModel();
+        $metadataModel = new Metadata();
         
         if($metadataLevel['data']){
             $this->returnJson($metadataLevel['data']);
@@ -97,7 +97,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
         $config = $this->getConfig()->getCollection($collectionId);
         $searchableFilters = $this->getConfig()->getSearchableFilters($collectionId);
                 
-        $objectsModel = new ObjectsModel();
+        $objectsModel = new Objects();
         $incomingFilters = $objectsModel->getFilters($searchableFilters, $this->getConfig()->getRequiredFilters($collectionId));
       
         //Filters no set, id filter assumed
@@ -131,7 +131,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller
     public function reportError($collectionId, $itemId, $errorId){
         $errorReports = $this->getConfig()->getErrorReports($collectionId);
         
-        $errorModel = new ErrorReportsModel();
+        $errorModel = new ErrorReports();
         !$errorModel->setError($errorReports, $itemId, $errorId) ? $this->returnError(500, 'Could not set error') : $this->returnJson('Error set');
         
         

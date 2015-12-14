@@ -225,6 +225,7 @@ class ConfigurationLoader
             'helpText' => '',
             'helpLink' => '',
             'dbFieldName' => '',
+            'type' => '1',
             'required' => false,
             'validationRegularExpression' => false,
             'validationErrorMessage' => ''
@@ -243,26 +244,30 @@ class ConfigurationLoader
                 if($collectionConfig['indexes'][$i]['entities'][$j]['isMarkable'] == true){
                     $entity['fields'][] = [
                         'name' => 'entity_topleft',
-                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'validationRegularExpression' => '/^0(\.\d{0,10})$/',
+                        'validationErrorMessage' => 'entity_topleft required',
                         'required' => true,
                         'dbFieldName' => 'entity_topleft',
 
                     ];
                     $entity['fields'][] = [
                         'name' => 'entity_bottomleft',
-                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'validationRegularExpression' => '/^0(\.\d{0,10})$/',
+                        'validationErrorMessage' => 'entity_bottomleft required',
                         'required' => true,
                         'dbFieldName' => 'entity_bottomleft',
                     ];
                     $entity['fields'][] = [
                         'name' => 'entity_topright',
-                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'validationRegularExpression' => '/^0(\.\d{0,10})$/',
+                        'validationErrorMessage' => 'entity_topright required',
                         'required' => true,
                         'dbFieldName' => 'entity_topright',
                     ];   
                     $entity['fields'][] = [
                         'name' => 'entity_bottomright',
-                        'validationRegularExpression' => '^0(\.\d{0,10})$',
+                        'validationRegularExpression' => '/^0(\.\d{0,10})$/',
+                        'validationErrorMessage' => 'entity_bottomright required',
                         'required' => true,
                         'dbFieldName' => 'entity_bottomright',  
                     ];  
@@ -271,7 +276,7 @@ class ConfigurationLoader
                 //Adding an id field. Needed for updating existing posts
                 $entity['fields'][] = [
                     'name' => 'id',
-                    'validationRegularExpression' => '^d{0,}$',
+                    'validationRegularExpression' => '/^\d{0,}$/',
                     'required' => false,
                     'dbFieldName' => 'id',
                 ];

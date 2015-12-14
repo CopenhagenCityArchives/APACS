@@ -1,5 +1,5 @@
 <?php
-include '../lib/models/GenericIndexModel.php';
+include '../lib/models/GenericIndex.php';
 include_once '../lib/library/ConfigurationLoader.php';
 
 class GenericIndexModelTest extends \UnitTestCase {
@@ -7,7 +7,7 @@ class GenericIndexModelTest extends \UnitTestCase {
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         $di = new \Phalcon\Di\FactoryDefault;
 
-        $di->set('collectionConfigurationLoader', function(){
+        $di->set('configuration', function(){
             $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
             return $conf;
         });    
@@ -43,7 +43,7 @@ class GenericIndexModelTest extends \UnitTestCase {
             return 234;
         });
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
         $model->firstname = 'firstnameone';
         $model->lastname = 'lastnameone';
         if(!$model->save())
@@ -55,7 +55,7 @@ class GenericIndexModelTest extends \UnitTestCase {
             return 235;
         });
 
-        $model2 = new GenericIndexModel();
+        $model2 = new GenericIndex();
 
         $model2->firstname2 = 'test';
         $model2->lastname2 = 'test';
@@ -71,7 +71,7 @@ class GenericIndexModelTest extends \UnitTestCase {
             return 235;
         });
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
         $model->firstname2 = 'firstnametwo';
         $model->lastname2 = 'lastnamatwo';
         if(!$model->save())
@@ -87,7 +87,7 @@ class GenericIndexModelTest extends \UnitTestCase {
             return 235;
         });
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
 
         $model->firstname2 = '12 123 2';
         $model->lastname2 = 'lastname';

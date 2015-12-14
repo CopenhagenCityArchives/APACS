@@ -3,7 +3,7 @@
     use Phalcon\Mvc\Micro\Collection as MicroCollection;
  
     $app = new Phalcon\Mvc\Micro();
-
+    
     try {       
         //Register an autoloader
         $loader = new \Phalcon\Loader();
@@ -25,9 +25,13 @@
         });
 
         //Setup the database service
+        $di->set('db', function() use ($di){
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
+        });   
+
         $di->set('database', function() use ($di){
             return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-        });        
+        });               
 
         $di->setShared('response', function(){
             return new  \Phalcon\Http\Response();
@@ -60,14 +64,28 @@
 
         $app->mount($metadata);
         
+        //Info routes collection
+        $info = new MicroCollection();
+        $info->setHandler(new CommonInformationsController());
+
+        $info->get('/units', 'GetUnits');
+        $info->get('/units/{protocol:[0-9]+}', 'GetUnit');
+        $info->post('/units', 'ImportUnits');
+
+        $info->get('/pages', 'GetPages');
+        $info->get('/pages/{page:[0-9]+}', 'GetPage');
+        $info->post('/pages', 'ImportPages');
+
+        $app->mount($info);
+
         //Indexing routes collection
         $indexing = new MicroCollection();
-        $indexing->setHandler(new CommonInformationsController());
+        $indexing->setHandler(new IndexDataController());
 
-        $indexing->get('/protocols', 'GetProtocols');
-        $indexing->get('/protocols/{protocol:[0-9]+}', 'GetProtocol');
+        $indexing->post('/entries', 'CreateEntry');
+        $indexing->get('/entries/{entry:[0-9]+}', 'GetEntry');
 
-        $app->mount($indexing);
+        $app->mount($indexing);        
         
         //Not found-handling
         $app->notFound(function () use ($app, $di) {

@@ -7,7 +7,7 @@ class IndexDataControllerTest extends \UnitTestCase {
     public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
         $di = new \Phalcon\Di\FactoryDefault;
 
-        $di->set('collectionConfigurationLoader', function(){
+        $di->set('configuration', function(){
             $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
             return $conf;
         });    
@@ -46,7 +46,7 @@ class IndexDataControllerTest extends \UnitTestCase {
         $_POST['lastname'] = 'lastname';
         $ctrl->insert(234);
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
         $this->assertEquals(2, count($model->find("lastname = 'lastname'")),'GenericModel should be affiliated with the controller entity id');
     }
 
@@ -59,7 +59,7 @@ class IndexDataControllerTest extends \UnitTestCase {
 
         $this->assertEquals(false, $ctrl->insert(235), 'should return false on error');
 
-        $model = new GenericIndexModel();
+        $model = new GenericIndex();
         $this->assertEquals(0, count($model->find("lastname2 = 'lastname'")), 'should not save data on error');
     }
 }

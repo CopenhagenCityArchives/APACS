@@ -327,6 +327,15 @@ $collectionsSettings = array(
         'gui_required_fields_text' => 'Vælg et år',
         'image_type' => 'image',
         'primary_table_name' => 'begrav_page',
+        'units_table' => 'begrav_volume',
+        'units_id_field' => 'id',
+        'units_info_field' => 'nicetitle',
+        'units_info_condition' => 'is_public = 1 AND volumetype_id = 1',
+        'pages_table' => 'begrav_page',
+        'pages_id_field' => 'id',
+        'pages_unit_id_field' => 'volume_id',
+        'pages_info_condition' => NULL,
+        
      //   'starbas_field_name' => 'starbas_id',
         //How to link the data level objects to images
         'objects_query' => 'select begrav_page.id, year, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL

@@ -3,7 +3,7 @@
  *
  * This test is not run at the moment. The IndexDataModel may be obsolete (GenericIndexModel)
  */
-include '../lib/models/IndexDataModel.php';
+include '../lib/models/IndexData.php';
 include 'TestDatabaseConnection.php';
 
 class IndexDataModelTest extends \UnitTestCase {
@@ -29,7 +29,7 @@ class IndexDataModelTest extends \UnitTestCase {
         );
 
         $di->set('collectionConfigurationLoader', function(){
-            $conf = new CollectionsConfigurationModel();
+            $conf = new CollectionsConfiguration();
             $conf->loadConfig(require('./mockData/EntryConfMock.php'));
             return $conf;
         });
@@ -44,7 +44,7 @@ class IndexDataModelTest extends \UnitTestCase {
 
     public function testReturnErrorOnValidationError()
     {
-        $idm = new IndexDataModel();
+        $idm = new IndexData();
 
         $done = $idm->Insert(1,1,1, $this->configuration);
 
@@ -54,7 +54,7 @@ class IndexDataModelTest extends \UnitTestCase {
 
     public function testInsertData()
     {
-        $idm = new IndexDataModel();
+        $idm = new IndexData();
         
         //Expecting 0 rows
         $this->assertEquals(0, $this->testDatabase->getConnection()->getRowCount('insert_table'), 'Test table should have 0 rows');

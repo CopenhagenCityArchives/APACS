@@ -1,6 +1,6 @@
 <?php 
 
-class GenericIndexModel extends \Phalcon\Mvc\Model
+class GenericIndex extends \Phalcon\Mvc\Model
 {
     private $_entity;
 
@@ -14,7 +14,7 @@ class GenericIndexModel extends \Phalcon\Mvc\Model
 
         $this->_entity = $this->
         getDI()->
-        get('collectionConfigurationLoader')->
+        get('configuration')->
         getIndexEntity(
             $this->getDI()->get('currentEntityId')
         );

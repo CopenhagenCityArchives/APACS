@@ -18,9 +18,9 @@ class ValidationRuleSetTest extends \UnitTestCase {
         $validationRule = new ValidationRuleSet('/\d{1}/', false, 'Input should contain a single digit');
         $Validator = new Validator($validationRule);
 
-        $this->assertEquals(true, $Validator->Validate(1), 'Should return true when data is valid');
+        $this->assertEquals(true, $Validator->IsValid(1), 'Should return true when data is valid');
 
-        $this->assertEquals(false, $Validator->Validate("a"), 'Should return false when data is invalid');
+        $this->assertEquals(false, $Validator->IsValid("a"), 'Should return false when data is invalid');
     }
 
     public function testSupportForFalseRegularExpression()
@@ -28,7 +28,7 @@ class ValidationRuleSetTest extends \UnitTestCase {
         $validationRule = new ValidationRuleSet(false, false, 'Really not a required field');
         $Validator = new Validator($validationRule);
 
-        $this->assertEquals(true, $Validator->Validate(1));
+        $this->assertEquals(true, $Validator->IsValid(1));
     }
 
     public function testValidateWhenRequired()
@@ -36,19 +36,19 @@ class ValidationRuleSetTest extends \UnitTestCase {
         $validationRule = new ValidationRuleSet('/\w{0,1}/', true, 'Input should contain zero to one character');
         $Validator = new Validator($validationRule);
 
-        $this->assertEquals(false, $Validator->Validate(null), 'should return false if input required and null is given');
+        $this->assertEquals(false, $Validator->IsValid(null), 'should return false if input required and null is given');
 
-        $this->assertEquals(false, $Validator->Validate(NULL), 'should return false if input required and null is given');
+        $this->assertEquals(false, $Validator->IsValid(NULL), 'should return false if input required and null is given');
 
 
-        $this->assertEquals(false, $Validator->Validate(""), 'should return false if input required and empty string is given');
+        $this->assertEquals(false, $Validator->IsValid(""), 'should return false if input required and empty string is given');
     }
 
     public function testValidateWhenNotRequired()
     {
         $ValidationRule = new ValidationRuleSet('/\w{0,1}/', false, 'Input is not required');
         $Validator = new Validator($ValidationRule);
-        $this->assertEquals(true, $Validator->Validate(''), 'should return true if input is not required and empty');
+        $this->assertEquals(true, $Validator->IsValid(''), 'should return true if input is not required and empty');
     }
 
     public function testGetErrorMessage()

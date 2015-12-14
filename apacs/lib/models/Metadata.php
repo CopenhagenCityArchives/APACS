@@ -2,7 +2,7 @@
 /**
  * Handles loading of metadata from tables as configured
  */
-class MetadataModel extends \Phalcon\Mvc\Model
+class Metadata extends \Phalcon\Mvc\Model
 {        
     /**
      * Creates a metadata search query based on the metadata level and the search input

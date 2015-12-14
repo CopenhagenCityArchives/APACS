@@ -2,7 +2,7 @@
 /**
  * Handles error reporting
  */
-class ErrorReportsModel extends \Phalcon\Mvc\Model
+class ErrorReports extends \Phalcon\Mvc\Model
 {
     
     public function setError($errorConfs, $itemId, $errorId)
