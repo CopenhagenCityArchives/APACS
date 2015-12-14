@@ -1,10 +1,10 @@
 <?php
 
-class InsertStatementBuilder
+class InsertStatementBuilder implements IStatementBuilder
 {
 	private $tableName;
 	private $fields;
-	public $statement;
+	private $statement;
 
 	/**
 	 * Constructor. Takes a table name and an array of fieldss
@@ -22,6 +22,11 @@ class InsertStatementBuilder
 	 */
 	public function BuildStatement(){
 		$this->statement = "INSERT INTO " . $this->tableName . " (" . $this->getFieldNames() . ") VALUES " . $this->getFieldPlaceholders();
+	}
+
+	public function GetStatement()
+	{
+		return $this->statement;
 	}
 
 	private function getFieldNames()

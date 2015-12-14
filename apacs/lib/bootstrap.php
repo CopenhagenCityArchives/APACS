@@ -81,14 +81,25 @@
         $info->get('/collections2', 'GetCollections');
         $info->get('/collections2/{collectionId:[0-9]+}', 'GetCollection');
 
+        $info->post('/entries', 'SaveEntry');
+        $info->get('/entries', 'GetEntries');
+        $info->get('/entries/{entry:[0-9]+}', 'GetEntry');
+
         $app->mount($info);
 
-        //Indexing routes collection
+        //Users routes
+        $users = new MicroCollection();
+        $users->setHandler(new UserController());
+
+        $users->get('/activeusers', 'GetActiveUsers');
+        $users->get('/users', 'GetUsers');
+        $users->get('/users/{userId:{[0-9]+}', 'GetUser');
+
+        $app->mount($users);          
+
+        //Test routes collection
         $indexing = new MicroCollection();
         $indexing->setHandler(new IndexDataController());
-
-        $indexing->post('/entries', 'CreateEntry');
-        $indexing->get('/entries/{entry:[0-9]+}', 'GetEntry');
 
 $indexing->get('/new_collections/{collectionId:[0-9]+}', 'test');
 

@@ -3,26 +3,48 @@
 class GenericEntry
 {
 	private $di;
-	private $_dr;
+
 	private $_errorMessages;
+	
 	private $_fields;
 	private $_mainTableName;
+	
+	private $_fieldValues;
+
 	private $_dataIsNormalized;
 
-	function __construct($tablename, $fields, \Phalcon\DiInterface $di)
+	private $_loadStatement;
+	private $_insertStatement;
+
+	/**
+	 * Constructor
+	 * @param Array Entity information: An array of entity informations, including database tablename and fields
+	 * @param Array Field values: An array of fields in the form [fieldname => 'the_name_of_the_field', value => 'input_value']
+	 * @param \Phalcon\DiInterface Phalcon Dependency Injection Service
+	 */
+	function __construct($entityInfo, $fieldValues, \Phalcon\DiInterface $di)
 	{
 		$this->di = $di;
 
-		$this->dr = new DataReceiver($this->di->get('request'));
+	//	$this->dr = new DataReceiver($this->di->get('request'));
 		$this->_errorMessages = [];
-		$this->_fields = $fields;
-		$this->_mainTableName = $tablename;
-		$this->_dataIsNormalized = false;
-	}
+		$this->_fields = $entityInfo['fields'];
+		$this->_mainTableName = $entityInfo['tablename'];
 
-	public function GetErrorMessages()
-	{
-		return $this->_errorMessages;
+		$this->_fieldValues = $fieldValues;
+
+		$this->_dataIsNormalized = false;
+
+		$this->_loadStatement = null;
+		$this->_insertStatement = null;
+
+		$this->_dbConnection = $di->get('db');
+		
+		//Map values and fields if values are given
+		if(count($this->_fieldValues) > 0)
+		{
+			$this->mapValuesAndFields();
+		}
 	}
 
 	public function GetData()
@@ -30,7 +52,7 @@ class GenericEntry
 		if(!$this->_dataIsNormalized)
 			return false;
 
-		$this->getAndValidateData();
+		$this->ValidateValues();
 
 		$data = [];
 		for($i = 0; $i < count($this->_fields); $i++)
@@ -42,48 +64,148 @@ class GenericEntry
 		return $data;
 	}
 
+	/**
+	 * Saves an entry based on the metadata and the concrete input fields
+	 */
 	public function Save()
 	{
-		if(!$this->getAndValidateData())
+		//Let's start a transaction
+		$this->_dbConnection->begin();
+
+		if(!$this->ValidateValues()){
+			$this->_dbConnection->rollback();
 			return false;
+		}
 
-		if(!$this->getOrSaveNormalizedData())
+		if(!$this->getOrSaveNormalizedData()){
+			$this->_dbConnection->rollback();
 			return false;
+		}
 
-		$queryBuilder = new InsertStatementBuilder($this->_mainTableName, $this->_fields);
-		$queryBuilder->BuildStatement();
-
-		$connection = $this->di->get('db');
+		if($this->_insertStatement == null){
+			$queryBuilder = new InsertStatementBuilder($this->_mainTableName, $this->_fields);
+			$queryBuilder->BuildStatement();
+			$this->_insertStatement = $queryBuilder->GetStatement();
+		}
 
 		//Save entry
-		if(!$connection->execute($queryBuilder->statement, $this->mapFieldValues()))
+		if(!$this->_dbConnection->execute($this->_insertStatement, $this->mapFieldValues()))
 		{
-			$this->_errorMessages[] = 'Could not save entry:' . $connection->getErrorInfo()[0];
+			$this->_errorMessages[] = 'Could not save entry:' . $this->_dbConnection->getErrorInfo()[0];
+			$this->_dbConnection->rollback();
+			return false;
+		}
+
+		//Committing the database changes
+		if(!$this->_dbConnection->commit())
+		{
+			$this->_errorMessages[] = 'Could not save entry:' . $this->_dbConnection->getErrorInfo()[0];
 			return false;
 		}
 
 		return true;
 	}
 
-	private function getAndValidateData()
+	public function Update($id)
 	{
-		$isValid = true;
-		//Get inputs and validate them
+		if(!$this->ValidateValues()){
+			$this->_dbConnection->rollback();
+			return false;
+		}
+
+		if(!$this->getOrSaveNormalizedData()){
+			$this->_dbConnection->rollback();
+			return false;
+		}
+
+		if($this->_updateStatement == null){
+			$queryBuilder = new UpdateStatementBuilder($this->_mainTableName, $this->_fields);
+			$queryBuilder->BuildStatement();
+			$this->_updateStatement = $queryBuilder->GetStatement();
+		}
+
+		//Save entry
+		if(!$this->_dbConnection->execute($this->_updateStatement, $this->mapFieldValues()))
+		{
+			$this->_errorMessages[] = 'Could not update entry:' . $this->_dbConnection->getErrorInfo()[0];
+			$this->_dbConnection->rollback();
+			return false;
+		}
+
+		$this->_dbConnection->commit();
+		return true;
+	}
+
+	//TODO: Should be able to load by primary key and by post_id
+	public function Load($id)
+	{
+		if($this->_loadStatement == null){
+			$queryBuilder = new LoadStatementBuilder($this->_mainTableName, $this->_fields);
+			$queryBuilder->BuildStatement();
+			$this->_loadStatement = $queryBuilder->GetStatement();
+		}
+
+		$results = $this->_dbConnection->query($this->_loadStatement, ['id' => $id]);
+		$results->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		
+		$entitiesFields = [];
+		$i = 0;
+		while($cursor = $results->fetchArray())
+		{
+			$entitiesFields[$i]['entity_id'] = '';
+			$entitiesFields[$i]['fields'] = [];
+			$j = 0;
+			foreach($this->_fields as $field){
+				$entitiesFields[$i]['fields'][$j]['fieldname'] = $field['dbFieldName'];
+				$entitiesFields[$i]['fields'][$j]['value'] = $cursor[$field['dbFieldName']];
+				$j++;
+				
+			}
+	//		$results->next();
+			$i++;
+		}
+		return $entitiesFields;
+	//	return $results->fetchAll();
+	}
+
+	private function mapValuesAndFields()
+	{
+		//Go through all fields as given in metadata
 		for($i = 0; $i < count($this->_fields); $i++)
 		{
-			$this->_fields[$i]['value'] = $this->dr->Value('POST',$this->_fields[$i]['name']);
-			
+			$key = array_search($this->_fields[$i]['dbFieldName'], array_column($this->_fieldValues, 'fieldname'));
+
+			if($key !== false)
+			{
+				$this->_fields[$i]['value'] = $this->_fieldValues[$key]['value'];
+			}
+			else{
+				//echo 'couldnt find key :' . $this->_fields[$i]['dbFieldName'];
+				$this->_fields[$i]['value'] = null;
+			}
+		}
+	}
+
+	public function ValidateValues($ignoreNulls = false)
+	{
+		$isValid = true;
+
+		for($i = 0; $i < count($this->_fields); $i++)
+		{
 			$validator = new Validator(
 				new ValidationRuleSet(
 					$this->_fields[$i]['validationRegularExpression'],
 					$this->_fields[$i]['required'],
-					$this->_fields[$i]['validationErrorMessage'])
+					$this->_fields[$i]['validationErrorMessage']
+				)
 			);
 
-			//TODO: Get validation error messages
-			if(!$validator->isValid($this->_fields[$i]['value']))
+			//Get validation error messages
+			if(!$validator->isValid($this->_fields[$i]['value'], $ignoreNulls))
 			{
-				$this->_errorMessages[] = $validator->GetErrorMessage();
+//				echo $validator->GetErrorMessage() . ' ' .$this->_fields[$i]['dbFieldName'];
+				$this->_fields[$i]['isValid'] = false;
+				$this->_fields[$i]['errorMessage'] = $validator->GetErrorMessage();
 				$isValid = false;
 			}
 		}
@@ -94,6 +216,7 @@ class GenericEntry
 	private function getOrSaveNormalizedData()
 	{
 		$normalizedDataIsValid = true;
+
 		//Get or save normalized data
 		for($i = 0; $i < count($this->_fields); $i++)
 		{
@@ -145,11 +268,11 @@ class GenericEntry
 	private function getNormalizedId($table, $entryField, $value, $newValueAllowed)
 	{
 		$query = 'SELECT id FROM ' . $table . ' WHERE ' . $entryField . ' = "' . $value . '" LIMIT 1';
-		$resultSet = $this->di->get('db')->query($query);
+		$resultSet = $this->_dbConnection->query($query);
         $resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
         $result = $resultSet->fetchAll();
 
-		if(count($result) !== 1 && $newValueAllowed == true)
+		if(count($result) == 0 && $newValueAllowed == true)
 		{
 			return $this->saveNormalizedValueGetId($table, $entryField, $value);
 		}
@@ -165,11 +288,10 @@ class GenericEntry
 	private function saveNormalizedValueGetId($tablename, $entryField, $value)
 	{
 		$query = 'INSERT INTO ' . $tablename . ' (' . $entryField . ') VALUES ("' . $value .'")';
-		$con = $this->di->get('db');
 		
-		if($con->query($query))
+		if($this->_dbConnection->query($query))
 		{
-			return $con->lastInsertId();
+			return $this->_dbConnection->lastInsertId();
 		}
 
 		return false;

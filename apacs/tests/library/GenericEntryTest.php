@@ -30,70 +30,111 @@ class GenericEntryTest extends \UnitTestCase {
         parent::tearDown();
         $this->di->get('db')->query('DROP TABLE IF EXISTS entry_table');
         $this->di->get('db')->query('DROP TABLE IF EXISTS normalized_table');
-       	$_GET = array();
+
         $this->ge = null;
+        $this->entity = [];
     }
 
     public function createTables()
     {
        $this->di->get('db')->query('DROP TABLE IF EXISTS entry_table');
        $this->di->get('db')->query('DROP TABLE IF EXISTS normalized_table');
-       $this->di->get('db')->query('CREATE TABLE entry_table (id INT(11) NOT NULL AUTO_INCREMENT, testFieldDb CHAR(50), normalizedFieldDb CHAR(50), PRIMARY KEY (`id`))');
+       $this->di->get('db')->query('CREATE TABLE entry_table (id INT(11) NOT NULL AUTO_INCREMENT, testFieldDb CHAR(50), normalizedFieldDb CHAR(50), post_id INT(11), PRIMARY KEY (`id`))');
        $this->di->get('db')->query('CREATE TABLE normalized_table (id INT(11) NOT NULL AUTO_INCREMENT, normalized_field CHAR(50), PRIMARY KEY (`id`))');
     }
 
     public function setSingleFieldAndTable()
     {
-        $this->tablename = 'entry_table';
-        $this->fields = [
-            [   
-                'name' => 'testField', 
-                'dbFieldName' => 'testFieldDb', 
-                'type' => '1', 
-                'required' => true,
-                'validationRegularExpression' => '/\d{0,1}/',
-                'validationErrorMessage' => 'Ét ciffer tilladt',
-                'maxLength' => 150
+        
+        $this->entity = [
+            'tablename' => 'entry_table',
+            'fields' => [
+                [   
+                    'name' => 'testField', 
+                    'dbFieldName' => 'testFieldDb', 
+                    'type' => '1', 
+                    'required' => true,
+                    'validationRegularExpression' => '/^(.{2,})$/',
+                    'validationErrorMessage' => 'Minimum to tegn',
+                    'maxLength' => 150
+                ]
             ]
         ];
     }
 
     public function setNormalizedFieldsAndTable()
     {
-        $this->tablename = 'entry_table';
-        $this->fields = [
-            [   
-                'name' => 'testField', 
-                'dbFieldName' => 'testFieldDb', 
-                'type' => '1', 
-                'required' => true,
-                'validationRegularExpression' => '/\d{0,1}/',
-                'validationErrorMessage' => 'Ét ciffer tilladt',
-                'maxLength' => 150
-            ],
-            [   
-                'name' => 'normalizedField', 
-                'dbFieldName' => 'normalizedFieldDb', 
-                'type' => '1:m',
-                'normalizedTable' => 'normalized_table', 
-                'normalizedField' => 'normalized_field',
-                'normalizedAllowNewValue' => true,
-                'required' => true,
-                'validationRegularExpression' => '/\d{0,1}/',
-                'validationErrorMessage' => 'Ét ciffer tilladt',
-                'maxLength' => 150
-            ]            
+        $this->entity = [
+            'tablename' => 'entry_table',
+            'fields' => [       
+                [   
+                    'name' => 'testField', 
+                    'dbFieldName' => 'testFieldDb', 
+                    'type' => '1', 
+                    'required' => true,
+                    'validationRegularExpression' => '/^(.{2,})$/',
+                    'validationErrorMessage' => 'Minimum to tegn',
+                    'maxLength' => 150
+                ],
+                [   
+                    'name' => 'normalizedField', 
+                    'dbFieldName' => 'normalizedFieldDb', 
+                    'type' => '1:m',
+                    'normalizedTable' => 'normalized_table', 
+                    'normalizedField' => 'normalized_field',
+                    'normalizedAllowNewValue' => true,
+                    'required' => true,
+                    'validationRegularExpression' => '/^(.{2,})$/',
+                    'validationErrorMessage' => 'Minimum to tegn',
+                    'maxLength' => 150
+                ]            
+            ]
         ];
     } 
+
+    public function invalidInputValues()
+    {
+        return [
+            [
+                'fieldname' => 'testFieldDb',
+                'value' => ''
+            ],
+            [
+                'fieldname' => 'normalizedField',
+                'value' => 'valueToNormalize'
+            ]
+        ];
+    }
+
+    public function inputValues()
+    {
+        return [
+            [
+                'fieldname' => 'testFieldDb',
+                'value' => 'testValue'
+            ],
+            [
+                'fieldname' => 'normalizedFieldDb',
+                'value' => 'valueToNormalize'
+            ]
+        ];
+    }
 
     public function testValidatation()
     {
         $this->createTables();
         $this->setSingleFieldAndTable();
 
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
-        $this->assertEquals(false, $this->ge->save(), 'should return false when data is invalid');
-        $this->assertCount(1, $this->ge->GetErrorMessages(), 'should set error message if validation error');
+        $this->ge = new GenericEntry($this->entity, $this->invalidInputValues(), $this->di);
+        $this->assertEquals(false, $this->ge->Save(), 'should return false when data is invalid');
+    }
+
+    public function testPartialValidation()
+    {
+        $this->setNormalizedFieldsAndTable();
+
+        $this->ge = new GenericEntry($this->entity, [['fieldname' => 'testFieldDb', 'value' => 'v']], $this->di);
+        $this->assertEquals(false, $this->ge->ValidateValues(true), 'should return false when data is invalid');
     }
 
     public function testSaving()
@@ -101,8 +142,7 @@ class GenericEntryTest extends \UnitTestCase {
         $this->createTables();
         $this->setSingleFieldAndTable();
 
-        $_POST['testField'] = 'testValue';
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
+        $this->ge = new GenericEntry($this->entity, $this->inputValues(), $this->di);
         $this->assertEquals(true, $this->ge->save(), 'should return true when saving is done');
     }
 
@@ -111,8 +151,7 @@ class GenericEntryTest extends \UnitTestCase {
         $this->createTables();
         $this->setSingleFieldAndTable();
 
-        $_POST['testField'] = 'testValue';
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
+        $this->ge = new GenericEntry($this->entity, $this->inputValues(), $this->di);
 
         $this->ge->save();
 
@@ -128,11 +167,8 @@ class GenericEntryTest extends \UnitTestCase {
         $this->createTables();
         $this->setNormalizedFieldsAndTable();
 
-        $_POST['testField'] = 'testValue';
-        $_POST['normalizedField'] = 'valueToNormalize';
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
-        $this->assertEquals(true, $this->ge->save(), 'should return true when saving is done');
-
+        $this->ge = new GenericEntry($this->entity, $this->inputValues(), $this->di);
+        $this->assertEquals(true, $this->ge->Save(), 'should return true when saving is done');
     }      
 
     public function testSavedNormalizedDataNewValue()
@@ -140,11 +176,9 @@ class GenericEntryTest extends \UnitTestCase {
         $this->createTables();
         $this->setNormalizedFieldsAndTable();
 
-        $_POST['testField'] = 'testValue';
-        $_POST['normalizedField'] = 'valueToNormalize';
-
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
-        $this->ge->save();
+        $this->ge = new GenericEntry($this->entity, [[ 'fieldname' => 'testFieldDb', 'value' => 'testValue' ],[ 'fieldname' => 'normalizedFieldDb', 'value' => 'valueToNormalize' ]], $this->di);
+        
+        $this->assertEquals(true, $this->ge->Save(), 'should save the normalized value in the normalization table');   
 
         $resultSet = $this->di->get('db')->query('select * from normalized_table limit 1');
         $resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
@@ -166,11 +200,8 @@ class GenericEntryTest extends \UnitTestCase {
 
         $this->di->get('db')->execute('INSERT INTO normalized_table (normalized_field) VALUES ("existing_value")');
 
-        $_POST['testField'] = 'testValue';
-        $_POST['normalizedField'] = 'existing_value';
-
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
-        $this->assertEquals(true, $this->ge->save(), 'should return true when saving is done');
+        $this->ge = new GenericEntry( $this->entity, [[ 'fieldname' => 'testFieldDb', 'value' => 'testValue' ],[ 'fieldname' => 'normalizedFieldDb', 'value' => 'existing_value' ]], $this->di);
+        $this->assertEquals(true, $this->ge->Save(), 'should return true when saving is done');
 
         $resultSet = $this->di->get('db')->query('select * from entry_table limit 1');
         $resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
@@ -183,16 +214,11 @@ class GenericEntryTest extends \UnitTestCase {
     {
         $this->createTables();
         $this->setNormalizedFieldsAndTable();
-        $this->fields[1]['normalizedAllowNewValue'] = false;
+        $this->entity['fields'][1]['normalizedAllowNewValue'] = false;
 
-        $_POST['testField'] = 'testValue';
-        $_POST['normalizedField'] = 'thisValueDoesNotExist';
+        $this->ge = new GenericEntry($this->entity, [[ 'fieldname' => 'testFieldDb', 'value' => 'testValue' ],[ 'fieldname' => 'normalizedFieldDb', 'value' => 'thisValueDoesNotExist' ]], $this->di);
 
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
-
-        $this->assertEquals($this->ge->save(), false, 'should return false when normalized data does not exist');
-
-        $this->assertCount(1, $this->ge->GetErrorMessages(), 'should return error message');
+        $this->assertEquals(false, $this->ge->Save(), 'should return false when normalized data does not exist');
     }   
 
     public function testGetData()
@@ -200,14 +226,33 @@ class GenericEntryTest extends \UnitTestCase {
         $this->createTables();
         $this->setNormalizedFieldsAndTable();
 
-        $_POST['testField'] = 'testValue';
-        $_POST['normalizedField'] = 'testValue2';
-
-        $this->ge = new GenericEntry($this->tablename, $this->fields, $this->di);
+        $this->ge = new GenericEntry($this->entity, [[ 'fieldname' => 'testFieldDb', 'value' => 'testValue' ],[ 'fieldname' => 'normalizedFieldDb', 'value' => 'testValue2' ]], $this->di);
         $this->ge->Save();
         $data = $this->ge->GetData();
 
         $this->assertEquals(2, count($data), 'should return array with fields and their values');
-        $this->assertEquals('testValue', $data[$this->fields[0]['name']], 'should save data');
+        $this->assertEquals('testValue', $data[$this->entity[0]['dbFieldName']], 'should save data');
     }
+
+    public function testLoadData()
+    {
+        $this->createTables();
+        $this->setNormalizedFieldsAndTable();     
+
+        $this->di->get('db')->execute('INSERT INTO entry_table (testFieldDb) VALUES ("new_value")');
+        
+        $this->ge = new GenericEntry($this->entity, [], $this->di);
+        $this->assertEquals(1, count($this->ge->Load(1)), 'should load row of data by id');
+    }
+
+    public function testLoadedDataStructure()
+    {
+        $this->createTables();
+        $this->setNormalizedFieldsAndTable();     
+
+        $this->di->get('db')->execute('INSERT INTO entry_table (testFieldDb) VALUES ("new_value")');
+        
+        $this->ge = new GenericEntry($this->entity, [], $this->di);
+        $this->assertEquals(['fieldname' => 'testFieldDb', 'value' => 'new_value'], $this->ge->Load(1)[0]['fields'][0], 'should load row of data by id');
+    }    
 }
