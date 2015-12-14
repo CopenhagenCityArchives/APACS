@@ -27,15 +27,15 @@ class Pages extends \Phalcon\Mvc\Model
 
     private function getImportCreateSQL()
     {
-        return 'INSERT INTO ' . $this->getSource() . ' (concrete_page_id, collection_id, concrete_unit_id, tablename) SELECT :id, :collectionId, :unitId, ":table" FROM :table :conditions';
+        return 'INSERT INTO ' . $this->getSource() . ' (concrete_page_id, collection_id, concrete_unit_id, tablename, image_url) SELECT :id, :collectionId, :unitId, ":table", :imageUrl FROM :table :conditions';
     }
 
     private function getImportUpdateSQL()
     {
-        return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_page_id = :table.:id SET tablename = ":table" :conditions';
+        return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_page_id = :table.:id SET tablename = ":table", image_url = :imageUrl :conditions';
     }
 
-    public function Import($type, $collectionId, $idField, $unitIdField, $table, $conditions = NULL)
+    public function Import($type, $collectionId, $idField, $unitIdField, $table, $image_url_field, $conditions = NULL)
     {
         if($type == self::OPERATION_TYPE_CREATE && $this->dataAlreadyImported('apacs_pages', $collectionId)){
             $this->status = ['error' => 'pages are already imported (collection and tablename already exists']; 
@@ -48,6 +48,7 @@ class Pages extends \Phalcon\Mvc\Model
         $sql = str_replace(':id', $idField, $sql);
         $sql = str_replace(':unitId', $unitIdField, $sql);
         $sql = str_replace(':table', $table, $sql);
+        $sql = str_replace(':imageUrl', $image_url_field, $sql);
         $sql = str_replace(':conditions', $conditions == NULL ? '' : 'WHERE ' . $conditions , $sql);
 
         return $this->runQueryGetStatus($sql);
