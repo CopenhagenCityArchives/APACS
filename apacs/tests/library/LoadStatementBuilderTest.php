@@ -22,6 +22,16 @@ class LoadStatementBuilderTest extends \UnitTestCase {
     	$this->assertEquals("SELECT `field1` FROM tableName WHERE tableName.id = :id", $qb1->GetStatement(), 'should build statement with single field');
     }
 
+    public function testBuildLoadQueryCustomKey()
+    {
+        $tableName = 'tableName';
+        $fields = [['name' => 'field1', 'dbFieldName' => 'field1']];
+
+        $qb1 = new LoadStatementBuilder($tableName, $fields, 'another_key');
+        $qb1->BuildStatement();
+        $this->assertEquals("SELECT `field1` FROM tableName WHERE tableName.another_key = :id", $qb1->GetStatement(), 'should build statement with custom key name');
+    }
+
     public function testBuildLoadQueryWithJoins()
     {
         $tableName = 'tableName';

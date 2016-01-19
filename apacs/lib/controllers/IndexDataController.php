@@ -1,10 +1,15 @@
 <?php
-
+use Phalcon\Filter;
+use Phalcon\Mvc\Model\Resultset;
+use JsonSchema\Validator;
+require_once __DIR__ . '../../library/GenericEntry.php';
 class IndexDataController extends \Phalcon\Mvc\Controller
 {
 	private $config;
 	private $response;
 	private $request;
+
+	private $dbCon;
 
 	public function onConstruct()
 	{
@@ -13,60 +18,57 @@ class IndexDataController extends \Phalcon\Mvc\Controller
 		$this->request = $this->getDI()->get('request');
 	}
 
-	public function test()
+	/*
+	Flow:
+		Check user access rights (authorize and authenticate)
+		Get configuration for the current collection and volume
+		Validate input
+		Build insert statement
+		Save data
+		Update stats
+		Return response
+	 */
+
+	public function SaveEntry($taskId)
 	{
-/*		$task = Tasks::findFirst(1);
-		$fields = Fieldgroups::findFirst(1);
-		foreach($task->fieldgroups as $fg)
+		//This is incomming data!
+		$jsonData = json_decode(file_get_contents('php://input'), true);
+
+		$entities = Entities::LoadEntitiesHierarchy($taskId);
+
+		$this->dbCon = $this->getDI()->get('db');
+
+		$errorMessages = Entries::ValidateJSONData(Tasks::GetFieldsSchema($taskId), $jsonData);
+		if(count($errorMessages) > 0)
 		{
-			echo 'hejj' . $fg->id;
+			$this->response->setStatusCode('400', 'Input error');
+			$this->response->setJsonContent(['message' => 'all data saved']);
 		}
 
-		foreach($fields->fieldsFieldgroups as $field)
-		{
-			echo 'hejj' . $field->id;
-		}
-*/
-		$confLoader = new DBConfigurationLoader();
-		
-		$this->response->setJsonContent($confLoader->GetCollection(1));
-		/*$EntitiesFields = EntitiesFields::find(['condition' => 'entities_id = ' . 1]);
-		
-		foreach($EntitiesFields as $field)
-		{
-			//Here we have it!
-			$field->getFields()->toArray();
-		}*/
-	}
+		//Saving data based on the entity hierarcy
+		//We traverse the entity hierarchy and the data hierarchy in parallel
+		foreach($entities as $entity)
+		{		
+			//Let's start a transaction
+			$this->dbCon->begin();
+			try{
+				Entries::SaveEntryRecursively($this->dbCon, $entity, $jsonData);
+			}
+			catch(Exception $e)
+			{
+				$this->dbCon->rollback();
+				$this->response->setStatusCode(401, 'Could not save entry');
+				$this->response->setJsonContent($e);
+				return;				
+			}
 
-	public function Create()
-	{
-		$dataReceiver = new DataReceiver(new Phalcon\Http\Request());
-		$data = $dataReceiver->GetDataFromFields('POST', $this->config->getIndexEntity($entityId)['fields']);
-		
-		//Needed: collection id, task id, page id	
-		$metaInfo = $dataReceiver->GetDataFromFields('POST', ['collection_id', 'task_id', 'page_id']);
-		
-		$entity = new Entity();
-		$entity->collection_id = $metaInfo['collection_id'];
-		$entity->task_id = $metaInfo['task_id'];
-		$entity->page_id = $metaInfo['page_id'];
-		$entity->data = json_encode($data, true);
-
-		if(!$entity->save()){
-			$this->response->setStatusCode('500', 'Could not save entity');
-			return $this->response;
+			$this->dbCon->commit();
 		}
 
-		$saver = new GenericIndex();
-		if(!$saver->save($data)){
-			$this->response->setStatusCode('401', 'Could not save data');
-			$this->response->setJsonContent($saver->getErrorMessages());
-			return $this->response;
-		}
+		//$ge = new GenericEntry($entities[0]['dbTableName'], $entities[0]['fields'], $this->dbCon);
 
-		$this->response->setJsonContent($data);
-		return $this->response;
+		$this->response->setStatusCode('200', 'OK');
+		$this->response->setJsonContent(['message' => 'all data saved']);
 	}
 
 	public function Update()
@@ -126,49 +128,78 @@ class IndexDataController extends \Phalcon\Mvc\Controller
 		return $this->response;
 	}
 	
-	public function insert($entityId)
+	public function GetEntries()
 	{
-				/*
-		Flow:
-			Check user access rights (authorize and authenticate)
-			Get configuration for the current collection and volume
-			Validate input
-			Build insert statement
-			Save data
-			Update stats
-			Return response
-		 */
-		
-		//if(!$user->hasAccess)
-		//	throw new Exeception("You don't have access to this action");
-		//	
-		//if(!$user->isAuthorized)
-		//	throw new Exception("Unauthorized access!");
+		$pageId = $this->request->getQuery('page_id', 'int', false);
+		$taskId = $this->request->getQuery('task_id', 'int', false);
 
-		//Setting the entity id for usage in controller and models
-        $this->getDI()->set('currentEntityId', function() use ($entityId){
-            return $entityId;
-        });
-
-		$this->response = new \Phalcon\Http\Response();
-		$entity = new GenericIndex();
-		$dataReceiver = new DataReceiver(new Phalcon\Http\Request());
-
-		$valuesFieldsMap = $dataReceiver->GetDataFromFields('POST', $this->config->getIndexEntity($entityId)['fields']);
-
-		if(!$entity->save($valuesFieldsMap)){
-			foreach($entity->getMessages() as $message){
-				$errorMessages[] = $message;
-			}
-
-			if(count($errorMessages) > 0){
-				$this->response->setStatusCode('??', 'validation error');
-				$this->response->setJsonContent($errorMessages);
-			}
-
-			return false;
+		if($pageId == false)
+		{
+			$this->error('page_id must be set');
+			return;
 		}
 
-		return true;
+		$conditions = 'page_id = ' . $pageId;
+
+		if($taskId !== false)
+		{
+			$conditions .= ' AND task_id = ' . $taskId; 
+		}
+
+		$resultSet = Entries::find(['conditions' => $conditions]);
+
+		$this->response->setJsonContent($resultSet->toArray());
+	}
+
+	public function GetEntry($entryId)
+	{
+		$entry = Entries::findFirst(['id' => $entryId]);
+		$task = $entry->getTasks();
+
+		$entities = $task->getEntities();
+
+		$result = [];
+
+		//Go through entities, get values and map them to fields
+		for($i = 0; $i < count($entities); $i++){
+			$entity = $entities [$i];
+
+			//Load entity fields
+			$query = $this->modelsManager->createQuery('SELECT f.* FROM Entities AS e LEFT JOIN EntitiesFields as ef ON e.id = ef.entity_id LEFT JOIN Fields as f ON ef.field_id = f.id WHERE e.id = ' . $entity->id);			
+			$fields  = $query->execute()->toArray();
+			
+			//Instantiate loader for concrete entry values
+			$ge = new GenericEntry($entity->dbTableName, $fields, $this->getDI());
+
+			//Get entries based on the entity
+			$entries = $entity->getEntriesEntities()->toArray();
+
+			$values = [];
+			foreach($entries as $entry)
+			{	
+				//Load data
+				$data = $ge->Load($entry['id']);			
+				
+				//We have the values. Let's map them to the fields
+				foreach($fields as $field){
+					$row = [];
+					$row['fieldname'] = $field['dbFieldName'];
+					$row['value'] = $data[$field['dbFieldName']];
+					$values[] = $row;
+				}				
+			}
+
+			//Setting data (entity info and values)
+			$result[$i] = ['entity_id' => $entity->id, 'entry_id' => $entryId];
+			$result[$i]['values'] = $values;
+		}
+
+		$this->response->setJsonContent($result);
+	}
+
+	private function error($error_message)
+	{
+		$this->response->setStatusCode(400, 'Bad request');
+		$this->response->setJsonContent(['message' => $error_message]);
 	}
 }

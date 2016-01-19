@@ -4,3 +4,6 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
 </IfModule>
+<IfModule mod_headers.c>
+   Header add Access-Control-Allow-Origin: *
+</IfModule>

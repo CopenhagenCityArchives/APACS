@@ -1,4 +1,5 @@
 <?php
+use Phalcon\Mvc\Model\Query;
 
 class Entries extends \Phalcon\Mvc\Model
 {
@@ -7,6 +8,8 @@ class Entries extends \Phalcon\Mvc\Model
 	protected $pagesId;
 	protected $tasksId;
 	protected $collectionId;
+
+    private $_metaEntities;
 
     public function getSource()
     {
@@ -20,12 +23,115 @@ class Entries extends \Phalcon\Mvc\Model
         $this->belongsTo('task_id', 'Tasks', 'id');
     }
 
+    public static function SaveEntryRecursively($dbCon, $entity, $values, $parentId = NULL)
+    {
+        $genericEntry = new GenericEntry($entity['dbTableName'], $entity['fields'], $dbCon);
+        
+        //Setting parent ids
+        //We have several child elements
+        if(array_keys($values) == range(0, count($values) - 1))
+        {
+            for($i = 0; $i< count($values); $i++)
+            {
+                $values[$i]['parent_id'] = $parentId;
+            }
+        }
+        else{
+            $values['parent_id'] = $parentId;
+            $newVal = [];
+            $newVal[0] = $values;
+            $values = $newVal;
+        }
+
+        for($i = 0; $i < count($values); $i++)
+        {
+            $insertId = -1;
+
+            //If entity is required to be unique
+            //we test if it exists
+            if($entity['unique'] == 1){
+                $result = $genericEntry->FindByValues($values[$i]);
+                if(count($result) > 0){
+                    $insertId = $result[0]['id'];
+                }
+            }
+            
+            if($insertId == -1){
+                if(!$genericEntry->Save($values[$i]))
+                    throw new Exception("Could not save!");
+
+                $insertId = $genericEntry->GetInsertId();
+            }
+
+            //Saving many to many relations here by adding a virtual entity and using the two ids
+            //(id and parent id)
+            if($entity['manyToManyTable'] !== NULL)
+            {
+                $middleEntity = [];
+                $middleEntity['tablename'] = $entity['manyToManyTable'];
+
+                //Creating a many to many entry, by using an artificial code table
+                $middleEntity['fields'][] = [
+                    'dbFieldName' => $entity['manyToManyForeignField'], 
+                    'codeTable' => NULL, 
+                    'codeField' => NULL, 
+                    'codeAllowNewValue' => 0
+                ];
+
+                $middleEntity['fields'][] = [
+                    'dbFieldName' => $entity['manyToManyParentField'],
+                    'codeTable' => NULL, 
+                    'codeField' => NULL, 
+                    'codeAllowNewValue' => 0
+                ];
+
+                $middleData[$entity['manyToManyParentField']] = $values[$i]['parent_id'];
+                $middleData[$entity['manyToManyForeignField']] = $insertId;
+
+                $middleGE = new GenericEntry($middleEntity['tablename'], $middleEntity['fields'], $dbCon);
+                
+                if(!$middleGE->Save($middleData))
+                {
+                    throw new Exception("Could not save middle data!");
+                }
+            }
+
+            //Saving children entities
+            if(isset($entity['children']))
+            {
+                foreach($entity['children'] as $child)
+                {               
+                    if(isset($values[$i][$child['guiName']])){
+                        Entries::SaveEntryRecursively($dbCon, $child, $values[$i][$child['guiName']], $insertId);
+                    }
+                }
+            }
+        }
+    }   
+
+    public static function ValidateJSONData($schema, $data)
+    {
+        var_dump($schema);
+        // Validate
+        $validator = new JsonSchema\Validator();
+        $validator->check($data, $schema);
+
+        $messages = [];
+        if (!$validator->isValid()){
+            foreach ($validator->getErrors() as $error) {
+                $messages[] = sprintf("[%s] %s\n", $error['property'], $error['message']);
+            }
+        }
+
+        return $messages;
+    }
+
     /**
      * Validates an array of entities (POST data from users)
      * @param Array $entities An array of entities with data
      * @return bool Returns true is all fields are valid, false if not
      */
-    public function ValidateEntities(Array $entities)
+    public function ValidateEntry(Array $entities)
     {
         //Array for metaEntities. Loaded as entities of specific metaEntity type is reached
         $metaEntities = [];
@@ -50,13 +156,18 @@ class Entries extends \Phalcon\Mvc\Model
         return $isValid;
     }
 
-    public function SaveEntities($collectionId, $taskId, $pageId, $postId, $userId, $inputEntities, $validate = true)
+    public function UpdateEntry()
     {
 
-        //TODO: Validate if $validate == true
-        
+    }
+
+    public function SaveEntry($collectionId, $taskId, $pageId, $postId, $userId, $inputEntities)
+    {
         $entry = new Entries();
         $entry->save(['user_id' => $collectionId, 'task_id' => $taskId, 'collection_id' => $collectionId, 'page_id' => $pageId, 'post_id' => $postId]);
+
+        if(!is_array($inputEntities))
+            throw new Exception("Entries: Entities not given");
 
         for($j = 0; $j < count($inputEntities); $j++)
         {
@@ -64,6 +175,9 @@ class Entries extends \Phalcon\Mvc\Model
 
             //Loading metaEntity, if it is not loaded already
             $metaEntity = $this->loadMetaEntity($input['entity_id']);
+            
+            if($metaEntity == false)
+                throw new Exception("entity not found");
 
             $ge = new GenericEntry($metaEntity, $input, $this->getDI());
             
@@ -153,8 +267,10 @@ class Entries extends \Phalcon\Mvc\Model
     {
         //Loading metaEntity, if it is not loaded already
         if(!isset($this->_metaEntities[$id])){
-            $this->_metaEntities[$id] = Entities::findFirst($id);
-            $this->_metaEntities[$id]['fields'] = $this->manager->query('SELECT f.* FROM Fields f LEFT JOIN EntitiesFields ef ON f.id = ef.field_id WHERE ef.entity_id = ' . $entity['entity_id'])->execute()->toArray();
+            $this->_metaEntities[$id] = Entities::findFirst($id)->toArray();
+
+            $query = new Query('SELECT f.* FROM Fields f LEFT JOIN EntitiesFields ef ON f.id = ef.field_id WHERE ef.entity_id = ' . $id, $this->getDI());
+            $this->_metaEntities[$id]['fields'] = $query->execute()->toArray();
         }
     }    
 }

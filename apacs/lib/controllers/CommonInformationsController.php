@@ -1,4 +1,5 @@
 <?php
+use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 
 class CommonInformationsController extends \Phalcon\Mvc\Controller
 {
@@ -41,6 +42,12 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 		$this->response->setJsonContent($confLoader->GetTask($taskId));
 	}	
 
+	public function GetTaskFieldsSchema($taskId)
+	{
+		$confLoader = new DBConfigurationLoader();
+		$this->response->setJsonContent($confLoader->GetTaskFieldsSchema($taskId));
+	}
+
 	public function GetUnits()
 	{
 		$request = $this->getDI()->get('request');
@@ -60,14 +67,21 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 
 		$results = [];
 		$i = 0;
-		while($resultSet->valid()){
-			$results[$i] = array_intersect_key($resultSet->current()->toArray(), array_flip(Units::$publicFields));
-			$results[$i]['tasks'] = $resultSet->current()->getTasksUnits(['conditions' => $taskId !== null ? 'task_id = ' . $taskId : null])->toArray();
-			$resultSet->next();
+
+		$unitsConditions = $taskId == NULL ? [] : ['conditions' => 'task_id = ' . $taskId];
+
+		foreach($resultSet as $row)
+		{
+			$results[$i] = array_intersect_key($row->toArray(), array_flip(Units::$publicFields));
+			$results[$i]['tasks'] = $row->getTasksUnits($unitsConditions)->toArray();
 			$i++;
 		}
-
-		$this->response->setJsonContent($results);
+		if(count($results)>0){
+			$this->response->setJsonContent($results);
+		}
+		else{
+			$this->response->setJsonContent([]);
+		}
 	}
 
 	public function GetUnit($unitId)
@@ -136,268 +150,48 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller
 		$result['entries'] = $page->getEntries($entriesCondition)->toArray();
 
 		$this->response->setJsonContent($result);
-	}	
+	}
 
-	public function GetEntries()
+	/**
+	 * Retrieves the next available page, meaning the next page in the protocol
+	 * for which there haven't been activity the last 5 minutes, based on the current page number 
+	 */
+	public function GetNextAvailablePage()
 	{
-		$pageId = $this->request->getQuery('page_id', 'int', false);
-		$taskId = $this->request->getQuery('task_id', 'int', false);
+		$taskId = $this->request->getQuery('task_id', null, null);
+		$unitId = $this->request->getQuery('unit_id', null, null);
+		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
 
-		if($pageId == false)
-		{
-			$this->error('page_id must be set');
+		if(is_null($taskId) && is_null($unitId)){
+			$this->error('task_id, unit_id and current_number are required');
 			return;
 		}
 
-		$conditions = 'page_id = ' . $pageId;
+    	$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND Pages.page_number > :current_page_number AND Pages.unit_id = :unit_id AND last_activity > DATE_SUB(NOW(), INTERVAL 5 MINUTE) ORDER BY Pages.page_number LIMIT 1';
 
-		if($taskId !== false)
-		{
-			$conditions .= ' AND task_id = ' . $taskId; 
-		}
+		$taskPage = new TasksPages();
+		$result = new Resultset(null, $taskPage, $taskPage->getReadConnection()->query($query, ['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $currentPageNumber]));
 
-		$resultSet = Entries::find(['conditions' => $conditions]);
-
-		$this->response->setJsonContent($resultSet->toArray());
+		$this->response->setStatusCode('200', 'OK');
+    	$this->response->setJsonContent($result);
 	}
 
-	public function GetEntry($entryId)
+	public function GetActiveUsers()
 	{
-		$entry = Entries::findFirst(['id' => $entryId]);
-		$task = $entry->getTasks();
+		$taskId = $this->request->getQuery('task_id', null, null);
+		$unitId = $this->request->getQuery('unit_id', null, null);
 
-		$entities = $task->getEntities();
-
-		$result = [];
-
-		//Go through entities, get values and map them to fields
-		for($i = 0; $i < count($entities); $i++){
-			$entity = $entities [$i];
-
-			//Load entity fields
-			$query = $this->modelsManager->createQuery('SELECT f.* FROM Entities AS e LEFT JOIN EntitiesFields as ef ON e.id = ef.entity_id LEFT JOIN Fields as f ON ef.field_id = f.id WHERE e.id = ' . $entity->id);			
-			$fields  = $query->execute()->toArray();
-			
-			//Instantiate loader for concrete entry values
-			$ge = new GenericEntry($entity->dbTableName, $fields, $this->getDI());
-
-			//Get entries based on the entity
-			$entries = $entity->getEntriesEntities()->toArray();
-
-			$values = [];
-			foreach($entries as $entry)
-			{	
-				//Load data
-				$data = $ge->Load($entry['id']);			
-				
-				//We have the values. Let's map them to the fields
-				foreach($fields as $field){
-					$row = [];
-					$row['fieldname'] = $field['dbFieldName'];
-					$row['value'] = $data[$field['dbFieldName']];
-					$values[] = $row;
-				}				
-			}
-
-			//Setting data (entity info and values)
-			$result[$i] = ['entity_id' => $entity->id, 'entry_id' => $entryId];
-			$result[$i]['values'] = $values;
-		}
-
-		$this->response->setJsonContent($result);
-	}
-
-	public function SaveEntry()
-	{
-
-		$entry = $this->request->getJsonRawBody();
-
-		$postId = $entry->post_id;
-		$taskId = $entry->task_id;
-
-		$concreteEntries = [];
-		
-		$dataIsValid = true;
-		foreach($entry['entity_groups'] as $entityGroup){
-
-			$fieldsMetadata = Entries::findFirst($entityGroup['entity_id'])->getFields()->toArray();
-
-			foreach($entityGroup['entities'] as $entity){
-				$ge = new GenericEntry($fieldsMetadata, $entity['fields'], $this->getDI());
-				if(!$ge->Validate())
-				{
-					$dataIsValid = false;
-				}
-				$concreteEntries[] = $ge;
-			}  
-		}
-
-		//All rigth, we have all entries. Let's validate them!
-		$dataIsValid = true;
-		foreach($concreteEntries as $conEntry)
-		{
-			if(!$conEntry->Validate())
-			{
-				$dataIsValid = false;
-				break;
-			}
-		}
-
-		if(!$dataIsValid)
-
-
-		$task = Tasks::findFirst(['id' => $taskId]);
-
-		$entities = $task->getEntities();
-
-		$result = [];
-
-		//Go through entities, get values and map them to fields
-		for($i = 0; $i < count($entities); $i++){
-			$entity = $entities [$i];
-
-			//Load entity fields
-			$query = $this->modelsManager->createQuery('SELECT f.* FROM Entities AS e LEFT JOIN EntitiesFields as ef ON e.id = ef.entity_id LEFT JOIN Fields as f ON ef.field_id = f.id WHERE e.id = ' . $entity->id);			
-			$fields  = $query->execute()->toArray();
-			
-			//Instantiate loader for concrete entry values
-			$ge = new GenericEntry($entity->dbTableName, $fields, $this->getDI());
-
-			if(!$ge->Save()){
-				$this->error($ge->GetErrorMessages());
-			}
-
-			//Data is saved! Let's put the data in the aggregated array
-			$values = $ge->GetData();
-
-			//Setting data (entity info and values)
-			//TODO: Save the id of the generic entry!
-			$result[$i] = ['entity_id' => $entity->id, 'entry_id' => 1];
-			$result[$i]['values'] = $values;
-		}
-
-		$entry = new Entries();
-		$entry->data = $result;
-		$entry->task_id = $taskId;
-		$entry->post_id = $postId;
-
-		$entry->save();
-
-		$this->response->setJsonContent($entry->toArray());		
-	}
-
-	public function GetEntry_ORG($entryId)
-	{
-		$entry = Entries::findFirst(['id' => $entryId]);	
-
-		$data = $entry->toArray();
-
-		//Lets combine entry values and entity fields!
-		
-		$entryEntities = $entry->getEntriesEntities(['entry_id' => $entryId]);
-		$i = 0;
-		foreach($entryEntities as $entryEntity)
-		{			
-			$entity = $entryEntity->getEntities();
-			
-			$entityData = [];
-			$entityData['entity_id'] = $entity->id;
-			$entityData['entry_id'] = $entryEntity->entry_id;
-			$data['entities'][$i] = $entityData;
-
-			$fields = [];
-			foreach($entity->getEntitiesFields() as $entityField)
-			{
-				$fields[] = $entityField->getFields()->toArray();
-			}
-
-			$ge = new GenericEntry($entity->toArray()['dbTableName'], $fields, $this->getDI());
-			$entryData = $ge->Load($entryId);
-
-			$rows = [];
-			foreach($entryData[0] as $key => $val){
-				foreach($fields as $field){
-					if($field['dbFieldName'] == $key){
-						$newField = [];
-						$newField['fieldname'] = $field['dbFieldName'];
-						$newField['value'] = $val;
-						$newField['id'] = null;
-						$newField['unreadable'] = null;
-						$rows[] = $newField;
-					}
-				}
-			}
-
-			$data['field'][$i]['values'] = $rows;
-			$i++;
-		}
-
-		$this->response->setJsonContent($data);
-	}
-
-	public function CreateEntry()
-	{
-		$taskId = $this->request->getPost('task_id', 'int', false);
-		$pageId = $this->request->getPost('page_id', 'int', false);
-
-		if($taskId == false || $pageId == false)
-		{
-			$this->error('task_id and page_id must be set');
-			return;
-		}
-/*
-		$fields = $this->config->getCollection(5)[0]['indexes'][0]['entities'][0]['fields'];
-		$table = $this->config->getCollection(5)[0]['indexes'][0]['entities'][0]['dbTableName'];
-*/
-		$configLoader = new DBConfigurationLoader();
-		$task = $configLoader->GetTask($taskId);
-
-		$genericEntry = new GenericEntry($table, $fields, $this->getDI());
-		
-		$action = $this->request->getPost('action', 'string', false);
-
-		//Validation only. Do not save
-		if($action == 'validate'){
-			$valid = $genericEntry->PartialValidation();
-			
-			if($valid){
-				$this->response->setStatusCode('400');
-				$this->response->setJsonContent(['message' => 'all fields are okay']);
-			}
-			else{
-				$this->response->setStatusCode('404');
-				$this->response->setJsonContent($genericEntry->GetErrorMessages());
-			}
-
+		if(is_null($taskId) && is_null($unitId)){
+			$this->error('task_id or unit_id are required');
 			return;
 		}
 
-		//Saving data, return error messages if not possible or input is invalid
-		if(!$genericEntry->Save())
+//TODO: Active users are not supported yet!
+		if(!is_null($taskId))
 		{
-			$this->response->setStatusCode(401, 'Could not save entry');
-			$this->response->setJsonContent($genericEntry->GetErrorMessages());
-			return;
+			//$activeUsers = Logs::find(['conditions' => 'task_id = ' . $taskId]);
 		}
-/*
-		//Saving the generic entry
-		//Needed: collection id, task id, page id	
-		$metaInfo = $dataReceiver->GetDataFromFields('POST', ['collection_id', 'task_id', 'page_id']);
-		
-		$entity = new Entries();
-		$entity->collection_id = $metaInfo['collection_id'];
-		$entity->task_id = $metaInfo['task_id'];
-		$entity->page_id = $metaInfo['page_id'];
-		$entity->data = json_encode($genericEntry->GetData(), true);
-
-		if(!$entity->save()){
-			$this->response->setStatusCode(500, 'Could not save meta entry');
-			return $this->response;
-		}*/
-
-		$this->response->setStatusCode(201, 'Data saved');
-		$this->response->setJsonContent($genericEntry->GetData());		
-	}	
+	}
 
 	public function ImportUnits()
 	{

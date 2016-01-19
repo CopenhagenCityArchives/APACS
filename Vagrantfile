@@ -13,12 +13,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Connect to IP
   # --------------------
-  config.vm.network :public_network, bridge: 'vmxnet3 Ethernet Adapter #2', ip: "192.168.10.129"
+  config.vm.network :public_network, bridge: 'vmxnet3 Ethernet Adapter #5', ip: "192.168.10.129"
 
   # Forward to Port
   # --------------------
   config.vm.network :forwarded_port, guest: 3306, host: 33306
   config.vm.network :forwarded_port, guest: 80, host: 8080
+  config.vm.network :forwarded_port, guest: 9000, host: 9001
   
   # Optional (Remove if desired)
   config.vm.provider :virtualbox do |v|

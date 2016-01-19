@@ -1,6 +1,6 @@
 <?php
 
-class InsertStatementBuilder implements IStatementBuilder
+class UpdateStatementBuilder implements IStatementBuilder
 {
 	private $tableName;
 	private $fields;
@@ -10,7 +10,7 @@ class InsertStatementBuilder implements IStatementBuilder
 	 * Constructor. Takes a table name and an array of fieldss
 	 * @param array An array containing the entry type from which the statement is built
 	 */
-	function __construct($tableName, $fields)
+	function __construct($tableName, $fields, $values)
 	{
 		$this->tableName = $tableName;
 		$this->fields = $fields;

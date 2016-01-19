@@ -3,5 +3,8 @@
         "phpunit/phpunit": "4.5.*",
         "athletic/athletic": "~0.1",
 		"phalcon/incubator": "v1.3.5"
-    }   
+    },
+    "require": {
+        "justinrainbow/json-schema": "~1.3"
+    }
 }

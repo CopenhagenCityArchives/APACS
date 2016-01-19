@@ -1,4 +1,6 @@
 <?php
+use Phalcon\Mvc\Model\Resultset;
+use Phalcon\Mvc\Model\Query;
 
 class DBConfigurationLoader
 {
@@ -41,46 +43,133 @@ class DBConfigurationLoader
 		return $tasks->toArray();
 	}
 
-	public function GetTask($taskId)
+	public function GetTask($collectionId)
+	{
+		$task = Tasks::findFirstById($collectionId);
+		return $task->toArray();
+	}
+
+	/**
+	 * Retrieves a list of entities in JSON Schema form
+	 * @param integer $taskId The id of the task
+	 */
+	public function GetTaskFieldsSchema($taskId)
 	{
 		$data = [];
 
 		$task = Tasks::findFirstById($taskId);
 
 		$data = $task->toArray();
-		$data['entities'] = [];
+		$data['schema'] = [];
 
-		$entities = Entities::find(['condition' => 'task_id = ' . $taskId]);
+		$entities = Entities::find(['conditions' => 'task_id = ' . $taskId . ' AND parent_id IS NULL', 'hydration' => Resultset::HYDRATE_ARRAYS]);
+		$fields = new Tasks();
+		$data['schema'] = [];
+		$data['schema']['title'] = $data['name'];
+		$data['schema']['type'] = 'object';
+		$data['schema']['properties'] = [];
 
-		foreach($entities as $entity)
+		if(count($entities) > 1)
 		{
-			$data['entities'][] = $this->GetEntityAndFields($entity->id);
+			$i = 0;
+			foreach($entities as $entity)
+			{
+				$entityWithChildren = $this->GetEntityRecursively($entity);
+				$data['schema']['properties'][$entity['id']] = $entityWithChildren;
+
+				$i++;
+			}
 		}
+		else{
+			$entityWithChildren = $this->GetEntityRecursively($entities[0]);
+			$data['schema']['properties'] = $entityWithChildren['properties'];
+		}
+
+		$data['steps'] = $this->GetSteps($taskId);
 
 		return $data;
 	}
 
-	public function GetEntityAndFields($entityId)
+	private function GetEntityRecursively($ingoingEntity)
 	{
-		$data = [];
+		$entity = $ingoingEntity;
+		$entity = [];
 
-		$entity = Entities::findFirstById($entityId);
+		$steps = [];
 
-		$data = $entity->toArray();
+		$task = new Tasks();
 
-		$entitiesFields = $entity->getEntitiesFields();
+		$entity['title'] = $ingoingEntity['guiName'];
+		$entity['type'] = $ingoingEntity['countPerEntry'] == 1 ? 'object' : 'array';
 
-		$fields = [];
+		$propertiesAndRequired = $task->GetFieldsSchema($ingoingEntity['id']);
 
-		foreach($entitiesFields as $field)
-		{
-			//Here we have it!
-			$fieldData = $field->getFields()->toArray();
-			$fieldData['field_group_number'] = $field->field_group_number;
-			$fields[] = $fieldData;
+		if($entity['type'] == 'array'){
+			if($ingoingEntity['countPerEntry'] > 1)
+				$entity['maxItems'] = $ingoingEntity['countPerEntry'];
+
+			$entity['items'] = [];
+			$entity['items']['type'] = 'object';
+			foreach($propertiesAndRequired['properties'] as $property)
+			{
+				$item = $property;
+				$item['type'] = 'object';
+				$item['title'] = $property['entity_field_id'];
+				$entity['items']['properties'][$item['entity_field_id']] = $item;
+			}
+		}
+		else{
+			$entity['properties'] = $propertiesAndRequired['properties'];
 		}
 
-		$data['fields'] = $fields;
+		
+		$entity['required'] = $propertiesAndRequired['required'];
+
+		foreach(Entities::find(['conditions' => 'parent_id = ' . $ingoingEntity['id'], 'hydration' => Resultset::HYDRATE_ARRAYS]) as $child){
+			$c = $this->GetEntityRecursively($child);
+			$entity['properties'][$c['title']] = $c;
+		}
+
+		return $entity;
+	}
+
+	public function GetSteps($taskId)
+	{
+		$step = new Steps();
+		//$steps = $step->GetSteps($taskId);
+		$steps = Steps::find(['condition' => 'task_id = ' . $taskId, 'columns' => ['id', 'name', 'description']]);
+
+		$data = [];
+		$i = 0;
+		foreach($steps as $step)
+		{
+			$data[$i] = $step->toArray();
+			
+			$data[$i]['fields'] = [];
+			$result = new Query('SELECT e.guiName, ef.id, e.countPerEntry, e.parent_id FROM EntitiesFields ef LEFT JOIN Entities e ON ef.entity_id = e.id WHERE ef.step_id = ' . $step->id, \Phalcon\DI\FactoryDefault::getDefault());
+			$fields = $result->execute()->toArray();
+			//	var_dump($fields);
+			
+
+			foreach($fields as $field)
+			{
+				if($field['countPerEntry'] == -1)
+				{
+					$data[$i]['fields'][] = $field['guiName'];
+					break;
+				}
+				else
+				{
+					if(is_null($field['parent_id'])){
+						$data[$i]['fields'][] = $field['id'];
+					}
+					else{
+						$data[$i]['fields'][] = $field['guiName'] . '.' . $field['id'];
+					}
+				}
+			}
+			$i++;
+		}
 
 		return $data;
 	}
