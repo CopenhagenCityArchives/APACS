@@ -14,7 +14,7 @@ class ValidationRuleSetTest extends \UnitTestCase {
 	}
 
 	public function testValidateByRegularExpression() {
-		$validationRule = new ValidationRuleSet('/^\w{2,}$/', false, 'Input should contain a single digit');
+		$validationRule = new ValidationRuleSet('/^\w{2,}$/', false, 'Input should contain two or more characters');
 		$Validator = new Validator($validationRule);
 
 		$this->assertEquals(true, $Validator->IsValid('sd'), 'Should return true when data is valid');

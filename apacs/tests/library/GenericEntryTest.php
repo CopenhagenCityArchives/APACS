@@ -1,4 +1,5 @@
 <?php
+include_once '../lib/library/GenericEntry.php';
 
 class GenericEntryTest extends \UnitTestCase {
 
@@ -26,8 +27,12 @@ class GenericEntryTest extends \UnitTestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		$this->di->get('db')->query('DROP TABLE IF EXISTS entry_table');
-		$this->di->get('db')->query('DROP TABLE IF EXISTS normalized_table');
+
+		$this->di->get('db')->query('DROP TABLE IF EXISTS begrav_persons');
+		$this->di->get('db')->query('DROP TABLE IF EXISTS begrav_deathcause');
+		$this->di->get('db')->query('DROP TABLE IF EXISTS apacs_entities');
+		$this->di->get('db')->query('DROP TABLE IF EXISTS apacs_fields');
+		$this->di->get('db')->query('DROP TABLE IF EXISTS apacs_entities_fields');
 
 		$this->ge = null;
 		$this->entity = [];
@@ -38,221 +43,178 @@ class GenericEntryTest extends \UnitTestCase {
 		$this->di->get('db')->query('DROP TABLE IF EXISTS normalized_table');
 		$this->di->get('db')->query('CREATE TABLE entry_table (id INT(11) NOT NULL AUTO_INCREMENT, testFieldDb CHAR(50), normalizedFieldDb CHAR(50), post_id INT(11), PRIMARY KEY (`id`))');
 		$this->di->get('db')->query('CREATE TABLE normalized_table (id INT(11) NOT NULL AUTO_INCREMENT, normalized_field CHAR(50), PRIMARY KEY (`id`))');
+
+		//Concrete table begrav_person
+		$this->di->get('db')->query('DROP TABLE IF EXISTS begrav_persons');
+		$this->di->get('db')->query("CREATE TABLE `begrav_persons` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `firstnames` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `lastname` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `birthname` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `deathcause` int(11) DEFAULT NULL,
+			  `age_years` int(11) DEFAULT NULL,
+			  `age_month` int(11) DEFAULT NULL,
+			  `dateofbirth` datetime DEFAULT NULL,
+			  `dateofdeath` datetime DEFAULT NULL,
+			  `placeofdeath_id` int(11) DEFAULT NULL,
+			  `cemetary_id` int(11) DEFAULT NULL,
+			  `parish_id` int(11) DEFAULT NULL,
+			  `civilstatus_id` int(11) DEFAULT NULL,
+			  `birthplace_id` int(11) DEFAULT NULL,
+			  `birthplace_other` char(125) COLLATE utf8_danish_ci DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;"
+		);
+
+		//Concrete table begrav_deathcause
+		$this->di->get('db')->query('DROP TABLE IF EXISTS begrav_deathcause');
+		$this->di->get('db')->query("CREATE TABLE `begrav_deathcause` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `deathcasuse` varchar(125) COLLATE utf8_danish_ci DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;"
+		);
+
+		//Creating entities table
+		$this->di->get('db')->query('DROP TABLE IF EXISTS apacs_entities');
+		$this->di->get('db')->query("CREATE TABLE `apacs_entities` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `required` tinyint(1) NOT NULL DEFAULT '0',
+			  `countPerEntry` char(3) COLLATE utf8_danish_ci NOT NULL DEFAULT 'one',
+			  `dbTableName` char(50) COLLATE utf8_danish_ci NOT NULL,
+			  `isMarkable` tinyint(1) NOT NULL DEFAULT '0',
+			  `guiName` char(50) COLLATE utf8_danish_ci NOT NULL,
+			  `task_id` int(11) NOT NULL,
+			  `primaryKeyFieldName` char(100) COLLATE utf8_danish_ci NOT NULL DEFAULT 'id',
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;"
+		);
+
+		//Creating fields table
+		$this->di->get('db')->query('DROP TABLE IF EXISTS apacs_fields');
+		$this->di->get('db')->query("CREATE TABLE `apacs_fields` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `name` char(50) COLLATE utf8_danish_ci NOT NULL,
+			  `defaultValue` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `placeholder` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `helpText` char(150) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `dbFieldName` char(50) COLLATE utf8_danish_ci NOT NULL,
+			  `type` char(20) COLLATE utf8_danish_ci NOT NULL DEFAULT 'string',
+			  `includeInSolr` tinyint(1) NOT NULL DEFAULT '0',
+			  `required` tinyint(1) NOT NULL DEFAULT '0',
+			  `validationRegularExpression` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `validationErrorMessage` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `foreignEntity` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `foreignFieldName` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+			  `unique` tinyint(1) NOT NULL DEFAULT '0',
+			  `newValueAllowed` tinyint(1) NOT NULL DEFAULT '1',
+			  `internal_description` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;"
+		);
+
+		//Creating entities_fields table
+		$this->di->get('db')->query('DROP TABLE IF EXISTS apacs_entities_fields');
+		$this->di->get('db')->query("CREATE TABLE `apacs_entities_fields` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `field_id` int(11) NOT NULL,
+			  `entity_id` int(11) NOT NULL,
+			  `step_id` int(11) NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;"
+		);
 	}
 
-	public function setSingleFieldAndTable() {
-
-		$this->entity = [
-			'tablename' => 'entry_table',
-			'fields' => [
-				[
-					'name' => 'testField',
-					'dbFieldName' => 'testFieldDb',
-					'type' => '1',
-					'codeTable' => null,
-					'codeField' => null,
-					'codeAllowNewValue' => null,
-					'required' => true,
-					'validationRegularExpression' => '/^\w{2,}$/',
-					'validationErrorMessage' => 'Minimum to tegn',
-					'maxLength' => 150,
-				],
-			],
-		];
+	public function insertEntityWithObjectRelation() {
+		$this->di->get('db')->query("INSERT INTO `apacs_entities` VALUES (1,1,'1','begrav_persons',1,'Personer',1,'id'),(2,1,'1','begrav_deathcause',0,'Dødsårsag',1,'id');");
+		$this->di->get('db')->query("INSERT INTO `apacs_entities_fields` VALUES (10,7,1,1),(11,8,1,1),(12,9,1,1),(13,10,1,1),(14,12,2,1);");
+		$this->di->get('db')->query("INSERT INTO `apacs_fields` VALUES (7,'id',NULL,'',NULL,'id','value',0,0,NULL,NULL,NULL,NULL,1,1,'Primærnøgle'),(8,'firstname',NULL,'Fornavn','Personens fornavne','firstnames','value',1,1,'/\\\\w{1,}/','Feltet skal udfyldes',NULL,NULL,0,1,'Fornavn'),(9,'Lastname',NULL,'Efternavn','Efternavn','lastname','value',1,1,'/\\\\w{1,}/','Feltet skal udfyldes',NULL,NULL,0,1,'Efternavn'),(10,'deathcause',NULL,'Dødsårsag','Dødsårsag','deathcause','object',0,0,NULL,NULL,'2','id',0,0,'Fremmednøgle til dødsårsag'),(12,'deathcause',NULL,'Dødsårsag','Dødsårsag','deathcause','value',1,1,'/\\\\w{1,}/','Feltet skal udfyldes',NULL,NULL,1,1,'Dødsårsag');");
 	}
 
-	public function setNormalizedFieldsAndTable() {
-		$this->entity = [
-			'tablename' => 'entry_table',
-			'fields' => [
-				[
-					'name' => 'testField',
-					'dbFieldName' => 'testFieldDb',
-					'type' => '1',
-					'codeTable' => null,
-					'codeField' => null,
-					'codeAllowNewValue' => null,
-					'required' => true,
-					'validationRegularExpression' => '/^\w{2,}$/',
-					'validationErrorMessage' => 'Minimum to tegn',
-					'maxLength' => 150,
-				],
-				[
-					'name' => 'normalizedField',
-					'dbFieldName' => 'normalizedFieldDb',
-					'type' => '1:m',
-					'codeTable' => 'normalized_table',
-					'codeField' => 'normalized_field',
-					'codeAllowNewValue' => true,
-					'required' => true,
-					'validationRegularExpression' => '/^\w{2,}$/',
-					'validationErrorMessage' => 'Minimum to tegn',
-					'maxLength' => 150,
-				],
-			],
-		];
+	public function getDefaultEntity() {
+		$id = 1;
+		$result = $this->getDI()->get('db')->query('select * from apacs_entities where id = ' . $id);
+		$return['table'] = $result->fetchAll()[0];
+
+		$result = $this->getDI()->get('db')->query('select * from apacs_entities_fields left join apacs_fields on apacs_entities_fields.field_id = apacs_fields.id WHERE apacs_entities_fields.entity_id = ' . $id);
+		$return['fields'] = $result->fetchAll();
+
+		return $return;
 	}
 
-	public function invalidInputValues() {
+	public function getSimpleEntry() {
 		return [
-			[
-				'testFieldDb' => '',
-				'normalizedFieldDb' => 'valueToNormalize',
+			'firstnames' => 'Jens',
+			'lastname' => 'Larsen',
+			'deathcause' => [
+				'deathcause' => 'Hjertefejl',
 			],
 		];
 	}
 
-	public function inputValues() {
+	public function getSimpleEntityWithError() {
 		return [
-			[
-				'testFieldDb' => 'testValue',
-				'normalizedFieldDb' => 'valueToNormalize',
+			'firstnames' => 'Jens',
+			'lastname' => '',
+			'deathcause' => [
+				'deathcause' => 'Hjertefejl',
 			],
 		];
 	}
 
-	public function inputValuesDecodingExistingValues() {
-		return [
-			[
-				'testFieldDb' => 'testValue',
-				'normalizedFieldDb' => 'existing_value',
-			],
-		];
-	}
-
-	public function inputValuesDecodingNonexistingValues() {
-		return [
-			[
-				'testFieldDb' => 'testValue',
-				'normalizedFieldDb' => 'this does not exist',
-			],
-		];
-	}
-
-	public function testValidatation() {
+	public function testValidateEntry() {
 		$this->createTables();
-		$this->setSingleFieldAndTable();
+		$this->insertEntityWithObjectRelation();
+		$entity = $this->getDefaultEntity();
 
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->assertEquals(false, $this->ge->Save($this->invalidInputValues()), 'should return false when data is invalid');
+		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$valuesAreValid = $this->ge->ValidateValues($this->getSimpleEntityWithError());
+
+		$this->assertEquals(false, $valuesAreValid, 'should return false on invalid data');
 	}
 
-	public function testSaving() {
+	public function testSaveEntry() {
 		$this->createTables();
-		$this->setSingleFieldAndTable();
+		$this->insertEntityWithObjectRelation();
+		$entity = $this->getDefaultEntity();
 
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->assertEquals(true, $this->ge->Save($this->inputValues()), 'should return true when saving is done');
+		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$couldSave = $this->ge->Save($this->getSimpleEntry());
+
+		$this->assertEquals(true, $couldSave, 'should save data');
 	}
 
-	public function testSavedData() {
+	public function testLoadEntry() {
 		$this->createTables();
-		$this->setSingleFieldAndTable();
+		$this->insertEntityWithObjectRelation();
+		$entity = $this->getDefaultEntity();
 
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
+		$this->di->get('db')->query("INSERT INTO `begrav_persons` (`id`, `firstnames`, `lastname`) VALUES (1,'Jens','Nielsen');");
 
-		$this->ge->save($this->inputValues());
-
-		$resultSet = $this->di->get('db')->query('select * from entry_table limit 1');
-		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		$results = $resultSet->fetchAll();
-
-		$this->assertEquals('testValue', $results[0]['testFieldDb'], 'should insert data');
+		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$result = $this->ge->Load(1);
+		$this->assertEquals(1, count($result), 'should return a row of data');
+		$this->assertEquals(['id' => '1', 'firstnames' => 'Jens', 'lastname' => 'Nielsen'], $result[0], 'should return values of type value');
 	}
 
-	public function testValidationLogicOnNormalization() {
-		$this->setNormalizedFieldsAndTable();
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-
-		$this->assertEquals(true, $this->ge->ValidateValues($this->inputValues()[0]), 'should ignore validation errors for normalization fields');
-	}
-
-	public function testSavingNormalized() {
+	public function testUpdateEntry() {
 		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
+		$this->insertEntityWithObjectRelation();
+		$entity = $this->getDefaultEntity();
 
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->ge->Save($this->inputValues());
-		var_dump($this->ge->GetErrorMessages());
-//		$this->assertEquals(true, , 'should return true when saving normalized fields');
-	}
+		//Inserting data to update
+		$this->di->get('db')->query("INSERT INTO `begrav_persons` (`id`, `firstnames`, `lastname`) VALUES (1,'Jens','Nielsen');");
 
-	public function testSavedNormalizedDataNewValue() {
-		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
+		//Updating
+		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$updatedValues = ['id' => '1', 'firstnames' => 'Niels', 'lastname' => 'Hansen', 'deathcause' => 'shouldnt have effect'];
+		$this->ge->Update($updatedValues);
 
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
+		$expectedValuesAfterUpdate = ['id' => '1', 'firstnames' => 'Niels', 'lastname' => 'Hansen'];
 
-		$this->assertEquals(true, $this->ge->Save($this->inputValues()), 'should save the normalized value in the normalization table');
-
-		$resultSet = $this->di->get('db')->query('select * from normalized_table limit 1');
-		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		$results = $resultSet->fetchAll();
-
-		$this->assertEquals('valueToNormalize', $results[0]['normalized_field'], 'should save the normalized value in the normalization table');
-
-		$resultSet = $this->di->get('db')->query('select * from entry_table limit 1');
-		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		$entryResults = $resultSet->fetchAll();
-
-		$this->assertEquals($results[0]['id'], $entryResults[0]['normalizedFieldDb'], 'the inserted id should match the idin the normalization table');
-	}
-
-	public function testSavingNormalizedExistingValue() {
-		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
-
-		$this->di->get('db')->execute('INSERT INTO normalized_table (normalized_field) VALUES ("existing_value")');
-
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->assertEquals(true, $this->ge->Save($this->inputValuesDecodingExistingValues()), 'should return true when saving is done');
-
-		$resultSet = $this->di->get('db')->query('select * from entry_table limit 1');
-		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		$results = $resultSet->fetchAll();
-
-		$this->assertEquals(1, $results[0]['normalizedFieldDb'], 'should use the correct id from the normalization table');
-	}
-
-	public function testSavedNormalizedDataNewValuesNotAllowed() {
-		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
-		$this->entity['fields'][1]['codeAllowNewValue'] = false;
-
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-
-		$this->assertEquals(false, $this->ge->Save($this->inputValuesDecodingNonexistingValues()), 'should return false when normalized data does not exist');
-	}
-
-	public function testGetData() {
-		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
-
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->ge->Save($this->inputValues());
-		$data = $this->ge->Load(1);
-
-		$this->assertEquals(1, count($data), 'should return array with fields and their values');
-		$this->assertEquals('testValue', $data[0][$this->entity['fields'][0]['dbFieldName']], 'should save data');
-	}
-
-	public function testLoadData() {
-		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
-
-		$this->di->get('db')->execute('INSERT INTO entry_table (testFieldDb) VALUES ("new_value")');
-
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->assertEquals(1, count($this->ge->Load(1)), 'should load row of data by id');
-	}
-
-	public function testLoadedDataStructure() {
-		$this->createTables();
-		$this->setNormalizedFieldsAndTable();
-
-		$this->di->get('db')->execute('INSERT INTO entry_table (testFieldDb) VALUES ("new_value")');
-
-		$this->ge = new GenericEntry($this->entity['tablename'], $this->entity['fields'], $this->di->get('db'));
-		$this->assertEquals(['testFieldDb' => 'new_value'], $this->ge->Load(1)[0], 'should load row of data by id');
+		//Loading result
+		$result = $this->di->get('db')->query("SELECT id,firstnames,lastname FROM `begrav_persons` WHERE id = 1;");
+		$result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		$this->assertEquals($expectedValuesAfterUpdate, $result->fetchAll()[0], 'should update existing values');
 	}
 }
