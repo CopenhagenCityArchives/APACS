@@ -18,6 +18,11 @@ class IndexDataController extends \Phalcon\Mvc\Controller
 		$this->request = $this->getDI()->get('request');
 	}
 
+	public function test()
+	{
+		Entries::SaveInSolr(['test' => 'this is a value']);
+	}
+
 	/*
 	Flow:
 		Check user access rights (authorize and authenticate)
