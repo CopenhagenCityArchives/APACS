@@ -39,7 +39,7 @@ class GenericEntry {
 	*/
 	public function Save(Array $data) {
 		if ($this->_insertStatement == null) {
-			$queryBuilder = new InsertStatementBuilder($this->_mainTableName, $this->_fields);
+			$queryBuilder = new InsertStatementBuilder($this->_mainTableName, array_filter($this->_fields, function ($el) use ($data) {return isset($el['dbFieldName']) && isset($data[$el['dbFieldName']]) && !is_null($data[$el['dbFieldName']]);}));
 			$queryBuilder->BuildStatement();
 			$this->_insertStatement = $queryBuilder->GetStatement();
 		}
@@ -48,7 +48,6 @@ class GenericEntry {
 		//If so, it is assumed that several rows of data are given
 		if (array_keys($data) == range(0, count($data) - 1)) {
 			foreach ($data as $row) {
-				//			$row = $this->ConvertCodeValues($row);
 				$validated = $this->ValidateValues($row);
 
 				if (!$validated) {
@@ -61,13 +60,13 @@ class GenericEntry {
 				}
 			}
 		} else {
-//			$data = $this->ConvertCodeValues($data);
 			$validated = $this->ValidateValues($data);
 
 			if (!$validated) {
 				return false;
 			}
-
+			echo $this->_insertStatement;
+			var_dump($this->GetDataAsParameters($data));
 			if (!$this->_dbConnection->execute($this->_insertStatement, $this->GetDataAsParameters($data))) {
 				$this->_errorMessages[] = 'Could not save entry:' . $this->_dbConnection->getErrorInfo()[0];
 				return false;
@@ -124,32 +123,32 @@ class GenericEntry {
 	public function ValidateValues($data, $ignoreNulls = false) {
 		$isValid = true;
 
-		for ($i = 0; $i < count($this->_fields); $i++) {
+		foreach ($this->_fields as &$field) {
 			//Don't validate the primary key and field types that are not values
-			if ($this->_fields[$i]['dbFieldName'] == $this->_primaryKeyFieldName || $this->_fields[$i]['type'] !== 'value') {
+			if (isset($field['dbFieldName']) && $field['dbFieldName'] == $this->_primaryKeyFieldName || $field['type'] !== 'string') {
 				continue;
 			}
 
-			if (isset($this->_fields[$i]['validationRegularExpression'])) {
+			if (isset($field['validationRegularExpression'])) {
 				$validator = new Validator(
 					new ValidationRuleSet(
-						$this->_fields[$i]['validationRegularExpression'],
-						$this->_fields[$i]['required'],
-						$this->_fields[$i]['validationErrorMessage']
+						$field['validationRegularExpression'],
+						$field['required'],
+						$field['validationErrorMessage']
 					)
 				);
 
 				//Get validation error messages
-				if (!$validator->isValid($data[$this->_fields[$i]['dbFieldName']], $ignoreNulls)) {
-					$this->_errorMessages[] = $this->_fields[$i]['dbFieldName'] . ':' . $this->_fields[$i]['validationErrorMessage'];
+				if (!$validator->isValid($data[$field['dbFieldName']], $ignoreNulls)) {
+					$this->_errorMessages[] = $field['dbFieldName'] . ':' . $field['validationErrorMessage'];
 					//$this->_fields[$i]['isValid'] = false;
 					//$this->_fields[$i]['errorMessage'] = $validator->GetErrorMessage();
 					$isValid = false;
 				}
 			} else {
 				//Check for null values
-				if ($ignoreNulls == false && is_null($data[$this->_fields[$i]['dbFieldName']])) {
-					$this->_errorMessages[] = $this->_fields[$i]['dbFieldName'] . ':' . $this->_fields[$i]['validationErrorMessage'];
+				if ($ignoreNulls == false && is_null($data[$field['dbFieldName']])) {
+					$this->_errorMessages[] = $field['dbFieldName'] . ':' . $field['validationErrorMessage'];
 					///$this->_fields[$i]['isValid'] = false;
 					//$this->_fields[$i]['errorMessage'] = $this->_fields[$i]['validationErrorMessage'];
 					$isValid = false;
@@ -178,9 +177,14 @@ class GenericEntry {
 
 		foreach ($this->_fields as $field) {
 			//Set fields that are of type value and have a value
-			if ($field['type'] == 'value') {
-				$parameters[$field['dbFieldName']] = isset($data[$field['dbFieldName']]) ? $data[$field['dbFieldName']] : null;
+			$dataFieldName = isset($field['dbFieldName']) ? $field['dbFieldName'] : $field['dbTableName'];
+
+			if (($field['type'] == 'string' || $field['type'] == 'object') && isset($data[$dataFieldName])) {
+				$parameters[$dataFieldName] = $data[$dataFieldName];
 			}
+		}
+		if (count($parameters) == 0) {
+			throw new InvalidArgumentException("no fields of type string or object found");
 		}
 
 		return $parameters;

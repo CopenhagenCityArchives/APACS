@@ -36,6 +36,10 @@ class UpdateStatementBuilder implements IStatementBuilder {
 			}
 		}
 
+		if (strlen($string) == 0) {
+			throw new InvalidArgumentException("No fields of type string or object found in fields");
+		}
+
 		return substr($string, 0, strlen($string) - 2);
 	}
 }

@@ -105,8 +105,24 @@ class Entries extends \Phalcon\Mvc\Model {
 		$this->response->setJsonContent($resultset->GetData());
 	}
 
-	public static function SaveEntryRecursively($entityName, $entityFields, $values, $dbCon) {
-		$entityTableAndFields = Entities::find(['conditions' => 'foreignEntityName = ' . $entityName['dbTableName']])[0];
+	public function SaveEntry($entityId, $data) {
+		$entity = Entities::findById($entityId)->toArray();
+
+		$dbCon = $this->getDI()->get('db');
+		$dbCon->start_transaction();
+
+		try {
+			Entries::SaveEntryRecursively($entity, $data, $this->getDI()->get('db'));
+		} catch (Exception $d) {
+			$dbCon->fallback();
+		}
+
+		return $dbCon->commit();
+	}
+
+	public static function SaveEntryRecursively($entity, $values, $dbCon) {
+		$entityModel = new Entities();
+		$entityTableAndFields = $entityModel->GetEntityAndFields($entity['id']);
 
 		//Process:
 		//Save entities for fields of type object
@@ -114,21 +130,32 @@ class Entries extends \Phalcon\Mvc\Model {
 		//Save entities for fields of type array with id from saved entity
 
 		//Saving related entities with relation type object
-		foreach (array_filter($entityFields, function ($el) {return $el['type'] == 'object';}) as $objectField) {
-			$tableAndFields = $this->EntityFactory->Get($objectField['foreignEntity']);
+		//foreach (array_filter($entityTableAndFields['fields'], function ($el) {return isset($el['type']) && $el['type'] == 'object';}) as $key => $objectField) {
+		$tempFields = $entityModel->ConvertFieldsToAssocArray($entityTableAndFields['fields']);
 
-			$newId = Entries::SaveEntryRecursively($objectField['foreignTableName'], $tableAndFields['fields'], $values[$tableAndFields['dbTableName']], $dbCon);
+		foreach ($tempFields as $key => $objectField) {
 
-			$values[$tableAndFields['dbTaleName']] = $newId;
+			if ($objectField['type'] !== 'object') {
+				continue;
+			}
+
+			//var_dump($values, $key);
+			$newId = Entries::SaveEntryRecursively($objectField, $values[$key], $dbCon);
+
+			$values[$key] = $newId;
 		}
 
 		//Saving the entity
-		$entry = new GenericEntry($entityTable, $entityFields, $dbCon);
-		$entry->Save($values);
+		$entry = new GenericEntry($entityTableAndFields, $entityTableAndFields['fields'], $dbCon);
+
+		if (!$entry->Save($values)) {
+			throw new Exception('Could not save entry');
+		}
+
 		$entryId = $entry->GetInsertId();
 
 		//Saving related entities with relation type array
-		foreach (array_filter($entityFields, function ($el) {return $el['type'] == 'array';}) as $arrayField) {
+		foreach (array_filter($entity['fields'], function ($el) {return $el['type'] == 'array';}) as $arrayField) {
 			$tableAndFields = $this->EntityFactory->Get($arrayField['foreignEntity']);
 			$values[$tableAndFields['dbTableName']]['foreignFieldName'] = $entryId;
 
@@ -136,6 +163,49 @@ class Entries extends \Phalcon\Mvc\Model {
 		}
 
 		return $entryId;
+	}
+
+	public function LoadEntry($entityId, $entryId) {
+		$entity = Entities::findById($entityId)->toArray();
+		$entity['fields'] = Entities::ConvertFieldsToAssocArray($entity['fields']);
+
+		try {
+			return Entries::LoadEntryRecursively('entry_id', $entryId, $entity, $this->getDI()->get('db'));
+		} catch (Exception $d) {
+			return false;
+		}
+	}
+
+	public static function LoadEntryRecursively($keyName, $keyValue, $entity, $dbCon) {
+		$entityModel = new Entities();
+		$entityTableAndFields = $entityModel->GetEntityAndFields($entity['id']);
+
+		//Load and return a single array of all data related to the entry
+		//Process:
+		//Load the main entry based on the entryId
+		//Load related data for object type fields by using the id from the main entry field
+		//Load related data for array type fields by using the primary key of the main entry
+		//var_dump($entity['fields']);
+		$ge = new GenericEntry($entity, $entity['fields'], $dbCon);
+		$entry = $ge->FindByValues([$keyName => $keyValue])[0];
+
+		foreach (array_filter($entityTableAndFields['fields'], function ($el) {return isset($el['type']) && $el['type'] == 'object';}) as $key => $objectField) {
+
+			$objectData = Entries::LoadEntryRecursively($objectField['primaryKeyFieldName'], $entry[$key], $objectField, $dbCon);
+
+			$entry[$key] = $objectData;
+		}
+
+		//Loading related entities with relation type array
+		foreach (array_filter($entity['fields'], function ($el) {return $el['type'] == 'array';}) as $arrayField) {
+			/*$tableAndFields = $this->EntityFactory->Get($arrayField['foreignEntity']);
+				$values[$tableAndFields['dbTableName']]['foreignFieldName'] = $entryId;
+
+				Entries::SaveEntryRecursively($arrayField['foreignTableName'], $tableAndFields['fields'], $values[$tableAndFields['dbTableName']], $dbCon);
+			*/
+		}
+
+		return $entry;
 	}
 
 	public static function ValidateJSONData($schema, $data) {

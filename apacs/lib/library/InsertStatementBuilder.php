@@ -30,10 +30,14 @@ class InsertStatementBuilder implements IStatementBuilder {
 		$fieldNames = "";
 
 		foreach ($this->fields as $field) {
-			//Add fields of type value
-			if ($field['type'] == 'value') {
+			//Add fields of type string
+			if ($field['type'] == 'string' || $field['type'] == 'object') {
 				$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
 			}
+		}
+
+		if (strlen($fieldNames) == 0) {
+			throw new InvalidArgumentException("No fields of type string or object found in fields");
 		}
 
 		return substr($fieldNames, 0, strlen($fieldNames) - 2);
@@ -43,7 +47,7 @@ class InsertStatementBuilder implements IStatementBuilder {
 		$values = "(";
 
 		foreach ($this->fields as $field) {
-			if ($field['type'] == 'value') {
+			if ($field['type'] == 'string' || $field['type'] == 'object') {
 				$values .= ':' . $field['dbFieldName'] . ', ';
 			}
 		}

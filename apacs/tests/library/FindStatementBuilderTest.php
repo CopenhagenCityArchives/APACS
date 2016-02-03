@@ -30,4 +30,16 @@ class FindStatementBuilderTest extends \UnitTestCase {
 		$qb2->BuildStatement();
 		$this->assertEquals("SELECT * FROM tableName2 WHERE field1 = \"1\" AND field2 = \"2\"", $qb2->GetStatement(), 'should return an insert query');
 	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testThrowExceptionOnNoMatchingFields() {
+		$tableName2 = 'tableName2';
+		$fields2 = [['name' => 'field1', 'dbFieldName' => 'field1', 'type' => 'wrongType'], ['name' => 'field3', 'dbFieldName' => 'field3', 'type' => 'wrongType']];
+		$values = ['field1' => null];
+
+		$qb2 = new FindStatementBuilder($tableName2, $fields2, $values);
+		$qb2->BuildStatement();
+	}
 }

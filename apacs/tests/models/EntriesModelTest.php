@@ -4,7 +4,8 @@ include_once '../lib/models/Entities.php';
 
 class EntriesModelTest extends \UnitTestCase {
 
-	private $entitiesFieldsMockConf;
+	private $entitiesMock;
+	private $entriesMock;
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
 		$di = new \Phalcon\Di\FactoryDefault;
@@ -20,31 +21,81 @@ class EntriesModelTest extends \UnitTestCase {
 			));
 		});
 
-		$this->entitiesFieldsMockConf = new EntityFieldConfigurationsMock();
+		$this->entitiesMock = new Mocks\EntitiesMock();
+		$this->entitiesMock->createTables();
 
+		$this->entriesMock = new Mocks\EntriesMock();
+		$this->entriesMock->createTables();
 		parent::setUp($di, $config);
 	}
 
 	public function tearDown() {
-		$this->entitiesFieldsMockConf->clearDatabase();
+		$this->entitiesMock->clearDatabase();
+		$this->entriesMock->clearDatabase();
 		parent::tearDown();
 	}
 
 	public function testSave() {
 		$values = [
-			'firstname' => 'Niels',
+			'firstnames' => 'Niels',
 			'lastname' => 'Jensen',
-			'deathcause' => [
+			'begrav_deathcauses' => [
 				'id' => 1,
-				'deathcause' => 'Lungebetændelse',
+				'begrav_deathcauses' => 'Lungebetændelse',
 			],
+			'entry_id' => 1,
 		];
 
-		$entity = $this->entitiesFieldsMockConf->getDefaultEntity();
-		Entries::SaveEntryRecursively($entity['table'], $entity['fields'], $values, $this->getDI()->get('db'));
+		$expectedValuesAfterUpdate = [
+			'firstnames' => 'Niels',
+			'lastname' => 'Jensen',
+			'begrav_deathcauses' => 1,
+			'entry_id' => '1',
+		];
 
-		$result = $this->getDI()->get('db')->query('SELECT * FROM tableName WHERE id = 1');
+		$this->entitiesMock->insertEntityWithObjectRelation();
+
+		$entity = $this->entitiesMock->getDefaultEntity();
+
+		Entries::SaveEntryRecursively($entity, $values, $this->getDI()->get('db'));
+
+		$result = $this->getDI()->get('db')->query('SELECT firstnames, lastname, begrav_deathcauses, entry_id FROM ' . $entity['dbTableName'] . ' WHERE id = 1');
 		$result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
 		$this->assertEquals($expectedValuesAfterUpdate, $result->fetchAll()[0], 'should save data in database');
+	}
+
+	/**
+	 * @expectedException Exception
+	 */
+	public function testValidation() {
+		$values = [
+			'firstnames' => null,
+			'lastname' => null,
+			'begrav_deathcauses' => [
+				'id' => 1,
+				'begrav_deathcauses' => 'test',
+			],
+			'entry_id' => 1,
+		];
+
+		$this->entitiesMock->insertEntityWithObjectRelation();
+
+		$entity = $this->entitiesMock->getDefaultEntity();
+
+		//Should throw exception when trying to save invalid data
+		Entries::SaveEntryRecursively($entity, $values, $this->getDI()->get('db'));
+	}
+
+	public function testLoadEntry() {
+		$this->entitiesMock->createTables();
+		$this->entitiesMock->insertEntityWithObjectRelation();
+		$entity = $this->entitiesMock->getDefaultEntity();
+		$this->entriesMock->createEntryWithObjectRelation();
+
+		$this->assertEquals(
+			$this->entriesMock->getEntryWithObjectRelation(),
+			Entries::LoadEntryRecursively('entry_id', 1, $entity, $this->getDI()->get('db')),
+			'should return a complete array of the saved entry'
+		);
 	}
 }

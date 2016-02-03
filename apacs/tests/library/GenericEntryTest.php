@@ -1,6 +1,5 @@
 <?php
 include_once '../lib/library/GenericEntry.php';
-require_once './mockData/EntryConfMock.php';
 
 class GenericEntryTest extends \UnitTestCase {
 
@@ -8,7 +7,8 @@ class GenericEntryTest extends \UnitTestCase {
 	private $fields;
 	private $tablename;
 	protected $di;
-	private $entitiesFieldsMockConf;
+	private $entitiesMock;
+	private $entriesMock;
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
 		$di = new \Phalcon\Di\FactoryDefault;
@@ -23,7 +23,11 @@ class GenericEntryTest extends \UnitTestCase {
 		}
 		);
 
-		$this->entitiesFieldsMockConf = new EntityFieldConfigurationsMock();
+		$this->entitiesMock = new Mocks\EntitiesMock();
+		$this->entitiesMock->createTables();
+
+		$this->entriesMock = new Mocks\EntriesMock();
+		$this->entriesMock->createTables();
 
 		$this->di = $di;
 		parent::setUp($di, $config);
@@ -34,15 +38,17 @@ class GenericEntryTest extends \UnitTestCase {
 
 		$this->ge = null;
 		$this->entity = [];
+
+		$this->entitiesMock->clearDatabase();
+		$this->entriesMock->clearDatabase();
 	}
 
 	public function getSimpleEntry() {
 		return [
 			'firstnames' => 'Jens',
 			'lastname' => 'Larsen',
-			'deathcause' => [
-				'deathcause' => 'Hjertefejl',
-			],
+			'begrav_deathcauses' => 1,
+			'entry_id' => 1,
 		];
 	}
 
@@ -50,64 +56,61 @@ class GenericEntryTest extends \UnitTestCase {
 		return [
 			'firstnames' => 'Jens',
 			'lastname' => '',
-			'deathcause' => [
-				'deathcause' => 'Hjertefejl',
+			'begrav_deathcauses' => [
+				'begrav_deathcauses' => 'Hjertefejl',
 			],
+			'entry_id' => 1,
 		];
 	}
 
 	public function testValidateEntry() {
-		$this->entitiesFieldsMockConf->createTables();
-		$this->entitiesFieldsMockConf->insertEntityWithObjectRelation();
-		$entity = $this->entitiesFieldsMockConf->getDefaultEntity();
+		$this->entitiesMock->insertEntityWithObjectRelation();
+		$entity = $this->entitiesMock->getDefaultEntity();
 
-		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$this->ge = new GenericEntry($entity, $entity['fields'], $this->di->get('db'));
 		$valuesAreValid = $this->ge->ValidateValues($this->getSimpleEntityWithError());
 
 		$this->assertEquals(false, $valuesAreValid, 'should return false on invalid data');
 	}
 
 	public function testSaveEntry() {
-		$this->entitiesFieldsMockConf->createTables();
-		$this->entitiesFieldsMockConf->insertEntityWithObjectRelation();
-		$entity = $this->entitiesFieldsMockConf->getDefaultEntity();
+		$this->entitiesMock->insertEntityWithObjectRelation();
+		$entity = $this->entitiesMock->getDefaultEntity();
 
-		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$this->ge = new GenericEntry($entity, $entity['fields'], $this->di->get('db'));
 		$couldSave = $this->ge->Save($this->getSimpleEntry());
 
 		$this->assertEquals(true, $couldSave, 'should save data');
 	}
 
 	public function testLoadEntry() {
-		$this->entitiesFieldsMockConf->createTables();
-		$this->entitiesFieldsMockConf->insertEntityWithObjectRelation();
-		$entity = $this->entitiesFieldsMockConf->getDefaultEntity();
+		$this->entitiesMock->insertEntityWithObjectRelation();
+		$entity = $this->entitiesMock->getDefaultEntity();
 
-		$this->di->get('db')->query("INSERT INTO `begrav_persons` (`id`, `firstnames`, `lastname`) VALUES (1,'Jens','Nielsen');");
+		$this->di->get('db')->query("INSERT INTO `begrav_persons` (`id`, `firstnames`, `lastname`, `entry_id`) VALUES (1,'Jens','Nielsen',1);");
 
-		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
+		$this->ge = new GenericEntry($entity, $entity['fields'], $this->di->get('db'));
 		$result = $this->ge->Load(1);
 		$this->assertEquals(1, count($result), 'should return a row of data');
-		$this->assertEquals(['id' => '1', 'firstnames' => 'Jens', 'lastname' => 'Nielsen'], $result[0], 'should return values of type value');
+		$this->assertEquals(['id' => '1', 'firstnames' => 'Jens', 'lastname' => 'Nielsen', 'entry_id' => 1], $result[0], 'should return values of type value');
 	}
 
 	public function testUpdateEntry() {
-		$this->entitiesFieldsMockConf->createTables();
-		$this->entitiesFieldsMockConf->insertEntityWithObjectRelation();
-		$entity = $this->entitiesFieldsMockConf->getDefaultEntity();
+		$this->entitiesMock->insertEntityWithObjectRelation();
+		$entity = $this->entitiesMock->getDefaultEntity();
 
 		//Inserting data to update
-		$this->di->get('db')->query("INSERT INTO `begrav_persons` (`id`, `firstnames`, `lastname`) VALUES (1,'Jens','Nielsen');");
+		$this->di->get('db')->query("INSERT INTO `begrav_persons` (`id`, `firstnames`, `lastname`, `entry_id`) VALUES (1,'Jens','Nielsen', 1);");
 
 		//Updating
-		$this->ge = new GenericEntry($entity['table'], $entity['fields'], $this->di->get('db'));
-		$updatedValues = ['id' => '1', 'firstnames' => 'Niels', 'lastname' => 'Hansen', 'deathcause' => 'shouldnt have effect'];
+		$this->ge = new GenericEntry($entity, $entity['fields'], $this->di->get('db'));
+		$updatedValues = ['id' => '1', 'firstnames' => 'Niels', 'lastname' => 'Hansen', 'deathcauses' => 'shouldnt have effect', 'entry_id' => 1];
 		$this->ge->Update($updatedValues);
 
-		$expectedValuesAfterUpdate = ['id' => '1', 'firstnames' => 'Niels', 'lastname' => 'Hansen'];
+		$expectedValuesAfterUpdate = ['id' => '1', 'firstnames' => 'Niels', 'lastname' => 'Hansen', 'entry_id' => 1];
 
 		//Loading result
-		$result = $this->di->get('db')->query("SELECT id,firstnames,lastname FROM `begrav_persons` WHERE id = 1;");
+		$result = $this->di->get('db')->query("SELECT id,firstnames,lastname, entry_id FROM `begrav_persons` WHERE id = 1;");
 		$result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
 		$this->assertEquals($expectedValuesAfterUpdate, $result->fetchAll()[0], 'should update existing values');
 	}

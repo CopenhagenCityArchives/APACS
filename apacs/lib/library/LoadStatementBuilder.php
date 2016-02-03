@@ -40,6 +40,10 @@ class LoadStatementBuilder implements IStatementBuilder {
 			}
 		}
 
+		if (strlen($fieldNames) == 0) {
+			throw new InvalidArgumentException("No fields of type string or object found in fields");
+		}
+
 		return substr($fieldNames, 0, strlen($fieldNames) - 2);
 	}
 }

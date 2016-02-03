@@ -21,7 +21,7 @@ class EntitiesModelTest extends \UnitTestCase {
 			));
 		});
 
-		$this->entitiesFieldsMockConf = new EntityFieldConfigurationsMock();
+		$this->entitiesFieldsMockConf = new Mocks\EntitiesMock();
 		$this->entitiesFieldsMockConf->createTables();
 
 		parent::setUp($di, $config);
@@ -47,27 +47,33 @@ class EntitiesModelTest extends \UnitTestCase {
 
 		//Counting fields that have a key named fields
 		$this->assertTrue(count(array_column($entities['fields'], 'fields')) == 1, 'should convert fields that relates to other entities to entities');
+		$this->assertEquals('object', $entities['type'], 'should set entity type based on countPerEntry');
 	}
 
 	public function testGetFieldsAsAssocArray() {
 		$fields = [
 			[
 				'dbFieldName' => 'test1',
+				'includeInForm' => 1,
 				'value' => 2,
 			],
 			[
 				'dbFieldName' => 'test2',
+				'includeInForm' => 1,
 				'value' => 1,
 			],
 			[
 				'dbTableName' => 'test3',
+				'includeInForm' => 1,
 				'value' => 3,
 			],
 			[
 				'dbFieldName' => 'test4',
+				'includeInForm' => 1,
 				'fields' => [
 					'id' => 1,
 					'fieldname' => 2,
+					'includeInForm' => 1,
 				],
 			],
 		];
@@ -84,18 +90,30 @@ class EntitiesModelTest extends \UnitTestCase {
 		$this->assertEquals(count($fields), count($convertedArr), 'should keep all keys');
 	}
 
-	public function testGetEntityAsJSONSchemaObject() {
+	public function testGetSimpleEntityAsJSONSchemaObject() {
 		$this->entitiesFieldsMockConf->insertEntityWithoutRelations();
 		$entity = new Entities();
 		$loadedEntity = $entity->GetEntityAndFields(1);
-		$jsonSchemaObject = $entity->ConvertEntityToJSONSchemaObject($loadedEntity);
+		$jsonSchemaObject = $entity->getEntityAsJSONSchema($loadedEntity);
 		$expectedKeys = ['title', 'type'];
 
 		foreach ($expectedKeys as $key) {
 			$this->assertTrue(array_key_exists($key, $jsonSchemaObject), 'should hold key with name ' . $key);
 		}
 
+		$this->assertFalse(array_key_exists('id', $jsonSchemaObject['properties']), 'should remove fields with value includeInForm = 0');
+
 		$this->assertTrue($jsonSchemaObject['type'] == 'object', 'should convert entities with countPerEntry == 1 to type object');
 		$this->assertTrue(isset($jsonSchemaObject['properties']), 'should convert fields to properties for type object');
+		$this->assertEquals(2, count($jsonSchemaObject['required']), 'should set array containing required fields');
+	}
+
+	public function testGetComplexEntityAsJSONSchemaObject() {
+		$this->entitiesFieldsMockConf->insertEntityWithArrayRelations();
+		$entity = new Entities();
+		$loadedEntity = $entity->GetEntityAndFields(1);
+		$jsonSchemaObject = $entity->getEntityAsJSONSchema($loadedEntity);
+
+		$this->assertTrue(isset($jsonSchemaObject['properties']['begrav_persons_deathcauses']['items']), 'should include entities pointing to main entity');
 	}
 }

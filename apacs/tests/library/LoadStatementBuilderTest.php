@@ -41,4 +41,14 @@ class LoadStatementBuilderTest extends \UnitTestCase {
 		$qb1->BuildStatement();
 		$this->assertEquals("SELECT `field1` FROM tableName WHERE tableName.id = :id", $qb1->GetStatement(), 'should ignore fields that are not of type value');
 	}
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 */
+	public function testThrowExceptionOnNoMatchingFields() {
+		$tableName2 = 'tableName2';
+		$fields2 = [['name' => 'field1', 'dbFieldName' => 'field1', 'type' => 'wrongType'], ['name' => 'field3', 'dbFieldName' => 'field3', 'type' => 'wrongType']];
+		$qb2 = new LoadStatementBuilder($tableName2, $fields2);
+		$qb2->BuildStatement();
+	}
 }

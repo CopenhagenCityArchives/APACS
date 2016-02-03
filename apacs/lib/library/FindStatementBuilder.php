@@ -43,11 +43,14 @@ class FindStatementBuilder implements IStatementBuilder {
 
 	private function getConditions() {
 		$conditions = '';
-//TODO: Also find codeTable and field values
 		foreach ($this->fields as $field) {
 			if (isset($this->values[$field['dbFieldName']])) {
 				$conditions .= $field['dbFieldName'] . ' = "' . $this->values[$field['dbFieldName']] . '" AND ';
 			}
+		}
+
+		if (strlen($conditions) == 0) {
+			throw new InvalidArgumentException("No no values given");
 		}
 
 		return substr($conditions, 0, strlen($conditions) - 5);

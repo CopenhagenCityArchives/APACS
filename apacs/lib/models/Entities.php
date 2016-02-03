@@ -15,10 +15,20 @@ class Entities extends \Phalcon\Mvc\Model {
 	}
 
 	private function GetEntitiesFields($entityId) {
-		$query = new Query("SELECT Entities.id as entity_id, EntitiesFields.id as entity_field_id, Fields.name, Fields.type, Fields.validationRegularExpression, Fields.helpText, Fields.validationErrorMessage, Fields.defaultValue, Fields.required, Fields.foreignEntityName, Fields.foreignFieldName, Fields.dbFieldName FROM Entities LEFT JOIN EntitiesFields ON Entities.id = EntitiesFields.entity_id LEFT JOIN Fields ON EntitiesFields.field_id = Fields.id WHERE Entities.id = :entityId:", $this->getDI());
+		$query = new Query("SELECT Entities.id as entity_id, EntitiesFields.id as entity_field_id, Fields.name, Fields.type, Fields.validationRegularExpression, Fields.helpText, Fields.validationErrorMessage, Fields.defaultValue, Fields.required, Fields.foreignEntityName, Fields.foreignFieldName, Fields.dbFieldName, Fields.includeInForm FROM Entities LEFT JOIN EntitiesFields ON Entities.id = EntitiesFields.entity_id LEFT JOIN Fields ON EntitiesFields.field_id = Fields.id WHERE Entities.id = :entityId:", $this->getDI());
 		$fields = $query->execute(['entityId' => $entityId])->toArray();
 		return $fields;
 	}
+
+	/*private function GetEntitiesRelatingTo($entityId) {
+		$relatingFields = Fields::find(['conditions' => 'entities_id = ' . $entityId])->toArray();
+		$uniqueEntryIds = array_unique(array_map(function ($i) {return $i['entities_id'];}, $relatingFields));
+
+		return Entities::find([
+			'id IN (:ids:)',
+			'bind' => ['ids' => $uniqueEntryIds],
+		])->toArray();
+	}*/
 
 	public function getEntityAsJSONSchema($entity) {
 
@@ -35,22 +45,24 @@ class Entities extends \Phalcon\Mvc\Model {
 		return $entity;
 	}
 
-	public function GetEntityAndFields($entityId) {
+	public function GetEntityAndFields($entityId, $parentEntity = null) {
 		$entity = Entities::find(['conditions' => 'id =' . $entityId])[0];
 		$entityArr = [];
 		$entityArr = $entity->toArray();
 		$entityArr['fields'] = $this->GetEntitiesFields($entityId);
+		//$entityArr['fields'] = $this->ConvertFieldsToAssocArray($entityArr['fields']);
+		if ($entityArr['countPerEntry'] == -1 || $entityArr['countPerEntry'] > 1) {
+			$entityArr['type'] = 'array';
+		} else {
+			$entityArr['type'] = 'object';
+		}
 
 		//Loading related entities by identifying fields of type object and array
 		foreach (array_filter($entityArr['fields'], function ($el) {return $el['type'] == 'object' || $el['type'] == 'array';}) as $key => $field) {
-			//var_dump($field);
-			if ($field['type'] == 'object') {
-				$entityArr['type'] = 'object';
-			} else {
-				$entityArr['type'] = 'array';
+			//We dont wnat to receive the parent entity (this will generate an eternal loop)
+			if ($field['foreignEntityName'] !== $parentEntity) {
+				$entityArr['fields'][$key] = $this->GetEntityAndFields($field['foreignEntityName'], $field['entity_id']);
 			}
-
-			$entityArr['fields'][$key] = $this->GetEntityAndFields($field['foreignEntityName']);
 		}
 
 		return $entityArr;
@@ -58,9 +70,11 @@ class Entities extends \Phalcon\Mvc\Model {
 
 	public function ConvertFieldsToAssocArray($fields) {
 		$keyArr = [];
-		foreach ($fields as $field) {
+		foreach ($fields as $key => $field) {
 			if (isset($field['dbFieldName'])) {
+				//if ($field['includeInForm'] == 1) {
 				$keyArr[$field['dbFieldName']] = $field;
+				//	}
 			} else if (isset($field['dbTableName'])) {
 				$keyArr[$field['dbTableName']] = $field;
 			} else {
@@ -85,6 +99,18 @@ class Entities extends \Phalcon\Mvc\Model {
 				break;
 			}
 		}
+
+		//Remove fields not included in form (includeInForm = 0)
+		foreach ($entity['fields'] as $key => $field) {
+			if (isset($field['includeInForm']) && $field['includeInForm'] == 0) {
+				unset($entity['fields'][$key]);
+			}
+		}
+
+		unset($entity['required']);
+
+		$requiredFields = array_column(array_filter($entity['fields'], function ($el) {return $el['required'] == 1;}), 'dbFieldName');
+		$entity['required'] = $requiredFields;
 
 		if ($entity['countPerEntry'] == 1) {
 			$entity['type'] = 'object';
