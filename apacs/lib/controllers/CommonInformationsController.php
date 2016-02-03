@@ -37,7 +37,233 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 	public function GetTaskFieldsSchema($taskId) {
 		$confLoader = new DBConfigurationLoader();
-		$this->response->setJsonContent($confLoader->GetTaskFieldsSchema($taskId));
+		$this->response->setContentType('application/json', 'UTF-8');
+		//echo '';
+
+		$this->response->setContent(
+			'{
+   "id":"1",
+   "countPerEntry":"1",
+   "dbTableName":"begrav_persons",
+   "isMarkable":"1",
+   "guiName":"Personer",
+   "task_id":"1",
+   "primaryKeyFieldName":"id",
+   "type":"object",
+   "title":"begrav_persons",
+   "required":[
+      "firstnames",
+      "lastname",
+      "age_years",
+"begrav_chapels",
+"deathcause"
+   ],
+   "properties":{
+      "firstnames":{
+         "entity_id":"1",
+         "entity_field_id":"11",
+         "name":"firstname",
+         "type":"string",
+         "validationRegularExpression":"",
+         "helpText":"Personens fornavne",
+         "validationErrorMessage":"Feltet skal udfyldes",
+         "defaultValue":null,
+         "required":"1",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"firstnames",
+         "includeInForm":"1"
+      },
+      "lastname":{
+         "entity_id":"1",
+         "entity_field_id":"12",
+         "name":"Lastname",
+         "type":"string",
+         "validationRegularExpression":"",
+         "helpText":"Efternavn",
+         "validationErrorMessage":"Feltet skal udfyldes",
+         "defaultValue":null,
+         "required":"1",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"lastname",
+         "includeInForm":"1"
+      },
+      "birthname":{
+         "entity_id":"1",
+         "entity_field_id":"15",
+         "name":"birthname",
+         "type":"string",
+         "validationRegularExpression":"",
+         "helpText":"F\u00f8denavn",
+         "validationErrorMessage":"",
+         "defaultValue":null,
+         "required":"0",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"birthname",
+         "includeInForm":"1"
+      },
+      "age_years":{
+         "entity_id":"1",
+         "entity_field_id":"16",
+         "name":"age_years",
+         "type":"string",
+         "validationRegularExpression":"",
+         "helpText":"Alder, \u00e5r",
+         "validationErrorMessage":"Feltet skal udfyldes",
+         "defaultValue":null,
+         "required":"1",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"age_years",
+         "includeInForm":"1"
+      },
+      "age_months":{
+         "entity_id":"1",
+         "entity_field_id":"17",
+         "name":"age_months",
+         "type":"string",
+         "validationRegularExpression":null,
+         "helpText":"Alder, m\u00e5neder",
+         "validationErrorMessage":null,
+         "defaultValue":null,
+         "required":"0",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"age_months",
+         "includeInForm":"1"
+      },
+      "birth_date":{
+         "entity_id":"1",
+         "entity_field_id":"18",
+         "name":"birth_date",
+         "type":"string",
+         "validationRegularExpression":null,
+         "helpText":"F\u00f8dselsdato",
+         "validationErrorMessage":null,
+         "defaultValue":null,
+         "required":"0",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"birth_date",
+         "includeInForm":"1"
+      },
+      "death_date":{
+         "entity_id":"1",
+         "entity_field_id":"19",
+         "name":"death_date",
+         "type":"string",
+         "validationRegularExpression":null,
+         "helpText":"D\u00f8dsdato",
+         "validationErrorMessage":null,
+         "defaultValue":null,
+         "required":"0",
+         "foreignEntityName":null,
+         "foreignFieldName":null,
+         "dbFieldName":"death_date",
+         "includeInForm":"1"
+      },
+      "begrav_addresses":{
+         "id":"3",
+         "countPerEntry":"1",
+         "dbTableName":"begrav_addresses",
+         "isMarkable":"0",
+         "guiName":"Adresse",
+         "task_id":"1",
+         "primaryKeyFieldName":"id",
+         "type":"object",
+         "title":"begrav_addresses",
+         "required":[
+"street","floor"
+
+         ],
+         "properties":{
+            "street":{
+                     "entity_id":"4",
+                     "entity_field_id":"30",
+                     "name":"name",
+                     "type":"string",
+                     "validationRegularExpression":"",
+                     "helpText":"Vejnavn",
+                     "validationErrorMessage":"Feltet skal udfyldes",
+                     "defaultValue":null,
+                     "required":"1",
+                     "foreignEntityName":null,
+                     "foreignFieldName":null,
+                     "dbFieldName":"name",
+                     "includeInForm":"1"
+               },
+            "floor":{
+                     "entity_id":"7",
+                     "entity_field_id":"37",
+                     "name":"floor",
+                     "type":"string",
+                     "validationRegularExpression":"",
+                     "helpText":"Etage",
+                     "validationErrorMessage":"Feltet skal udfyldes",
+                     "defaultValue":null,
+                     "required":"1",
+                     "foreignEntityName":null,
+                     "foreignFieldName":null,
+                     "dbFieldName":"floor",
+                     "includeInForm":"1"
+                  }
+         }
+      },
+      "begrav_chapels":{
+         "id":"6",
+               "entity_id":"6",
+               "entity_field_id":"32",
+               "name":"name",
+               "type":"string",
+               "validationRegularExpression":"",
+               "helpText":"Kapelnavn",
+               "validationErrorMessage":"Feltet skal udfyldes",
+               "defaultValue":null,
+               "required":"1",
+               "foreignEntityName":null,
+               "foreignFieldName":null,
+               "dbFieldName":"name",
+               "includeInForm":"1"
+      },
+            "begrav_deathcauses":{
+               "id":"2",
+               "countPerEntry":"1",
+               "dbTableName":"begrav_deathcauses",
+               "isMarkable":"0",
+               "guiName":"D\u00f8ds\u00e5rsag",
+               "task_id":"1",
+               "primaryKeyFieldName":"id",
+               "type":"object",
+               "title":"begrav_deathcauses",
+               "required":[
+                  "deathcause"
+               ],
+               "properties":{
+                  "deathcause":{
+                     "entity_id":"2",
+                     "entity_field_id":"40",
+                     "name":"deathcause",
+                     "type":"string",
+                     "validationRegularExpression":"",
+                     "helpText":"D\u00f8ds\u00e5rsag",
+                     "validationErrorMessage":"Feltet skal udfyldes",
+                     "defaultValue":null,
+                     "required":"1",
+                     "foreignEntityName":null,
+                     "foreignFieldName":null,
+                     "dbFieldName":"deathcause",
+                     "includeInForm":"1"
+                  }
+         }
+      }
+   }
+}'
+		);
+
+		//	$this->response->send();
+		//$this->response->setJsonContent($confLoader->GetTaskFieldsSchema($taskId));
 	}
 
 	public function GetUnits() {
@@ -58,7 +284,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$results = [];
 		$i = 0;
 
-		$unitsConditions = $taskId == NULL ? [] : ['conditions' => 'task_id = ' . $taskId];
+		$unitsConditions = is_null($taskId) ? [] : ['conditions' => 'tasks_id = ' . $taskId];
 
 		foreach ($resultSet as $row) {
 			$results[$i] = array_intersect_key($row->toArray(), array_flip(Units::$publicFields));
@@ -96,10 +322,10 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			return;
 		}
 
-		$conditions = 'concrete_unit_id = ' . $unitId;
+		$conditions = 'unit_id = ' . $unitId;
 
 		if ($pageNumber !== false) {
-			$conditions .= ' AND page_number = ' . $pageNumber;
+			$conditions = $conditions . ' AND page_number = ' . $pageNumber;
 		}
 
 		$resultSet = Pages::find([
@@ -116,6 +342,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$resultSet->next();
 			$i++;
 		}*/
+
 		$results = $resultSet->toArray();
 
 		$this->response->setJsonContent($results);
@@ -123,17 +350,16 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 	public function GetPage($pageId) {
 		$page = Pages::findFirst(['id' => $pageId]);
-		$taskId = $this->request->getQuery('task_id', null, false);
+		$taskId = $this->request->getQuery('task_id', null, null);
 
-		$entriesCondition = [];
-
-		if ($taskId !== false) {
-			$entriesCondition = "task_id = " . $taskId;
+		$taskPageConditions = 'pages_id = ' . $pageId;
+		if (!is_null($taskId)) {
+			$taskPageConditions .= ' AND tasks_id = ' . $taskId;
 		}
-
 		$result = [];
 		$result = $page->toArray(Pages::$publicFields);
-		$result['entries'] = $page->getEntries($entriesCondition)->toArray();
+		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions])->toArray();
+		//$result['posts'] = $page->getPosts()->toArray();
 
 		$this->response->setJsonContent($result);
 	}
@@ -147,18 +373,22 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$unitId = $this->request->getQuery('unit_id', null, null);
 		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
 
-		if (is_null($taskId) && is_null($unitId)) {
+		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
 			$this->error('task_id, unit_id and current_number are required');
 			return;
 		}
-
-		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND Pages.page_number > :current_page_number AND Pages.unit_id = :unit_id AND last_activity > DATE_SUB(NOW(), INTERVAL 5 MINUTE) ORDER BY Pages.page_number LIMIT 1';
+/*AND Pages.unit_id = :unit_id AND last_activity > DATE_SUB(NOW(), INTERVAL 5 MINUTE)*/
+		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND Pages.page_number > :current_page_number ORDER BY Pages.page_number LIMIT 1';
 
 		$taskPage = new TasksPages();
-		$result = new Resultset(null, $taskPage, $taskPage->getReadConnection()->query($query, ['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $currentPageNumber]));
+		$result = new Resultset(null, $taskPage,
+			$taskPage->getReadConnection()->query($query,
+				['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $currentPageNumber]
+			)
+		);
 
 		$this->response->setStatusCode('200', 'OK');
-		$this->response->setJsonContent($result);
+		$this->response->setJsonContent($result->toArray());
 	}
 
 	public function GetActiveUsers() {
