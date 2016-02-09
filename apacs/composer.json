@@ -6,6 +6,8 @@
     },
     "require": {
         "justinrainbow/json-schema": "~1.3",
-        "solarium/solarium": "v3.5.1"
+        "solarium/solarium": "v3.5.1",
+        "j4mie/idiorm": "^1.5",
+        "arjunkomath/crud": "dev-master"
     }
 }

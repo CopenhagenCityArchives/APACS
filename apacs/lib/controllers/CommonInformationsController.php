@@ -35,9 +35,18 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($confLoader->GetTask($taskId));
 	}
 
-	public function GetTaskFieldsSchema($taskId) {
-		$confLoader = new DBConfigurationLoader();
-		$this->response->setJsonContent($confLoader->GetTaskFieldsSchema($taskId));
+	public function GetTaskFieldsSchema() {
+		$request = $this->getDI()->get('request');
+
+		$taskId = $request->getQuery('task_id', null, null);
+
+		if (is_null($taskId)) {
+			$this->error('task_id is required');
+			return;
+		}
+
+		$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
+		$this->response->setJsonContent($task->GetTaskSchema($taskId));
 	}
 
 	public function GetUnits() {
@@ -58,7 +67,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$results = [];
 		$i = 0;
 
-		$unitsConditions = $taskId == NULL ? [] : ['conditions' => 'task_id = ' . $taskId];
+		$unitsConditions = is_null($taskId) ? [] : ['conditions' => 'tasks_id = ' . $taskId];
 
 		foreach ($resultSet as $row) {
 			$results[$i] = array_intersect_key($row->toArray(), array_flip(Units::$publicFields));
@@ -96,10 +105,10 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			return;
 		}
 
-		$conditions = 'concrete_unit_id = ' . $unitId;
+		$conditions = 'unit_id = ' . $unitId;
 
 		if ($pageNumber !== false) {
-			$conditions .= ' AND page_number = ' . $pageNumber;
+			$conditions = $conditions . ' AND page_number = ' . $pageNumber;
 		}
 
 		$resultSet = Pages::find([
@@ -116,6 +125,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$resultSet->next();
 			$i++;
 		}*/
+
 		$results = $resultSet->toArray();
 
 		$this->response->setJsonContent($results);
@@ -123,17 +133,16 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 	public function GetPage($pageId) {
 		$page = Pages::findFirst(['id' => $pageId]);
-		$taskId = $this->request->getQuery('task_id', null, false);
+		$taskId = $this->request->getQuery('task_id', null, null);
 
-		$entriesCondition = [];
-
-		if ($taskId !== false) {
-			$entriesCondition = "task_id = " . $taskId;
+		$taskPageConditions = 'pages_id = ' . $pageId;
+		if (!is_null($taskId)) {
+			$taskPageConditions .= ' AND tasks_id = ' . $taskId;
 		}
-
 		$result = [];
 		$result = $page->toArray(Pages::$publicFields);
-		$result['entries'] = $page->getEntries($entriesCondition)->toArray();
+		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions])->toArray();
+		//$result['posts'] = $page->getPosts()->toArray();
 
 		$this->response->setJsonContent($result);
 	}
@@ -147,18 +156,22 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$unitId = $this->request->getQuery('unit_id', null, null);
 		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
 
-		if (is_null($taskId) && is_null($unitId)) {
+		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
 			$this->error('task_id, unit_id and current_number are required');
 			return;
 		}
-
-		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND Pages.page_number > :current_page_number AND Pages.unit_id = :unit_id AND last_activity > DATE_SUB(NOW(), INTERVAL 5 MINUTE) ORDER BY Pages.page_number LIMIT 1';
+/*AND Pages.unit_id = :unit_id AND last_activity > DATE_SUB(NOW(), INTERVAL 5 MINUTE)*/
+		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND Pages.page_number > :current_page_number ORDER BY Pages.page_number LIMIT 1';
 
 		$taskPage = new TasksPages();
-		$result = new Resultset(null, $taskPage, $taskPage->getReadConnection()->query($query, ['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $currentPageNumber]));
+		$result = new Resultset(null, $taskPage,
+			$taskPage->getReadConnection()->query($query,
+				['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $currentPageNumber]
+			)
+		);
 
 		$this->response->setStatusCode('200', 'OK');
-		$this->response->setJsonContent($result);
+		$this->response->setJsonContent($result->toArray());
 	}
 
 	public function GetActiveUsers() {

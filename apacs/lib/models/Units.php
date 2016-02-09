@@ -1,83 +1,73 @@
 <?php
 
-class Units extends \Phalcon\Mvc\Model
-{
+class Units extends \Phalcon\Mvc\Model {
 
 	protected $id;
 	protected $numOfPages;
 	protected $collectionId;
 
-    private $status = [];
-    static $publicFields = ['id','collection_id','pages','description','index_active'];
+	private $status = [];
+	static $publicFields = ['id', 'collection_id', 'pages', 'description', 'index_active'];
 
-    const OPERATION_TYPE_CREATE = 'create';
-    const OPERATION_TYPE_UPDATE = 'update';
+	const OPERATION_TYPE_CREATE = 'create';
+	const OPERATION_TYPE_UPDATE = 'update';
 
-    private function getImportCreateSQL()
-    {
-        return 'INSERT INTO ' . $this->getSource() . ' (concrete_unit_id, description, collection_id, tablename) SELECT :id, :fields, :collectionId, ":table" FROM :table :conditions';
-    }
+	private function getImportCreateSQL() {
+		return 'INSERT INTO ' . $this->getSource() . ' (concrete_unit_id, description, collection_id, tablename) SELECT :id, :fields, :collectionId, ":table" FROM :table :conditions';
+	}
 
-    private function getImportUpdateSQL()
-    {
-        return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_unit_id = :table.:id SET ' . $this->getSource() . '.description = :fields, tablename = ":table" :conditions';
-    }
+	private function getImportUpdateSQL() {
+		return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_unit_id = :table.:id SET ' . $this->getSource() . '.description = :fields, tablename = ":table" :conditions';
+	}
 
-    public function getSource()
-    {
-        return 'apacs_' . 'units';
-    }
+	public function getSource() {
+		return 'apacs_' . 'units';
+	}
 
-    public function initialize()
-    {
-        $this->hasMany('id', 'Pages', 'unit_id');
-        $this->hasMany('id', 'TasksUnits', 'unit_id');
-    }
+	public function initialize() {
+		$this->hasMany('id', 'Pages', 'units_id');
+		$this->hasMany('id', 'TasksUnits', 'units_id');
+	}
 
-    public function Import($type, $collectionId, $idField, $infoField, $table, $conditions = NULL)
-    {
-        if($type == self::OPERATION_TYPE_CREATE && $this->dataAlreadyImported('apacs_units', $table, $collectionId)){
-            $this->status = ['error' => 'units are already imported (collection and tablename already exists']; 
-            return false;
-        }
-        $sql = ($type == self::OPERATION_TYPE_UPDATE ? $this->getImportUpdateSQL() : $this->getImportCreateSQL());
+	public function Import($type, $collectionId, $idField, $infoField, $table, $conditions = NULL) {
+		if ($type == self::OPERATION_TYPE_CREATE && $this->dataAlreadyImported('apacs_units', $table, $collectionId)) {
+			$this->status = ['error' => 'units are already imported (collection and tablename already exists'];
+			return false;
+		}
+		$sql = ($type == self::OPERATION_TYPE_UPDATE ? $this->getImportUpdateSQL() : $this->getImportCreateSQL());
 
-        $sql = str_replace(':collectionId', $collectionId, $sql);
-        $sql = str_replace(':id', $idField, $sql);
-        $sql = str_replace(':fields', $infoField, $sql);
-        $sql = str_replace(':table', $table, $sql);
-        $sql = str_replace(':conditions', $conditions == NULL ? '' : 'WHERE ' . $conditions , $sql);
+		$sql = str_replace(':collectionId', $collectionId, $sql);
+		$sql = str_replace(':id', $idField, $sql);
+		$sql = str_replace(':fields', $infoField, $sql);
+		$sql = str_replace(':table', $table, $sql);
+		$sql = str_replace(':conditions', $conditions == NULL ? '' : 'WHERE ' . $conditions, $sql);
 
-        return $this->runQueryGetStatus($sql);
-    }
+		return $this->runQueryGetStatus($sql);
+	}
 
-    private function dataAlreadyImported($type, $tableName, $collectionId)
-    {
-        $sql = 'SELECT * FROM ' . $type . ' WHERE tablename = \'' . $tableName . '\' AND collection_id = \'' . $collectionId . '\' LIMIT 1';
-        $resultSet = $this->getDI()->get('database')->query($sql);
-        $resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-        $results = $resultSet->fetchAll();
+	private function dataAlreadyImported($type, $tableName, $collectionId) {
+		$sql = 'SELECT * FROM ' . $type . ' WHERE tablename = \'' . $tableName . '\' AND collection_id = \'' . $collectionId . '\' LIMIT 1';
+		$resultSet = $this->getDI()->get('database')->query($sql);
+		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		$results = $resultSet->fetchAll();
 
-        return count($results) > 0;
-    }    
+		return count($results) > 0;
+	}
 
-    private function runQueryGetStatus($query)
-    {
-        $connection = $this->getDI()->get('database');
-        $success = $connection->execute($query);
+	private function runQueryGetStatus($query) {
+		$connection = $this->getDI()->get('database');
+		$success = $connection->execute($query);
 
-        if($success){
-            $this->status = ["affected_rows"=>$connection->affectedRows()];
-        }
-        else{
-            $this->status = ["status" => "could not execute query", "error_message" => $connection->getErrorInfo()];
-        }
+		if ($success) {
+			$this->status = ["affected_rows" => $connection->affectedRows()];
+		} else {
+			$this->status = ["status" => "could not execute query", "error_message" => $connection->getErrorInfo()];
+		}
 
-        return $success;
-    }    
+		return $success;
+	}
 
-    public function GetStatus()
-    {
-        return $this->status;
-    }
+	public function GetStatus() {
+		return $this->status;
+	}
 }

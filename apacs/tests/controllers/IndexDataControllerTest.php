@@ -1,65 +1,101 @@
 <?php
-include '../lib/controllers/IndexDataController.php';
-include '../lib/library/ConfigurationLoader.php';
 
 class IndexDataControllerTest extends \UnitTestCase {
 
-    public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-        $di = new \Phalcon\Di\FactoryDefault;
+	private $entitiesMock;
+	private $entriesMock;
 
-        $di->set('configuration', function(){
-            $conf = new ConfigurationLoader('./mockData/EntryConfMock.php');
-            return $conf;
-        });    
+	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+		$di = new \Phalcon\Di\FactoryDefault;
 
-        //Test specific database, Phalcon
-        $di->set('db', function(){
-            return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-                "host" => "localhost",
-                "username" => "root",
-                "password" => "",
-                "dbname" => "unit_tests",
-                'charset' => 'utf8'
-                ));
-            }
-        ); 
+		$di->set('configuration', function () {
+			$conf = new ConfigurationLoader('./Mocks/MockCollectionsConfiguration.php');
+			return $conf;
+		});
 
-        parent::setUp($di, $config);
-    }
-    
-    public function tearDown() {
-        $this->getDI()->get('db')->query('DELETE FROM insert_table');
-        $this->getDI()->get('db')->query('DELETE FROM insert_table2');
-        parent::tearDown();
-    }
-/*
-    public function testInsertNoErrors()
-    {
-        $ctrl = new IndexDataController();
+		//Test specific database, Phalcon
+		$di->setShared('db', function () {
+			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
+				"host" => "localhost",
+				"username" => "root",
+				"password" => "",
+				"dbname" => "unit_tests",
+				'charset' => 'utf8',
+			));
+		}
+		);
 
-        $_POST['firstname'] = 'firstname';
-        $_POST['lastname'] = 'lastname';
+		$this->entitiesMock = new Mocks\EntitiesMock();
+		$this->entitiesMock->createTables();
 
-        $this->assertEquals(true, $ctrl->insert(234), 'should return true on success');
+		$this->entriesMock = new Mocks\EntriesMock();
+		$this->entriesMock->createTables();
 
-        $_POST['firstname'] = 'niels';
-        $_POST['lastname'] = 'lastname';
-        $ctrl->insert(234);
+		parent::setUp($di, $config);
+	}
 
-        $model = new GenericIndex();
-        $this->assertEquals(2, count($model->find("lastname = 'lastname'")),'GenericModel should be affiliated with the controller entity id');
-    }
+	public function tearDown() {
+		$this->entitiesMock->clearDatabase();
+		$this->entriesMock->clearDatabase();
+		parent::tearDown();
+	}
 
-    public function testInsertErrors()
-    {
-        $ctrl = new IndexDataController();
+	public function testSaveEntryThrowErrorOnEmptyData() {
+		$ctrl = new IndexDataController();
+		$ctrl->SaveEntry(1);
+		$this->assertEquals('401 Input error', $this->di->get('response')->getStatusCode(), 'should return 401 when no error is given');
+	}
 
-        $_POST['firstname2'] = '123 123';
-        $_POST['lastname2'] = 'lastname';
+	public function testSaveEntryThrowErrorOnInvalidTask() {
+		$ctrl = new IndexDataController();
+		$ctrl->SaveEntry(9999);
+		$this->assertEquals('401 Input error', $this->di->get('response')->getStatusCode(), 'should return 401 when no error is given');
+	}
 
-        $this->assertEquals(false, $ctrl->insert(235), 'should return false on error');
+	public function testSaveEntryOnInvalidData() {
+		$this->entitiesMock->insertEntity();
 
-        $model = new GenericIndex();
-        $this->assertEquals(0, count($model->find("lastname2 = 'lastname'")), 'should not save data on error');
-    }*/
+		$data = [
+			'persons' => [
+				'firstnames' => 'niels',
+				'lastname' => 'hansen',
+				'deathcauses' => null,
+			],
+		];
+
+		$raw = json_encode($data);
+
+		$ctrl = new IndexDataController();
+		$ctrl->SaveEntry(1);
+		$this->assertEquals('401 Input error', $this->di->get('response')->getStatusCode(), 'should return 401 when data is invalid');
+	}
+
+	/*public function testSaveEntry() {
+		$this->entriesMock->createEntryWithObjectRelation();
+		$this->entitiesMock->insertEntity();
+
+		$data = [
+			'persons' => [
+				'firstnames' => 'niels',
+				'lastname' => 'jensen',
+			],
+			'deathcauses' => [
+				'deathcause' => 'lungebetændelse',
+			],
+		];
+
+		$raw = json_encode($data);
+
+		$mock = $this->getMock("\\Phalcon\\Http\\Request", array("getRawBody"));
+		$mock->expects($this->once())
+			->method("getRawBody")
+			->will($this->returnValue($raw));
+
+		$this->di->set('request', $mock, true);
+
+		$ctrl = new IndexDataController();
+		$ctrl->SaveEntry(1);
+		//	var_dump($this->di->get('response')->getContent());
+		$this->assertEquals('200 OK', $this->di->get('response')->getStatusCode());
+	}*/
 }

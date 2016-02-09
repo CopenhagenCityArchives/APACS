@@ -50,7 +50,7 @@ class ValidationRuleSetTest extends \UnitTestCase {
 	public function testValidationWhenNullValuesAreIgnored() {
 		$ValidationRule = new ValidationRuleSet('/\w{1,10}/', true, 'Should contain 1 to 10 characters', true);
 		$Validator = new Validator($ValidationRule);
-		$this->assertEquals(true, $Validator->IsValid(null, true), 'should return true if input is not required and empty');
+		$this->assertEquals(true, $Validator->IsValid(null, null, true), 'should return true if input is not required and empty');
 	}
 
 	public function testGetErrorMessage() {

@@ -1,332 +1,261 @@
 <?php
-use Phalcon\Mvc\Model\Query;
 
-class Entries extends \Phalcon\Mvc\Model
-{
+class Entries extends \Phalcon\Mvc\Model {
 
 	protected $id;
 	protected $pagesId;
 	protected $tasksId;
 	protected $collectionId;
 
-    private $_metaEntities;
+	private $_metaEntities;
 
-    public function getSource()
-    {
-        return 'apacs_' . 'entries';
-    }
+	private $crud;
 
-    public function initialize()
-    {
-        $this->hasMany('id', 'Errors', 'entry_id');
-        $this->belongsTo('page_id', 'Pages', 'id');
-        $this->belongsTo('task_id', 'Tasks', 'id');
-    }
+	public function getSource() {
+		return 'apacs_' . 'entries';
+	}
 
-    public static function SaveInSolr($data)
-    {
-        $config = [ 
-            'endpoint' => 
-                [ 'localhost' => 
-                    [ 'host' => '54.194.233.62', 'hostname' => '54.194.233.62', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'] 
-                ]
-            ];
+	public function initialize() {
+		$this->hasMany('id', 'Errors', 'entry_id');
+		$this->belongsTo('page_id', 'Pages', 'id');
+		$this->belongsTo('task_id', 'Tasks', 'id');
 
+		//Settings for ORM db access
+		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname']);
+		ORM::configure('username', $this->getDI()->get('config')['username']);
+		ORM::configure('password', $this->getDI()->get('config')['password']);
+		ORM::configure('charset', $this->getDI()->get('config')['charset']);
 
-        // create a client instance
-        $client = new Solarium\Client($config);
+		$this->crud = new CRUD\CRUD();
+	}
 
+	/**
+	 * Saves an entry based on an entity.
+	 * As entity can consist of more than one table, each field
+	 * is checked for relations, and decoded if they exists
+	 * @param Entities $entity The data structure defining entity
+	 * @param Array $data The data to save. Only single rows are supported!
+	 */
+	public function SaveEntry(Entities $entity, Array $data) {
+		//Decoding and saving code values
+		foreach ($entity->getFields() as $field) {
+			if ($field->hasDecode == 0) {
+				continue;
+			}
 
-        // get a select query instance
-     //   $query = $client->createQuery($client::QUERY_SELECT);
+			//This is a field that needs decoding
+			//Lets get the data from the decode table
+			//Creating an entry consisting of the decode table and a field in the table identified by decodeField
+			$fakeField = $field->toArray();
+			$fakeField['fieldName'] = $field->decodeField;
 
-       // $resultset = $client->execute($query);
+			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
 
-        $update = $client->createUpdate();
-        $doc1 = $update->createDocument(); 
-        $doc1->id = rand(0,10000000); 
-        $doc1->collection_id = 1;
-        $doc1->page_id = 1;
-        $doc1->post_id = 1;
-        $doc1->task_id = 1;
-        $doc1->entry_id = 1;
-        $doc1->firstnames = 'testdoc-1'; 
-        $doc1->lastname = "364";
-        $doc1->birthdate = "1972-05-20T17:33:18Z";
-        $doc1->birthplace = "København";
-                
-   /*     $childDoc = $update->createDocument();
-        //$childDoc = [];
-        $childDoc->id = rand(0,1000000);
-        $childDoc->address1_s ='Jens Nielsens Allé 1, st. tv., 2100 København Ø';
-        $childDoc->street = 'Jens Nielsens Allé';
-        $childDoc->parent_id = $doc1->id;
-        $childDoc->collection_id = 1;
-        $childDoc->page_id = 1;
-        $childDoc->post_id = 1;
-        $childDoc->task_id = 1;
-        $childDoc->entry_id = 1;*/
-        $doc1->address = ['Jens Nielsens Allé 1, st. tv., 2100 København Ø', 'Rådhuspladsen 13, midtfor, 1599 København K'];
-        $doc1->area = ['Storstrøms Amt', 'Københavns Amt'];
-        $doc1->sogn = ['Testsogn'];
-  /*
-        $childDoc1 = $update->createDocument();
-       // $childDoc1 = [];
-        $childDoc1->id = rand(0,1000000);
-        $childDoc1->address2_s ='Rådhuspladsen 13, midtfor, 1599 København K';
-        $childDoc1->street = 'Rådhuspladsen';        
-        $childDoc1->parent_id = $doc1->id;
-        $childDoc1->collection_id = 1;
-        $childDoc1->page_id = 1;
-        $childDoc1->post_id = 1;
-        $childDoc1->task_id = 1;
-        $childDoc1->entry_id = 1;
-*/
-  //      $doc1->address_concat[] = $childDoc1->address;
+			//Value not given and new value not allowed. Throw error
+			if (count($fieldValues) == 0 && !$field->codeAllowNewValue) {
+				throw new InvalidArgumentException('The field ' . $field->decodeField . ' has a value that does not exist: ' . $data[$fakeField['decodeField']]);
+			}
 
+			//Let's create the new value
+			if (count($fieldValues) == 0) {
 
-        $doc2 = $update->createDocument(); 
-        $doc2->id = rand(0,10000000); 
-        $doc2->collection_id = 1;
-        $doc2->page_id = 1;
-        $doc2->post_id = 1;
-        $doc2->task_id = 1;
-        $doc2->entry_id = 1;
-        $doc2->firstnames = 'testdoc-2';
-        $doc2->lastname = "340";
-        $doc2->birthdate = "1972-05-20T17:33:18Z";
-        $doc2->birthplace = "København";
-        $doc2->address = ['Hans Knudsens Plads 23, 2100 København Ø'];
+				$saveData = [$fakeField['fieldName'] => $data[$fakeField['fieldName']]];
 
+				//$fieldValues = $ge->Save($saveData);
+				$id = $this->crud->save($field->decodeTable, $saveData);
+				//Let's use the id of the decode value
+				$data[$field->fieldName] = $id;
+			}
 
-        $result = $update->addDocuments([$doc1, $doc2]);
-        $update->addCommit();
-        $result = $client->update($update);
-        //echo  $result->getStatus();
+		}
 
-        // get a select query instance
-        $query = $client->createQuery($client::QUERY_SELECT);
-        // this executes the query and returns the result
-        $resultset = $client->execute($query);
-        // display the total number of documents found by solr
-      //  echo 'NumFound: '.$resultset->getNumFound();
+		$fields = $entity->fields->toArray();
 
-        echo json_encode($resultset->GetData());
+		//The data is now decoded
+		//We're adding another fake field: The EntityKey. This referes to the main entity of the task
+		if ($entity->isPrimaryEntity != 1) {
+			$entityField = new Fields();
+			$entityField->fieldName = $entity->entityKeyName;
 
+			if (!isset($data[$entityField->fieldName])) {
+				throw new InvalidArgumentException('the entity cannot be saved, as there is no value for the entity key field: ' . $entityField->fieldName);
+			}
 
-    }
+			$fields[] = $entityField->toArray();
+		}
 
-    public static function SaveEntryRecursively($dbCon, $entity, $values, $parentId = NULL)
-    {
-        $genericEntry = new GenericEntry($entity['dbTableName'], $entity['fields'], $dbCon);
-        
-        //Setting parent ids
-        //We have several child elements
-        if(array_keys($values) == range(0, count($values) - 1))
-        {
-            for($i = 0; $i< count($values); $i++)
-            {
-                $values[$i]['parent_id'] = $parentId;
-            }
-        }
-        else{
-            $values['parent_id'] = $parentId;
-            $newVal = [];
-            $newVal[0] = $values;
-            $values = $newVal;
-        }
+		//Let's save the data
+		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data));
+		if (!$newId) {
+			throw new RuntimeException('could not save the entry ' . $entity->name);
+		}
+		return $newId;
+	}
 
-        for($i = 0; $i < count($values); $i++)
-        {
-            $insertId = -1;
+	private function GetFieldsValuesArray($fields, $data) {
+		$fieldsAndData = [];
+		foreach ($fields as $field) {
+			if (isset($data[$field['fieldName']])) {
+				$fieldsAndData[$field['fieldName']] = $data[$field['fieldName']];
+			}
+		}
+		return $fieldsAndData;
+	}
 
-            //If entity is required to be unique
-            //we test if it exists
-            if($entity['unique'] == 1){
-                $result = $genericEntry->FindByValues($values[$i]);
-                if(count($result) > 0){
-                    $insertId = $result[0]['id'];
-                }
-            }
-            
-            if($insertId == -1){
-                if(!$genericEntry->Save($values[$i]))
-                    throw new Exception("Could not save!");
+	/**
+	 * Saving entries for a task. Each entry is validated and saved
+	 * The primary entity is special, as it's insert id is used for the following entities
+	 * All saving is done in a transaction, which is rolled back on error
+	 * @param Array  $entities An array of Entities
+	 * @param Array $data 	   The data to save
+	 * @throws InvalidArgumentException if data is not set, or is not valid
+	 * @throws RuntimeException if data could not be saved to the database
+	 */
+	public function SaveEntries($entities, $data) {
+		//Let's start a transaction
+		$dbCon = $this->getDI()->get('db');
+		$dbCon->begin();
 
-                $insertId = $genericEntry->GetInsertId();
-            }
+		if (!is_array($entities)) {
+			throw new InvalidArgumentException('entities should be an array');
+		}
 
-            //Saving many to many relations here by adding a virtual entity and using the two ids
-            //(id and parent id)
-            if($entity['manyToManyTable'] !== NULL)
-            {
-                $middleEntity = [];
-                $middleEntity['tablename'] = $entity['manyToManyTable'];
+		//Save primary entity and get id
+		$primaryEntity = array_filter($entities, function ($el) {return $el->isPrimaryEntity == '1';})[0];
 
-                //Creating a many to many entry, by using an artificial code table
-                $middleEntity['fields'][] = [
-                    'dbFieldName' => $entity['manyToManyForeignField'], 
-                    'codeTable' => NULL, 
-                    'codeField' => NULL, 
-                    'codeAllowNewValue' => 0
-                ];
+		//Saving main entity
+		if (!isset($data[$primaryEntity->name])) {
+			$dbCon->rollback();
+			throw new InvalidArgumentException('no data given for ' . $primaryEntity->name);
+		}
 
-                $middleEntity['fields'][] = [
-                    'dbFieldName' => $entity['manyToManyParentField'],
-                    'codeTable' => NULL, 
-                    'codeField' => NULL, 
-                    'codeAllowNewValue' => 0
-                ];
+		if (!$primaryEntity->isDataValid($data[$primaryEntity->name])) {
+			$dbCon->rollback();
+			throw new InvalidArgumentException('input error ' . $primaryEntity->GetValidationStatus());
+		}
 
-                $middleData[$entity['manyToManyParentField']] = $values[$i]['parent_id'];
-                $middleData[$entity['manyToManyForeignField']] = $insertId;
+		$primaryId = $this->SaveEntry($primaryEntity, $data[$primaryEntity->name]);
 
-                $middleGE = new GenericEntry($middleEntity['tablename'], $middleEntity['fields'], $dbCon);
-                
-                if(!$middleGE->Save($middleData))
-                {
-                    throw new Exception("Could not save middle data!");
-                }
-            }
+		if (is_null($primaryId)) {
+			$dbCon->rollback();
+			throw new RuntimeException('could not get insert id for primary entity');
+		}
 
-            //Saving children entities
-            if(isset($entity['children']))
-            {
-                foreach($entity['children'] as $child)
-                {               
-                    if(isset($values[$i][$child['guiName']])){
-                        Entries::SaveEntryRecursively($dbCon, $child, $values[$i][$child['guiName']], $insertId);
-                    }
-                }
-            }
-        }
-    }   
+		foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
 
-    public static function ValidateJSONData($schema, $data)
-    {
-        var_dump($schema);
-        // Validate
-        $validator = new JsonSchema\Validator();
-        $validator->check($data, $schema);
+			if (!isset($data[$primaryEntity->name][$entity->name])) {
+				if ($entity->required == '1') {
+					throw new InvalidArgumentException('entity data not set: ' . $entity->name);
+				}
+				continue;
+			}
 
-        $messages = [];
-        if (!$validator->isValid()){
-            foreach ($validator->getErrors() as $error) {
-                $messages[] = sprintf("[%s] %s\n", $error['property'], $error['message']);
-            }
-        }
+			if ($entity->type == 'object') {
+				//Setting the identifier of the primary entity
+				$data[$primaryEntity->name][$entity->name][$entity->entityKeyName] = $primaryId;
 
-        return $messages;
-    }
+				if (!$entity->isDataValid($data[$primaryEntity->name][$entity->name])) {
+					$dbCon->rollback();
+					throw new InvalidArgumentException('Input error ' . $primaryEntity->GetValidationStatus());
+				}
 
-    /**
-     * Validates an array of entities (POST data from users)
-     * @param Array $entities An array of entities with data
-     * @return bool Returns true is all fields are valid, false if not
-     */
-    public function ValidateEntry(Array $entities)
-    {
-        //Array for metaEntities. Loaded as entities of specific metaEntity type is reached
-        $metaEntities = [];
-        $isValid = true;
+				try {
+					$this->SaveEntry($entity, $data[$primaryEntity->name][$entity->name]);
+				} catch (Exception $e) {
+					$dbCon->rollback();
+					throw new RuntimeException('Error while saving: ' . $e);
+				}
+			} else {
+				foreach ($data[$primaryEntity->name][$entity->name] as $row) {
+					//Setting the identifier of the primary entity
+					$row[$entity->entityKeyName] = $primaryId;
 
-        for($j = 0; $j < count($entities); $j++)
-        {
-            $entity = $entities[$j];
+					if (!$entity->isDataValid($row)) {
+						$dbCon->rollback();
+						throw new InvalidArgumentException('Input error ' . $entity->GetValidationStatus());
+					}
 
-            //Get metaEntity
-            $this->loadMetaEntity($entity['entity_id']);
+					try {
+						$this->SaveEntry($entity, $row);
+					} catch (Exception $e) {
+						$dbCon->rollback();
+						throw new RuntimeException('Error while saving: ' . $e);
+					}
+				}
+			}
+		}
 
-            $ge = new GenericEntry($this->metaEntities[$entity['entity_id']], $entity['fields'], $this->getDI());
+		return $dbCon->commit();
+	}
 
-            if(!$ge->ValidateData()){
-                $isValid = false;
-            }
+	public static function SaveInSolr($solrData) {
+		$config = [
+			'endpoint' =>
+			['localhost' =>
+				['host' => '54.194.233.62', 'hostname' => '54.194.233.62', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'],
+			],
+		];
 
-            $entities[$j] = $entity;
-        }
+		// create a client instance
+		$client = new Solarium\Client($config);
 
-        return $isValid;
-    }
+		$update = $client->createUpdate();
+		$doc1 = $update->createDocument();
 
-    public function UpdateEntry()
-    {
+		$post = new Posts();
+		$doc1->id = rand(0, 100000000);
 
-    }
+		//	var_dump(($solrData));
 
-    public function LoadEntitiesByPost($postId)
-    {
-        $entries = Entries::find(['post_id' => $postId]);
+		foreach ($solrData as $key => $row) {
+			if (strlen($key) > 0) {
+				$doc1->{$key} = $row;
+			}
 
-        $entriesData = [];
+		}
 
-        foreach($entries as $entry)
-        {
-            $metaEntity = $this->loadMetaEntity($entry->entity_id);
-            $ge = new GenericEntry($metaEntity, [], $this->getDI());
+		$result = $update->addDocuments([$doc1]);
+		$update->addCommit();
+		$result = $client->update($update);
+		return $result->getStatus();
 
-            $entriesData[] = $ge->Load($postId);
-        }
+	}
 
-        $this->response->setJsonContent($entriesData);
-    }
+	/**
+	 * Method for converting data to SOLR format
+	 * For entities of type object and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
+	 * SOLR in a 1:1 form, using SOLRFieldName as name. The entity itself is concated an sent to SOLR.
+	 * For entities of type array and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
+	 * SOLR in a concated form, one row pr. entity, and all values are put in arrays according to the field
+	 * they belong to
+	 * @param Array $entities The entities to save
+	 * @param Array $data     The data to convert
+	 */
+	public function GetSolrData($entities, $data) {
+		$solrData = [];
 
-    /*public function UpdateEntryData($id)
-    {
-        //This is the heavy one! What we want here is this:
-        //Get all metaEntities
-        //Get all metaFields
-        //Get concrete field data from entities
-        //Map it all together in this:
-        /*
-        
-        {
-            entity_groups:[
-                {
-                    name: "Hovedperson",
-                    entities: [
-                        {
-                            id: 232,
-                            fields: [
-                                {
-                                    id: 3525
-                                    fieldname: fornavn,
-                                    value: Hans,
-                                    unreadable: false
-                                }
-                            ]
-                        },
-                        {
-                            id: 252,
-                            fields: [
-                                {
-                                    id: 32425,
-                                    fieldname: fornavn,
-                                    value: Jens,
-                                    unreadable: false
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    name: "Ægtefæller",
-                    entities: [
-                        {
-                            id: 523,
-                            fields: [
-                                {
-                                    id: 2423,
-                                    fieldname: fornavn,
-                                    value: Jensine,
-                                    unreadable: true
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]            
-        }
-        
-        */  
+		$primaryEntity = array_filter($entities, function ($el) {return $el->isPrimaryEntity;})[0];
+
+		foreach ($entities as $entity) {
+			$row = null;
+			if ($entity->isPrimaryEntity == '1') {
+				$row = $data[$entity->name];
+			} else {
+				if (isset($data[$primaryEntity->name][$entity->name])) {
+					$row = $data[$primaryEntity->name][$entity->name];
+				} else {
+					$row = [];
+				}
+			}
+
+			if (count($row) > 0) {
+				if ($entity->includeInSOLR == '1') {
+					$solrData[$entity->name] = $entity->ConcatDataByEntity($row);
+				}
+				$solrData = array_merge($solrData, $entity->ConcatDataByField($row));
+			}
+		}
+
+		return $solrData;
+	}
 }
