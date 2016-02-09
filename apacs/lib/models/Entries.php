@@ -221,29 +221,41 @@ class Entries extends \Phalcon\Mvc\Model {
 
 	}
 
-	public function LoadEntry($entityId, $entryId) {
-		$entity = Entities::findById($entityId)->toArray();
-		$entity['fields'] = Entities::ConvertFieldsToAssocArray($entity['fields']);
+	/**
+	 * Method for converting data to SOLR format
+	 * For entities of type object and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
+	 * SOLR in a 1:1 form, using SOLRFieldName as name. The entity itself is concated an sent to SOLR.
+	 * For entities of type array and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
+	 * SOLR in a concated form, one row pr. entity, and all values are put in arrays according to the field
+	 * they belong to
+	 * @param Array $entities The entities to save
+	 * @param Array $data     The data to convert
+	 */
+	public function GetSolrData($entities, $data) {
+		$solrData = [];
 
-		try {
-			return Entries::LoadEntryRecursively('entry_id', $entryId, $entity, $this->getDI()->get('db'));
-		} catch (Exception $d) {
-			return false;
+		$primaryEntity = array_filter($entities, function ($el) {return $el->isPrimaryEntity;})[0];
+
+		foreach ($entities as $entity) {
+			$row = null;
+			if ($entity->isPrimaryEntity == '1') {
+				$row = $data[$entity->name];
+			} else {
+				if (isset($data[$primaryEntity->name][$entity->name])) {
+					$row = $data[$primaryEntity->name][$entity->name];
+				} else {
+					$row = [];
+				}
+			}
+
+			if (count($row) > 0) {
+				if ($entity->includeInSOLR == '1') {
+					$solrData[$entity->name] = $entity->ConcatDataByEntity($row);
+				}
+				$solrData = array_merge($solrData, $entity->ConcatDataByField($row));
+			}
 		}
-	}
 
-	public function LoadEntitiesByPost($postId) {
-		$entries = Entries::find(['post_id' => $postId]);
-
-		$entriesData = [];
-
-		foreach ($entries as $entry) {
-			$metaEntity = $this->loadMetaEntity($entry->entity_id);
-			//$ge = new GenericEntry($metaEntity, [], $this->getDI());
-			//$this->crud->load();
-			$entriesData[] = $ge->Load($postId);
-		}
-
-		$this->response->setJsonContent($entriesData);
+		return $solrData;
 	}
 }

@@ -1,8 +1,5 @@
 <?php
 
-include '../lib/controllers/MetadataLevelsController.php';
-require_once '../lib/library/ConfigurationLoader.php';
-
 class MetadataControllerTest extends \UnitTestCase {
 
 	private $_controller;

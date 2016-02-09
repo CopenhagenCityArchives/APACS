@@ -1,6 +1,4 @@
 <?php
-include_once '../lib/models/Entries.php';
-include_once '../lib/models/Entities.php';
 
 class EntriesModelTest extends \UnitTestCase {
 
@@ -61,26 +59,6 @@ class EntriesModelTest extends \UnitTestCase {
 		$savedData = $resultSet->fetchAll()[0];
 		$this->assertEquals($savedData, $dataToSave);
 	}
-
-	/*public function testSaveArray() {
-		$this->entitiesMock->insertEntity();
-		$entry = new Entries();
-		$dataToSave = [
-			[
-				'firstnames' => 'Jens',
-				'lastname' => 'Jensen',
-			],
-			[
-				'firstnames' => 'Jens',
-				'lastname' => 'Jensen',
-			],
-		];
-
-		$entry->SaveEntry($this->entitiesMock->getEntity(), $dataToSave);
-
-		$resultSet = $this->getDI()->get('db')->query('SELECT firstnames, lastname FROM burial_persons');
-		$this->assertEquals(2, count($resultSet->fetchAll()));
-	}*/
 
 	/**
 	 * @expectedException InvalidArgumentException
@@ -151,68 +129,54 @@ class EntriesModelTest extends \UnitTestCase {
 		$this->assertEquals(1, count($result2), 'should save related data');
 	}
 
-/*
-public function testSave() {
-$values = [
-'firstnames' => 'Niels',
-'lastname' => 'Jensen',
-'begrav_deathcauses' => [
-'id' => 1,
-'begrav_deathcauses' => 'Lungebetændelse',
-],
-'entry_id' => 1,
-];
+	public function testConvertToSolr() {
+		$this->entitiesMock->insertEntity();
 
-$expectedValuesAfterUpdate = [
-'firstnames' => 'Niels',
-'lastname' => 'Jensen',
-'begrav_deathcauses' => 1,
-'entry_id' => '1',
-];
+		$taskId = 1;
 
-$this->entitiesMock->insertEntityWithObjectRelation();
+		$data = [
+			'persons' => [
+				'firstnames' => 'Jens',
+				'lastname' => 'Hansen',
+				'deathcauses' => [
+					['deathcause' => 'lungebetændelse'],
+					['deathcause' => 'hjertestop'],
+				],
+			],
+		];
 
-$entity = $this->entitiesMock->getDefaultEntity();
+		$solrData = [
+			'persons' => 'Jens Hansen',
+			'firstnames' => 'Jens',
+			'lastname' => 'Hansen',
+			'deathcauses' => ['lungebetændelse', 'hjertestop'],
+		];
 
-Entries::SaveEntryRecursively($entity, $values, $this->getDI()->get('db'));
+		$post = new Entries();
+		$resultSet = Entities::find(['conditions' => 'task_id = ' . '1']);
+		$entities = [];
+		foreach ($resultSet as $entity) {
+			$entities[] = $entity;
+		}
 
-$result = $this->getDI()->get('db')->query('SELECT firstnames, lastname, begrav_deathcauses, entry_id FROM ' . $entity['dbTableName'] . ' WHERE id = 1');
-$result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-$this->assertEquals($expectedValuesAfterUpdate, $result->fetchAll()[0], 'should save data in database');
-}
+		$this->assertEquals($solrData, $post->GetSolrData($entities, $data), 'should convert data to SOLR');
+	}
 
-/**
- * @expectedException Exception
- */
-/*	public function testValidation() {
-$values = [
-'firstnames' => null,
-'lastname' => null,
-'begrav_deathcauses' => [
-'id' => 1,
-'begrav_deathcauses' => 'test',
-],
-'entry_id' => 1,
-];
+	public function testValidation() {
+		$values = [
+			'firstnames' => null,
+			'lastname' => null,
+			'begrav_deathcauses' => [
+				'id' => 1,
+				'begrav_deathcauses' => 'test',
+			],
+			'entry_id' => 1,
+		];
 
-$this->entitiesMock->insertEntityWithObjectRelation();
+		$this->entitiesMock->insertEntity();
 
-$entity = $this->entitiesMock->getDefaultEntity();
+		$entity = $this->entitiesMock->getEntity();
 
-//Should throw exception when trying to save invalid data
-Entries::SaveEntryRecursively($entity, $values, $this->getDI()->get('db'));
-}
-
-public function testLoadEntry() {
-$this->entitiesMock->createTables();
-$this->entitiesMock->insertEntityWithObjectRelation();
-$entity = $this->entitiesMock->getDefaultEntity();
-$this->entriesMock->createEntryWithObjectRelation();
-
-$this->assertEquals(
-$this->entriesMock->getEntryWithObjectRelation(),
-Entries::LoadEntryRecursively('entry_id', 1, $entity, $this->getDI()->get('db')),
-'should return a complete array of the saved entry'
-);
-}*/
+		$this->assertFalse($entity->isDataValid(), 'should return false when data is invalid');
+	}
 }
