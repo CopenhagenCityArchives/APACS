@@ -1,7 +1,6 @@
 <?php
 
-class InsertStatementBuilder implements IStatementBuilder
-{
+class InsertStatementBuilder implements IStatementBuilder {
 	private $tableName;
 	private $fields;
 	private $statement;
@@ -10,8 +9,7 @@ class InsertStatementBuilder implements IStatementBuilder
 	 * Constructor. Takes a table name and an array of fieldss
 	 * @param array An array containing the entry type from which the statement is built
 	 */
-	function __construct($tableName, $fields)
-	{
+	function __construct($tableName, $fields) {
 		$this->tableName = $tableName;
 		$this->fields = $fields;
 	}
@@ -20,34 +18,36 @@ class InsertStatementBuilder implements IStatementBuilder
 	 * Returns a statement based on the given table name and fields
 	 * @return string A statement based on the given table name and fields
 	 */
-	public function BuildStatement(){
+	public function BuildStatement() {
 		$this->statement = "INSERT INTO " . $this->tableName . " (" . $this->getFieldNames() . ") VALUES " . $this->getFieldPlaceholders();
 	}
 
-	public function GetStatement()
-	{
+	public function GetStatement() {
 		return $this->statement;
 	}
 
-	private function getFieldNames()
-	{
+	private function getFieldNames() {
 		$fieldNames = "";
 
-		foreach($this->fields as $field){
-			$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
+		foreach ($this->fields as $field) {
+			//Add fields of type value
+			if ($field['type'] == 'value') {
+				$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
+			}
 		}
 
-		return substr($fieldNames, 0, strlen($fieldNames)-2);
+		return substr($fieldNames, 0, strlen($fieldNames) - 2);
 	}
 
-	private function getFieldPlaceholders()
-	{
+	private function getFieldPlaceholders() {
 		$values = "(";
 
-		foreach($this->fields as $field){
-			$values .= ':' . $field['dbFieldName'] . ', ';
+		foreach ($this->fields as $field) {
+			if ($field['type'] == 'value') {
+				$values .= ':' . $field['dbFieldName'] . ', ';
+			}
 		}
 
-		return substr($values, 0, strlen($values)-2) . ')';
+		return substr($values, 0, strlen($values) - 2) . ')';
 	}
 }

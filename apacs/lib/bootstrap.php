@@ -104,6 +104,8 @@ error_reporting(E_ALL);
         $indexing = new MicroCollection();
         $indexing->setHandler(new IndexDataController());
 
+$indexing->get('/test', 'test');
+
         $indexing->post('/entries/{taskId:[0-9]+}', 'SaveEntry');
         $indexing->get('/entries', 'GetEntries');
         $indexing->get('/entries/{entry:[0-9]+}', 'GetEntry');

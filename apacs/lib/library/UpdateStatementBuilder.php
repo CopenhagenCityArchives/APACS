@@ -1,7 +1,6 @@
 <?php
 
-class UpdateStatementBuilder implements IStatementBuilder
-{
+class UpdateStatementBuilder implements IStatementBuilder {
 	private $tableName;
 	private $fields;
 	private $statement;
@@ -10,44 +9,33 @@ class UpdateStatementBuilder implements IStatementBuilder
 	 * Constructor. Takes a table name and an array of fieldss
 	 * @param array An array containing the entry type from which the statement is built
 	 */
-	function __construct($tableName, $fields, $values)
-	{
+	function __construct($tableName, $fields, $keyName = 'id') {
 		$this->tableName = $tableName;
 		$this->fields = $fields;
+		$this->keyName = $keyName;
 	}
 
 	/**
 	 * Returns a statement based on the given table name and fields
 	 * @return string A statement based on the given table name and fields
 	 */
-	public function BuildStatement(){
-		$this->statement = "INSERT INTO " . $this->tableName . " (" . $this->getFieldNames() . ") VALUES " . $this->getFieldPlaceholders();
+	public function BuildStatement() {
+		$this->statement = "UPDATE " . $this->tableName . " SET " . $this->getFieldNameAndPlaceholderPairs() . " WHERE " . $this->keyName . " = :id;";
 	}
 
-	public function GetStatement()
-	{
+	public function GetStatement() {
 		return $this->statement;
 	}
 
-	private function getFieldNames()
-	{
-		$fieldNames = "";
+	private function getFieldNameAndPlaceholderPairs() {
+		$string = '';
 
-		foreach($this->fields as $field){
-			$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
+		foreach ($this->fields as $field) {
+			if ($field['type'] == 'value') {
+				$string .= '`' . $field['dbFieldName'] . '` = :' . $field['dbFieldName'] . ', ';
+			}
 		}
 
-		return substr($fieldNames, 0, strlen($fieldNames)-2);
-	}
-
-	private function getFieldPlaceholders()
-	{
-		$values = "(";
-
-		foreach($this->fields as $field){
-			$values .= ':' . $field['dbFieldName'] . ', ';
-		}
-
-		return substr($values, 0, strlen($values)-2) . ')';
+		return substr($string, 0, strlen($string) - 2);
 	}
 }

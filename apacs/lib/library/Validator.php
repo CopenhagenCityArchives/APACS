@@ -1,37 +1,41 @@
 <?php
 
-	class Validator
-	{
-		private $_validationRule;
+class Validator {
+	private $_validationRule;
 
-		function __construct(ValidationRuleSet $vr){
-			$this->_validationRule = $vr;
+	function __construct(ValidationRuleSet $vr) {
+		$this->_validationRule = $vr;
+	}
+
+	/**
+	 * Validates a given input based on the ValidationRuleSet.
+	 * @return bool Wether or not the input is valid
+	 */
+	public function IsValid($dataToValidate, $ignoreNullValues = false) {
+
+		if ($dataToValidate == null && $ignoreNullValues == true) {
+			return true;
 		}
 
-		/**
-		 * Validates a given input based on the ValidationRuleSet.
-		 * @return bool Wether or not the input is valid
-		 */
-		public function IsValid($dataToValidate, $ignoreNullValues = false){
-			if($dataToValidate == null && $ignoreNullValues == true)
-				return true;
-
-			if($this->_validationRule->required){
-				if(!isset($dataToValidate) || $dataToValidate === NULL  || $dataToValidate === null || trim($dataToValidate) == "")
-					return false;
+		if ($this->_validationRule->required == 1 || $this->_validationRule->required == true) {
+			if (!isset($dataToValidate) || $dataToValidate === NULL || $dataToValidate === null || trim($dataToValidate) == "") {
+				return false;
 			}
 
-			if($this->_validationRule->regularExpression == false)
-				return true;
-
-			if(preg_match($this->_validationRule->regularExpression, $dataToValidate) == 1)
-				return true;	
-
-			return false;
 		}
 
-		public function GetErrorMessage()
-		{
-			return $this->_validationRule->errorMessage;
+		if ($this->_validationRule->regularExpression == false) {
+			return true;
 		}
+
+		if (preg_match($this->_validationRule->regularExpression, $dataToValidate) == 1) {
+			return true;
+		}
+
+		return false;
 	}
+
+	public function GetErrorMessage() {
+		return $this->_validationRule->errorMessage;
+	}
+}

@@ -1,18 +1,19 @@
 <?php
 
-class GenericEntry
-{
+class GenericEntry {
 	private $di;
 
 	private $_errorMessages;
-	
+
 	//Table and field info
 	private $_fields;
 	private $_mainTableName;
-	
+	private $_primaryKeyFieldName;
+
 	//Query statements
 	private $_loadStatement;
 	private $_insertStatement;
+	private $_updateStatement;
 
 	/**
 	 * Constructor
@@ -20,10 +21,10 @@ class GenericEntry
 	 * @param Array field values: An array of fields in the form [fieldname => 'the_name_of_the_field', value => 'input_value']
 	 * @param \Phalcon\DiInterface Phalcon Dependency Injection Service
 	 */
-	function __construct($table, $fields, $dbCon)
-	{
+	function __construct($table, $fields, $dbCon) {
 		$this->_fields = $fields;
-		$this->_mainTableName = $table;
+		$this->_mainTableName = $table['dbTableName'];
+		$this->_primaryKeyFieldName = $table['primaryKeyFieldName'];
 
 		$this->_errorMessages = [];
 		$this->_loadStatement = null;
@@ -33,12 +34,11 @@ class GenericEntry
 	}
 
 	/*
-	* @description: Saves the given data
-	* @param: Array $data An array of data to save
-	 */
-	public function Save(Array $data)
-	{
-		if($this->_insertStatement == null){
+		* @description: Saves the given data
+		* @param: Array $data An array of data to save
+	*/
+	public function Save(Array $data) {
+		if ($this->_insertStatement == null) {
 			$queryBuilder = new InsertStatementBuilder($this->_mainTableName, $this->_fields);
 			$queryBuilder->BuildStatement();
 			$this->_insertStatement = $queryBuilder->GetStatement();
@@ -46,25 +46,29 @@ class GenericEntry
 
 		//Checking if all keys are numeric and sequential.
 		//If so, it is assumed that several rows of data are given
-		if(array_keys($data) == range(0, count($data) - 1))
-		{
-			foreach($data as $row)
-			{
-				$row = $this->ConvertCodeValues($row);
-				$this->ValidateValues($row);
+		if (array_keys($data) == range(0, count($data) - 1)) {
+			foreach ($data as $row) {
+				//			$row = $this->ConvertCodeValues($row);
+				$validated = $this->ValidateValues($row);
 
-				if(!$this->_dbConnection->execute($this->_insertStatement, $this->GetDataAsParameters($row)))
-				{
+				if (!$validated) {
+					return false;
+				}
+
+				if (!$this->_dbConnection->execute($this->_insertStatement, $this->GetDataAsParameters($row))) {
 					$this->_errorMessages[] = 'Could not save entry:' . $this->_dbConnection->getErrorInfo()[0];
 					return false;
 				}
 			}
-		}
-		else{
-			$data = $this->ConvertCodeValues($data);
-			$this->ValidateValues($data);
-			if(!$this->_dbConnection->execute($this->_insertStatement, $this->GetDataAsParameters($data)))
-			{
+		} else {
+//			$data = $this->ConvertCodeValues($data);
+			$validated = $this->ValidateValues($data);
+
+			if (!$validated) {
+				return false;
+			}
+
+			if (!$this->_dbConnection->execute($this->_insertStatement, $this->GetDataAsParameters($data))) {
 				$this->_errorMessages[] = 'Could not save entry:' . $this->_dbConnection->getErrorInfo()[0];
 				return false;
 			}
@@ -73,44 +77,31 @@ class GenericEntry
 		return true;
 	}
 
-	public function GetInsertId()
-	{
+	public function GetInsertId() {
 		return $this->_dbConnection->lastInsertId();
 	}
-/*
-	public function Update($id)
-	{
-		if(!$this->ValidateValues()){
-			$this->_dbConnection->rollback();
+
+	public function Update($data) {
+		if (!$this->ValidateValues($data)) {
 			return false;
 		}
 
-		if(!$this->getOrSaveNormalizedData()){
-			$this->_dbConnection->rollback();
-			return false;
-		}
-
-		if($this->_updateStatement == null){
+		if ($this->_updateStatement == null) {
 			$queryBuilder = new UpdateStatementBuilder($this->_mainTableName, $this->_fields);
 			$queryBuilder->BuildStatement();
 			$this->_updateStatement = $queryBuilder->GetStatement();
 		}
 
 		//Save entry
-		if(!$this->_dbConnection->execute($this->_updateStatement, $this->mapFieldValues()))
-		{
-			$this->_errorMessages[] = 'Could not update entry:' . $this->_dbConnection->getErrorInfo()[0];
-			$this->_dbConnection->rollback();
+		if (!$this->_dbConnection->execute($this->_updateStatement, $this->GetDataAsParameters($data))) {
+			$this->_errorMessages[] = 'Could not save entry:' . $this->_dbConnection->getErrorInfo()[0];
 			return false;
 		}
 
-		$this->_dbConnection->commit();
 		return true;
 	}
-*/
-	
-	public function Load($id)
-	{
+
+	public function Load($id) {
 		//We make a new statement each time the Load is called, because the key name can change
 		$queryBuilder = new LoadStatementBuilder($this->_mainTableName, $this->_fields);
 		$queryBuilder->BuildStatement();
@@ -118,26 +109,28 @@ class GenericEntry
 
 		$results = $this->_dbConnection->query($this->_loadStatement, ['id' => $id]);
 		$results->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		
+
 		return $results->fetchAll();
 	}
 
-	public function FindByValues($values)
-	{
+	public function FindByValues($values) {
 		$queryBuilder = new FindStatementBuilder($this->_mainTableName, $this->_fields, $values);
 		$queryBuilder->BuildStatement();
 		$resultSet = $this->_dbConnection->query($queryBuilder->GetStatement());
-        $resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-        return $resultSet->fetchAll();
+		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		return $resultSet->fetchAll();
 	}
 
-	public function ValidateValues($data, $ignoreNulls = false)
-	{
+	public function ValidateValues($data, $ignoreNulls = false) {
 		$isValid = true;
 
-		for($i = 0; $i < count($this->_fields); $i++)
-		{
-			if(isset($field['validationRegularExpression'])){
+		for ($i = 0; $i < count($this->_fields); $i++) {
+			//Don't validate the primary key and field types that are not values
+			if ($this->_fields[$i]['dbFieldName'] == $this->_primaryKeyFieldName || $this->_fields[$i]['type'] !== 'value') {
+				continue;
+			}
+
+			if (isset($this->_fields[$i]['validationRegularExpression'])) {
 				$validator = new Validator(
 					new ValidationRuleSet(
 						$this->_fields[$i]['validationRegularExpression'],
@@ -145,12 +138,20 @@ class GenericEntry
 						$this->_fields[$i]['validationErrorMessage']
 					)
 				);
-				
+
 				//Get validation error messages
-				if(!$validator->isValid($data[$this->_fields[$i]['dbFieldName']], $ignoreNulls))
-				{
-					$this->_fields[$i]['isValid'] = false;
-					$this->_fields[$i]['errorMessage'] = $validator->GetErrorMessage();
+				if (!$validator->isValid($data[$this->_fields[$i]['dbFieldName']], $ignoreNulls)) {
+					$this->_errorMessages[] = $this->_fields[$i]['dbFieldName'] . ':' . $this->_fields[$i]['validationErrorMessage'];
+					//$this->_fields[$i]['isValid'] = false;
+					//$this->_fields[$i]['errorMessage'] = $validator->GetErrorMessage();
+					$isValid = false;
+				}
+			} else {
+				//Check for null values
+				if ($ignoreNulls == false && is_null($data[$this->_fields[$i]['dbFieldName']])) {
+					$this->_errorMessages[] = $this->_fields[$i]['dbFieldName'] . ':' . $this->_fields[$i]['validationErrorMessage'];
+					///$this->_fields[$i]['isValid'] = false;
+					//$this->_fields[$i]['errorMessage'] = $this->_fields[$i]['validationErrorMessage'];
 					$isValid = false;
 				}
 			}
@@ -159,79 +160,72 @@ class GenericEntry
 		return $isValid;
 	}
 
-	public function GetErrorMessages()
-	{
-		$errors = [];
-		foreach($this->_fields as $field)
-		{
-			if(isset($field['errorMessage']))
-				$errors[] = $field['errorMessage'];
-		}
+	public function GetErrorMessages() {
+		return $this->_errorMessages;
+		/*	$errors = [];
+			foreach ($this->_fields as $field) {
+				if (isset($field['errorMessage'])) {
+					$errors[] = $field['dbFieldName'] . ':' . $field['errorMessage'];
+				}
 
-		return $errors;
+			}
+
+		*/
 	}
 
-	private function GetDataAsParameters($data)
-	{
+	private function GetDataAsParameters($data) {
 		$parameters = [];
-		foreach($this->_fields as $field)
-		{
-			if(isset($data[$field['dbFieldName']]))
-			{
-				$parameters[$field['dbFieldName']] = $data[$field['dbFieldName']];
+
+		foreach ($this->_fields as $field) {
+			//Set fields that are of type value and have a value
+			if ($field['type'] == 'value') {
+				$parameters[$field['dbFieldName']] = isset($data[$field['dbFieldName']]) ? $data[$field['dbFieldName']] : null;
 			}
 		}
 
 		return $parameters;
 	}
+/*
+private function ConvertCodeValues($row) {
 
-	private function ConvertCodeValues($row)
-	{
-		foreach($this->_fields as $field)
-		{
-			if($field['codeTable'] !== NULL)
-			{
-				$newValue = $this->GetCodeValue($field, $row[$field['dbFieldName']]);
-				
-				if($newValue !== NULL){
-					$row[$field['dbFieldName']] = $newValue;
-				}
-			}
-		}
+foreach ($this->_fields as $field) {
+if (!is_null($field['codeTable'])) {
+$newValue = $this->GetCodeValue($field, $row[$field['dbFieldName']]);
 
-		return $row;
-	}
+if (!is_null($newValue)) {
+$row[$field['dbFieldName']] = $newValue;
+}
+}
+}
 
-	private function GetCodeValue($field, $value)
-	{
-		$query = 'SELECT id FROM ' . $field['codeTable'] . ' WHERE ' . $field['codeField'] . ' = "' . $value . '" LIMIT 1';
+return $row;
+}
 
-		$resultSet = $this->_dbConnection->query($query);
-        $resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-        $result = $resultSet->fetchAll();
+private function GetCodeValue($field, $value) {
+$query = 'SELECT id FROM ' . $field['codeTable'] . ' WHERE ' . $field['codeField'] . ' = "' . $value . '" LIMIT 1';
 
-		if(count($result) == 0 && $field['codeAllowNewValue'] == 1)
-		{
-			return $this->CreateNewCodeValue($field, $value);
-		}
+$resultSet = $this->_dbConnection->query($query);
+$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+$result = $resultSet->fetchAll();
 
-		if(count($result) == 1)
-		{
-			return $result[0]['id'];
-		}
+if (count($result) == 0 && $field['codeAllowNewValue'] == 1) {
+return $this->CreateNewCodeValue($field, $value);
+}
 
-		return null;
-	}
+if (count($result) == 1) {
+return $result[0]['id'];
+}
 
-	private function CreateNewCodeValue($field, $value)
-	{
-		$query = 'INSERT INTO ' . $field['codeTable'] . ' (' . $field['codeField'] . ') VALUES ("' . $value .'")';
-		
-		if($this->_dbConnection->query($query))
-		{
-			return $this->_dbConnection->lastInsertId();
-		}
+return null;
+}
 
-		return null;
-	}	
+private function CreateNewCodeValue($field, $value) {
+$query = 'INSERT INTO ' . $field['codeTable'] . ' (' . $field['codeField'] . ') VALUES ("' . $value . '")';
+
+if ($this->_dbConnection->query($query)) {
+return $this->_dbConnection->lastInsertId();
+}
+
+return null;
+}*/
 }

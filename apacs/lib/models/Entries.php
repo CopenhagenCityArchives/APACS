@@ -23,6 +23,99 @@ class Entries extends \Phalcon\Mvc\Model
         $this->belongsTo('task_id', 'Tasks', 'id');
     }
 
+    public static function SaveInSolr($data)
+    {
+        $config = [ 
+            'endpoint' => 
+                [ 'localhost' => 
+                    [ 'host' => '54.194.233.62', 'hostname' => '54.194.233.62', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'] 
+                ]
+            ];
+
+
+        // create a client instance
+        $client = new Solarium\Client($config);
+
+
+        // get a select query instance
+     //   $query = $client->createQuery($client::QUERY_SELECT);
+
+       // $resultset = $client->execute($query);
+
+        $update = $client->createUpdate();
+        $doc1 = $update->createDocument(); 
+        $doc1->id = rand(0,10000000); 
+        $doc1->collection_id = 1;
+        $doc1->page_id = 1;
+        $doc1->post_id = 1;
+        $doc1->task_id = 1;
+        $doc1->entry_id = 1;
+        $doc1->firstnames = 'testdoc-1'; 
+        $doc1->lastname = "364";
+        $doc1->birthdate = "1972-05-20T17:33:18Z";
+        $doc1->birthplace = "København";
+                
+   /*     $childDoc = $update->createDocument();
+        //$childDoc = [];
+        $childDoc->id = rand(0,1000000);
+        $childDoc->address1_s ='Jens Nielsens Allé 1, st. tv., 2100 København Ø';
+        $childDoc->street = 'Jens Nielsens Allé';
+        $childDoc->parent_id = $doc1->id;
+        $childDoc->collection_id = 1;
+        $childDoc->page_id = 1;
+        $childDoc->post_id = 1;
+        $childDoc->task_id = 1;
+        $childDoc->entry_id = 1;*/
+        $doc1->address = ['Jens Nielsens Allé 1, st. tv., 2100 København Ø', 'Rådhuspladsen 13, midtfor, 1599 København K'];
+        $doc1->area = ['Storstrøms Amt', 'Københavns Amt'];
+        $doc1->sogn = ['Testsogn'];
+  /*
+        $childDoc1 = $update->createDocument();
+       // $childDoc1 = [];
+        $childDoc1->id = rand(0,1000000);
+        $childDoc1->address2_s ='Rådhuspladsen 13, midtfor, 1599 København K';
+        $childDoc1->street = 'Rådhuspladsen';        
+        $childDoc1->parent_id = $doc1->id;
+        $childDoc1->collection_id = 1;
+        $childDoc1->page_id = 1;
+        $childDoc1->post_id = 1;
+        $childDoc1->task_id = 1;
+        $childDoc1->entry_id = 1;
+*/
+  //      $doc1->address_concat[] = $childDoc1->address;
+
+
+        $doc2 = $update->createDocument(); 
+        $doc2->id = rand(0,10000000); 
+        $doc2->collection_id = 1;
+        $doc2->page_id = 1;
+        $doc2->post_id = 1;
+        $doc2->task_id = 1;
+        $doc2->entry_id = 1;
+        $doc2->firstnames = 'testdoc-2';
+        $doc2->lastname = "340";
+        $doc2->birthdate = "1972-05-20T17:33:18Z";
+        $doc2->birthplace = "København";
+        $doc2->address = ['Hans Knudsens Plads 23, 2100 København Ø'];
+
+
+        $result = $update->addDocuments([$doc1, $doc2]);
+        $update->addCommit();
+        $result = $client->update($update);
+        //echo  $result->getStatus();
+
+        // get a select query instance
+        $query = $client->createQuery($client::QUERY_SELECT);
+        // this executes the query and returns the result
+        $resultset = $client->execute($query);
+        // display the total number of documents found by solr
+      //  echo 'NumFound: '.$resultset->getNumFound();
+
+        echo json_encode($resultset->GetData());
+
+
+    }
+
     public static function SaveEntryRecursively($dbCon, $entity, $values, $parentId = NULL)
     {
         $genericEntry = new GenericEntry($entity['dbTableName'], $entity['fields'], $dbCon);
@@ -161,32 +254,6 @@ class Entries extends \Phalcon\Mvc\Model
 
     }
 
-    public function SaveEntry($collectionId, $taskId, $pageId, $postId, $userId, $inputEntities)
-    {
-        $entry = new Entries();
-        $entry->save(['user_id' => $collectionId, 'task_id' => $taskId, 'collection_id' => $collectionId, 'page_id' => $pageId, 'post_id' => $postId]);
-
-        if(!is_array($inputEntities))
-            throw new Exception("Entries: Entities not given");
-
-        for($j = 0; $j < count($inputEntities); $j++)
-        {
-            $input = $inputEntities[$j];
-
-            //Loading metaEntity, if it is not loaded already
-            $metaEntity = $this->loadMetaEntity($input['entity_id']);
-            
-            if($metaEntity == false)
-                throw new Exception("entity not found");
-
-            $ge = new GenericEntry($metaEntity, $input, $this->getDI());
-            
-            if(!$ge->Save($input)){
-                throw new Exception("Could not save entry.");
-            }
-        }        
-    }
-
     public function LoadEntitiesByPost($postId)
     {
         $entries = Entries::find(['post_id' => $postId]);
@@ -261,16 +328,5 @@ class Entries extends \Phalcon\Mvc\Model
             ]            
         }
         
-        */
-      
-    private function loadMetaEntity($id)
-    {
-        //Loading metaEntity, if it is not loaded already
-        if(!isset($this->_metaEntities[$id])){
-            $this->_metaEntities[$id] = Entities::findFirst($id)->toArray();
-
-            $query = new Query('SELECT f.* FROM Fields f LEFT JOIN EntitiesFields ef ON f.id = ef.field_id WHERE ef.entity_id = ' . $id, $this->getDI());
-            $this->_metaEntities[$id]['fields'] = $query->execute()->toArray();
-        }
-    }    
+        */  
 }
