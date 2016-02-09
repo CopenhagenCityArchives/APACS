@@ -13,6 +13,11 @@ class UpdateStatementBuilder implements IStatementBuilder {
 		$this->tableName = $tableName;
 		$this->fields = $fields;
 		$this->keyName = $keyName;
+
+		if (count($this->fields) < 1) {
+			throw new InvalidArgumentException("No fields given");
+		}
+
 	}
 
 	/**
@@ -31,13 +36,7 @@ class UpdateStatementBuilder implements IStatementBuilder {
 		$string = '';
 
 		foreach ($this->fields as $field) {
-			if ($field['type'] == 'value') {
-				$string .= '`' . $field['dbFieldName'] . '` = :' . $field['dbFieldName'] . ', ';
-			}
-		}
-
-		if (strlen($string) == 0) {
-			throw new InvalidArgumentException("No fields of type string or object found in fields");
+			$string .= '`' . $field['fieldName'] . '` = :' . $field['fieldName'] . ', ';
 		}
 
 		return substr($string, 0, strlen($string) - 2);

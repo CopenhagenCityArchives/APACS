@@ -14,6 +14,10 @@ class LoadStatementBuilder implements IStatementBuilder {
 		$this->tableName = $tableName;
 		$this->fields = $fields;
 		$this->keyName = $keyName;
+
+		if (count($fields) < 1) {
+			throw new InvalidArgumentException("No fields given");
+		}
 	}
 
 	/**
@@ -35,13 +39,7 @@ class LoadStatementBuilder implements IStatementBuilder {
 		$fieldNames = "";
 
 		foreach ($this->fields as $field) {
-			if ($field['type'] == 'value') {
-				$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
-			}
-		}
-
-		if (strlen($fieldNames) == 0) {
-			throw new InvalidArgumentException("No fields of type string or object found in fields");
+			$fieldNames .= '`' . $field['fieldName'] . '`, ';
 		}
 
 		return substr($fieldNames, 0, strlen($fieldNames) - 2);

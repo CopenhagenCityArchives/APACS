@@ -12,6 +12,10 @@ class InsertStatementBuilder implements IStatementBuilder {
 	function __construct($tableName, $fields) {
 		$this->tableName = $tableName;
 		$this->fields = $fields;
+
+		if (count($this->fields) < 1) {
+			throw new InvalidArgumentException("No fields found");
+		}
 	}
 
 	/**
@@ -30,14 +34,7 @@ class InsertStatementBuilder implements IStatementBuilder {
 		$fieldNames = "";
 
 		foreach ($this->fields as $field) {
-			//Add fields of type string
-			if ($field['type'] == 'string' || $field['type'] == 'object') {
-				$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
-			}
-		}
-
-		if (strlen($fieldNames) == 0) {
-			throw new InvalidArgumentException("No fields of type string or object found in fields");
+			$fieldNames .= '`' . $field['fieldName'] . '`, ';
 		}
 
 		return substr($fieldNames, 0, strlen($fieldNames) - 2);
@@ -47,9 +44,7 @@ class InsertStatementBuilder implements IStatementBuilder {
 		$values = "(";
 
 		foreach ($this->fields as $field) {
-			if ($field['type'] == 'string' || $field['type'] == 'object') {
-				$values .= ':' . $field['dbFieldName'] . ', ';
-			}
+			$values .= ':' . $field['fieldName'] . ', ';
 		}
 
 		return substr($values, 0, strlen($values) - 2) . ')';

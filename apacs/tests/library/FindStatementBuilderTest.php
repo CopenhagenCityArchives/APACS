@@ -14,7 +14,7 @@ class FindStatementBuilderTest extends \UnitTestCase {
 
 	public function testBuildFindQuery() {
 		$tableName = 'tableName';
-		$fields = [['name' => 'field1', 'dbFieldName' => 'field1', 'type' => 'value']];
+		$fields = [['name' => 'field1', 'fieldName' => 'field1', 'type' => 'value']];
 		$values = ['field1' => 1];
 		$qb1 = new FindStatementBuilder($tableName, $fields, $values);
 		$qb1->BuildStatement();
@@ -23,7 +23,7 @@ class FindStatementBuilderTest extends \UnitTestCase {
 
 	public function testBuildInsertQueryMultipleFields() {
 		$tableName2 = 'tableName2';
-		$fields2 = [['name' => 'field1', 'dbFieldName' => 'field1', 'type' => 'value'], ['name' => 'field2', 'dbFieldName' => 'field2', 'type' => 'value']];
+		$fields2 = [['name' => 'field1', 'fieldName' => 'field1', 'type' => 'value'], ['name' => 'field2', 'fieldName' => 'field2', 'type' => 'value']];
 		$values = ['field1' => 1, 'field2' => 2];
 
 		$qb2 = new FindStatementBuilder($tableName2, $fields2, $values);
@@ -36,8 +36,8 @@ class FindStatementBuilderTest extends \UnitTestCase {
 	 */
 	public function testThrowExceptionOnNoMatchingFields() {
 		$tableName2 = 'tableName2';
-		$fields2 = [['name' => 'field1', 'dbFieldName' => 'field1', 'type' => 'wrongType'], ['name' => 'field3', 'dbFieldName' => 'field3', 'type' => 'wrongType']];
-		$values = ['field1' => null];
+		$fields2 = [['fieldName' => 'field1'], ['fieldName' => 'field3']];
+		$values = ['field1' => null, 'field3' => null];
 
 		$qb2 = new FindStatementBuilder($tableName2, $fields2, $values);
 		$qb2->BuildStatement();

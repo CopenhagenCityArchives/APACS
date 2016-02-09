@@ -1,13 +1,28 @@
 <?php
 
 class Fields extends \Phalcon\Mvc\Model {
-	public static $publicFields = ['id', 'name', 'formType', 'defaultValue', 'placeholder', 'helpText', 'dbFieldName', 'required'];
-
 	public function getSource() {
 		return 'apacs_' . 'fields';
 	}
 
 	public function initialize() {
-		$this->belongsTo('id', 'EntitiesFields', 'field_id');
+		$this->belongsTo('id', 'Entities', 'entities_id');
+		$this->hasMany('datasources_id', 'Datasources', 'id');
+	}
+
+	/**
+	 * Returns the fieldname used when accessing data. This name can be either fieldName,
+	 * or decodeField, depending on wheter the field is decoded or not
+	 */
+	public function GetRealFieldName() {
+		if ($this->decodeField !== null) {
+			return $this->decodeField;
+		}
+
+		return $this->fieldName;
+	}
+
+	public static function GetRealFieldNameFromField($field) {
+		return !is_null($field['decodeField']) ? $field['decodeField'] : $field['fieldName'];
 	}
 }

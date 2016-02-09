@@ -33,6 +33,14 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		Entries::SaveEntryRecursively($entity, $values, $this->getDI()->get('db'));
 	}
 
+	public function GetDataFromDatasouce($dataSourceId) {
+		$query = $this->request->getQuery('q', null, null);
+
+		$datasource = Datasources::findFirst(['conditions' => 'id = ' . $dataSourceId]);
+
+		$this->response->setJsonContent($datasource->GetData($query));
+	}
+
 	/*
 		Flow:
 			Check user access rights (authorize and authenticate)
@@ -46,38 +54,44 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 	public function SaveEntry($taskId) {
 		//This is incomming data!
-		$jsonData = json_decode(file_get_contents('php://input'), true);
+		$jsonData = json_decode($this->request->getRawBody(), true);
 
-		$entities = Entities::LoadEntitiesHierarchy($taskId);
-
-		$this->dbCon = $this->getDI()->get('db');
-
-		$errorMessages = Entries::ValidateJSONData(Tasks::GetFieldsSchema($taskId), $jsonData);
-		if (count($errorMessages) > 0) {
-			$this->response->setStatusCode('400', 'Input error');
-			$this->response->setJsonContent(['message' => 'all data saved']);
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setJsonContent(['Invalid JSON format']);
+			return;
 		}
 
-		//Saving data based on the entity hierarcy
-		//We traverse the entity hierarchy and the data hierarchy in parallel
-		foreach ($entities as $entity) {
-			//Let's start a transaction
-			$this->dbCon->begin();
-			try {
-				Entries::SaveEntryRecursively($this->dbCon, $entity, $jsonData);
-			} catch (Exception $e) {
-				$this->dbCon->rollback();
-				$this->response->setStatusCode(401, 'Could not save entry');
-				$this->response->setJsonContent($e);
-				return;
-			}
-
-			$this->dbCon->commit();
+		if (count($jsonData) == 0) {
+			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setJsonContent(['No data given']);
+			return;
 		}
 
-		//$ge = new GenericEntry($entities[0]['dbTableName'], $entities[0]['fields'], $this->dbCon);
+		$entitiesResult = Entities::find(['conditions' => 'task_id = ' . $taskId]);
+		$entities = [];
+		foreach ($entitiesResult as $result) {
+			$entities[] = $result;
+		}
+		//var_dump($entities);
+		if (count($entities) == 0 || !is_array($entities)) {
+			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setJsonContent(['No entities found for task ' . $taskId]);
+			return;
+		}
 
-		$this->response->setStatusCode('200', 'OK');
+		try {
+			$entry = new Entries();
+			$entry->SaveEntries($entities, $jsonData);
+			$post = new Posts();
+			$entry->SaveInSolr($post->GetSolrData($entities, $jsonData));
+		} catch (Exception $e) {
+			$this->response->setStatusCode(401, 'Save error');
+			$this->response->setJsonContent(['message' => 'Could not save entry ' . $e->getMessage()]);
+			return;
+		}
+
+		$this->response->setStatusCode(200, 'OK');
 		$this->response->setJsonContent(['message' => 'all data saved']);
 	}
 

@@ -1,7 +1,4 @@
 <?php
-include_once '../lib/models/Entities.php';
-include_once '../lib/models/EntitiesFields.php';
-include_once '../lib/models/Fields.php';
 
 class EntitiesModelTest extends \UnitTestCase {
 
@@ -33,69 +30,36 @@ class EntitiesModelTest extends \UnitTestCase {
 	}
 
 	public function testGetEntitiesAndFields() {
-		$this->entitiesFieldsMockConf->insertEntityWithoutRelations();
-		$entity = new Entities();
-		$entities = $entity->GetEntityAndFields(1);
-		$this->assertTrue(isset($entities['fields']), 'should return an array with with fields');
-		$this->assertTrue(count($entities) > 1, 'should return an array with with properties');
-	}
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+		$entityArr = Entities::findById(1)[0]->toArray();
+		$entityArr['fields'] = $entity->getFields()->toArray();
 
-	public function testGetEntitiesAndFieldsWithRelations() {
-		$this->entitiesFieldsMockConf->insertEntityWithObjectRelation();
-		$entity = new Entities();
-		$entities = $entity->GetEntityAndFields(1);
-
-		//Counting fields that have a key named fields
-		$this->assertTrue(count(array_column($entities['fields'], 'fields')) == 1, 'should convert fields that relates to other entities to entities');
-		$this->assertEquals('object', $entities['type'], 'should set entity type based on countPerEntry');
+		$this->assertTrue(isset($entityArr['fields']), 'should return an array with with fields');
+		$this->assertTrue(count($entityArr) > 1, 'should return an array with with properties');
 	}
 
 	public function testGetFieldsAsAssocArray() {
-		$fields = [
-			[
-				'dbFieldName' => 'test1',
-				'includeInForm' => 1,
-				'value' => 2,
-			],
-			[
-				'dbFieldName' => 'test2',
-				'includeInForm' => 1,
-				'value' => 1,
-			],
-			[
-				'dbTableName' => 'test3',
-				'includeInForm' => 1,
-				'value' => 3,
-			],
-			[
-				'dbFieldName' => 'test4',
-				'includeInForm' => 1,
-				'fields' => [
-					'id' => 1,
-					'fieldname' => 2,
-					'includeInForm' => 1,
-				],
-			],
-		];
 
-		$expectedKeys = ['test1', 'test2', 'test3'];
+		$expectedKeys = ['firstnames', 'lastname'];
 
-		$entity = new Entities();
-		$convertedArr = $entity->ConvertFieldsToAssocArray($fields);
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+		$convertedArr = $entity->GetFieldsAsAssocArray();
 
 		foreach ($expectedKeys as $key) {
-			$this->assertTrue(array_key_exists($key, $convertedArr), 'should convert numeric array to assoc list for fields with dbFieldName or dbTableName property');
+			$this->assertTrue(array_key_exists($key, $convertedArr), 'should convert numeric array to assoc list');
 		}
 
-		$this->assertEquals(count($fields), count($convertedArr), 'should keep all keys');
+		$this->assertEquals(count($entity->getFields()->toArray()), count($convertedArr), 'should keep all keys');
 	}
 
-	public function testGetSimpleEntityAsJSONSchemaObject() {
-		$this->entitiesFieldsMockConf->insertEntityWithoutRelations();
-		$entity = new Entities();
-		$loadedEntity = $entity->GetEntityAndFields(1);
-		$jsonSchemaObject = $entity->getEntityAsJSONSchema($loadedEntity);
-		$expectedKeys = ['title', 'type'];
+	public function testGetEntityAsJSONSchemaObject() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+		//$loadedEntity = $entity->GetEntityAndFields(1);
+		$jsonSchemaObject = $entity->ConvertToJSONSchemaObject();
+		$expectedKeys = ['title', 'type', 'properties'];
 
 		foreach ($expectedKeys as $key) {
 			$this->assertTrue(array_key_exists($key, $jsonSchemaObject), 'should hold key with name ' . $key);
@@ -105,15 +69,116 @@ class EntitiesModelTest extends \UnitTestCase {
 
 		$this->assertTrue($jsonSchemaObject['type'] == 'object', 'should convert entities with countPerEntry == 1 to type object');
 		$this->assertTrue(isset($jsonSchemaObject['properties']), 'should convert fields to properties for type object');
-		$this->assertEquals(2, count($jsonSchemaObject['required']), 'should set array containing required fields');
+		$this->assertEquals(1, count($jsonSchemaObject['required']), 'should set array containing required fields');
 	}
 
-	public function testGetComplexEntityAsJSONSchemaObject() {
-		$this->entitiesFieldsMockConf->insertEntityWithArrayRelations();
-		$entity = new Entities();
-		$loadedEntity = $entity->GetEntityAndFields(1);
-		$jsonSchemaObject = $entity->getEntityAsJSONSchema($loadedEntity);
+	public function testConcatDataByEntityObject() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
 
-		$this->assertTrue(isset($jsonSchemaObject['properties']['begrav_persons_deathcauses']['items']), 'should include entities pointing to main entity');
+		$data = [
+			'firstnames' => 'Jens',
+			'lastname' => 'Nielsen',
+			'shouldBeIgnored' => 'dont add this',
+		];
+
+		$expectedResult = 'Jens Nielsen';
+
+		$this->assertEquals($expectedResult, $entity->ConcatDataByEntity($data));
+	}
+
+	public function testConcatDataByEntityArray() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+		$entity->type = 'array';
+
+		$data = [
+			[
+				'firstnames' => 'Jens',
+				'lastname' => 'Nielsen',
+				'shouldBeIgnored' => 'dont add this',
+			],
+			[
+				'firstnames' => 'Alan',
+				'lastname' => 'Hansen',
+				'shouldBeIgnored' => 'dont add this',
+			],
+		];
+
+		$expectedResult = [
+			'Jens Nielsen',
+			'Alan Hansen',
+		];
+
+		$this->assertEquals($expectedResult, $entity->ConcatDataByEntity($data));
+	}
+
+	public function testConcatDataByFieldObject() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+		$entity->type = 'object';
+
+		$data = [
+			'firstnames' => 'Jens',
+			'lastname' => 'Nielsen',
+			'shouldBeIgnored' => 'dont add this',
+		];
+
+		$expectedResult = [
+			'firstnames' => 'Jens',
+			'lastname' => 'Nielsen',
+		];
+
+		$this->assertEquals($expectedResult, $entity->ConcatDataByField($data));
+	}
+
+	public function testConcatDataByFieldArray() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+		$entity->type = 'array';
+
+		$data = [
+			[
+				'firstnames' => 'Jens',
+				'lastname' => 'Nielsen',
+				'shouldBeIgnored' => 'dont add this',
+			],
+			[
+				'firstnames' => 'Alan',
+				'lastname' => 'Bentsen',
+				'shouldBeIgnored' => 'dont add this',
+			],
+		];
+
+		$expectedResult = [
+			'firstnames' => ['Jens', 'Alan'],
+			'lastname' => ['Nielsen', 'Bentsen'],
+		];
+
+		$this->assertEquals($expectedResult, $entity->ConcatDataByField($data));
+	}
+
+	public function testValidateInvalidData() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+
+		$data = [
+			'firstnames' => null,
+			'lastname' => 'Jensen',
+		];
+
+		$this->assertFalse(false, $entity->isDataValid($data), 'should return false when data is not valid');
+	}
+
+	public function testValidateValidData() {
+		$this->entitiesFieldsMockConf->insertEntity();
+		$entity = Entities::findById(1)[0];
+
+		$data = [
+			'firstnames' => 'Hans',
+			'lastname' => 'Jensen',
+		];
+
+		$this->assertTrue(true, $entity->isDataValid($data), 'should return true when data is valid');
 	}
 }

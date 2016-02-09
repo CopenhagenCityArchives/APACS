@@ -35,7 +35,7 @@ class FindStatementBuilder implements IStatementBuilder {
 		$fieldNames = "";
 
 		foreach ($this->fields as $field) {
-			$fieldNames .= '`' . $field['dbFieldName'] . '`, ';
+			$fieldNames .= '`' . $field['fieldName'] . '`, ';
 		}
 
 		return substr($fieldNames, 0, strlen($fieldNames) - 2);
@@ -44,8 +44,8 @@ class FindStatementBuilder implements IStatementBuilder {
 	private function getConditions() {
 		$conditions = '';
 		foreach ($this->fields as $field) {
-			if (isset($this->values[$field['dbFieldName']])) {
-				$conditions .= $field['dbFieldName'] . ' = "' . $this->values[$field['dbFieldName']] . '" AND ';
+			if (isset($this->values[$field['fieldName']])) {
+				$conditions .= $field['fieldName'] . ' = "' . $this->values[$field['fieldName']] . '" AND ';
 			}
 		}
 

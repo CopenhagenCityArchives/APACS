@@ -29,14 +29,14 @@ try {
 	});
 
 	//Setup the database service
-	$di->set('db', function () use ($di) {
+	$di->setShared('db', function () use ($di) {
 		return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	});
 
-	$di->set('database', function () use ($di) {
-		return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-	});
-
+/*	$di->set('database', function () use ($di) {
+return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
+});
+ */
 	$di->setShared('response', function () {
 		return new \Phalcon\Http\Response();
 	});
@@ -81,7 +81,7 @@ try {
 	$info->post('/pages', 'ImportPages');
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
 
-	$info->get('/taskschema/{taskId:[0-9]+}', 'GetTaskFieldsSchema');
+	$info->get('/taskschema', 'GetTaskFieldsSchema');
 
 	$info->get('/tasks', 'GetTasks');
 	$info->get('/tasks/{taskId:[0-9]+}', 'GetTask');
@@ -105,6 +105,8 @@ try {
 	$indexing->setHandler(new IndexDataController());
 
 	$indexing->get('/test', 'test');
+
+	$indexing->get('/datasource/{dataSourceId:[0-9]+}', 'GetDataFromDatasouce');
 
 	$indexing->post('/entries/{taskId:[0-9]+}', 'SaveEntry');
 	$indexing->get('/entries', 'GetEntries');
