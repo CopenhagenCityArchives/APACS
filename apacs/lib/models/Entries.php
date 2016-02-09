@@ -85,14 +85,14 @@ class Entries extends \Phalcon\Mvc\Model {
 		}
 
 		//Let's save the data
-		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsAndData($fields, $data));
+		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data));
 		if (!$newId) {
 			throw new RuntimeException('could not save the entry ' . $entity->name);
 		}
 		return $newId;
 	}
 
-	private function GetFieldsAndData($fields, $data) {
+	private function GetFieldsValuesArray($fields, $data) {
 		$fieldsAndData = [];
 		foreach ($fields as $field) {
 			if (isset($data[$field['fieldName']])) {
