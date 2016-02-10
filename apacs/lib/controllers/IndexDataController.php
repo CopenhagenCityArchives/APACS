@@ -61,9 +61,14 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		try {
+			//Saving the concrete entry
+			$concreteEntry = new ConcreteEntries($this->getDI());
+			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
+			$concreteEntry->SaveInSolr($concreteEntry->GetSolrData($entities, $jsonData));
+
+			//Saving the meta entry, holding information about the concrete entry
 			$entry = new Entries();
-			$entry->SaveEntries($entities, $jsonData);
-			$entry->SaveInSolr($entry->GetSolrData($entities, $jsonData));
+			$entry->Save(['task_id' => $taskId, 'post_id' => $postId, 'concrete_id' => $concreteId, 'user_id' => $userId]);
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry ' . $e->getMessage()]);

@@ -1,6 +1,6 @@
 <?php
 
-class EntriesModelTest extends \UnitTestCase {
+class ConcreteEntriesTest extends \UnitTestCase {
 
 	private $entitiesMock;
 	private $entriesMock;
@@ -46,13 +46,13 @@ class EntriesModelTest extends \UnitTestCase {
 
 	public function testSave() {
 		$this->entitiesMock->insertEntity();
-		$entry = new Entries();
+		$entry = new ConcreteEntries($this->di);
 		$dataToSave = [
 			'firstnames' => 'Jens',
 			'lastname' => 'Jensen',
 		];
 
-		$entry->SaveEntry($this->entitiesMock->getEntity(), $dataToSave);
+		$entry->Save($this->entitiesMock->getEntity(), $dataToSave);
 
 		$resultSet = $this->getDI()->get('db')->query('SELECT firstnames, lastname FROM burial_persons');
 		$resultSet->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
@@ -65,19 +65,19 @@ class EntriesModelTest extends \UnitTestCase {
 	 */
 	public function testSaveThrowErrorWhenEntityKeyNameValueIsNotSet() {
 		$this->entitiesMock->insertEntity();
-		$entry = new Entries();
+		$entry = new ConcreteEntries($this->di);
 		$dataToSaveWrong = [
 			'persons_id' => null,
 			'deathcause' => 'lungebetændelse',
 		];
 
 		//This should throw an exception, as the EntityKeyName is null
-		$entry->SaveEntry($this->entitiesMock->getEntity(2), $dataToSaveWrong);
+		$entry->Save($this->entitiesMock->getEntity(2), $dataToSaveWrong);
 	}
 
 	public function testSaveDecodeFields() {
 		$this->entitiesMock->insertEntity();
-		$entry = new Entries();
+		$entry = new ConcreteEntries($this->di);
 		$dataToSave = [
 			'persons_id' => 1,
 			'deathcause' => 'lungebetændelse',
@@ -88,7 +88,7 @@ class EntriesModelTest extends \UnitTestCase {
 			'deathcauses_id' => '1',
 		];
 
-		$id = $entry->SaveEntry($this->entitiesMock->getEntity(2), $dataToSave);
+		$id = $entry->Save($this->entitiesMock->getEntity(2), $dataToSave);
 
 		$this->assertTrue(is_numeric($id), 'should return id when saving entry');
 
@@ -101,13 +101,13 @@ class EntriesModelTest extends \UnitTestCase {
 	/**
 	 * @expectedException InvalidArgumentException
 	 */
-	public function testSaveEntryThrowErrorOnEmptyData() {
+	public function testSaveThrowErrorOnEmptyData() {
 		$this->entitiesMock->insertEntity();
-		$entry = new Entries();
-		$entry->SaveEntries([$this->entitiesMock->getEntity()], []);
+		$entry = new ConcreteEntries($this->di);
+		$entry->SaveEntriesForTask([$this->entitiesMock->getEntity()], []);
 	}
 
-	public function testSaveEntries() {
+	public function testSaveEntriesForTask() {
 		$this->entitiesMock->insertEntity();
 
 		$data = [
@@ -119,9 +119,9 @@ class EntriesModelTest extends \UnitTestCase {
 				],
 			],
 		];
-		$entry = new Entries();
+		$entry = new ConcreteEntries($this->di);
 
-		$this->assertTrue($entry->SaveEntries([0 => $this->entitiesMock->getEntity()], $data), 'should save data');
+		$this->assertTrue($entry->SaveEntriesForTask([0 => $this->entitiesMock->getEntity()], $data), 'should save data');
 
 		$result = $this->di->get('db')->query('select * from burial_persons WHERE 1');
 		$this->assertEquals(1, count($result), 'should save main entity');
@@ -152,7 +152,7 @@ class EntriesModelTest extends \UnitTestCase {
 			'deathcauses' => ['lungebetændelse', 'hjertestop'],
 		];
 
-		$post = new Entries();
+		$post = new ConcreteEntries($this->di);
 		$resultSet = Entities::find(['conditions' => 'task_id = ' . '1']);
 		$entities = [];
 		foreach ($resultSet as $entity) {
@@ -178,5 +178,15 @@ class EntriesModelTest extends \UnitTestCase {
 		$entity = $this->entitiesMock->getEntity();
 
 		$this->assertFalse($entity->isDataValid(), 'should return false when data is invalid');
+	}
+
+	public function testLoad() {
+		$this->entitiesMock->insertEntity();
+		$this->entriesMock->createEntryWithObjectRelation();
+
+		$entity = $this->entitiesMock->getEntity(2);
+
+		$entry = new ConcreteEntries($this->di);
+		$this->assertTrue(count($entry->Load($entity, 'id', 1)) > 0, 'should return array of data');
 	}
 }
