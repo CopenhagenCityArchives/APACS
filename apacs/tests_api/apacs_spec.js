@@ -71,3 +71,11 @@ frisby.create('EntriesPost')
   .post(url + '/entries/1')
   .expectStatus(401)
 .toss();
+
+frisby.create('Datasource')
+  .get(url + '/datasource/1')
+  .expectStatus(200)
+  .afterJSON(function(data){
+    expect(data.length > 0).toBe(true);
+  })
+.toss();
