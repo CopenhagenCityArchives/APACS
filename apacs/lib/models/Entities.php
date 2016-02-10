@@ -190,4 +190,38 @@ class Entities extends \Phalcon\Mvc\Model {
 
 		return $keyArr;
 	}
+
+	/**
+	 * Returns the primary entity for an array of entities
+	 * @param ResultSet $entities A ResultSet representing the entities to search
+	 * @return Entities The first occuring primary entity. If none is found null is returned
+	 */
+	public static function GetPrimaryEntity($entities) {
+		$entities->rewind();
+		while ($entities->valid()) {
+			$entity = $entities->current();
+			if ($entity->isPrimaryEntity == '1') {
+				return $entity;
+			}
+
+			$entities->next();
+		}
+
+		return null;
+	}
+
+	public static function GetSecondaryEntities($entities) {
+		$entities->rewind();
+		$secondaryEntities = [];
+		while ($entities->valid()) {
+			$entity = $entities->current();
+			if ($entity->isPrimaryEntity !== '1') {
+				$secondaryEntities[] = $entity;
+			}
+
+			$entities->next();
+		}
+
+		return $secondaryEntities;
+	}
 }

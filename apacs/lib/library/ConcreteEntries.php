@@ -23,6 +23,7 @@ class ConcreteEntries {
 		ORM::configure('password', $this->getDI()->get('config')['password']);
 		ORM::configure('charset', $this->getDI()->get('config')['charset']);
 		//ORM::configure('logging', true);
+		//echo ORM::get_last_query();
 
 		$this->crud = new CRUD\CRUD();
 	}
@@ -33,31 +34,69 @@ class ConcreteEntries {
 
 	public function Load(Entities $entity, $primaryKeyName, $id) {
 		if ($entity->type == 'array') {
-			$results = $this->buildJoins($entity)->find_array([$primaryKeyName => $id]);
+
+			return $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
 		} else {
-			$results = $this->buildJoins($entity)->find_array([$primaryKeyName => $id])[0];
+			$result = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
+			if (isset($result[0])) {
+				return $result[0];
+			}
 		}
-		//echo ORM::get_last_query();
-		return $results;
 	}
 
 	private function buildJoins($entity) {
 		$joins = ORM::for_table($entity->primaryTableName);
-		//Adding table to select from
+		//Select visible fields
+
+		//Select fields and decoded fields (if they are visible)
 		foreach ($entity->fields as $field) {
-			if ($field->hasDecode == '1') {
-				$joins = $joins->select($field->decodeTable . '.' . '*');
+			if ($field->includeInForm == '1') {
+				if ($field->hasDecode == '1') {
+					$joins = $joins->select($field->decodeTable . '.' . $field->decodeField);
+				} else {
+					$joins = $joins->select($field->tableName . '.' . $field->fieldName);
+				}
 			}
 		}
 
 		//Adding joins
 		foreach ($entity->fields as $field) {
 			if ($field->hasDecode == '1') {
-				$joins = $joins->join($field->decodeTable, [$entity->primaryTableName . '.' . $field->fieldName, '=', $field->decodeTable . '.id']);
+				$joins = $joins->left_outer_join($field->decodeTable, [$entity->primaryTableName . '.' . $field->fieldName, '=', $field->decodeTable . '.id']);
 			}
 		}
 
 		return $joins;
+	}
+
+	public function LoadEntries($taskId, $concreteId) {
+		$result = [];
+
+		$entities = Entities::find(['conditions' => 'task_id = ' . $taskId]);
+
+		$primaryEntity = Entities::GetPrimaryEntity($entities);
+
+		if ($primaryEntity == null) {
+			throw new InvalidArgumentException('There is no primary entity for task ' . $taskId);
+		}
+
+		$results[$primaryEntity->name] = [];
+
+		//Load primary entity
+		$results[$primaryEntity->name]['metadata'] = $primaryEntity->toArray();
+		$results[$primaryEntity->name]['data'] = $this->Load($primaryEntity, 'id', $concreteId);
+
+		$secondaryEntities = Entities::GetSecondaryEntities($entities);
+
+		//Load secondary entities
+		foreach ($secondaryEntities as $entity) {
+			$results[$entity->name] = [];
+
+			$results[$entity->name]['metadata'] = $entity->toArray();
+			$results[$entity->name]['data'] = $this->Load($entity, $entity->entityKeyName, $concreteId);
+		}
+
+		return $results;
 	}
 
 	/**
@@ -81,22 +120,26 @@ class ConcreteEntries {
 			$fakeField['fieldName'] = $field->decodeField;
 			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
 
-			//Value not given and new value not allowed. Throw error
-			if (count($fieldValues) == 0 && !$field->codeAllowNewValue) {
-				throw new InvalidArgumentException('The field ' . $field->decodeField . ' has a value that does not exist: ' . $data[$fakeField['decodeField']]);
+			//Value not given
+			if (!isset($fieldValues[0]['id'])) {
+				//new value not allowed. Throw error
+				if (!$field->codeAllowNewValue) {
+					throw new InvalidArgumentException('The field ' . $field->decodeField . ' has a value that does not exist: ' . $data[$fakeField['decodeField']]);
+				}
+
+				//Let's create the new value
+				if (count($fieldValues) == 0) {
+
+					$saveData = [$fakeField['fieldName'] => $data[$fakeField['fieldName']]];
+
+					//$fieldValues = $ge->Save($saveData);
+					$id = $this->crud->save($field->decodeTable, $saveData);
+					//Let's use the id of the decode value
+					$data[$field->fieldName] = $id;
+				}
+			} else {
+				$data[$field->fieldName] = $fieldValues[0]['id'];
 			}
-
-			//Let's create the new value
-			if (count($fieldValues) == 0) {
-
-				$saveData = [$fakeField['fieldName'] => $data[$fakeField['fieldName']]];
-
-				//$fieldValues = $ge->Save($saveData);
-				$id = $this->crud->save($field->decodeTable, $saveData);
-				//Let's use the id of the decode value
-				$data[$field->fieldName] = $id;
-			}
-
 		}
 
 		$fields = $entity->fields->toArray();

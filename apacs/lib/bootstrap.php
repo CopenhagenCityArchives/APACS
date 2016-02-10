@@ -110,7 +110,6 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 
 	$indexing->post('/entries/{taskId:[0-9]+}', 'SaveEntry');
 	$indexing->get('/entries', 'GetEntries');
-	$indexing->get('/entries/{entry:[0-9]+}', 'GetEntry');
 
 //TODO: Implement endpoint for creating posts
 	$indexing->post('/pages/{taskId:[0-9]+', 'CreatePosts');

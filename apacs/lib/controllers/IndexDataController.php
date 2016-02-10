@@ -21,18 +21,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($datasource->GetData($query));
 	}
 
-	/*
-		Flow:
-			Check user access rights (authorize and authenticate)
-			Get configuration for the current collection and volume
-			Validate input
-			Build insert statement
-			Save data
-			Update stats
-			Return response
-	*/
-
-	public function SaveEntry($taskId) {
+	public function SaveEntry() {
 		//This is incomming data!
 		$jsonData = json_decode($this->request->getRawBody(), true);
 
@@ -48,7 +37,9 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			return;
 		}
 
-		$entitiesResult = Entities::find(['conditions' => 'task_id = ' . $taskId]);
+		//TODO: Get and authorize user
+
+		$entitiesResult = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 		$entities = [];
 		foreach ($entitiesResult as $result) {
 			$entities[] = $result;
@@ -61,6 +52,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		try {
+			//Saving the post
+			$post = new Posts();
+			$post->Save($jsonData['post']);
+
 			//Saving the concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
 			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
@@ -68,7 +63,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			//Saving the meta entry, holding information about the concrete entry
 			$entry = new Entries();
-			$entry->Save(['task_id' => $taskId, 'post_id' => $postId, 'concrete_id' => $concreteId, 'user_id' => $userId]);
+			$entry->Save(['tasks_id' => $jsonData['task_id'], 'posts_id' => $post->id, 'concrete_entries_id' => $concreteId, 'users_id' => $userId]);
+
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry ' . $e->getMessage()]);
@@ -76,27 +72,31 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['message' => 'all data saved']);
+		$this->response->setJsonContent(['message' => 'all data saved. task_id:  ' . $jsonData['task_id'] . ', post_id: ' . $post->id]);
 	}
 
 	public function GetEntries() {
-		$pageId = $this->request->getQuery('page_id', 'int', false);
+		$postId = $this->request->getQuery('post_id', 'int', false);
 		$taskId = $this->request->getQuery('task_id', 'int', false);
 
-		if ($pageId == false) {
-			$this->error('page_id must be set');
+		if ($postId == false || $taskId == false) {
+			$this->error('task_id and post_id must be set');
 			return;
 		}
 
-		$conditions = 'page_id = ' . $pageId;
+		$conditions = 'posts_id = ' . $postId . ' AND tasks_id = ' . $taskId;
 
-		if ($taskId !== false) {
-			$conditions .= ' AND task_id = ' . $taskId;
+		$entry = Entries::findFirst(['conditions' => $conditions]);
+
+		if ($entry === false) {
+			$this->response->setJsonContent(['no entries for task and post']);
+			return;
 		}
 
-		$resultSet = Entries::find(['conditions' => $conditions]);
+		$concreteEntry = new ConcreteEntries($this->getDI());
+		$concreteEntry->LoadEntries($taskId, $entry->concrete_entries_id);
 
-		$this->response->setJsonContent($resultSet->toArray());
+		$this->response->setJsonContent($concreteEntry->LoadEntries($taskId, $entry->concrete_entries_id));
 	}
 
 	private function error($error_message) {
