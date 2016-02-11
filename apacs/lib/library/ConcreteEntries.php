@@ -204,7 +204,7 @@ class ConcreteEntries {
 
 		if (!$primaryEntity->isDataValid($data[$primaryEntity->name])) {
 			$dbCon->rollback();
-			throw new InvalidArgumentException('input error ' . $primaryEntity->GetValidationStatus());
+			throw new InvalidArgumentException('could not save primary entity. Input error ' . $primaryEntity->GetValidationStatus());
 		}
 
 		$primaryId = $this->Save($primaryEntity, $data[$primaryEntity->name]);
@@ -229,11 +229,11 @@ class ConcreteEntries {
 
 				if (!$entity->isDataValid($data[$primaryEntity->name][$entity->name])) {
 					$dbCon->rollback();
-					throw new InvalidArgumentException('Input error ' . $primaryEntity->GetValidationStatus());
+					throw new InvalidArgumentException('could not save single row of secondary entity ' . $entity->name . ' data. Input error ' . $primaryEntity->GetValidationStatus());
 				}
 
 				try {
-					$this->SaveEntry($entity, $data[$primaryEntity->name][$entity->name]);
+					$this->Save($entity, $data[$primaryEntity->name][$entity->name]);
 				} catch (Exception $e) {
 					$dbCon->rollback();
 					throw new RuntimeException('Error while saving: ' . $e);
@@ -245,7 +245,7 @@ class ConcreteEntries {
 
 					if (!$entity->isDataValid($row)) {
 						$dbCon->rollback();
-						throw new InvalidArgumentException('Input error ' . $entity->GetValidationStatus());
+						throw new InvalidArgumentException('could not save array row of secondary entity ' . $entity->name . ' data. Input error ' . $entity->GetValidationStatus());
 					}
 
 					try {
