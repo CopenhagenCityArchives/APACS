@@ -121,7 +121,7 @@ class ConcreteEntriesTest extends \UnitTestCase {
 		];
 		$entry = new ConcreteEntries($this->di);
 
-		$this->assertTrue($entry->SaveEntriesForTask([0 => $this->entitiesMock->getEntity()], $data), 'should save data');
+		$this->assertTrue(is_numeric($entry->SaveEntriesForTask([0 => $this->entitiesMock->getEntity()], $data)), 'should return insert id of the primary entity');
 
 		$result = $this->di->get('db')->query('select * from burial_persons WHERE 1');
 		$this->assertEquals(1, count($result), 'should save main entity');
