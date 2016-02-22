@@ -27,6 +27,7 @@ class Units extends \Phalcon\Mvc\Model {
 	public function initialize() {
 		$this->hasMany('id', 'Pages', 'units_id');
 		$this->hasMany('id', 'TasksUnits', 'units_id');
+		$this->belongsTo('collections_id', 'Collections', 'id');
 	}
 
 	public function Import($type, $collectionId, $idField, $infoField, $table, $conditions = NULL) {
