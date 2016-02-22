@@ -27,7 +27,8 @@ class Tasks extends \Phalcon\Mvc\Model {
 
 		$response = [];
 		$response['keyName'] = $mainEntity->name;
-		$response['schema'][$mainEntity->name] = $mainArr;
+		$response['schema']['type'] = 'object';
+		$response['schema']['properties'][$mainEntity->name] = $mainArr;
 		$steps = new Steps();
 		$response['steps'] = $steps->GetStepsAndFields($this->id, $mainEntity->name);
 
