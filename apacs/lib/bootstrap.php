@@ -78,10 +78,14 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 
 	$info->get('/pages', 'GetPages');
 	$info->get('/pages/{page:[0-9]+}', 'GetPage');
-	$info->post('/pages', 'ImportPages');
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
 
+	$info->post('/pages', 'ImportPages');
+
+	$info->get('/posts/{post:[0-9]+}/image', 'GetPostImage');
+
 	$info->get('/taskschema', 'GetTaskFieldsSchema');
+	$info->get('/searchconfig', 'GetSearchConfig');
 
 	$info->get('/tasks', 'GetTasks');
 	$info->get('/tasks/{taskId:[0-9]+}', 'GetTask');
@@ -104,15 +108,17 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	$indexing = new MicroCollection();
 	$indexing->setHandler(new IndexDataController());
 
-	$indexing->get('/test', 'test');
-
 	$indexing->get('/datasource/{dataSourceId:[0-9]+}', 'GetDataFromDatasouce');
 
-	$indexing->post('/entries/{taskId:[0-9]+}', 'SaveEntry');
-	$indexing->get('/entries', 'GetEntries');
+	$indexing->get('/search', 'SolrProxy');
 
-//TODO: Implement endpoint for creating posts
-	$indexing->post('/pages/{taskId:[0-9]+', 'CreatePosts');
+	$indexing->post('/entries', 'SaveEntry');
+
+	//This might be necessary for frontend calls. Reason unknown.
+	$indexing->options('/entries', function () {echo 'ok';});
+	$indexing->get('/entries/{entry_id:[0-9]+}', 'GetEntry');
+
+	$indexing->post('/errorreports', 'ReportError');
 
 	$app->mount($indexing);
 
@@ -128,13 +134,14 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 
 		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin)
 			->setHeader("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE,OPTIONS')
-			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization')
+			->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
+			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Credentials", true);
 	});
 
 	$app->handle();
-
 	//Send any responses collected in the controllers
+	$di->get('response')->setHeader('charset', 'utf-8');
 	$di->get('response')->send();
 
 } catch (Exception $e) {
