@@ -1,34 +1,27 @@
 <?php
-/**
- * Handles error reporting
- */
-class ErrorReports extends \Phalcon\Mvc\Model
-{
-    
-    public function setError($errorConfs, $itemId, $errorId)
-    {
-        $conf = array();
-        foreach($errorConfs as $report){
-            if($report['id'] == $errorId){
-                $conf = $report;
-                break;
-            }
-        }
-        
-        if(!$conf)
-            return false;
-        
-        $conf['sql'] = str_replace(':itemId', $itemId, $conf['sql']);
-        
-        
-        try{
-            return $this->getDI()->getDatabase()->query($conf['sql']);
-        }
-        catch(Exception $e){
-            echo('Could not execute query: ' . $e);
-            return false;
-        }
-        
-        return false;
-    }
+
+use Phalcon\Mvc\Model\Query;
+
+class ErrorReports extends \Phalcon\Mvc\Model {
+
+	protected $id;
+	protected $entriesId;
+	protected $collectionId;
+	protected $reportingUser;
+	protected $reportedTime;
+	protected $toSuperuser;
+
+	public function getSource() {
+		return 'apacs_' . 'errorreports';
+	}
+
+	public function initialize() {
+		$this->belongsTo('reporting_user_id', 'Users', 'id');
+		$this->belongsTo('user_id', 'Users', 'id');
+	}
+
+	public function GetWithUsers($conditions) {
+		$query = new Query('SELECT Errors.*, Users.* FROM Errors LEFT JOIN Errors.user_id = Users.id LEFT JOIN Users Errors.reporting_user_id = Users.id WHERE ' . $conditions, $this->getDI());
+		return $query->execute(['taskId' => $this->tasks_id, 'stepsId' => $this->id]);
+	}
 }
