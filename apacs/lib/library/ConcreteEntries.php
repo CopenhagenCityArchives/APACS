@@ -18,10 +18,9 @@ class ConcreteEntries {
 		}
 
 		//Settings for ORM db access
-		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname']);
+		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname'] . ';charset=utf8');
 		ORM::configure('username', $this->getDI()->get('config')['username']);
 		ORM::configure('password', $this->getDI()->get('config')['password']);
-		ORM::configure('charset', $this->getDI()->get('config')['charset']);
 		//ORM::configure('logging', true);
 		//echo ORM::get_last_query();
 
@@ -46,7 +45,6 @@ class ConcreteEntries {
 
 	private function buildJoins($entity) {
 		$joins = ORM::for_table($entity->primaryTableName);
-		//Select visible fields
 
 		//Select fields and decoded fields (if they are visible)
 		foreach ($entity->fields as $field) {
@@ -59,6 +57,9 @@ class ConcreteEntries {
 			}
 		}
 
+		//We always want the id of the entry
+		$joins = $joins->select($entity->primaryTableName . '.id');
+
 		//Adding joins
 		foreach ($entity->fields as $field) {
 			if ($field->hasDecode == '1') {
@@ -69,31 +70,66 @@ class ConcreteEntries {
 		return $joins;
 	}
 
-	public function LoadEntries($taskId, $concreteId) {
-		$result = [];
+	public function EnrichData($entities, $entityData) {
 
-		$entities = Entities::find(['conditions' => 'task_id = ' . $taskId]);
+		$results = [];
+
+		foreach ($entities as $entity) {
+			$data = $entityData[$entity->name];
+
+			if ($entity->type == 'object') {
+				$temp = $data;
+				unset($data);
+				$data = [];
+				$data[] = $temp;
+				//var_dump($data);
+			}
+
+			foreach ($data as $row) {
+				$resultRow = [];
+
+				$resultRow['entity_name'] = $entity->name;
+				$resultRow['label'] = $entity->guiName;
+				//$resultRow['concrete_entries_id'] = $concrete_entries_id;
+				$resultRow['fields'] = [];
+
+				foreach ($entity->fields as $field) {
+					$fieldRow = [];
+					if (isset($row[$field->GetRealFieldName()])) {
+						$fieldRow['field_name'] = $field->GetRealFieldName();
+						$fieldRow['label'] = $field->formName;
+						$fieldRow['value'] = $row[$field->GetRealFieldName()];
+						$resultRow['fields'][] = $fieldRow;
+					}
+				}
+
+				$results[] = $resultRow;
+			}
+		}
+
+		return $results;
+	}
+
+	public function LoadEntry($entities, $id) {
+		$results = [];
 
 		$primaryEntity = Entities::GetPrimaryEntity($entities);
 
-		if ($primaryEntity == null) {
-			throw new InvalidArgumentException('There is no primary entity for task ' . $taskId);
-		}
-
-		$results[$primaryEntity->name] = [];
-
 		//Load primary entity
-		$results[$primaryEntity->name]['metadata'] = $primaryEntity->toArray();
-		$results[$primaryEntity->name]['data'] = $this->Load($primaryEntity, 'id', $concreteId);
+		$results[$primaryEntity->name] = $this->Load($primaryEntity, 'id', $id);
 
 		$secondaryEntities = Entities::GetSecondaryEntities($entities);
+		usort($secondaryEntities, function ($a, $b) {
+			if ($a->viewOrder == $b->viewOrder) {
+				return 0;
+			}
+
+			return ($a->viewOrder < $b->viewOrder) ? -1 : 1;
+		});
 
 		//Load secondary entities
 		foreach ($secondaryEntities as $entity) {
-			$results[$entity->name] = [];
-
-			$results[$entity->name]['metadata'] = $entity->toArray();
-			$results[$entity->name]['data'] = $this->Load($entity, $entity->entityKeyName, $concreteId);
+			$results[$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
 		}
 
 		return $results;
@@ -118,10 +154,12 @@ class ConcreteEntries {
 			//Creating an entry consisting of the decode table and a field in the table identified by decodeField
 			$fakeField = $field->toArray();
 			$fakeField['fieldName'] = $field->decodeField;
+
 			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
 
 			//Value not given
 			if (!isset($fieldValues[0]['id'])) {
+
 				//new value not allowed. Throw error
 				if (!$field->codeAllowNewValue) {
 					throw new InvalidArgumentException('The field ' . $field->decodeField . ' has a value that does not exist: ' . $data[$fakeField['decodeField']]);
@@ -194,7 +232,7 @@ class ConcreteEntries {
 		}
 
 		//Save primary entity and get id
-		$primaryEntity = array_filter($entities, function ($el) {return $el->isPrimaryEntity == '1';})[0];
+		$primaryEntity = Entities::GetPrimaryEntity($entities);
 
 		//Saving main entity
 		if (!isset($data[$primaryEntity->name])) {
@@ -214,8 +252,8 @@ class ConcreteEntries {
 			throw new RuntimeException('could not get insert id for primary entity');
 		}
 
-		foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
-
+		//foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
+		foreach (Entities::GetSecondaryEntities() as $entity) {
 			if (!isset($data[$primaryEntity->name][$entity->name])) {
 				if ($entity->required == '1') {
 					throw new InvalidArgumentException('entity data not set: ' . $entity->name);
@@ -277,7 +315,7 @@ class ConcreteEntries {
 		$doc1 = $update->createDocument();
 
 		$post = new Posts();
-		$doc1->id = rand(0, 100000000);
+		$doc1->id = $solrData['id'];
 
 		//	var_dump(($solrData));
 
@@ -292,7 +330,21 @@ class ConcreteEntries {
 		$update->addCommit();
 		$result = $client->update($update);
 		return $result->getStatus();
+	}
 
+	public static function ProxySolrRequest() {
+
+		$queryStr = $_SERVER['QUERY_STRING'];
+		//$queryStr = str_replace('_url=/search?', '', $queryStr);
+		$queryStr = substr($queryStr, strpos('?q=', $queryStr));
+		if (strrpos($queryStr, 'delete')) {
+			die();
+		}
+
+		$url = 'http://ec2-54-194-233-62.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
+
+		print file_get_contents($url);
+		exit();
 	}
 
 	/**
@@ -308,7 +360,8 @@ class ConcreteEntries {
 	public function GetSolrData($entities, $data) {
 		$solrData = [];
 
-		$primaryEntity = array_filter($entities, function ($el) {return $el->isPrimaryEntity;})[0];
+		$primaryEntity = Entities::GetPrimaryEntity($entities);
+		//array_filter($entities, function ($el) {return $el->isPrimaryEntity;})[0];
 
 		foreach ($entities as $entity) {
 			$row = null;
