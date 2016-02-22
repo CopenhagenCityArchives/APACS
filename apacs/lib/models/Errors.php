@@ -1,7 +1,8 @@
 <?php
 
-class Errors extends \Phalcon\Mvc\Model
-{
+use Phalcon\Mvc\Model\Query;
+
+class Errorreports extends \Phalcon\Mvc\Model {
 
 	protected $id;
 	protected $entriesId;
@@ -10,14 +11,17 @@ class Errors extends \Phalcon\Mvc\Model
 	protected $reportedTime;
 	protected $toSuperuser;
 
-    public function getSource()
-    {
-        return 'apacs_' . 'errors';
-    }
+	public function getSource() {
+		return 'apacs_' . 'errorreports';
+	}
 
-    public function initialize()
-    {
-        $this->belongsTo('unit_id', 'Errors', 'id');
-        $this->belongsTo('reporting_user_id', 'Users', 'id');
-    }
+	public function initialize() {
+		$this->belongsTo('reporting_user_id', 'Users', 'id');
+		$this->belongsTo('user_id', 'Users', 'id');
+	}
+
+	public function GetWithUsers($conditions) {
+		$query = new Query('SELECT Errors.*, Users.* FROM Errors LEFT JOIN Errors.user_id = Users.id LEFT JOIN Users Errors.reporting_user_id = Users.id WHERE ' . $conditions, $this->getDI());
+		return $query->execute(['taskId' => $this->tasks_id, 'stepsId' => $this->id]);
+	}
 }
