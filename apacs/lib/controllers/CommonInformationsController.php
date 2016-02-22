@@ -49,6 +49,28 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($task->GetTaskSchema($taskId));
 	}
 
+	public function GetSearchConfig() {
+		$request = $this->getDI()->get('request');
+		$collectionId = $request->getQuery('collection_id', null, null);
+
+		$conditions = '';
+		if (!is_null($collectionId)) {
+			$conditions = 'id = ' . $collectionId;
+		}
+
+		$collections = Collections::find($conditions);
+		$result = [];
+		$collections->rewind();
+		while ($collections->valid()) {
+			$resRow = $collections->current()->toArray();
+			$resRow['fields'] = $collections->current()->GetSearchConfig();
+			$result[] = $resRow;
+			$collections->next();
+		}
+
+		$this->response->setJsonContent($result);
+	}
+
 	public function GetUnits() {
 		$request = $this->getDI()->get('request');
 
@@ -99,52 +121,75 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 		$unitId = $request->getQuery('unit_id', 'int', false);
 		$pageNumber = $request->getQuery('page_number', 'int', false);
+		$pageId = $request->getQuery('page_id', 'int', false);
 
-		if (!$unitId) {
-			$this->error('unit_id is required');
+		$conditions = [];
+
+		if ($unitId !== false) {
+			$conditions[] = 'unit_id = ' . $unitId;
+		}
+
+		if ($pageNumber !== false) {
+			$conditions[] = 'page_number = ' . $pageNumber;
+		}
+
+		if ($pageId !== false) {
+			$conditions[] = 'id = ' . $pageId;
+		}
+
+		if (count($conditions) < 1) {
+			$this->error('page_id, unit_id or page_number is required');
 			return;
 		}
 
-		$conditions = 'unit_id = ' . $unitId;
-
-		if ($pageNumber !== false) {
-			$conditions = $conditions . ' AND page_number = ' . $pageNumber;
-		}
-
 		$resultSet = Pages::find([
-			'conditions' => $conditions,
+			'conditions' => implode(' AND ', $conditions),
 		]);
 
-		$results = [];
-		//If we want entries at the this level, uncomment this:
-		/*	$i = 0;
-
-		while($resultSet->valid()){
-			$results[$i] = array_intersect_key($resultSet->current()->toArray(), array_flip(Pages::$publicFields));
-			$results[$i]['entries'] = $resultSet->current()->getEntries()->toArray();
-			$resultSet->next();
-			$i++;
-		}*/
-
-		$results = $resultSet->toArray();
-
-		$this->response->setJsonContent($results);
+		if (count($resultSet) == 1) {
+			$this->GetPage($resultSet->toArray()[0]['id']);
+		} else {
+			$results = $resultSet->toArray();
+			$this->response->setJsonContent($results);
+		}
 	}
 
 	public function GetPage($pageId) {
-		$page = Pages::findFirst(['id' => $pageId]);
+		$page = Pages::findFirst($pageId);
 		$taskId = $this->request->getQuery('task_id', null, null);
 
 		$taskPageConditions = 'pages_id = ' . $pageId;
 		if (!is_null($taskId)) {
 			$taskPageConditions .= ' AND tasks_id = ' . $taskId;
 		}
-		$result = [];
-		$result = $page->toArray(Pages::$publicFields);
-		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions])->toArray();
-		//$result['posts'] = $page->getPosts()->toArray();
+
+		$result = $page->toArray();
+		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions, 'columns' => ['is_done', 'last_activity', 'tasks_id']])->toArray();
+		$taskUnit = TasksUnits::findFirst(['conditions' => ['tasks_id = ' . $taskId]]);
+
+		if ($taskUnit == false) {
+			throw new Exception('TaskUnit not found for page id ' . $pageId);
+		}
+		$post = new Posts();
+		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
+		$result['posts'] = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']])->toArray();
 
 		$this->response->setJsonContent($result);
+	}
+
+	public function GetPostImage($postId) {
+		$post = Posts::findFirstById($postId);
+
+		if ($post == false) {
+			throw new Exception('Post image not found for post id ' . $postId);
+		}
+
+		$this->response->setHeader('Content-type', 'image/jpeg');
+		$this->response->setContent($post->image);
+	}
+
+	public function GetErrors() {
+
 	}
 
 	/**
