@@ -21,6 +21,42 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($datasource->GetData($query));
 	}
 
+	public function SolrProxy() {
+		$this->response->setContentType('application/json', 'UTF-8');
+		ConcreteEntries::ProxySolrRequest();
+	}
+
+	public function ReportError() {
+		$jsonData = json_decode($this->request->getRawBody(), true);
+		//TODO: Implement user auth
+		$reportingUserId = 1;
+		$requiredFields = ['task_id', 'entity_name', 'field_name', 'concrete_entry_id', 'comment'];
+
+		array_walk($requiredFields, function ($el) use ($requiredFields) {
+			if (!isset($jsonData[$el])) {
+				$this->error(implode($requiredFields) . ' must be set');
+				return;
+			}
+		});
+		var_dump($jsonData);
+		$concreteEntry = new ConcreteEntries($this->getDI());
+		//$entry = $concreteEntry->Load(Entities::findFirst(['conditions' => ['name' => $jsonData['entity_name'], 'tasks_id' => $jsonData['task_id']]]), 'id', $jsonData['concrete_entry_id']);
+
+		$errors = new ErrorReports();
+		$errors->reporting_user_id = $reportingUserId;
+		$errors->tasks_id = $jsonData['task_id'];
+		$errors->entity_name = $jsonData['entity_name'];
+		$errors->field_name = $jsonData['field_name'];
+		$errors->comment = $jsonData['field_name'];
+		$errors->old_value = $entry[$jsonData['field_name']];
+
+		$errors->users_id = Entries::find();
+
+		if (!$errors->Save($jsonData)) {
+			throw new Exception('could not save error: ' . implode($errors->getMessages(), ', '));
+		}
+	}
+
 	public function SaveEntry() {
 		//This is incomming data!
 		$jsonData = json_decode($this->request->getRawBody(), true);
@@ -38,6 +74,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		//TODO: Get and authorize user
+		$userId = 1;
 
 		$entitiesResult = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 		$entities = [];
@@ -54,16 +91,42 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		try {
 			//Saving the post
 			$post = new Posts();
-			$post->Save($jsonData['post']);
+			$jsonData['post']['complete'] = 1;
+			$jsonData['post']['pages_id'] = $jsonData['page_id'];
+			if (!$post->Save($jsonData['post'])) {
+				throw new InvalidArgumentException('Could not save post.');
+			}
+			$post->SaveThumbImage();
 
 			//Saving the concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
 			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
-			$concreteEntry->SaveInSolr($concreteEntry->GetSolrData($entities, $jsonData));
 
 			//Saving the meta entry, holding information about the concrete entry
 			$entry = new Entries();
-			$entry->Save(['tasks_id' => $jsonData['task_id'], 'posts_id' => $post->id, 'concrete_entries_id' => $concreteId, 'users_id' => $userId]);
+
+			$entry->tasks_id = $jsonData['task_id'];
+			$entry->posts_id = $post->id;
+			$entry->concrete_entries_id = $concreteId;
+			$entry->users_id = $userId;
+			$entry->complete = 0;
+			$entry->id = 0;
+
+			if (!$entry->save()) {
+				throw new RuntimeException('could not save entry information' . $entry->getMessages()[0]);
+			}
+
+			$solrData = [];
+			$solrData['id'] = $concreteId;
+			$solrData['task_id'] = $jsonData['task_id'];
+			$solrData['post_id'] = $post->id;
+			$solrData['entry_id'] = $entry->toArray()['id'];
+
+			$concreteEntry->SaveInSolr(array_merge(
+				$solrData, $concreteEntry->GetSolrData($entities, $jsonData)
+			));
+			$entry->complete = 1;
+			$entry->save();
 
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
@@ -75,28 +138,41 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(['message' => 'all data saved. task_id:  ' . $jsonData['task_id'] . ', post_id: ' . $post->id]);
 	}
 
-	public function GetEntries() {
-		$postId = $this->request->getQuery('post_id', 'int', false);
-		$taskId = $this->request->getQuery('task_id', 'int', false);
+	/**
+	 * Updates part of an entry. Note that this method only supports updating one entry at a time
+	 *
+	 */
+	public function UpdateEntry($entryId) {
+		$jsonData = json_decode($this->request->getRawBody(), true);
 
-		if ($postId == false || $taskId == false) {
-			$this->error('task_id and post_id must be set');
-			return;
+		$concreteId = $jsonData['concrete_id'];
+		$entityName = $jsonData['entity_name'];
+		$fieldName = $jsonData['field_name'];
+		$value = $jsonData['value'];
+
+		$conEntry = new ConcreteEntries();
+		$entityData = $conEntry->Load($entity, 'id', $concreteId);
+		$entityData[$fieldName] = $value;
+
+		if ($conEntry->Save($entity, $entityData) !== true) {
+			throw new RuntimeException('could not update entry wth id: ' . $concreteId);
 		}
 
-		$conditions = 'posts_id = ' . $postId . ' AND tasks_id = ' . $taskId;
+		$this->setJsonContent(['message' => 'entry updated']);
+	}
 
-		$entry = Entries::findFirst(['conditions' => $conditions]);
+	public function GetEntry($id) {
+		//Loading entry
+		$entry = Entries::findFirstById($id);
 
-		if ($entry === false) {
-			$this->response->setJsonContent(['no entries for task and post']);
-			return;
-		}
+		//Loading entities for entry
+		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
 
+		//Loading concrete entry
 		$concreteEntry = new ConcreteEntries($this->getDI());
-		$concreteEntry->LoadEntries($taskId, $entry->concrete_entries_id);
-
-		$this->response->setJsonContent($concreteEntry->LoadEntries($taskId, $entry->concrete_entries_id));
+		$this->response->setJsonContent(
+			$concreteEntry->EnrichData($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id), $entry->concrete_entries_id)
+		);
 	}
 
 	private function error($error_message) {
