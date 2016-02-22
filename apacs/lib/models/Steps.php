@@ -27,11 +27,21 @@ class Steps extends \Phalcon\Mvc\Model {
 				if (!is_null($el->fields->decodeField)) {
 					$fieldName = $el->fields->decodeField;
 				}
-				if ($prefix != $el->entities->name . '.') {
-					return $prefix . $el->entities->name . '.' . $fieldName;} else {
-					return $el->entities->name . '.' . $fieldName;
-				}},
+
+				$elementName = '';
+				if ($el->entities->type == 'array') {
+					$elementName = $el->entities->name;
+				} else {
+					$elementName = $el->entities->name . '.' . $fieldName;
+				}
+
+				return ($prefix != $el->entities->name . '.') ? $prefix . $elementName : $elementName;
+			},
 				$step->GetRelatedEntitiesAndFields()->toArray());
+
+			if (count($stepInfo['fields']) > 0) {
+				$stepInfo['fields'] = array_unique($stepInfo['fields']);
+			}
 
 			$stepsAndFields[] = $stepInfo;
 		}
