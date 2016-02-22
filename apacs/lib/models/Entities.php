@@ -2,6 +2,7 @@
 
 class Entities extends \Phalcon\Mvc\Model {
 	public static $publicFields = ['id', 'required', 'countPerEntry', 'isMarkable', 'guiName', 'task_id'];
+	public static $entityJsonSchemaFields = ['id', 'validationErrorMessage', 'pattern', 'title', 'isRequired'];
 	private $validationStatus = [];
 
 	public function getSource() {
@@ -45,23 +46,27 @@ class Entities extends \Phalcon\Mvc\Model {
 		$entity['title'] = $entity['guiName'];
 		$entity['fields'] = $this->GetFieldsAsAssocArray();
 
+		$iterateFields = $entity['fields'];
+
 		//iterating fields
-		foreach ($entity['fields'] as $key => $field) {
+		foreach ($iterateFields as $key => $field) {
 			//Remove fields not included in form (includeInForm = 0)
 			if ($field['includeInForm'] == 0) {
 				unset($entity['fields'][$key]);
 				continue;
 			}
 			//Converting field property validationRegularExpression to pattern
-			if (!is_null($field['validationRegularExpression'])) {
-				$field['pattern'] = $field['validationRegularExpression'];
-			}
+			//if (!is_null($field['validationRegularExpression'])) {
+			$field['pattern'] = null;
+			$field['pattern'] = str_replace('/', '', $field['validationRegularExpression']);
+			//}
 
-			$field['title'] = $field['tableName'];
+			$field['title'] = $field['formName'];
 			$field['description'] = $field['helpText'];
 
 			//Converting field property to
 			if (!is_null($field['formFieldType'])) {
+				$field['type'] = $field['formFieldType'];
 				if ($field['formFieldType'] == 'typeahead') {
 					$field['type'] = 'string';
 					$field['format'] = 'typeahead';
@@ -72,13 +77,14 @@ class Entities extends \Phalcon\Mvc\Model {
 			if (!is_null($field['datasources_id'])) {
 				$datasource = Datasources::findFirst(['conditions' => 'id = ' . $field['datasources_id']]);
 
-				if (!is_null($datasource)) {
+				if (isset($datasource) && $datasource !== false) {
 					$values = $datasource->GetValuesAsArray();
 					if (!$values) {
 						$field['datasource'] = 'http://www.kbhkilder.dk/1508/stable/api/datasource/' . $datasource->id . '?q=';
 						$field['datasourceValueField'] = $datasource->valueField;
 					} else {
 						$field['enum'] = $values;
+						$field['type'] = 'string';
 					}
 				}
 			}
@@ -86,9 +92,11 @@ class Entities extends \Phalcon\Mvc\Model {
 			//When using decode fields, the decode field name is used as name
 			if ($field['hasDecode'] == 1) {
 				$field['fieldName'] = $field['decodeField'];
-				unset($entity['fields'][$key]);
-				$entity['fields'][$field['fieldName']] = $field;
 			}
+
+			unset($entity['fields'][$key]);
+			$entity['fields'][$field['fieldName']] = $field;
+			//	$entity['fields'][$field['fieldName']] = array_intersect_assoc(Entities::$entityJsonSchemaFields, $entity['fields']);
 		}
 
 		unset($entity['required']);
