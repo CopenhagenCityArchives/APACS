@@ -61,6 +61,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		if (!$errors->Save($jsonData)) {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
+
+		$this->response->setJsonContent(['message' => 'error report saved']);
 	}
 
 	public function SaveEntry() {
