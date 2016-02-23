@@ -30,30 +30,36 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = json_decode($this->request->getRawBody(), true);
 		//TODO: Implement user auth
 		$reportingUserId = 1;
-		$requiredFields = ['task_id', 'entity_name', 'field_name', 'concrete_entry_id', 'comment', 'value'];
+		$requiredFields = ['task_id', 'post_id', 'entity_name', 'field_name', 'concrete_entries_id', 'comment', 'value'];
 
-		array_walk($requiredFields, function ($el) use ($requiredFields) {
+		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
-				$this->error('the following fields are required: ' . implode($requiredFields, ','));
-				return;
+				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
 			}
 		});
 
 		$concreteEntry = new ConcreteEntries($this->getDI());
 		//$entry = $concreteEntry->Load(Entities::findFirst(['conditions' => ['name' => $jsonData['entity_name'], 'tasks_id' => $jsonData['task_id']]]), 'id', $jsonData['concrete_entry_id']);
 
+		$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
+
+		if (!$entry) {
+			throw new InvalidArgumentException('no entry found for task id ' . $jsonData['task_id'] . ' and post id ' . $jsonData['post_id']);
+		}
+
 		$errors = new ErrorReports();
-		$errors->reporting_user_id = $reportingUserId;
+		$errors->reporting_users_id = $reportingUserId;
+		$errors->users_id = 1; //$entry->users_id;
 		$errors->tasks_id = $jsonData['task_id'];
+		$errors->posts_id = $jsonData['post_id'];
 		$errors->entity_name = $jsonData['entity_name'];
 		$errors->field_name = $jsonData['field_name'];
 		$errors->comment = $jsonData['field_name'];
-		$errors->old_value = $jsonData['value'];
-
-		//$errors->users_id = Entries::find();
+		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
+		$errors->original_value = $jsonData['value'];
 
 		if (!$errors->Save($jsonData)) {
-			throw new Exception('could not save error: ' . implode($errors->getMessages(), ', '));
+			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
 	}
 
@@ -76,15 +82,14 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		//TODO: Get and authorize user
 		$userId = 1;
 
-		$entitiesResult = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
-		$entities = [];
-		foreach ($entitiesResult as $result) {
-			$entities[] = $result;
-		}
-
-		if (count($entities) == 0 || !is_array($entities)) {
+		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
+		/*$entities = [];
+			foreach ($entitiesResult as $result) {
+				$entities[] = $result;
+		*/
+		if (count($entities) == 0) {
 			$this->response->setStatusCode(401, 'Input error');
-			$this->response->setJsonContent(['No entities found for task ' . $taskId]);
+			$this->response->setJsonContent(['No entities found for task ' . $jsonData['task_id']]);
 			return;
 		}
 
@@ -96,7 +101,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			if (!$post->Save($jsonData['post'])) {
 				throw new InvalidArgumentException('Could not save post.');
 			}
-			$post->SaveThumbImage();
+			//$post->SaveThumbImage();
 
 			//Saving the concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
@@ -118,9 +123,17 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			$solrData = [];
 			$solrData['id'] = $concreteId;
+
 			$solrData['task_id'] = $jsonData['task_id'];
 			$solrData['post_id'] = $post->id;
 			$solrData['entry_id'] = $entry->toArray()['id'];
+
+			//Setting collection info
+			$colInfo = $post->GetCollectionInfo();
+			$solrData['collection_info'] = $colInfo['collection_name'] . ' ' . $colInfo['unit_description'];
+			$solrData['unit_id'] = $colInfo['unit_id'];
+			$solrData['page_id'] = $colInfo['page_id'];
+			$solrData['collection_id'] = $colInfo['collection_id'];
 
 			$concreteEntry->SaveInSolr(array_merge(
 				$solrData, $concreteEntry->GetSolrData($entities, $jsonData)
@@ -162,21 +175,27 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetPostEntries($id) {
-		$entries = Entries::find(['conditions' => 'posts_id = ' . $id]);
 		$response = [];
-		foreach ($entries as $entry) {
-			//Loading entry
-			//	$entry = Entries::findFirstById($id);
 
+		$post = Posts::findFirstById($id);
+
+		$entries = $post->getEntries();
+
+		$postData = [];
+		foreach ($entries as $entry) {
 			//Loading entities for entry
 			$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
 
 			//Loading concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
 			$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
-
-			$response = array_merge($response, $concreteEntry->EnrichData($entities, $entryData, $entry->concrete_entries_id));
+			$postData = array_merge($postData, $concreteEntry->EnrichData($entities, $entryData, $entry->concrete_entries_id));
 		}
+
+		$response['metadata'] = $post->GetCollectionInfo();
+		$response['data'] = $postData;
+		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id])->toArray();
+		$response['error_reports'] = $errorReports;
 
 		$this->response->setJsonContent($response);
 	}
