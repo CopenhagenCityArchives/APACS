@@ -189,7 +189,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			//Loading concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
 			$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
-			$postData = array_merge($postData, $concreteEntry->EnrichData($entities, $entryData, $entry->concrete_entries_id));
+			$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entities, $entryData, $entry->concrete_entries_id));
 		}
 
 		$response['metadata'] = $post->GetCollectionInfo();

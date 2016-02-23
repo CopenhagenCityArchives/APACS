@@ -70,7 +70,7 @@ class ConcreteEntries {
 		return $joins;
 	}
 
-	public function EnrichData($entities, $entityData) {
+	public function ConcatEntitiesAndData($entities, $entityData) {
 
 		$results = [];
 
@@ -84,26 +84,33 @@ class ConcreteEntries {
 				$data[] = $temp;
 				//var_dump($data);
 			}
-                        
-                        $resultRow = [];
-                        $resultRow['entity_name'] = $entity->name;
-                        $resultRow['label'] = $entity->guiName;
-                        //$resultRow['concrete_entries_id'] = $concrete_entries_id;
-                        $resultRow['fields'] = [];
-                        
+
+			$entityRow = [];
+			$entityRow['entity_name'] = $entity->name;
+			$entityRow['label'] = $entity->guiName;
+			//$resultRow['concrete_entries_id'] = $concrete_entries_id;
+			$entityRow['fields'] = [];
+			$i = 0;
+			$addFieldsAsArray = count($data) > 1;
 			foreach ($data as $row) {
-                            foreach ($entity->fields as $field) {
-                                $fieldRow = [];
-                                if (isset($row[$field->GetRealFieldName()])) {
-                                        $fieldRow['field_name'] = $field->GetRealFieldName();
-                                        $fieldRow['label'] = $field->formName;
-                                        $fieldRow['value'] = $row[$field->GetRealFieldName()];
-                                        $resultRow['fields'][] = $fieldRow;
-                                }
-                            }
+				$fieldValueRow = [];
+				//Set field name and value for each field
+				foreach ($entity->fields as $field) {
+					if (isset($row[$field->GetRealFieldName()])) {
+						$fieldValueRow['field_name'] = $field->GetRealFieldName();
+						$fieldValueRow['label'] = $field->formName;
+						$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
+						$fieldValueRow['parent_id'] = $row['id'];
+					}
+					if ($addFieldsAsArray == true) {
+						$entityRow['fields'][$i][] = $fieldValueRow;
+					} else {
+						$entityRow['fields'][] = $fieldValueRow;
+					}
+				}
+				$i++;
 			}
-                        
-                        $results[] = $resultRow;
+			$results[] = $entityRow;
 		}
 
 		return $results;
@@ -226,10 +233,6 @@ class ConcreteEntries {
 		$dbCon = ORM::get_db();
 		$dbCon->beginTransaction();
 
-		if (!is_array($entities)) {
-			throw new InvalidArgumentException('entities should be an array');
-		}
-
 		//Save primary entity and get id
 		$primaryEntity = Entities::GetPrimaryEntity($entities);
 
@@ -252,7 +255,7 @@ class ConcreteEntries {
 		}
 
 		//foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
-		foreach (Entities::GetSecondaryEntities() as $entity) {
+		foreach (Entities::GetSecondaryEntities($entities) as $entity) {
 			if (!isset($data[$primaryEntity->name][$entity->name])) {
 				if ($entity->required == '1') {
 					throw new InvalidArgumentException('entity data not set: ' . $entity->name);
