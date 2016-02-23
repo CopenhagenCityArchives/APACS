@@ -188,10 +188,6 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->response->setContent($post->image);
 	}
 
-	public function GetErrors() {
-
-	}
-
 	/**
 	 * Retrieves the next available page, meaning the next page in the protocol
 	 * for which there haven't been activity the last 5 minutes, based on the current page number
