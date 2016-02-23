@@ -173,7 +173,9 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			//Loading concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
-			$response = array_merge($response, $concreteEntry->EnrichData($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id), $entry->concrete_entries_id));
+			$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
+
+			$response = array_merge($response, $concreteEntry->EnrichData($entities, $entryData, $entry->concrete_entries_id));
 		}
 
 		$this->response->setJsonContent($response);

@@ -84,27 +84,26 @@ class ConcreteEntries {
 				$data[] = $temp;
 				//var_dump($data);
 			}
-
+                        
+                        $resultRow = [];
+                        $resultRow['entity_name'] = $entity->name;
+                        $resultRow['label'] = $entity->guiName;
+                        //$resultRow['concrete_entries_id'] = $concrete_entries_id;
+                        $resultRow['fields'] = [];
+                        
 			foreach ($data as $row) {
-				$resultRow = [];
-
-				$resultRow['entity_name'] = $entity->name;
-				$resultRow['label'] = $entity->guiName;
-				//$resultRow['concrete_entries_id'] = $concrete_entries_id;
-				$resultRow['fields'] = [];
-
-				foreach ($entity->fields as $field) {
-					$fieldRow = [];
-					if (isset($row[$field->GetRealFieldName()])) {
-						$fieldRow['field_name'] = $field->GetRealFieldName();
-						$fieldRow['label'] = $field->formName;
-						$fieldRow['value'] = $row[$field->GetRealFieldName()];
-						$resultRow['fields'][] = $fieldRow;
-					}
-				}
-
-				$results[] = $resultRow;
+                            foreach ($entity->fields as $field) {
+                                $fieldRow = [];
+                                if (isset($row[$field->GetRealFieldName()])) {
+                                        $fieldRow['field_name'] = $field->GetRealFieldName();
+                                        $fieldRow['label'] = $field->formName;
+                                        $fieldRow['value'] = $row[$field->GetRealFieldName()];
+                                        $resultRow['fields'][] = $fieldRow;
+                                }
+                            }
 			}
+                        
+                        $results[] = $resultRow;
 		}
 
 		return $results;
