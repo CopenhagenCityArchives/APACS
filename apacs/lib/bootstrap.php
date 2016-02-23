@@ -114,6 +114,7 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 
 	$indexing->get('/search', 'SolrProxy');
 
+	$indexing->get('/entries/{entry_id:[0-9]+}', 'GetEntry');
 	$indexing->post('/entries', 'SaveEntry');
 
 	//This might be necessary for frontend calls. Reason unknown.

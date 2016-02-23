@@ -200,8 +200,18 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($response);
 	}
 
-	private function error($error_message) {
-		$this->response->setStatusCode(400, 'Bad request');
-		$this->response->setJsonContent(['message' => $error_message]);
+	public function GetEntry($id) {
+		$entry = Entries::findFirstById($id);
+
+		if ($entry === false) {
+			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
+		}
+
+		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+
+		$concreteEntry = new ConcreteEntries($this->getDI());
+		$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
+
+		$this->response->setJsonContent($entryData);
 	}
 }
