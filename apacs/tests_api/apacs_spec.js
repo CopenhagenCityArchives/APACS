@@ -67,9 +67,22 @@ frisby.create('Next available page')
   })
 .toss();
 
-frisby.create('EntriesPost')
+frisby.create('Entries')
   .post(url + '/entries/1')
   .expectStatus(401)
+.toss();
+
+frisby.create('Search config')
+  .get(url + '/searchconfig')
+  .expectStatus(200)
+  .afterJSON(function(data){
+    expect(data.length > 0).toBe(true);
+  })
+.toss();
+
+frisby.create('Solr proxy')
+  .get(url + '/search?wt=json')
+  .expectStatus(200)
 .toss();
 
 frisby.create('Datasource')
