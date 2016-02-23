@@ -4,11 +4,11 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 define('ROOT_PATH', __DIR__);
-define('PATH_LIBRARY', __DIR__ . '/../lib/library/');
+define('PATH_LIBRARY', __DIR__ . '/../app/library/');
 //define('PATH_SERVICES', __DIR__ . '/../app/services/');
 //define('PATH_RESOURCES', __DIR__ . '/../app/resources/');
-define('PATH_MODELS', __DIR__ . '/../lib/models/');
-define('PATH_CONTROLLERS', __DIR__ . '/../lib/controllers/');
+define('PATH_MODELS', __DIR__ . '/../app/models/');
+define('PATH_CONTROLLERS', __DIR__ . '/../app/controllers/');
 
 set_include_path(
 	ROOT_PATH . PATH_SEPARATOR . get_include_path()

@@ -1,6 +1,6 @@
 <?php
 
-include '../lib/library/ConfigurationLoader.php';
+include '../app/library/ConfigurationLoader.php';
 
 class ConfigurationLoaderTest extends \UnitTestCase {
 
