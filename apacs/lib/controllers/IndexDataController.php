@@ -30,15 +30,15 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = json_decode($this->request->getRawBody(), true);
 		//TODO: Implement user auth
 		$reportingUserId = 1;
-		$requiredFields = ['task_id', 'entity_name', 'field_name', 'concrete_entry_id', 'comment'];
+		$requiredFields = ['task_id', 'entity_name', 'field_name', 'concrete_entry_id', 'comment', 'value'];
 
 		array_walk($requiredFields, function ($el) use ($requiredFields) {
 			if (!isset($jsonData[$el])) {
-				$this->error(implode($requiredFields) . ' must be set');
+				$this->error('the following fields are required: ' . implode($requiredFields, ','));
 				return;
 			}
 		});
-		var_dump($jsonData);
+
 		$concreteEntry = new ConcreteEntries($this->getDI());
 		//$entry = $concreteEntry->Load(Entities::findFirst(['conditions' => ['name' => $jsonData['entity_name'], 'tasks_id' => $jsonData['task_id']]]), 'id', $jsonData['concrete_entry_id']);
 
@@ -48,9 +48,9 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->entity_name = $jsonData['entity_name'];
 		$errors->field_name = $jsonData['field_name'];
 		$errors->comment = $jsonData['field_name'];
-		$errors->old_value = $entry[$jsonData['field_name']];
+		$errors->old_value = $jsonData['value'];
 
-		$errors->users_id = Entries::find();
+		//$errors->users_id = Entries::find();
 
 		if (!$errors->Save($jsonData)) {
 			throw new Exception('could not save error: ' . implode($errors->getMessages(), ', '));
