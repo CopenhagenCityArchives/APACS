@@ -108,6 +108,8 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	$indexing = new MicroCollection();
 	$indexing->setHandler(new IndexDataController());
 
+	$indexing->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
+
 	$indexing->get('/datasource/{dataSourceId:[0-9]+}', 'GetDataFromDatasouce');
 
 	$indexing->get('/search', 'SolrProxy');
@@ -116,7 +118,6 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 
 	//This might be necessary for frontend calls. Reason unknown.
 	$indexing->options('/entries', function () {echo 'ok';});
-	$indexing->get('/entries/{entry_id:[0-9]+}', 'GetEntry');
 
 	$indexing->post('/errorreports', 'ReportError');
 

@@ -161,18 +161,22 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->setJsonContent(['message' => 'entry updated']);
 	}
 
-	public function GetEntry($id) {
-		//Loading entry
-		$entry = Entries::findFirstById($id);
+	public function GetPostEntries($id) {
+		$entries = Entries::find(['conditions' => 'posts_id = ' . $id]);
+		$response = [];
+		foreach ($entries as $entry) {
+			//Loading entry
+			//	$entry = Entries::findFirstById($id);
 
-		//Loading entities for entry
-		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+			//Loading entities for entry
+			$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
 
-		//Loading concrete entry
-		$concreteEntry = new ConcreteEntries($this->getDI());
-		$this->response->setJsonContent(
-			$concreteEntry->EnrichData($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id), $entry->concrete_entries_id)
-		);
+			//Loading concrete entry
+			$concreteEntry = new ConcreteEntries($this->getDI());
+			$response = array_merge($response, $concreteEntry->EnrichData($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id), $entry->concrete_entries_id));
+		}
+
+		$this->response->setJsonContent($response);
 	}
 
 	private function error($error_message) {
