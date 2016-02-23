@@ -91,7 +91,7 @@ class ConcreteEntries {
 			//$resultRow['concrete_entries_id'] = $concrete_entries_id;
 			$entityRow['fields'] = [];
 			$i = 0;
-			$addFieldsAsArray = count($data) > 1;
+			$addFieldsAsArray = $entity->type == 'array';
 			foreach ($data as $row) {
 				$fieldValueRow = [];
 				//Set field name and value for each field
