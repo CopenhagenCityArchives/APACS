@@ -1,7 +1,7 @@
 <?php
 
-include '../lib/library/ValidationRuleSet.php';
-include '../lib/library/Validator.php';
+include '../app/library/ValidationRuleSet.php';
+include '../app/library/Validator.php';
 
 class ValidationRuleSetTest extends \UnitTestCase {
 

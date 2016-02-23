@@ -60,14 +60,14 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 
 			$obj['data_url'] = $url;
 
-			require '../../lib/templates/info.php';
+			require '../../app/templates/info.php';
 
 			die();
 		}
 	}
 
 	public function displayAllInfo() {
-		require '../../lib/templates/info.php';
+		require '../../app/templates/info.php';
 	}
 
 	//Should load data from a metadata level, either by query or at once, defined by the filter

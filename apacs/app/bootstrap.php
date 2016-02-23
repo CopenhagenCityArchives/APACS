@@ -10,9 +10,9 @@ try {
 	//Register an autoloader
 	$loader = new \Phalcon\Loader();
 	$loader->registerDirs(array(
-		'../../lib/controllers/',
-		'../../lib/models/',
-		'../../lib/library/',
+		'../../app/controllers/',
+		'../../app/models/',
+		'../../app/library/',
 	))->register();
 
 	include __DIR__ . "/../vendor/autoload.php";
@@ -20,12 +20,12 @@ try {
 	//Create a DI
 	$di = new Phalcon\DI\FactoryDefault();
 
-	require '../../lib/config/config.php';
+	require '../../app/config/config.php';
 
 	//Setup the configuration service
 	$di->setShared('configuration', function () use ($di) {
 		//Loading the almighty configuration array
-		return new ConfigurationLoader('../../lib/config/CollectionsConfiguration.php');
+		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
 	});
 
 	//Setup the database service
