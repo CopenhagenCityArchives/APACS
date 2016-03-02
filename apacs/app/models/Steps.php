@@ -50,7 +50,7 @@ class Steps extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetRelatedEntitiesAndFields() {
-		$query = new Query('SELECT Fields.*, Entities.* FROM Fields LEFT JOIN Entities ON Fields.entities_id = Entities.id WHERE Entities.task_id = :taskId: AND Fields.steps_id = :stepsId:', $this->getDI());
+		$query = new Query('SELECT Fields.*, Entities.* FROM Fields LEFT JOIN Entities ON Fields.entities_id = Entities.id WHERE Entities.task_id = :taskId: AND Fields.steps_id = :stepsId: ORDER BY formFieldOrder', $this->getDI());
 		return $query->execute(['taskId' => $this->tasks_id, 'stepsId' => $this->id]);
 	}
 }
