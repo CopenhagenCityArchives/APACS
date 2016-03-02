@@ -1,22 +1,28 @@
 <?php
 
-class TasksPages extends \Phalcon\Mvc\Model
-{
+use Phalcon\Mvc\Model\Query;
+use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 
-	protected $id;
-	protected $isActive;
-    protected $isDone;
-    protected $pagesId;
-    protected $tasksId;
+class TasksPages extends \Phalcon\Mvc\Model {
+	public function getSource() {
+		return 'apacs_' . 'tasks_pages';
+	}
 
-    public function getSource()
-    {
-        return 'apacs_' . 'tasks_pages';
-    }
+	public function initialize() {
+		$this->hasMany('id', 'Pages', 'page_id');
+		$this->hasMany('id', 'Tasks', 'task_id');
+	}
 
-    public function initialize()
-    {
-        $this->hasMany('id', 'Pages', 'page_id');
-        $this->hasMany('id', 'Tasks', 'task_id');
-    }
+	public static function GetNextAvailablePage($taskId, $unitId, $curPageNumber) {
+		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND Pages.page_number > :current_page_number AND Pages.unit_id = :unit_id AND last_activity < DATE_SUB(NOW(), INTERVAL 5 MINUTE) ORDER BY Pages.page_number LIMIT 1';
+
+		$taskPage = new TasksPages();
+		$result = new Resultset(null, $taskPage,
+			$taskPage->getReadConnection()->query($query,
+				['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $curPageNumber]
+			)
+		);
+
+		return $result;
+	}
 }
