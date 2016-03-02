@@ -7,18 +7,10 @@ class Units extends \Phalcon\Mvc\Model {
 	protected $collectionId;
 
 	private $status = [];
-	static $publicFields = ['id', 'collection_id', 'pages', 'description', 'index_active'];
+	static $publicFields = ['id', 'collection_id', 'pages', 'description'];
 
 	const OPERATION_TYPE_CREATE = 'create';
 	const OPERATION_TYPE_UPDATE = 'update';
-
-	private function getImportCreateSQL() {
-		return 'INSERT INTO ' . $this->getSource() . ' (concrete_unit_id, description, collection_id, tablename) SELECT :id, :fields, :collectionId, ":table" FROM :table :conditions';
-	}
-
-	private function getImportUpdateSQL() {
-		return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_unit_id = :table.:id SET ' . $this->getSource() . '.description = :fields, tablename = ":table" :conditions';
-	}
 
 	public function getSource() {
 		return 'apacs_' . 'units';
@@ -28,6 +20,14 @@ class Units extends \Phalcon\Mvc\Model {
 		$this->hasMany('id', 'Pages', 'units_id');
 		$this->hasMany('id', 'TasksUnits', 'units_id');
 		$this->belongsTo('collections_id', 'Collections', 'id');
+	}
+
+	private function getImportCreateSQL() {
+		return 'INSERT INTO ' . $this->getSource() . ' (concrete_unit_id, description, collection_id, tablename) SELECT :id, :fields, :collectionId, ":table" FROM :table :conditions';
+	}
+
+	private function getImportUpdateSQL() {
+		return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_unit_id = :table.:id SET ' . $this->getSource() . '.description = :fields, tablename = ":table" :conditions';
 	}
 
 	public function Import($type, $collectionId, $idField, $infoField, $table, $conditions = NULL) {

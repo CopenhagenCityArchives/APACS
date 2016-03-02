@@ -33,10 +33,6 @@ try {
 		return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	});
 
-/*	$di->set('database', function () use ($di) {
-return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-});
- */
 	$di->setShared('response', function () {
 		return new \Phalcon\Http\Response();
 	});
@@ -72,7 +68,7 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	$info = new MicroCollection();
 	$info->setHandler(new CommonInformationsController());
 
-	$info->get('/units', 'GetUnits');
+	$info->get('/tasksunits', 'GetTasksUnits');
 	$info->get('/units/{unitId:[0-9]+}', 'GetUnit');
 	//   $info->post('/units', 'ImportUnits');
 
@@ -81,6 +77,8 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
 
 	$info->post('/pages', 'ImportPages');
+
+	$info->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
 
 	$info->get('/posts/{post:[0-9]+}/image', 'GetPostImage');
 
@@ -92,35 +90,38 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 	$info->get('/collections2', 'GetCollections');
 	$info->get('/collections2/{collectionId:[0-9]+}', 'GetCollection');
 
+	$info->get('/entries/{entry_id:[0-9]+}', 'GetEntry');
+	$info->get('/entries', 'GetEntries');
+
+	$info->get('/errorreports', 'GetErrorReports');
+
+	$info->get('/useractivities', 'GetUserActivities');
+
+	$info->get('/activeusers', 'GetActiveUsers');
+
 	$app->mount($info);
 
-	//Users routes
-	/*     $users = new MicroCollection();
-	        $users->setHandler(new UserController());
-
-	        $users->get('/activeusers', 'GetActiveUsers');
-	        $users->get('/users', 'GetUsers');
-	        $users->get('/users/{userId:{[0-9]+}', 'GetUser');
-
-	        $app->mount($users);
-*/
 	//Index data routes
 	$indexing = new MicroCollection();
 	$indexing->setHandler(new IndexDataController());
-
-	$indexing->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
 
 	$indexing->get('/datasource/{dataSourceId:[0-9]+}', 'GetDataFromDatasouce');
 
 	$indexing->get('/search', 'SolrProxy');
 
-	$indexing->get('/entries/{entry_id:[0-9]+}', 'GetEntry');
 	$indexing->post('/entries', 'SaveEntry');
+	$indexing->patch('/entries/{entry_id:[0-9]+}', 'UpdateEntry');
+
+	$indexing->patch('/taskspages/{tasks_pages_id:[0-9]+}', 'UpdateTasksPages');
 
 	//This might be necessary for frontend calls. Reason unknown.
 	$indexing->options('/entries', function () {echo 'ok';});
 
 	$indexing->post('/errorreports', 'ReportError');
+
+	$indexing->patch('/errorreports/{errorreportId:[0-9]+}', 'UpdateErrorReport');
+
+	$indexing->get('/test', 'authCheck');
 
 	$app->mount($indexing);
 
@@ -135,7 +136,7 @@ return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 		$origin = $app->request->getHeader("ORIGIN") ? $app->request->getHeader("ORIGIN") : '*';
 
 		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin)
-			->setHeader("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE,OPTIONS')
+			->setHeader("Access-Control-Allow-Methods", 'GET,PUT,PATCH,POST,OPTIONS')
 			->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Credentials", true);

@@ -1,5 +1,4 @@
 <?php
-use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 
 class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	private $response;
@@ -71,15 +70,48 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($result);
 	}
 
+	public function GetTasksUnits() {
+		$indexActive = $this->request->getQuery('index_active', null, null);
+		$taskId = $this->request->getQuery('task_id', null, null);
+
+		$conditions = [];
+
+		if (is_null($taskId) && is_null($indexActive)) {
+			throw new InvalidArgumentException('task_id or index_active is required');
+		}
+
+		if (!is_null($indexActive)) {
+			$conditions[] = 'index_active = ' . $indexActive;
+		}
+
+		if (!is_null($taskId)) {
+			$conditions[] = 'tasks_id = ' . $taskId;
+		}
+
+		$taskUnits = TasksUnits::FindUnitsAndTasks(implode(' AND ', $conditions));
+		$this->response->setJsonContent($taskUnits->toArray());
+	}
+
 	public function GetUnits() {
 		$request = $this->getDI()->get('request');
 
 		$collectionId = $request->getQuery('collection_id', null, false);
 		$taskId = $request->getQuery('task_id', null, null);
+		$index_active = $request->getQuery('index_active', null, null);
 
 		if (!$collectionId) {
 			$this->error('collection_id is required');
 			return;
+		}
+
+		$conditions = '';
+
+		if (!is_null($index_active)) {
+			$conditions = $conditions . 'index_active = ' . $index_active;
+		}
+
+		if (!is_null($taskId)) {
+			$conditions = $conditions . 'tasks_id = ' . $taskId;
 		}
 
 		$resultSet = Units::find([
@@ -89,11 +121,9 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$results = [];
 		$i = 0;
 
-		$unitsConditions = is_null($taskId) ? [] : ['conditions' => 'tasks_id = ' . $taskId];
-
 		foreach ($resultSet as $row) {
 			$results[$i] = array_intersect_key($row->toArray(), array_flip(Units::$publicFields));
-			$results[$i]['tasks'] = $row->getTasksUnits($unitsConditions)->toArray();
+			$results[$i]['tasks'] = $row->getTasksUnits(['conditions' => $conditions])->toArray();
 			$i++;
 		}
 		if (count($results) > 0) {
@@ -164,7 +194,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 
 		$result = $page->toArray();
-		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions, 'columns' => ['is_done', 'last_activity', 'tasks_id']])->toArray();
+		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions, 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
 		$taskUnit = TasksUnits::findFirst(['conditions' => ['tasks_id = ' . $taskId]]);
 
 		if ($taskUnit == false) {
@@ -172,9 +202,18 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 		$post = new Posts();
 		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
-		$result['posts'] = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']])->toArray();
+		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']])->toArray();
 
-		$this->response->setJsonContent($result);
+		$result['posts'] = [];
+
+		foreach ($posts as $curPos) {
+			$result['posts'][] = $curPos;
+		}
+
+		//Hack used to convert post decimals from string
+		echo json_encode($result, JSON_NUMERIC_CHECK);
+
+		//$this->response->setJsonContent($result);
 	}
 
 	public function GetPostImage($postId) {
@@ -201,18 +240,106 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$this->error('task_id, unit_id and current_number are required');
 			return;
 		}
-/*AND Pages.unit_id = :unit_id AND last_activity > DATE_SUB(NOW(), INTERVAL 5 MINUTE)*/
-		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND Pages.page_number > :current_page_number ORDER BY Pages.page_number LIMIT 1';
+		$result = TasksPages::GetNextAvailablePage($taskId, $unitId, $currentPageNumber);
 
-		$taskPage = new TasksPages();
-		$result = new Resultset(null, $taskPage,
-			$taskPage->getReadConnection()->query($query,
-				['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $currentPageNumber]
-			)
-		);
+		if ($result !== false) {
+			$this->response->setJsonContent($result[0]);
+		} else {
+			$this->response->setJsonContent([]);
+		}
+	}
 
-		$this->response->setStatusCode('200', 'OK');
-		$this->response->setJsonContent($result->toArray());
+	public function GetEntry($id) {
+		$entry = Entries::findFirstById($id);
+
+		if ($entry === false) {
+			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
+		}
+
+		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+
+		$concreteEntry = new ConcreteEntries($this->getDI());
+		$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
+
+		$this->response->setJsonContent($entryData);
+	}
+
+	public function GetEntries() {
+		$taskId = $this->request->getQuery('task_id', null, null);
+		$postId = $this->request->getQuery('post_id', null, null);
+
+		if (is_null($taskId) || is_null($postId)) {
+			$this->error('task_id and post_id are required');
+			return;
+		}
+
+		$entries = Entries::find(['conditions' => 'tasks_id = ' . $taskId . ' AND posts_id = ' . $postId]);
+
+		if (count($entries) == 0) {
+			throw new InvalidArgumentException('No entries found for task_id ' . $taskId . ' and post_id ' . $postId);
+		}
+
+		if (count($entries) == 1) {
+			$this->GetEntry($entries->toArray()[0]['id']);
+		}
+	}
+
+	public function GetPostEntries($id) {
+		$response = [];
+
+		$post = Posts::findFirstById($id);
+
+		$entries = $post->getEntries();
+
+		$postData = [];
+		foreach ($entries as $entry) {
+			//Loading entities for entry
+			$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+
+			//Loading concrete entry
+			$concreteEntry = new ConcreteEntries($this->getDI());
+			$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
+			$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entities, $entryData, $entry->id));
+		}
+
+		$metadata = $entries[0]->GetContext();
+		unset($metadata['entry_id']);
+		$response['metadata'] = $metadata;
+		$response['data'] = $postData;
+		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id])->toArray();
+		$response['error_reports'] = $errorReports;
+
+		$this->response->setJsonContent($response);
+	}
+
+	public function GetErrorReports() {
+		$taskId = $this->request->getQuery('task_id', null, null);
+		$postId = $this->request->getQuery('post_id', null, null);
+		$userId = $this->request->getQuery('relevant_user_id', null, null);
+
+		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
+			$this->error('task_id and post_id or task_id and relevant_user_id are required');
+			return;
+		}
+
+		if (!is_null($taskId) && !is_null($postId)) {
+			$conditions = 'tasks_id = ' . $taskId . ' AND posts_id = ' . $postId;
+		}
+
+		if (!is_null($userId) && !is_null($taskId)) {
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser = 0 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK)';
+
+			$usersTasks = SuperUsers::findFirst(['conditions' => 'users_id = :userId: AND tasks_id = :taskId:', 'bind' => ['userId' => $userId, 'taskId' => $taskId]]);
+
+			//The user is a super user. Let's get error reports older than 7 days
+			if ($usersTasks !== false) {
+
+				$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray());
+				return;
+			}
+		}
+
+		$this->response->setJsonContent(ErrorReports::findByRawSql($conditions)->toArray());
 	}
 
 	public function GetActiveUsers() {
@@ -224,10 +351,29 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			return;
 		}
 
-//TODO: Active users are not supported yet!
+		$conditions = '';
 		if (!is_null($taskId)) {
-			$activeUsers = TasksUsers::find(['conditions' => 'task_id = taskId: AND ']);
+			$conditions = 'tasks_id = ' . $taskId;
 		}
+
+		if (!is_null($unitId)) {
+			$conditions = 'units_id = ' . $unitId;
+		}
+
+		$events = new Events();
+		$this->response->setJsonContent($events->GetActiveUsers($conditions)->toArray());
+	}
+
+	public function GetUserActivities() {
+		$userId = $this->request->getQuery('user_id', null, null);
+
+		if (is_null($userId)) {
+			$this->error('user_id is required');
+			return;
+		}
+
+		$events = new Events();
+		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray());
 	}
 
 	public function ImportUnits() {

@@ -60,6 +60,11 @@ class ConcreteEntries {
 		//We always want the id of the entry
 		$joins = $joins->select($entity->primaryTableName . '.id');
 
+		//We also want the foreign key to the primary entity for secondary entities
+		if ($entity->isPrimaryEntity !== '1') {
+			$joins = $joins->select($entity->entityKeyName);
+		}
+
 		//Adding joins
 		foreach ($entity->fields as $field) {
 			if ($field->hasDecode == '1') {
@@ -70,7 +75,7 @@ class ConcreteEntries {
 		return $joins;
 	}
 
-	public function ConcatEntitiesAndData($entities, $entityData) {
+	public function ConcatEntitiesAndData($entities, $entityData, $entry_id) {
 
 		$results = [];
 
@@ -88,7 +93,9 @@ class ConcreteEntries {
 			$entityRow = [];
 			$entityRow['entity_name'] = $entity->name;
 			$entityRow['label'] = $entity->guiName;
-			//$resultRow['concrete_entries_id'] = $concrete_entries_id;
+			$entityRow['entry_id'] = $entry_id;
+			$entityRow['task_id'] = $entity->task_id;
+			$entityRow['concrete_entries_id'] = $data[0]['id'];
 			$entityRow['fields'] = [];
 			$i = 0;
 			$addFieldsAsArray = $entity->type == 'array';
@@ -101,11 +108,12 @@ class ConcreteEntries {
 						$fieldValueRow['label'] = $field->formName;
 						$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
 						$fieldValueRow['parent_id'] = $row['id'];
-					}
-					if ($addFieldsAsArray == true) {
-						$entityRow['fields'][$i][] = $fieldValueRow;
-					} else {
-						$entityRow['fields'][] = $fieldValueRow;
+
+						if ($addFieldsAsArray == true) {
+							$entityRow['fields'][$i][] = $fieldValueRow;
+						} else {
+							$entityRow['fields'][] = $fieldValueRow;
+						}
 					}
 				}
 				$i++;
@@ -116,25 +124,43 @@ class ConcreteEntries {
 		return $results;
 	}
 
-	public function LoadEntry($entities, $id) {
+	/**
+	 * Loads a complete entry. Can be loaded either hierarchical (secondary entities are a part of the primary entity),
+	 * or not (all entities are in the same level)
+	 * @param [type]  $entities         The entities that describes the data to load
+	 * @param [type]  $id               The id of the concrete entry to load
+	 * @param boolean $loadhierarchical Indication of wheter or not to load the data in a hierarchical form. Defaults to false.
+	 */
+	public function LoadEntry($entities, $id, $loadhierarchical = false) {
 		$results = [];
 
-		$primaryEntity = Entities::GetPrimaryEntity($entities);
-
-		//Load primary entity
-		$results[$primaryEntity->name] = $this->Load($primaryEntity, 'id', $id);
-
-		$secondaryEntities = Entities::GetSecondaryEntities($entities);
-		usort($secondaryEntities, function ($a, $b) {
+		/*usort($entities, function ($a, $b) {
 			if ($a->viewOrder == $b->viewOrder) {
 				return 0;
 			}
 
 			return ($a->viewOrder < $b->viewOrder) ? -1 : 1;
-		});
+		});*/
 
-		//Load secondary entities
-		foreach ($secondaryEntities as $entity) {
+		//Load in hierarchical form
+		if ($loadhierarchical) {
+			$primaryEntity = Entities::GetPrimaryEntity($entities);
+
+			//Load primary entity
+			$results[$primaryEntity->name] = $this->Load($primaryEntity, 'id', $id);
+
+			$secondaryEntities = Entities::GetSecondaryEntities($entities);
+
+			//Load secondary entities
+			foreach ($secondaryEntities as $entity) {
+				$results[$primaryEntity->name][$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
+			}
+
+			return $results;
+		}
+
+		//Load in flat form
+		foreach ($entities as $entity) {
 			$results[$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
 		}
 
@@ -202,7 +228,8 @@ class ConcreteEntries {
 		}
 
 		//Let's save the data
-		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data));
+		$id = isset($data['id']) ? $data['id'] : null;
+		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data), $id);
 		if (!$newId) {
 			throw new RuntimeException('could not save the entry ' . $entity->name);
 		}
@@ -302,7 +329,26 @@ class ConcreteEntries {
 		return $primaryId;
 	}
 
-	public static function SaveInSolr($solrData) {
+	public static function GetSolrDataFromEntryContext($entryCon) {
+		$solrData = [];
+
+		//Entry id is used as id in Solr
+		$solrData['id'] = $entryCon['entry_id'];
+
+		$solrData['collection_id'] = $entryCon['collection_id'];
+		$solrData['task_id'] = $entryCon['task_id'];
+		$solrData['unit_id'] = $entryCon['unit_id'];
+		$solrData['page_id'] = $entryCon['page_id'];
+		$solrData['post_id'] = $entryCon['post_id'];
+		$solrData['entry_id'] = $entryCon['entry_id'];
+		//$solrData['last_update'] = $entryCon['last_update'];
+
+		$solrData['collection_info'] = $entryCon['collection_name'] . ' ' . $entryCon['unit_description'];
+
+		return $solrData;
+	}
+
+	public static function SaveInSolr($solrData, $id = null) {
 		$config = [
 			'endpoint' =>
 			['localhost' =>
@@ -314,10 +360,16 @@ class ConcreteEntries {
 		$client = new Solarium\Client($config);
 
 		$update = $client->createUpdate();
+
+		if (!is_null($id)) {
+			$update->addDeleteById(123);
+			$update->addCommit();
+		}
+
 		$doc1 = $update->createDocument();
 
 		$post = new Posts();
-		$doc1->id = $solrData['id'];
+//		$doc1->id = $solrData['id'];
 
 		//	var_dump(($solrData));
 
@@ -335,7 +387,7 @@ class ConcreteEntries {
 	}
 
 	public static function ProxySolrRequest() {
-
+		header("Access-Control-Allow-Origin: *");
 		$queryStr = $_SERVER['QUERY_STRING'];
 		//$queryStr = str_replace('_url=/search?', '', $queryStr);
 		$queryStr = substr($queryStr, strpos('?q=', $queryStr));

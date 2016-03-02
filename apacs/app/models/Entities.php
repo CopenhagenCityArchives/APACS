@@ -190,7 +190,10 @@ class Entities extends \Phalcon\Mvc\Model {
 	 */
 	public function GetFieldsAsAssocArray() {
 		$keyArr = [];
-		foreach ($this->getFields(['orderBy' => 'formFieldOrder'])->toArray() as $key => $field) {
+
+		$fields = Fields::find(['conditions' => 'entities_id = ' . $this->id, 'order' => 'formFieldOrder'])->toArray();
+
+		foreach ($fields as $key => $field) {
 			if ($field['includeInForm'] == '1') {
 				$keyArr[$field['fieldName']] = $field;
 			}

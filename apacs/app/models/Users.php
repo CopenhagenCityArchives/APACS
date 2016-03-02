@@ -1,7 +1,6 @@
 <?php
 
 class Users extends \Phalcon\Mvc\Model {
-	public static $publicFields = ['id', 'userName', 'imageUrl'];
 
 	public function getSource() {
 		return 'apacs_' . 'users';
