@@ -11,14 +11,6 @@ class Posts extends \Phalcon\Mvc\Model {
 		$this->hasMany('id', 'Entries', 'posts_id');
 	}
 
-	public function GetCollectionInfo() {
-		$query = 'SELECT Collections.id as collection_id, Collections.name as collection_name, Units.id as unit_id, Units.description as unit_description, Units.pages as unit_pages, Pages.id as page_id, Pages.page_number FROM apacs_posts AS Posts LEFT JOIN apacs_pages as Pages ON Posts.pages_id = Pages.id LEFT JOIN apacs_units as Units ON Pages.unit_id = Units.id LEFT JOIN apacs_collections as Collections ON Units.collections_id = Collections.id WHERE Posts.id = :id';
-
-		$resultSet = $this->getDI()->get('db')->query($query, ['id' => $this->id]);
-		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		return $resultSet->fetchAll()[0];
-	}
-
 	/**
 	 * Save a snippet of the image to which the post relates.
 	 */
