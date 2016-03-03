@@ -179,9 +179,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$post = new Posts();
 			$jsonData['post']['complete'] = 1;
 			$jsonData['post']['pages_id'] = $jsonData['page_id'];
-			if (!$post->Save($jsonData['post'])) {
+			if (!$post->save($jsonData['post'])) {
 				throw new InvalidArgumentException('Could not save post.');
 			}
+			$post = Posts::findFirst($post->id);
 			$post->SaveThumbImage();
 
 			//Saving the concrete entry
