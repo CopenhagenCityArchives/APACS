@@ -114,9 +114,6 @@ try {
 
 	$indexing->patch('/taskspages/{tasks_pages_id:[0-9]+}', 'UpdateTasksPages');
 
-	//This might be necessary for frontend calls. Reason unknown.
-	$indexing->options('/entries', function () {echo 'ok';});
-
 	$indexing->post('/errorreports', 'ReportError');
 
 	$indexing->patch('/errorreports/{errorreportId:[0-9]+}', 'UpdateErrorReport');
@@ -124,6 +121,11 @@ try {
 	$indexing->get('/test', 'authCheck');
 
 	$app->mount($indexing);
+
+	//Catch all for preflight checks (typically performed with an OPTIONS request)
+	$app->options('/{catch:(.*)}', function () use ($app) {
+		$app->response->setStatusCode(200, "OK")->send();
+	});
 
 	//Not found-handling
 	$app->notFound(function () use ($app, $di) {
