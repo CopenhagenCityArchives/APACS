@@ -141,7 +141,8 @@ try {
 			->setHeader("Access-Control-Allow-Methods", 'GET,PUT,PATCH,POST,OPTIONS')
 			->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
-			->setHeader("Access-Control-Allow-Credentials", true);
+			->setHeader("Access-Control-Allow-Credentials", true)
+			->setHeader("Accept-Charset", "UTF-8");
 	});
 
 	$app->handle();
