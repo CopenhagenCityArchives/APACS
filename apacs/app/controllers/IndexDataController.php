@@ -50,7 +50,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function SolrProxy() {
-		$this->response->setContentType('application/json', 'UTF-8');
 		ConcreteEntries::ProxySolrRequest();
 	}
 
@@ -105,7 +104,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
 		$errors->original_value = $jsonData['value'];
 
-		if (!$errors->Save($jsonData)) {
+		if (!$errors->save($jsonData)) {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
 
@@ -117,7 +116,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$event->units_id = $colInfo['unit_id'];
 		$event->pages_id = $colInfo['page_id'];
 		$event->posts_id = $colInfo['post_id'];
-		$event->type = Events::TypeReportError;
+		$event->event_type = Events::TypeReportError;
+		$event->save();
 
 		$this->response->setJsonContent(['message' => 'error report saved']);
 	}
@@ -166,12 +166,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			return;
 		}
 
-		/*$existingPosts = Posts::find(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
+		//Mission Impossible: We can't check for the post when we don't have an id
+		/*$existingPosts = Posts::find(['conditions' => 'task_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
 
-			if ($existingPosts) {
-				$this->response->setStatusCode(401, 'Entry already exists');
-				$this->response->setJsonContent(['message' => 'An entry exists for post id ' . $jsonData['post_id'] . ' and task_id ' . $jsonData['task_id']]);
-		*/
+		if ($existingPosts) {
+			$this->response->setStatusCode(401, 'Entry already exists');
+			$this->response->setJsonContent(['message' => 'An entry exists for post id ' . $jsonData['post_id'] . ' and task_id ' . $jsonData['task_id']]);
+		}*/
 
 		try {
 			//Saving the post
@@ -209,12 +210,12 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$entry->complete = 1;
 			$entry->save();
 
-			$taskUnit = TaskUnits::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND units_id = ' . $jsonData['page_id']]);
+			$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND units_id = ' . $entry->GetContext()['unit_id']]);
 
 			$maxPosts = $taskUnit->columns * $taskUnit->rows;
 
-			if (count(Posts::find(['conditions' => 'pages_id = ' . $jsonData['page_id']])) >= $maxPosts) {
-				$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND pages_id = ' . $jsonData['pages_id']]);
+			if (count(Posts::find(['conditions' => 'pages_id = ' . $jsonData['page_id']])) == $maxPosts) {
+				$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND pages_id = ' . $jsonData['page_id']]);
 				$taskPage->is_done = 1;
 				$taskPage->save();
 
@@ -228,8 +229,12 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$event->units_id = $solrData['unit_id'];
 			$event->pages_id = $solrData['page_id'];
 			$event->posts_id = $post->id;
-			$event->type = Events::TypeCreate;
-			$event->save();
+			$event->tasks_id = $solrData['task_id'];
+			$event->event_type = Events::TypeCreate;
+
+			if (!$event->save()) {
+				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()));
+			}
 
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
@@ -238,7 +243,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId]);
+		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId, 'pages_done' => $taskUnit->pages_done]);
 	}
 
 	/**
@@ -307,7 +312,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$event->units_id = $solrData['unit_id'];
 		$event->pages_id = $solrData['page_id'];
 		$event->posts_id = $solrData['post_id'];
-		$event->type = Events::TypeEdit;
+		$event->event_type = Events::TypeEdit;
 		$event->save();
 
 		$this->response->setJsonContent(['message' => 'entry updated']);
