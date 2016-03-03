@@ -177,7 +177,7 @@ class ConcreteEntries {
 	public function Save(Entities $entity, Array $data) {
 		//Decoding and saving code values
 		foreach ($entity->getFields() as $field) {
-			if ($field->hasDecode == 0) {
+			if ($field->hasDecode == 0 || !isset($data[$field->decodeField])) {
 				continue;
 			}
 

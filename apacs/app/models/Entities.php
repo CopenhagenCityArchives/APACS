@@ -169,7 +169,9 @@ class Entities extends \Phalcon\Mvc\Model {
 		if ($this->type == 'array') {
 			foreach (array_filter($this->getFields()->toArray(), function ($el) {return $el['includeInSOLR'] == '1';}) as $field) {
 				foreach ($data as $row) {
-					$concat[$field['SOLRFieldName']][] = $row[Fields::GetRealFieldNameFromField($field)];
+					if (isset($row[Fields::GetRealFieldNameFromField($field)])) {
+						$concat[$field['SOLRFieldName']][] = $row[Fields::GetRealFieldNameFromField($field)];
+					}
 				}
 			}
 			return $concat;
