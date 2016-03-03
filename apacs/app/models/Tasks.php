@@ -18,7 +18,12 @@ class Tasks extends \Phalcon\Mvc\Model {
 		$mainArr = $mainEntity->toArray();
 		$mainArr['title'] = $this->name;
 		$mainArr['description'] = $this->description;
-		$mainArr['properties'] = $mainEntity->ConvertToJSONSchemaObject()['properties'];
+
+		$mainSchema = $mainEntity->ConvertToJSONSchemaObject();
+
+		$mainArr['required'] = $mainSchema['required'];
+		$mainArr['properties'] = $mainSchema['properties'];
+
 		$entities = Entities::find(['conditions' => 'task_id = ' . $this->id . ' AND isPrimaryEntity = 0']);
 
 		foreach ($entities as $entity) {

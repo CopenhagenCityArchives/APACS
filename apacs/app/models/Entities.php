@@ -99,7 +99,7 @@ class Entities extends \Phalcon\Mvc\Model {
 			//	$entity['fields'][$field['fieldName']] = array_intersect_assoc(Entities::$entityJsonSchemaFields, $entity['fields']);
 		}
 
-		unset($entity['required']);
+		$entity['required'] = [];
 
 		$requiredFields = array_filter($entity['fields'], function ($el) {return $el['isRequired'] == '1';});
 		foreach ($requiredFields as $reqField) {
