@@ -22,31 +22,39 @@ class Steps extends \Phalcon\Mvc\Model {
 		foreach ($steps as $step) {
 			$stepInfo = [];
 			$stepInfo = $step->toArray();
-			$stepInfo['fields'] = array_map(function ($el) use ($prefix) {
-				$fieldName = $el->fields->fieldName;
-				if (!is_null($el->fields->decodeField)) {
-					$fieldName = $el->fields->decodeField;
-				}
-
-				$elementName = '';
-				if ($el->entities->type == 'array') {
-					$elementName = $el->entities->name;
-				} else {
-					$elementName = $el->entities->name . '.' . $fieldName;
-				}
-
-				return ($prefix != $el->entities->name . '.') ? $prefix . $elementName : $elementName;
-			},
-				$step->GetRelatedEntitiesAndFields()->toArray());
-
-			if (count($stepInfo['fields']) > 0) {
-				$stepInfo['fields'] = array_unique($stepInfo['fields']);
-			}
-
+			$stepInfo['fields'] = $this->GetFieldsAsSteps($step->GetRelatedEntitiesAndFields(), $prefix);
 			$stepsAndFields[] = $stepInfo;
 		}
 
 		return $stepsAndFields;
+	}
+
+	private function GetFieldsAsSteps($entities, $prefix) {
+		$stepsFields = [];
+		foreach ($entities->toArray() as $el) {
+
+			$fieldName = $el->fields->fieldName;
+			if (!is_null($el->fields->decodeField)) {
+				$fieldName = $el->fields->decodeField;
+			}
+
+			$elementName = '';
+			if ($el->entities->type == 'array') {
+				$elementName = $el->entities->name;
+			} else {
+				$elementName = $el->entities->name . '.' . $fieldName;
+			}
+
+			if ($prefix != $el->entities->name . '.') {
+				$elementName = $prefix . $elementName;
+			}
+
+			if (!array_search($elementName, $stepsFields)) {
+				$stepsFields[] = $elementName;
+			}
+		}
+
+		return $stepsFields;
 	}
 
 	public function GetRelatedEntitiesAndFields() {
