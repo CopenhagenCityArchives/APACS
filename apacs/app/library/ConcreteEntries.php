@@ -187,7 +187,7 @@ class ConcreteEntries {
 			$fakeField = $field->toArray();
 			$fakeField['fieldName'] = $field->decodeField;
 
-			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
+			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, utf8_decode($data[$field->decodeField]));
 
 			//Value not given
 			if (!isset($fieldValues[0]['id'])) {
