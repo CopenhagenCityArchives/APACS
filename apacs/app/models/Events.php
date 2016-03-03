@@ -17,6 +17,10 @@ class Events extends \Phalcon\Mvc\Model {
 		return 'apacs_' . 'events';
 	}
 
+	public function beforeSave() {
+		$this->timestamp = date('Y-m-d H:i:s');
+	}
+
 	public function GetUserActivitiesForUnits($userId) {
 		$sql = 'SELECT username, Units.description, Pages.page_number, Pages.id as page_id, Events.tasks_id as task_id, Events.timestamp FROM apacs_events as Events
 			LEFT JOIN apacs_users as Users on Events.users_id = Users.id
