@@ -210,10 +210,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$result['posts'][] = $curPos;
 		}
 
-		//Hack used to convert post decimals from string
-		echo json_encode($result, JSON_NUMERIC_CHECK);
-
-		//$this->response->setJsonContent($result);
+		$this->response->setContent(json_encode($result, JSON_NUMERIC_CHECK));
 	}
 
 	public function GetPostImage($postId) {
