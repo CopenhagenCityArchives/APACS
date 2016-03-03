@@ -319,16 +319,23 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(['message' => 'entry updated']);
 	}
 
-	public function UpdateTasksPages($id) {
+	public function UpdateTasksPages() {
 
 		$this->RequireAccessControl();
 
+		$taskId = $this->request->getQuery('task_id', null, null);
+		$pageId = $this->request->getQuery('page_id', null, null);
+
 		$jsonData = $this->GetAndValidateJsonPostData();
 
-		$taskPage = TasksPages::findFirstById($id);
+		if (is_null($taskId) || is_null($pageId)) {
+			throw new InvalidArgumentException('task_id and page_id is required');
+		}
+
+		$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = :taskId: AND pages_id = :pageId:', 'bind' => ['taskId' => $taskId, 'pageId' => $pageId]]);
 
 		if (!$taskPage) {
-			throw new InvalidArgumentException('No taskpage found with id ' . $id);
+			throw new InvalidArgumentException('No taskpage found with for task_id ' . $taskId . ' and page_id ' . $pageId);
 		}
 
 		$taskPage->is_done = $jsonData['is_done'];

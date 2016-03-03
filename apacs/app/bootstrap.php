@@ -112,7 +112,7 @@ try {
 	$indexing->post('/entries', 'SaveEntry');
 	$indexing->patch('/entries/{entry_id:[0-9]+}', 'UpdateEntry');
 
-	$indexing->patch('/taskspages/{tasks_pages_id:[0-9]+}', 'UpdateTasksPages');
+	$indexing->patch('/taskspages', 'UpdateTasksPages');
 
 	$indexing->post('/errorreports', 'ReportError');
 
