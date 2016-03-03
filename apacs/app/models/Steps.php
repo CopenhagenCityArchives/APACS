@@ -38,15 +38,19 @@ class Steps extends \Phalcon\Mvc\Model {
 				$fieldName = $el->fields->decodeField;
 			}
 
-			$elementName = '';
+			$elementName = [];
 			if ($el->entities->type == 'array') {
-				$elementName = $el->entities->name;
+				$elementName = [
+					'key' => $el->entities->name,
+					'add' => 'Tilføj',
+				];
+				//$elementName = $el->entities->name;
 			} else {
-				$elementName = $el->entities->name . '.' . $fieldName;
+				$elementName['key'] = $el->entities->name . '.' . $fieldName;
 			}
 
 			if ($prefix != $el->entities->name . '.') {
-				$elementName = $prefix . $elementName;
+				$elementName['key'] = $prefix . $elementName['key'];
 			}
 
 			if (!array_search($elementName, $stepsFields)) {
