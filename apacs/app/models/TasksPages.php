@@ -13,6 +13,10 @@ class TasksPages extends \Phalcon\Mvc\Model {
 		$this->hasMany('id', 'Tasks', 'task_id');
 	}
 
+	public function beforeSave() {
+		$this->last_activity = date('Y-m-d H:i:s');
+	}
+
 	public static function GetNextAvailablePage($taskId, $unitId, $curPageNumber) {
 		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND Pages.page_number > :current_page_number AND Pages.unit_id = :unit_id AND last_activity < DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND is_done = 0 ORDER BY Pages.page_number LIMIT 1';
 
