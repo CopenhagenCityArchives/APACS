@@ -142,7 +142,8 @@ try {
 			->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Credentials", true)
-			->setHeader("Accept-Charset", "UTF-8");
+			->setHeader("Accept-Charset", "UTF-8")
+			->setContentType("application/json");
 	});
 
 	$app->handle();
