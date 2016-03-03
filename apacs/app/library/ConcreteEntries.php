@@ -388,6 +388,7 @@ class ConcreteEntries {
 
 	public static function ProxySolrRequest() {
 		header("Access-Control-Allow-Origin: *");
+		header('Content-type: application/json; charset=UTF-8');
 		$queryStr = $_SERVER['QUERY_STRING'];
 		//$queryStr = str_replace('_url=/search?', '', $queryStr);
 		$queryStr = substr($queryStr, strpos('?q=', $queryStr));
