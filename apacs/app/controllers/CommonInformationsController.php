@@ -339,6 +339,14 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(ErrorReports::findByRawSql($conditions)->toArray());
 	}
 
+	public function GetUser($userId) {
+		$user = Users::findFirst($userId)->toArray();
+
+		$user['userUserTasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
+
+		$this->response->setJsonContent($user);
+	}
+
 	public function GetActiveUsers() {
 		$taskId = $this->request->getQuery('task_id', null, null);
 		$unitId = $this->request->getQuery('unit_id', null, null);

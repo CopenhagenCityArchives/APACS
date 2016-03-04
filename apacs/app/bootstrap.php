@@ -99,6 +99,8 @@ try {
 
 	$info->get('/activeusers', 'GetActiveUsers');
 
+	$info->get('/users/{id:[0-9]+}', 'GetUser');
+
 	$app->mount($info);
 
 	//Index data routes
