@@ -43,6 +43,10 @@ class Validator {
 			return true;
 		}
 
+		if (trim($dataToValidate) == '') {
+			return true;
+		}
+
 		return false;
 	}
 
