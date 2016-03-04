@@ -14,7 +14,7 @@ class TasksUnits extends \Phalcon\Mvc\Model {
 	}
 
 	public static function FindUnitsAndTasks($conditions, $params = null) {
-		$sql = "SELECT * FROM apacs_units as Units LEFT JOIN apacs_tasks_units as TasksUnits ON Units.id = TasksUnits.units_id WHERE $conditions";
+		$sql = "SELECT * FROM apacs_units as Units LEFT JOIN apacs_tasks_units as TasksUnits ON Units.id = TasksUnits.units_id WHERE $conditions ORDER BY Units.description";
 
 		// Base model
 		$units = new TasksUnits();
