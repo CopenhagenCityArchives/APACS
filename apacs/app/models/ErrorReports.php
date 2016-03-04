@@ -16,6 +16,7 @@ class ErrorReports extends \Phalcon\Mvc\Model {
 
 	public function beforeSave() {
 		$this->superUserTime = date('Y-m-d H:i:s', strtotime("+1 week"));
+		$this->last_update = date('Y-m-d H:i:s');
 	}
 
 	public function GetWithUsers($conditions) {
