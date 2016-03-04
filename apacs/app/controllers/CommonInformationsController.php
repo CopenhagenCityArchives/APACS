@@ -324,7 +324,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 
 		if (!is_null($userId) && !is_null($taskId)) {
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser = 0 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK)';
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK)';
 
 			$usersTasks = SuperUsers::findFirst(['conditions' => 'users_id = :userId: AND tasks_id = :taskId:', 'bind' => ['userId' => $userId, 'taskId' => $taskId]]);
 
