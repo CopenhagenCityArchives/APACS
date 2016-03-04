@@ -103,7 +103,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->comment = $jsonData['comment'];
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
 		$errors->original_value = $jsonData['value'];
-
+		$errors->toSuperUser = 0;
+		$errors->beforeSave();
 		if (!$errors->save($jsonData)) {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
@@ -239,7 +240,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
-			$this->response->setJsonContent(['message' => 'Could not save entry ' . $e->getMessage()]);
+			$this->response->setJsonContent(['message' => 'Could not save entry', 'userMessage' => $e->getMessage()]);
 			return;
 		}
 
@@ -348,7 +349,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$page = Pages::findFirst(['conditions' => 'id = :pageId:', 'bind' => ['pageId' => $taskPage->pages_id]]);
 		$tasksUnits = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitsId:', 'bind' => ['taskId' => $taskPage->tasks_id, 'unitsId' => $page->unit_id]]);
 		$tasksUnits->pages_done = $tasksUnits->pages_done + 1;
-		$tasksUnits->save();
+
+		if (!$tasksUnits->save()) {
+			throw new RuntimeException('could not udpate tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages()));
+		}
 
 		$this->response->setJsonContent($taskPage->toArray());
 	}
