@@ -18,9 +18,12 @@ class ConcreteEntries {
 		}
 
 		//Settings for ORM db access
-		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname'] . ';charset=utf8');
+		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname'] . ';charset=utf8;');
+		ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 		ORM::configure('username', $this->getDI()->get('config')['username']);
 		ORM::configure('password', $this->getDI()->get('config')['password']);
+		//This is necessary for PDO for PHP earlier than 5.3.some, as the charset=utf8 option above is ignored
+		ORM::get_db()->exec("set names utf8");
 		//ORM::configure('logging', true);
 		//echo ORM::get_last_query();
 
@@ -187,7 +190,7 @@ class ConcreteEntries {
 			$fakeField = $field->toArray();
 			$fakeField['fieldName'] = $field->decodeField;
 
-			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, utf8_decode($data[$field->decodeField]));
+			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
 
 			//Value not given
 			if (!isset($fieldValues[0]['id'])) {
