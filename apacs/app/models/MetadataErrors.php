@@ -20,7 +20,7 @@ class MetadataErrors extends \Phalcon\Mvc\Model {
 		$conf['sql'] = str_replace(':itemId', $itemId, $conf['sql']);
 
 		try {
-			return $this->getDI()->getDatabase()->query($conf['sql']);
+			return $this->getDI()->getDb()->query($conf['sql']);
 		} catch (Exception $e) {
 			echo ('Could not execute query: ' . $e);
 			return false;
