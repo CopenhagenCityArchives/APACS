@@ -123,7 +123,7 @@ class AccessController implements IAccessController {
 		$user->save();
 	}
 
-	public function UserCanEdit($userId, $taskId) {
+	public function UserCanEdit(int $userId, int $taskId) {
 		//Is the user the same as the one asking for permission?
 		if ($this->GetUserId() == $userId) {
 			return true;
