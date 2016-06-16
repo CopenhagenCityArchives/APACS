@@ -41,6 +41,27 @@ docker rm apacs --volumes=true
 docker rm apacs --volumes=true
 ```
 
+### Docker compose
+
+Start services
+```
+docker-compose up -d
+```
+
+Stop services
+```
+docker-compose stop
+```
+
+Remove all services
+```
+docker-compose rm --all
+```
+
+```
+docker-compose exec -T ksabackend_db_1 /bin/bash
+```
+
 ## Unit testing
 
 ### Unit tests
