@@ -21,8 +21,8 @@ class Posts extends \Phalcon\Mvc\Model {
 		//var_dump();
 		$image = imagecreatefromjpeg($this->getPages()->GetLocalPathToConcreteImage());
 
-		$imgHeight = imagesx($image);
-		$imgWidth = imagesy($image);
+		$imgHeight = imagesy($image);
+		$imgWidth = imagesx($image);
 
 		$rect = [];
 		$rect['x'] = $imgHeight * $this->x;
