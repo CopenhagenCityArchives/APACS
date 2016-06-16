@@ -1,43 +1,46 @@
 <?php
 
 use Phalcon\Mvc\Micro\Collection as MicroCollection;
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
 $app = new Phalcon\Mvc\Micro();
+
 //Create a DI
 $di = new Phalcon\DI\FactoryDefault();
+
+//Register an autoloader
+$loader = new \Phalcon\Loader();
+$loader->registerDirs(array(
+	'../../app/controllers/',
+	'../../app/models/',
+	'../../app/library/',
+))->register();
+
+/**
+ * Include composer autoloader
+ */
+require __DIR__ . "/../vendor/autoload.php";
+
+/**
+ * Include configuration file
+ */
+require __DIR__ . '/../app/config/config.php';
+
+//Setup the configuration service
+$di->setShared('configuration', function () use ($di) {
+	//Loading the almighty configuration array
+	return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
+});
+
+//Setup the database service
+$di->setShared('db', function () use ($di) {
+	return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
+});
+
+$di->setShared('response', function () {
+	return new \Phalcon\Http\Response();
+});
+
 try {
-	//Register an autoloader
-	$loader = new \Phalcon\Loader();
-	$loader->registerDirs(array(
-		'../../app/controllers/',
-		'../../app/models/',
-		'../../app/library/',
-	))->register();
-
-	/**
-	 * Include composer autoloader
-	 */
-	require __DIR__ . "/../vendor/autoload.php";
-
-	require __DIR__ . '/../app/config/config.php';
-
-	//Setup the configuration service
-	$di->setShared('configuration', function () use ($di) {
-		//Loading the almighty configuration array
-		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
-	});
-
-	//Setup the database service
-	$di->setShared('db', function () use ($di) {
-		return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-	});
-
-	$di->setShared('response', function () {
-		return new \Phalcon\Http\Response();
-	});
-
 	//Metadata routes collection
 	$metadata = new MicroCollection();
 

@@ -15,7 +15,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 	}
 
 	private function RequireAccessControl($authenticationRequired = true) {
-		$this->auth = new AccessController($this->request);
+		$this->auth = $this->getDI()->get('AccessController');
 		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
 			$this->response->setStatusCode(401, $this->auth->GetMessage());
 			$this->response->send();

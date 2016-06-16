@@ -1,6 +1,6 @@
 <?php
 
-class AccessController {
+class AccessController implements IAccessController {
 	private $authResponse;
 	private $message;
 	private $request;
