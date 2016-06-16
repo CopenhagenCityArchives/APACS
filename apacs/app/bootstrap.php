@@ -145,6 +145,9 @@ try {
 			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Credentials", true)
 			->setHeader("Accept-Charset", "UTF-8")
+			->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+			->setHeader("Pragma", "no-cache")
+			->setHeader("Expires", "0")
 			->setContentType("application/json");
 	});
 
