@@ -5,7 +5,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 $app = new Phalcon\Mvc\Micro();
-
+//Create a DI
+$di = new Phalcon\DI\FactoryDefault();
 try {
 	//Register an autoloader
 	$loader = new \Phalcon\Loader();
@@ -15,12 +16,12 @@ try {
 		'../../app/library/',
 	))->register();
 
-	include __DIR__ . "/../vendor/autoload.php";
+	/**
+	 * Include composer autoloader
+	 */
+	require __DIR__ . "/../vendor/autoload.php";
 
-	//Create a DI
-	$di = new Phalcon\DI\FactoryDefault();
-
-	require '../../app/config/config.php';
+	require __DIR__ . '/../app/config/config.php';
 
 	//Setup the configuration service
 	$di->setShared('configuration', function () use ($di) {
