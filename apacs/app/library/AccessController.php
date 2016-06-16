@@ -20,7 +20,7 @@ class AccessController {
 
 		$this->authResponse = null;
 
-		$url = 'http://kbharkiv.bo.intern.redweb.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
+		$url = 'http://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
 
 		$response = $this->getWebPage($url);
 
