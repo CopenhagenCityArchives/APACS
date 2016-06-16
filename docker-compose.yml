@@ -9,6 +9,8 @@ services:
       - "80:80"
     volumes:
       - ./apacs:/var/www/
+    environment:
+      - PROD_DEV=DEV
   db:
     image: mysql
     container_name: database
