@@ -29,8 +29,9 @@ Remove all services
 docker-compose rm --all
 ```
 
+Access bash in the webserver
 ```
-docker-compose exec -T ksabackend_db_1 /bin/bash
+docker exec -i -t webserver /bin/bash
 ```
 
 ## Unit testing
