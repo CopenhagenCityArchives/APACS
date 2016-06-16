@@ -25,8 +25,8 @@ class Posts extends \Phalcon\Mvc\Model {
 		$imgWidth = imagesx($image);
 
 		$rect = [];
-		$rect['x'] = $imgHeight * $this->x;
-		$rect['y'] = $imgWidth * $this->y;
+		$rect['x'] = $imgWidth * $this->x;
+		$rect['y'] = $imgHeight * $this->y;
 		$rect['height'] = $imgHeight * $this->height;
 		$rect['width'] = $imgWidth * $this->width;
 
