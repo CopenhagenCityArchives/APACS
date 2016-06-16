@@ -12,35 +12,6 @@ Dependencies:
 * XDEBUG (only required for PHPUnit code coverage)
 
 ## Operating the server
-### Setup Docker:
-```
-docker run -p 80:80 -d --name apacs -v /d/Udviklingsprojekter/KSA_backend/apacs:/var/www/ szeist/phalcon-apache2
-```
-
-### Start docker
-```
-docker start webtest
-```
-### Stop docker
-```
-docker stop webtest
-```
-
-### Get bash access:
-```
-docker exec -i -t apacs /bin/bash
-```
-
-### Remove container
-```
-docker rm apacs --volumes=true
-```
-
-### Delete mounted volume
-```
-docker rm apacs --volumes=true
-```
-
 ### Docker compose
 
 Start services
