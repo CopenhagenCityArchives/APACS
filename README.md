@@ -1,4 +1,4 @@
-##APACS (Archival Presentation And Crowsourcing System)
+## APACS (Archival Presentation And Crowsourcing System)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
 The system runs on Ubuntu using PHP and MySQL.
@@ -11,13 +11,43 @@ Dependencies:
 * PHP Unit (for tests)
 * XDEBUG (only required for PHPUnit code coverage)
 
-##Unit testing
+## Operating the server
+### Setup Docker:
+```
+docker run -p 80:80 -d --name apacs -v /d/Udviklingsprojekter/KSA_backend/apacs:/var/www/ szeist/phalcon-apache2
+```
 
-###Unit tests
+### Start docker
+```
+docker start webtest
+```
+### Stop docker
+```
+docker stop webtest
+```
+
+### Get bash access:
+```
+docker exec -i -t apacs /bin/bash
+```
+
+### Remove container
+```
+docker rm apacs --volumes=true
+```
+
+### Delete mounted volume
+```
+docker rm apacs --volumes=true
+```
+
+## Unit testing
+
+### Unit tests
 
 The test is configured using phpunit.xml.
 
-Go to /vagrant/www/tests
+Go to /apacs/tests
 
 Run:
 
@@ -25,13 +55,17 @@ Run:
 phpunit -c phpunit.xml
 ```
 
-###Code coverage
+### API endpoint tests
+Go to /apacs/tests_api
+```
+jasmine-node /tests
+```
+
+### Code coverage
 
 Go to /vagrant/www/tests/
 
 Run:
-
-
 ```
 sudo phpunit --coverage-html ./coverage
 ```
