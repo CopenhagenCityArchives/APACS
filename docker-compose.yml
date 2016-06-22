@@ -1,7 +1,7 @@
 version: '2'
 services:
   phalcon:
-    image: szeist/phalcon-apache2
+    build: ./docker_webserver/
     container_name: webserver
     links:
       - db
