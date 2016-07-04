@@ -1,6 +1,6 @@
 <?php
 
-class CommonInformationsController extends \Phalcon\Mvc\Controller {
+class CommonInformationsController extends \MainController {
 	private $response;
 	private $request;
 

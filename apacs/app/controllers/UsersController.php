@@ -1,6 +1,6 @@
 <?php
 
-class UsersController extends \Phalcon\Mvc\Controller {
+class UsersController extends \MainController {
 	private $config;
 	private $response;
 	private $request;
