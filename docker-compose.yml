@@ -3,6 +3,7 @@ services:
   phalcon:
     build: ./docker_webserver/
     container_name: webserver
+    privileged: true
     links:
       - db
     ports:

@@ -1,7 +1,7 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
 
 define('ROOT_PATH', __DIR__);
 define('PATH_LIBRARY', __DIR__ . '/../app/library/');
@@ -40,7 +40,17 @@ $loader->registerNamespaces(array(
 
 $loader->register();
 
-/*$di = new FactoryDefault();
-DI::reset();
+$di = new \Phalcon\Di\FactoryDefault;
 
-DI::setDefault($di);*/
+//Test specific database, Phalcon
+$di->setShared('db', function () {
+	return new \Phalcon\Db\Adapter\Pdo\Mysql([
+		"host" => "db",
+		"username" => "root",
+		"password" => "1234565",
+		"dbname" => "apacs",
+		'charset' => 'utf8',
+	]);
+});
+
+$di->get('db')->execute(file_get_contents("../init/init.sql"));
