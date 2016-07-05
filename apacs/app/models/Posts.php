@@ -1,6 +1,8 @@
 <?php
 
 class Posts extends \Phalcon\Mvc\Model {
+	public $errorMessage = null;
+
 	public function getSource() {
 		return 'apacs_' . 'posts';
 	}
@@ -37,11 +39,13 @@ class Posts extends \Phalcon\Mvc\Model {
 		$tempPath = './temp.jpg';
 		$resizedImage = imagecreatetruecolor($rect['width'], $rect['height']);
 		if (!imagecopyresized($resizedImage, $image, 0, 0, $rect['x'], $rect['y'], $rect['width'], $rect['height'], $rect['width'], $rect['height'])) {
-			throw new RuntimeException('could not crop image for post id ' . $this->id);
+			$this->errorMessage = 'Could not crop image for post id ' . $this->id;
+			return false;
 		}
 
 		if (!imagejpeg($resizedImage, $tempPath, 60)) {
-			throw new RuntimeException('could not save resized image to temp path');
+			$this->errorMessage = 'Could not save resized image to temp path';
+			return false;
 		}
 
 		$this->image = file_get_contents($tempPath);
@@ -49,10 +53,13 @@ class Posts extends \Phalcon\Mvc\Model {
 
 		$this->complete = 0;
 		if ($this->Save() == false) {
-			throw new RuntimeException('could not save image data');
+			$this->errorMessage = 'Could not save image object';
+			return false;
 		}
 
 		$this->image = null;
+
+		return true;
 	}
 
 	//Returns the next possible post for a page, calculated from previous posts for the page
