@@ -9,11 +9,6 @@ class CommonInformationsController extends \MainController {
 		$this->request = $this->getDI()->get('request');
 	}
 
-	private function error($error_message) {
-		$this->response->setStatusCode(400, 'Wrong parameters');
-		$this->response->setJsonContent(['message' => $error_message]);
-	}
-
 	public function GetCollections() {
 		$confLoader = new DBConfigurationLoader();
 		$this->response->setJsonContent($confLoader->GetCollections());
@@ -40,7 +35,7 @@ class CommonInformationsController extends \MainController {
 		$taskId = $request->getQuery('task_id', null, null);
 
 		if (is_null($taskId)) {
-			$this->error('task_id is required');
+			$this->SetResponse(400, null, 'task_id is required');
 			return;
 		}
 
@@ -77,7 +72,8 @@ class CommonInformationsController extends \MainController {
 		$conditions = [];
 
 		if (is_null($taskId) && is_null($indexActive)) {
-			throw new InvalidArgumentException('task_id or index_active is required');
+			$this->SetResponse(403, null, ['task_id or index_active is required']);
+			return;
 		}
 
 		if (!is_null($indexActive)) {
@@ -100,7 +96,7 @@ class CommonInformationsController extends \MainController {
 		$index_active = $request->getQuery('index_active', null, null);
 
 		if (!$collectionId) {
-			$this->error('collection_id is required');
+			$this->SetResponse(403, null, ['collection_id is required']);
 			return;
 		}
 
@@ -168,7 +164,7 @@ class CommonInformationsController extends \MainController {
 		}
 
 		if (count($conditions) < 1) {
-			$this->error('page_id, unit_id or page_number is required');
+			$this->SetResponse(400, null, 'page_id, unit_id or page_number is required');
 			return;
 		}
 
@@ -198,7 +194,8 @@ class CommonInformationsController extends \MainController {
 		$taskUnit = TasksUnits::findFirst(['conditions' => ['tasks_id = ' . $taskId]]);
 
 		if ($taskUnit == false) {
-			throw new Exception('TaskUnit not found for page id ' . $pageId);
+			$this->SetResponse(400, null, 'TaskUnit not found for page id ' . $pageId);
+			return;
 		}
 		$post = new Posts();
 		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
@@ -210,7 +207,7 @@ class CommonInformationsController extends \MainController {
 			$result['posts'][] = $curPos;
 		}
 
-		$this->response->setContent(json_encode($result, JSON_NUMERIC_CHECK));
+		$this->SetResponse(200, null, json_encode($result, JSON_NUMERIC_CHECK));
 	}
 
 	public function GetPostImage($postId) {
@@ -234,7 +231,7 @@ class CommonInformationsController extends \MainController {
 		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
 
 		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
-			$this->error('task_id, unit_id and current_number are required');
+			$this->SetResponse(400, null, 'task_id, unit_id and current_number are required');
 			return;
 		}
 		$result = TasksPages::GetNextAvailablePage($taskId, $unitId, $currentPageNumber);
@@ -250,7 +247,8 @@ class CommonInformationsController extends \MainController {
 		$entry = Entries::findFirstById($id);
 
 		if ($entry === false) {
-			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
+			$this->SetResponse(400, null, 'Entry with id ' . $id . ' not found');
+			return;
 		}
 
 		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
@@ -266,14 +264,15 @@ class CommonInformationsController extends \MainController {
 		$postId = $this->request->getQuery('post_id', null, null);
 
 		if (is_null($taskId) || is_null($postId)) {
-			$this->error('task_id and post_id are required');
+			$this->SetResponse(400, null, 'task_id and post_id are required');
 			return;
 		}
 
 		$entries = Entries::find(['conditions' => 'tasks_id = ' . $taskId . ' AND posts_id = ' . $postId]);
 
 		if (count($entries) == 0) {
-			throw new InvalidArgumentException('No entries found for task_id ' . $taskId . ' and post_id ' . $postId);
+			$this->SetResponse(400, null, 'No entries found for task_id ' . $taskId . ' and post_id ' . $postId);
+			return;
 		}
 
 		if (count($entries) == 1) {
@@ -285,6 +284,11 @@ class CommonInformationsController extends \MainController {
 		$response = [];
 
 		$post = Posts::findFirstById($id);
+
+		if (!$post) {
+			$this->SetResponse(400, null, ['No post found with id ' . $id]);
+			return;
+		}
 
 		$entries = $post->getEntries();
 
@@ -306,7 +310,7 @@ class CommonInformationsController extends \MainController {
 		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id])->toArray();
 		$response['error_reports'] = $errorReports;
 
-		$this->response->setJsonContent($response);
+		$this->SetResponse(200, null, [$response]);
 	}
 
 	public function GetErrorReports() {
@@ -315,7 +319,7 @@ class CommonInformationsController extends \MainController {
 		$userId = $this->request->getQuery('relevant_user_id', null, null);
 
 		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
-			$this->error('task_id and post_id or task_id and relevant_user_id are required');
+			$this->SetResponse(400, null, 'task_id and post_id or task_id and relevant_user_id are required');
 			return;
 		}
 
@@ -330,13 +334,12 @@ class CommonInformationsController extends \MainController {
 
 			//The user is a super user. Let's get error reports older than 7 days
 			if ($usersTasks !== false) {
-
-				$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray());
+				$this->SetResponse(400, null, ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray());
 				return;
 			}
 		}
 
-		$this->response->setJsonContent(ErrorReports::findByRawSql($conditions)->toArray());
+		$this->SetResponse(ErrorReports::findByRawSql($conditions)->toArray());
 	}
 
 	public function GetUser($userId) {
@@ -344,7 +347,7 @@ class CommonInformationsController extends \MainController {
 
 		$user['userUserTasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
 
-		$this->response->setJsonContent($user);
+		$this->SetResponse($user);
 	}
 
 	public function GetActiveUsers() {
@@ -352,7 +355,7 @@ class CommonInformationsController extends \MainController {
 		$unitId = $this->request->getQuery('unit_id', null, null);
 
 		if (is_null($taskId) && is_null($unitId)) {
-			$this->error('task_id or unit_id are required');
+			$this->SetResponse(400, null, 'task_id or unit_id are required');
 			return;
 		}
 
@@ -366,19 +369,19 @@ class CommonInformationsController extends \MainController {
 		}
 
 		$events = new Events();
-		$this->response->setJsonContent($events->GetActiveUsers($conditions)->toArray());
+		$this->SetResponse($events->GetActiveUsers($conditions)->toArray());
 	}
 
 	public function GetUserActivities() {
 		$userId = $this->request->getQuery('user_id', null, null);
 
 		if (is_null($userId)) {
-			$this->error('user_id is required');
+			$this->SetResponse(400, null, 'user_id is required');
 			return;
 		}
 
 		$events = new Events();
-		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray());
+		$this->SetResponse($events->GetUserActivitiesForUnits($userId)->toArray());
 	}
 
 	public function ImportUnits() {
@@ -387,7 +390,7 @@ class CommonInformationsController extends \MainController {
 		$collectionId = $request->getPost('collection_id', null, false);
 
 		if (!$collectionId) {
-			$this->error('collection_id is required');
+			$this->SetResponse(400, null, ['collection_id is required']);
 			return;
 		}
 
@@ -397,11 +400,9 @@ class CommonInformationsController extends \MainController {
 		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
 
 		if ($importer->Import($type, $collectionId, $colConfig['units_id_field'], $colConfig['units_info_field'], $colConfig['units_table'], $colConfig['units_info_condition'])) {
-			$this->response->setStatusCode('201', 'Content added');
-			$this->response->setJsonContent($importer->GetStatus());
+			$this->SetResponse(201, null, [$importer->GetStatus()]);
 		} else {
-			$this->response->setStatusCode('500', 'Internal server error');
-			$this->response->setJsonContent($importer->GetStatus());
+			$this->SetResponse(500, null, [$importer->GetStatus()]);
 		}
 	}
 
@@ -411,7 +412,7 @@ class CommonInformationsController extends \MainController {
 		$collectionId = $request->getPost('collection_id', null, false);
 
 		if (!$collectionId) {
-			$this->error('collection_id is required');
+			$this->SetResponse(400, null, ['collection_id is required']);
 			return;
 		}
 
@@ -421,11 +422,9 @@ class CommonInformationsController extends \MainController {
 		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
 
 		if ($importer->Import($type, $collectionId, $colConfig['pages_id_field'], $colConfig['pages_unit_id_field'], $colConfig['pages_table'], $colConfig['pages_image_url'], $colConfig['pages_info_condition'])) {
-			$this->response->setStatusCode('201', 'Content added');
-			$this->response->setJsonContent($importer->GetStatus());
+			$this->SetResponse(201, null, [$importer->GetStatus()]);
 		} else {
-			$this->response->setStatusCode('500', 'Internal error');
-			$this->response->setJsonContent($importer->GetStatus());
+			$this->SetResponse(500, null, [$importer->GetStatus()]);
 		}
 	}
 }
