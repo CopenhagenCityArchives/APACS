@@ -158,13 +158,6 @@ class IndexDataController extends \MainController {
 			return;
 		}
 
-		//Mission Impossible: We can't check for the post when we don't have an id
-		/*$existingPosts = Posts::find(['conditions' => 'task_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
-
-		if ($existingPosts) {
-			$this->response->setStatusCode(401, 'Entry already exists');
-			$this->response->setJsonContent(['message' => 'An entry exists for post id ' . $jsonData['post_id'] . ' and task_id ' . $jsonData['task_id']]);
-		}*/
 
 		try {
 			//Saving the post
