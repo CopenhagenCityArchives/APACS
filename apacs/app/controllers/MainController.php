@@ -1,5 +1,7 @@
 <?php
 
+use Phalcon\Mvc\Controller;
+
 class MainController extends \Phalcon\Mvc\Controller {
 	/**
 	 * Set the Response object with a return code and a message
@@ -10,25 +12,13 @@ class MainController extends \Phalcon\Mvc\Controller {
 	 */
 	public function SetResponse($responseCode = 200, $responseMessage = null, $responseData = null) {
 		if ($responseMessage == null) {
-			$this->getDI()->get('response')->setStatusCode($responseCode);
+			$this->getDI()->get('response')->setStatusCode($responseCode, null);
 		} else {
 			$this->getDI()->get('response')->setStatusCode($responseCode, $responseMessage);
 		}
 
 		if ($responseData != null) {
 			$this->getDI()->get('response')->setJsonContent($responseData);
-		}
-	}
-
-	/**
-	 * Sends the response
-	 * @param bool sendAndDie If true the response is sent at once and further execution is stopped
-	 */
-	public function SendResponse($sendAndDie = false) {
-		$this->getDI()->get('response')->send();
-
-		if ($sendAndDie) {
-			die();
 		}
 	}
 

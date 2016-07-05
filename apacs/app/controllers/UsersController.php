@@ -17,8 +17,8 @@ class UsersController extends \MainController {
 		$pageId = $this->request->query('page_id', 'int', false);
 
 		if ($collectionId == false && $unitId == false && $pageId == false) {
-			$this->response->setStatusCode('400', 'Wrong parameter');
-			$this->response->setJsonContent(['error_message' => 'collection_id, unit_id or page_id is required']);
+			$this->SetResponse(400, null, ['collection_id, unit_id or page_id is required']);
+			return;
 		}
 
 		$conditions = '';
@@ -39,9 +39,9 @@ class UsersController extends \MainController {
 
 		$results = $query->execute();
 		if (count($results) == 1) {
-			$this->response->setJsonContent($results[0]);
+			$this->SetResponse(200, null, $results[0]);
 		} else {
-			$this->response->setJsonContent($results);
+			$this->SetResponse(200, null, $results);
 		}
 	}
 }
