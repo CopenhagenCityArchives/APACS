@@ -1,6 +1,6 @@
 <?php
 
-class IndexDataController extends \Phalcon\Mvc\Controller {
+class IndexDataController extends \MainController {
 	private $config;
 	private $response;
 	private $request;
@@ -17,28 +17,9 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 	private function RequireAccessControl($authenticationRequired = true) {
 		$this->auth = $this->getDI()->get('AccessController');
 		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
-			$this->response->setStatusCode(401, $this->auth->GetMessage());
-			$this->response->send();
-			die();
-		}
-	}
-
-	private function GetAndValidateJsonPostData() {
-		$jsonData = json_decode($this->request->getRawBody(), true);
-
-		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->response->setStatusCode(401, 'Input error');
-			$this->response->setJsonContent(['Invalid JSON format']);
+			$this->SetResponse(401, $this->auth->GetMessage(), null);
 			return;
 		}
-
-		if (count($jsonData) == 0) {
-			$this->response->setStatusCode(401, 'Input error');
-			$this->response->setJsonContent(['No data given']);
-			return;
-		}
-
-		return $jsonData;
 	}
 
 	public function GetDataFromDatasouce($dataSourceId) {
@@ -64,7 +45,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
-				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
+				$this->SetResponse(400, null, ['The following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el]);
+				return;
 			}
 		});
 
@@ -73,7 +55,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$entity = Entities::findFirst(['conditions' => 'name = "' . $jsonData['entity_name'] . '"']);
 
 		if (!$entity) {
-			throw new InvalidArgumentException('no entity found with name ' . $jsonData['entity_name']);
+			$this->SetResponse(400, null, ['No entity found with name ' . $jsonData['entity_name']]);
+			return;
 		}
 
 		$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $entity->task_id, 'postId' => $jsonData['post_id']]]);
@@ -81,7 +64,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$post = Posts::findFirst(['conditions' => 'id = :postId:', 'bind' => ['postId' => $jsonData['post_id']]]);
 
 		if (!$entry) {
-			throw new InvalidArgumentException('no entry found for task id ' . $entity->task_id . ' and post id ' . $jsonData['post_id']);
+			$this->SetResponse(400, null, ['No entry found for task id ' . $entity->task_id . ' and post id ' . $jsonData['post_id']]);
+			return;
 		}
 
 		//Check if the entity and field of the concrete id is already reported as an error
@@ -89,7 +73,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			'bind' => ['entity' => $jsonData['entity_name'], 'field' => $jsonData['field_name'], 'concreteId' => $jsonData['concrete_entries_id']]]);
 
 		if (count($existingReports) > 0) {
-			throw new InvalidArgumentException('Error report already exists on the given entity, field and concrete id');
+			$this->SetResponse(400, null, ['Error report already exists on the given entity, field and concrete id']);
+			return;
 		}
 
 		$errors = new ErrorReports();
@@ -105,8 +90,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->original_value = $jsonData['value'];
 		$errors->toSuperUser = 0;
 		$errors->beforeSave();
+
 		if (!$errors->save($jsonData)) {
-			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
+			$this->SetResponse(500, null, ['Could not save error report: ' . implode($errors->getMessages(), ', ')]);
+			return;
 		}
 
 		$colInfo = $entry->GetContext();
@@ -120,7 +107,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$event->event_type = Events::TypeReportError;
 		$event->save();
 
-		$this->response->setJsonContent(['message' => 'error report saved']);
+		$this->SetResponse(200, null, ['message' => 'error report saved']);
 	}
 
 	public function UpdateErrorReport($errorReportId) {
@@ -130,24 +117,28 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		if (!isset($jsonData['to_super_user'])) {
-			throw new InvalidArgumentException('to_super_user is required');
+			$this->SetResponse(400, null, ['The field to_super_user is required']);
+			return;
 		}
 
 		$errorReport = ErrorReports::findFirstById($errorReportId);
 
 		if ($errorReport == false) {
-			throw new InvalidArgumentException('No error report found for id ' . $errorReportId);
+			$this->SetResponse(400, null, ['No error report found for id ' . $errorReportId]);
+			return;
 		}
 
 		if ($this->auth->GetUserId() !== $errorReport->users_id) {
-			throw new InvalidArgumentException('The user cannot change the error report with id ' . $errorReportId);
+			$this->SetResponse(403, null, ['The user has no privileg to change the error report with id ' . $errorReportId]);
+			return;
 		}
 
 		$errorReport->toSuperUser = $jsonData['to_super_user'];
 
 		$errorReport->save();
 
-		$this->response->setJsonContent(['message' => 'error report updated']);
+		$this->SetResponse(200, null, ['message' => 'error report updated']);
+	}
 	}
 
 	public function SaveEntry() {
@@ -234,9 +225,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$event->tasks_id = $solrData['task_id'];
 			$event->event_type = Events::TypeCreate;
 
-			if (!$event->save()) {
-				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()));
-			}
 
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
@@ -244,14 +232,14 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			return;
 		}
 
-		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId, 'pages_done' => $taskUnit->pages_done]);
+		$this->SetResponse(200, null, ['post_id' => $post->id, 'concrete_entry_id' => $concreteId, 'pages_done' => $taskUnit->pages_done]);
 	}
 
 	/**
 	 * Updates part of an entry. Note that this method only supports updating one entry at a time
 	 *
 	 */
+	//TODO: Slim!
 	public function UpdateEntry($entryId) {
 
 		$this->RequireAccessControl();
@@ -262,21 +250,24 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$entityName = $jsonData['entity_name'];
 		$fieldName = $jsonData['field_name'];
 		$value = $jsonData['value'];
+		$taskId = $jsonData['task_id'];
 
-		$entity = Entities::findFirst(['conditions' => 'name = :entity_name: AND task_id = :task_id:', 'bind' => ['entity_name' => $jsonData['entity_name'], 'task_id' => $jsonData['task_id']]]);
+		$entity = Entities::findFirst(['conditions' => 'name = :entity_name: AND task_id = :task_id:', 'bind' => ['entity_name' => $entityName, 'task_id' => $taskId]]);
 
 		if ($entity == false) {
-			throw new InvalidArgumentException('Not entity found with name ' . $jsonData['entity_name'] . ' for task id ' . $jsonData['task_id']);
+			$this->SetResponse(400, null, 'Not entity found with name ' . $entityName . ' for task id ' . $taskId);
+			return;
 		}
 
 		$entry = Entries::findFirstById($entryId);
 
 		if ($entry == false) {
-			throw new InvalidArgumentException('No entry found with id ' . $entryId);
+			$this->SetResponse(400, null, 'No entry found with id ' . $entryId);
+			return;
 		}
 
 		if (!$this->auth->UserCanEdit($entry->users_id, $entity->task_id)) {
-			$this->response->setStatusCode(401, 'User cannot edit this entry');
+			$this->SetResponse(403, null, 'User cannot edit this entry');
 			return;
 		}
 
@@ -284,11 +275,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$entryData = $conEntry->Load($entity, 'id', $concreteId);
 
 		if (is_null($entryData)) {
-			throw new InvalidArgumentException('no entry data found for ' . $jsonData['entity_name'] . ' with id ' . $concreteId);
+			$this->SetResponse(400, null, 'No entry data found for ' . $entityName . ' with id ' . $concreteId);
+			return;
 		}
 
 		if ($entryData[$entity->entityKeyName] !== $entry->concrete_entries_id) {
-			throw new InvalidArgumentException('The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
+			$this->SetResponse(400, null, 'The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
+			return;
 		}
 
 		$entryData[$fieldName] = $value;
@@ -296,7 +289,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$concreteId = $conEntry->Save($entity, $entryData);
 
 		if (!is_numeric($concreteId)) {
-			throw new RuntimeException('could not update entry wth id ' . $concreteId);
+			$this->SetResponse(400, null, 'Could not update entry wth id ' . $concreteId);
+			return;
 		}
 
 		$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entry->GetContext());
@@ -317,7 +311,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$event->event_type = Events::TypeEdit;
 		$event->save();
 
-		$this->response->setJsonContent(['message' => 'entry updated']);
+		$this->SetResponse(200, null, ['message' => 'entry updated']);
 	}
 
 	public function UpdateTasksPages() {
@@ -330,19 +324,22 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		if (is_null($taskId) || is_null($pageId)) {
-			throw new InvalidArgumentException('task_id and page_id is required');
+			$this->SetResponse(400, null, ['task_id and page_id is required']);
+			return;
 		}
 
 		$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = :taskId: AND pages_id = :pageId:', 'bind' => ['taskId' => $taskId, 'pageId' => $pageId]]);
 
 		if (!$taskPage) {
-			throw new InvalidArgumentException('No taskpage found with for task_id ' . $taskId . ' and page_id ' . $pageId);
+			$this->SetResponse(400, null, 'No taskpage found with for task_id ' . $taskId . ' and page_id ' . $pageId);
+			return;
 		}
 
 		$taskPage->is_done = $jsonData['is_done'];
 
 		if (!$taskPage->save()) {
-			throw new RuntimeException('could not update task page');
+			$this->SetResponse(500, null, ['Could not save taskpage: ' . implode($tasksUnits->getMessages())]);
+			return;
 		}
 
 		//Updating stats for TasksUnits (pages done)
@@ -351,9 +348,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$tasksUnits->pages_done = $tasksUnits->pages_done + 1;
 
 		if (!$tasksUnits->save()) {
-			throw new RuntimeException('could not udpate tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages()));
+			$this->SetResponse(500, null, ['could not update tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages())]);
+			return;
 		}
 
-		$this->response->setJsonContent($taskPage->toArray());
+		$this->SetResponse(200, null, $taskPage->toArray());
 	}
 }
