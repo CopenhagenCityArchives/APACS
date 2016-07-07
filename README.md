@@ -26,7 +26,12 @@ Access bash in the webserver
 docker exec -i -t webserver /bin/bash
 ```
 
-## Unit testing
+## Dependencies
+Install PHP dependencies by running:
+
+php composer.phar install
+
+## Tests
 
 ### Unit tests
 

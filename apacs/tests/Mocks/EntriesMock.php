@@ -3,19 +3,7 @@ namespace Mocks;
 
 class EntriesMock {
 	private $di;
-	public function __construct() {
-		$di = new \Phalcon\Di\FactoryDefault;
-		$di->set('db', function () {
-			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-				"host" => "localhost",
-				"username" => "root",
-				"password" => "",
-				"dbname" => "unit_tests",
-				'charset' => 'utf8',
-			));
-		}
-		);
-
+	public function __construct($di) {
 		$this->di = $di;
 	}
 

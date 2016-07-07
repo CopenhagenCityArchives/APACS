@@ -1,5 +1,5 @@
 <?php
-use Phalcon\DI\FactoryDefault;
+use \Phalcon\Di;
 use \Phalcon\Test\UnitTestCase as PhalconTestCase;
 
 abstract class UnitTestCase extends PhalconTestCase {
@@ -19,17 +19,32 @@ abstract class UnitTestCase extends PhalconTestCase {
 	 */
 	private $_loaded = false;
 
-	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	public function setUp() {
+        parent::setUp();
 
-		//If no DI is given, use the factory default
-		if ($di == null) {
-			//$di = DI::getDefault();
-			$di = new FactoryDefault();
-		}
+        // Load any additional services that might be required during testing
+        $di = Di::getDefault();
 
-		parent::setUp($di);
+        //Sets DI components.
 
-		$this->_loaded = true;
+		//Connection to the test database
+		$di->setShared('db', function () {
+			return new \Phalcon\Db\Adapter\Pdo\Mysql([
+				"host" => "database",
+				"username" => "dev",
+				"password" => "123456",
+				"dbname" => "apacs",
+				'charset' => 'utf8',
+			]);
+		});
+
+		//Creating the database
+		$di->get('db')->execute(file_get_contents("../init/init.sql"));
+
+        //Setting the di which will be available for all descending test classes
+        $this->di = $di;
+
+        $this->_loaded = true;
 	}
 
 	/**
@@ -37,8 +52,11 @@ abstract class UnitTestCase extends PhalconTestCase {
 	 * @throws \PHPUnit_Framework_IncompleteTestError;
 	 */
 	public function __destruct() {
-		/*   if(!$this->_loaded) {
-			            throw new \PHPUnit_Framework_IncompleteTestError('Please run parent::setUp().');
-		*/
+	   if(!$this->_loaded) {
+            throw new \PHPUnit_Framework_IncompleteTestError('Please run parent::setUp().');
+		}
+
+		$di = Di::getDefault();
+		$di->get('db')->execute(file_get_contents('../init/cleanup.sql'));
 	}
 }

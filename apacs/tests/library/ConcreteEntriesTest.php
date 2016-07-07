@@ -5,47 +5,32 @@ class ConcreteEntriesTest extends \UnitTestCase {
 	private $entitiesMock;
 	private $entriesMock;
 
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		$di = new \Phalcon\Di\FactoryDefault;
-
-		//Test specific database, Phalcon
-		$di->set('db', function () {
-			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-				"host" => "localhost",
-				"username" => "root",
-				"password" => "",
-				"dbname" => "unit_tests",
-				'charset' => 'utf8',
-			));
-		});
-
-		//Config
-		$di->set('config', function () {
+	public function setUp() {
+		parent::setUp();
+		
+		$this->di->set('config', function () {
 			return [
-				"host" => "localhost",
-				"username" => "root",
-				"password" => "",
-				"dbname" => "unit_tests",
+				"host" => "database",
+				"username" => "dev",
+				"password" => "123456",
+				"dbname" => "apacs",
 				'charset' => 'utf8',
 			];
 		});
 
-		$this->entitiesMock = new Mocks\EntitiesMock();
-		$this->entitiesMock->createTables();
+		$this->entitiesMock = new Mocks\EntitiesMock($this->di);
+		$this->entitiesMock->insertEntities();
 
-		$this->entriesMock = new Mocks\EntriesMock();
-		$this->entriesMock->createTables();
-		parent::setUp($di, $config);
+		$this->entriesMock = new Mocks\EntriesMock($this->di);
 	}
 
 	public function tearDown() {
-		//	$this->entitiesMock->clearDatabase();
-		$this->entriesMock->clearDatabase();
+		$this->entitiesMock->clearDatabase();
+		//$this->entriesMock->clearDatabase();
 		parent::tearDown();
 	}
 
 	public function testSave() {
-		$this->entitiesMock->insertEntity();
 		$entry = new ConcreteEntries($this->di);
 		$dataToSave = [
 			'firstnames' => 'Jens',
@@ -64,7 +49,6 @@ class ConcreteEntriesTest extends \UnitTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function testSaveThrowErrorWhenEntityKeyNameValueIsNotSet() {
-		$this->entitiesMock->insertEntity();
 		$entry = new ConcreteEntries($this->di);
 		$dataToSaveWrong = [
 			'persons_id' => null,
@@ -76,7 +60,6 @@ class ConcreteEntriesTest extends \UnitTestCase {
 	}
 
 	public function testSaveDecodeFields() {
-		$this->entitiesMock->insertEntity();
 		$entry = new ConcreteEntries($this->di);
 		$dataToSave = [
 			'persons_id' => 1,
@@ -102,14 +85,11 @@ class ConcreteEntriesTest extends \UnitTestCase {
 	 * @expectedException InvalidArgumentException
 	 */
 	public function testSaveThrowErrorOnEmptyData() {
-		$this->entitiesMock->insertEntity();
 		$entry = new ConcreteEntries($this->di);
 		$entry->SaveEntriesForTask([$this->entitiesMock->getEntity()], []);
 	}
 
 	public function testSaveEntriesForTask() {
-		$this->entitiesMock->insertEntity();
-
 		$data = [
 			'persons' => [
 				'firstnames' => 'Niels',
@@ -130,8 +110,6 @@ class ConcreteEntriesTest extends \UnitTestCase {
 	}
 
 	public function testConvertToSolr() {
-		$this->entitiesMock->insertEntity();
-
 		$taskId = 1;
 
 		$data = [
@@ -173,15 +151,12 @@ class ConcreteEntriesTest extends \UnitTestCase {
 			'entry_id' => 1,
 		];
 
-		$this->entitiesMock->insertEntity();
-
 		$entity = $this->entitiesMock->getEntity();
 
 		$this->assertFalse($entity->isDataValid(), 'should return false when data is invalid');
 	}
 
 	public function testLoad() {
-		$this->entitiesMock->insertEntity();
 		$this->entriesMock->createEntryWithObjectRelation();
 
 		$entity = $this->entitiesMock->getEntity(2);

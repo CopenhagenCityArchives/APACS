@@ -1,5 +1,8 @@
 <?php
 
+use Phalcon\Di;
+use Phalcon\Di\FactoryDefault;
+
 //ini_set('display_errors', 1);
 //error_reporting(E_ALL);
 
@@ -40,17 +43,7 @@ $loader->registerNamespaces(array(
 
 $loader->register();
 
-$di = new \Phalcon\Di\FactoryDefault;
-
-//Test specific database, Phalcon
-$di->setShared('db', function () {
-	return new \Phalcon\Db\Adapter\Pdo\Mysql([
-		"host" => "db",
-		"username" => "root",
-		"password" => "1234565",
-		"dbname" => "apacs",
-		'charset' => 'utf8',
-	]);
-});
-
-$di->get('db')->execute(file_get_contents("../init/init.sql"));
+//Sets a default Dependency Injector
+$di = new FactoryDefault();
+Di::reset();
+Di::setDefault($di);

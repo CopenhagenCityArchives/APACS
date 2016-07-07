@@ -1,6 +1,4 @@
-USE apacs;
-
-CREATE TABLE `apacs_collections` (
+CREATE TABLE IF NOT EXISTS `apacs_collections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(50) COLLATE utf8_danish_ci NOT NULL,
   `description` char(250) COLLATE utf8_danish_ci NOT NULL,
@@ -9,7 +7,7 @@ CREATE TABLE `apacs_collections` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_datasources` (
+CREATE TABLE IF NOT EXISTS `apacs_datasources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(25) COLLATE utf8_danish_ci DEFAULT NULL,
   `sql` char(255) COLLATE utf8_danish_ci DEFAULT NULL,
@@ -19,7 +17,7 @@ CREATE TABLE `apacs_datasources` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_entities` (
+CREATE TABLE IF NOT EXISTS `apacs_entities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `task_id` int(11) NOT NULL,
   `name` char(20) COLLATE utf8_danish_ci NOT NULL,
@@ -35,7 +33,7 @@ CREATE TABLE `apacs_entities` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_entries` (
+CREATE TABLE IF NOT EXISTS `apacs_entries` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `posts_id` int(11) NOT NULL,
   `tasks_id` int(11) NOT NULL,
@@ -46,7 +44,7 @@ CREATE TABLE `apacs_entries` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_errorreports` (
+CREATE TABLE IF NOT EXISTS `apacs_errorreports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tasks_id` int(11) NOT NULL,
   `posts_id` int(11) NOT NULL,
@@ -65,7 +63,7 @@ CREATE TABLE `apacs_errorreports` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_events` (
+CREATE TABLE IF NOT EXISTS `apacs_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `users_id` int(11) NOT NULL,
   `collections_id` int(11) NOT NULL,
@@ -78,7 +76,7 @@ CREATE TABLE `apacs_events` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `apacs_fields` (
+CREATE TABLE IF NOT EXISTS `apacs_fields` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `entities_id` int(11) DEFAULT NULL COMMENT 'FK til entities',
   `steps_id` int(11) DEFAULT NULL,
@@ -106,7 +104,7 @@ CREATE TABLE `apacs_fields` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_filterlevels` (
+CREATE TABLE IF NOT EXISTS `apacs_filterlevels` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `filter_id` int(11) NOT NULL,
   `name` char(50) COLLATE utf8_danish_ci NOT NULL,
@@ -122,7 +120,7 @@ CREATE TABLE `apacs_filterlevels` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_pages` (
+CREATE TABLE IF NOT EXISTS `apacs_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `unit_id` int(11) NOT NULL DEFAULT '1',
   `page_number` int(11) NOT NULL DEFAULT '0',
@@ -131,7 +129,7 @@ CREATE TABLE `apacs_pages` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=131071 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_posts` (
+CREATE TABLE IF NOT EXISTS `apacs_posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pages_id` int(11) DEFAULT NULL,
   `width` decimal(21,18) DEFAULT NULL,
@@ -144,7 +142,7 @@ CREATE TABLE `apacs_posts` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_steps` (
+CREATE TABLE IF NOT EXISTS `apacs_steps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(50) COLLATE utf8_danish_ci DEFAULT NULL,
   `description` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
@@ -152,14 +150,14 @@ CREATE TABLE `apacs_steps` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_superusers` (
+CREATE TABLE IF NOT EXISTS `apacs_superusers` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tasks_id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_tasks` (
+CREATE TABLE IF NOT EXISTS `apacs_tasks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   `description` varchar(250) COLLATE utf8_danish_ci NOT NULL,
@@ -168,7 +166,7 @@ CREATE TABLE `apacs_tasks` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_tasks_pages` (
+CREATE TABLE IF NOT EXISTS `apacs_tasks_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tasks_id` int(11) NOT NULL,
   `pages_id` int(11) NOT NULL,
@@ -177,7 +175,7 @@ CREATE TABLE `apacs_tasks_pages` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=131071 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_tasks_posts` (
+CREATE TABLE IF NOT EXISTS `apacs_tasks_posts` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `posts_id` int(11) DEFAULT NULL,
   `tasks_id` int(11) DEFAULT NULL,
@@ -185,7 +183,7 @@ CREATE TABLE `apacs_tasks_posts` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_tasks_units` (
+CREATE TABLE IF NOT EXISTS `apacs_tasks_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tasks_id` int(11) NOT NULL,
   `units_id` int(11) NOT NULL,
@@ -196,7 +194,7 @@ CREATE TABLE `apacs_tasks_units` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=257 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_units` (
+CREATE TABLE IF NOT EXISTS `apacs_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collections_id` int(11) DEFAULT NULL,
   `pages` int(11) NOT NULL DEFAULT '0',
@@ -206,7 +204,7 @@ CREATE TABLE `apacs_units` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=256 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `apacs_users` (
+CREATE TABLE IF NOT EXISTS `apacs_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)

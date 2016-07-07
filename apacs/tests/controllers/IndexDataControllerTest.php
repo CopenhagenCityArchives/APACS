@@ -25,11 +25,10 @@ class IndexDataControllerTest extends \UnitTestCase {
 		}
 		);
 
-		$this->entitiesMock = new Mocks\EntitiesMock();
-		$this->entitiesMock->createTables();
+		$this->entitiesMock = new Mocks\EntitiesMock($di);
+		$this->entitiesMock->insertEntities();
 
 		$this->entriesMock = new Mocks\EntriesMock();
-		$this->entriesMock->createTables();
 
 		parent::setUp($di, $config);
 	}

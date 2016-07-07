@@ -4,24 +4,11 @@ class EntitiesModelTest extends \UnitTestCase {
 
 	private $entitiesFieldsMockConf;
 
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		$di = new \Phalcon\Di\FactoryDefault;
-
-		//Test specific database, Phalcon
-		$di->set('db', function () {
-			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
-				"host" => "localhost",
-				"username" => "root",
-				"password" => "",
-				"dbname" => "unit_tests",
-				'charset' => 'utf8',
-			));
-		});
-
-		$this->entitiesFieldsMockConf = new Mocks\EntitiesMock();
-		$this->entitiesFieldsMockConf->createTables();
-
-		parent::setUp($di, $config);
+	public function setUp() {
+		parent::setUp();
+		
+		$this->entitiesFieldsMockConf = new \Mocks\EntitiesMock($this->di);
+		$this->entitiesFieldsMockConf->createTables();	
 	}
 
 	public function tearDown() {
