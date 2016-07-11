@@ -1,6 +1,14 @@
 <?php
 
 class Fields extends \Phalcon\Mvc\Model {
+
+	public $fieldName;
+	public $isRequired;
+	public $validationRegularExpression;
+	public $validationErrorMessage;
+	public $value;
+	protected $decodeField = null;
+
 	public function getSource() {
 		return 'apacs_' . 'fields';
 	}
