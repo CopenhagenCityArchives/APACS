@@ -12,7 +12,7 @@ class Objects extends \Phalcon\Mvc\Model
     public function getData($sql)
     {
         try{
-            $result = $this->getDI()->getDb()->query($sql);
+            $result = $this->getDI()->getDatabase()->query($sql);
             $result->setFetchMode(Phalcon\Db::FETCH_ASSOC);
 
             return $result->fetchAll();

@@ -40,7 +40,14 @@ class ConcreteEntries {
 			return $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
 		} else {
 			$result = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
+
 			if (isset($result[0])) {
+				foreach($entity->fields as $field){
+					if ($field->formFieldType == 'date') {
+						$result[0][$field->fieldName] = date('Y-m-d', strtotime($result[0][$field->fieldName]));
+					}
+				}
+
 				return $result[0];
 			}
 		}
@@ -83,45 +90,47 @@ class ConcreteEntries {
 		$results = [];
 
 		foreach ($entities as $entity) {
-			$data = $entityData[$entity->name];
+			if( isset($entityData[$entity->name][0]) ){
+				$data = $entityData[$entity->name];
 
-			if ($entity->type == 'object') {
-				$temp = $data;
-				unset($data);
-				$data = [];
-				$data[] = $temp;
-				//var_dump($data);
-			}
+				if ($entity->type == 'object') {
+					$temp = $data;
+					unset($data);
+					$data = [];
+					$data[] = $temp;
+					//var_dump($data);
+				}
 
-			$entityRow = [];
-			$entityRow['entity_name'] = $entity->name;
-			$entityRow['label'] = $entity->guiName;
-			$entityRow['entry_id'] = $entry_id;
-			$entityRow['task_id'] = $entity->task_id;
-			$entityRow['concrete_entries_id'] = $data[0]['id'];
-			$entityRow['fields'] = [];
-			$i = 0;
-			$addFieldsAsArray = $entity->type == 'array';
-			foreach ($data as $row) {
-				$fieldValueRow = [];
-				//Set field name and value for each field
-				foreach ($entity->fields as $field) {
-					if (isset($row[$field->GetRealFieldName()])) {
-						$fieldValueRow['field_name'] = $field->GetRealFieldName();
-						$fieldValueRow['label'] = $field->formName;
-						$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
-						$fieldValueRow['parent_id'] = $row['id'];
+				$entityRow = [];
+				$entityRow['entity_name'] = $entity->name;
+				$entityRow['label'] = $entity->guiName;
+				$entityRow['entry_id'] = $entry_id;
+				$entityRow['task_id'] = $entity->task_id;
+				$entityRow['concrete_entries_id'] = $data[0]['id'];
+				$entityRow['fields'] = [];
+				$i = 0;
+				$addFieldsAsArray = $entity->type == 'array';
+				foreach ($data as $row) {
+					$fieldValueRow = [];
+					//Set field name and value for each field
+					foreach ($entity->fields as $field) {
+						if (isset($row[$field->GetRealFieldName()])) {
+							$fieldValueRow['field_name'] = $field->GetRealFieldName();
+							$fieldValueRow['label'] = $field->formName;
+							$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
+							$fieldValueRow['parent_id'] = $row['id'];
 
-						if ($addFieldsAsArray == true) {
-							$entityRow['fields'][$i][] = $fieldValueRow;
-						} else {
-							$entityRow['fields'][] = $fieldValueRow;
+							if ($addFieldsAsArray == true) {
+								$entityRow['fields'][$i][] = $fieldValueRow;
+							} else {
+								$entityRow['fields'][] = $fieldValueRow;
+							}
 						}
 					}
+					$i++;
 				}
-				$i++;
+				$results[] = $entityRow;
 			}
-			$results[] = $entityRow;
 		}
 
 		return $results;
@@ -178,6 +187,7 @@ class ConcreteEntries {
 	 * @param Array $data The data to save. Only single rows are supported!
 	 */
 	public function Save(Entities $entity, Array $data) {
+
 		//Decoding and saving code values
 		foreach ($entity->getFields() as $field) {
 			if ($field->hasDecode == 0 || !isset($data[$field->decodeField])) {
@@ -232,6 +242,7 @@ class ConcreteEntries {
 
 		//Let's save the data
 		$id = isset($data['id']) ? $data['id'] : null;
+	
 		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data), $id);
 		if (!$newId) {
 			throw new RuntimeException('could not save the entry ' . $entity->name);
@@ -349,6 +360,8 @@ class ConcreteEntries {
 		$solrData['page_id'] = $entryCon['page_id'];
 		$solrData['post_id'] = $entryCon['post_id'];
 		$solrData['entry_id'] = $entryCon['entry_id'];
+		$solrData['user_id'] = $entryCon['user_id'];
+		$solrData['user_name'] = $entryCon['user_name'];
 		//$solrData['last_update'] = $entryCon['last_update'];
 
 		$solrData['collection_info'] = $entryCon['collection_name'] . ' ' . $entryCon['unit_description'];
@@ -360,7 +373,7 @@ class ConcreteEntries {
 		$config = [
 			'endpoint' =>
 			['localhost' =>
-				['host' => '54.194.233.62', 'hostname' => '54.194.233.62', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'],
+				['host' => '54.194.89.54', 'hostname' => '54.194.89.54', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'],
 			],
 		];
 
@@ -397,6 +410,10 @@ class ConcreteEntries {
 	public static function ProxySolrRequest() {
 		header("Access-Control-Allow-Origin: *");
 		header('Content-type: application/json; charset=UTF-8');
+		header("Cache-Control: no-cache, no-store, must-revalidate");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+
 		$queryStr = $_SERVER['QUERY_STRING'];
 		//$queryStr = str_replace('_url=/search?', '', $queryStr);
 		$queryStr = substr($queryStr, strpos('?q=', $queryStr));
@@ -404,7 +421,7 @@ class ConcreteEntries {
 			die();
 		}
 
-		$url = 'http://ec2-54-194-233-62.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
+		$url = 'http://ec2-54-194-89-54.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
 
 		print file_get_contents($url);
 		exit();

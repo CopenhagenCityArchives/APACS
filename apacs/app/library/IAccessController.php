@@ -12,5 +12,5 @@ interface IAccessController {
 
 	public function GetUserName(); //: string;
 
-	public function UserCanEdit(int $userId, int $taskId); //: bool;
+	public function UserCanEdit($context); //: bool;
 }

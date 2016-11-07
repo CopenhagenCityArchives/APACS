@@ -11,7 +11,7 @@ class Steps extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetStepsAndFields($taskId, $prefix = '') {
-		$steps = $this->find(['conditions' => ['tasks_id = ' . $taskId]]);
+		$steps = $this->find('tasks_id = ' . $taskId);
 		$stepsAndFields = [];
 		$entities = new Entities();
 

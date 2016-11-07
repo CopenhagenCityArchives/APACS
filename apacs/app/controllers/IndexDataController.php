@@ -1,6 +1,6 @@
 <?php
 
-class IndexDataController extends \MainController {
+class IndexDataController extends \Phalcon\Mvc\Controller {
 	private $config;
 	private $response;
 	private $request;
@@ -17,9 +17,28 @@ class IndexDataController extends \MainController {
 	private function RequireAccessControl($authenticationRequired = true) {
 		$this->auth = $this->getDI()->get('AccessController');
 		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
-			$this->SetResponse(401, $this->auth->GetMessage(), null);
+			$this->response->setStatusCode(401, $this->auth->GetMessage());
+			$this->response->send();
+			die();
+		}
+	}
+
+	private function GetAndValidateJsonPostData() {
+		$jsonData = json_decode($this->request->getRawBody(), true);
+
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setJsonContent(['Invalid JSON format']);
 			return;
 		}
+
+		if (count($jsonData) == 0) {
+			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setJsonContent(['No data given']);
+			return;
+		}
+
+		return $jsonData;
 	}
 
 	public function GetDataFromDatasouce($dataSourceId) {
@@ -27,7 +46,7 @@ class IndexDataController extends \MainController {
 
 		$datasource = Datasources::findFirst(['conditions' => 'id = ' . $dataSourceId]);
 
-		$this->response->setJsonContent($datasource->GetData($query));
+		$this->response->setJsonContent($datasource->GetData($query), JSON_NUMERIC_CHECK);
 	}
 
 	public function SolrProxy() {
@@ -45,18 +64,14 @@ class IndexDataController extends \MainController {
 
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
-				$this->SetResponse(400, null, ['The following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el]);
-				return;
+				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
 			}
 		});
-
-		$concreteEntry = new ConcreteEntries($this->getDI());
 
 		$entity = Entities::findFirst(['conditions' => 'name = "' . $jsonData['entity_name'] . '"']);
 
 		if (!$entity) {
-			$this->SetResponse(400, null, ['No entity found with name ' . $jsonData['entity_name']]);
-			return;
+			throw new InvalidArgumentException('no entity found with name ' . $jsonData['entity_name']);
 		}
 
 		$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $entity->task_id, 'postId' => $jsonData['post_id']]]);
@@ -64,8 +79,7 @@ class IndexDataController extends \MainController {
 		$post = Posts::findFirst(['conditions' => 'id = :postId:', 'bind' => ['postId' => $jsonData['post_id']]]);
 
 		if (!$entry) {
-			$this->SetResponse(400, null, ['No entry found for task id ' . $entity->task_id . ' and post id ' . $jsonData['post_id']]);
-			return;
+			throw new InvalidArgumentException('no entry found for task id ' . $entity->task_id . ' and post id ' . $jsonData['post_id']);
 		}
 
 		//Check if the entity and field of the concrete id is already reported as an error
@@ -73,14 +87,16 @@ class IndexDataController extends \MainController {
 			'bind' => ['entity' => $jsonData['entity_name'], 'field' => $jsonData['field_name'], 'concreteId' => $jsonData['concrete_entries_id']]]);
 
 		if (count($existingReports) > 0) {
-			$this->SetResponse(400, null, ['Error report already exists on the given entity, field and concrete id']);
-			return;
+			throw new InvalidArgumentException('Error report already exists on the given entity, field and concrete id');
 		}
+
+		$colInfo = $entry->GetContext();
 
 		$errors = new ErrorReports();
 		$errors->reporting_users_id = $reportingUserId;
 		$errors->users_id = $entry->users_id;
 		$errors->tasks_id = $entity->task_id;
+		$errors->entities_id = $entity->id;
 		$errors->pages_id = $post->pages_id;
 		$errors->posts_id = $jsonData['post_id'];
 		$errors->entity_name = $jsonData['entity_name'];
@@ -89,14 +105,13 @@ class IndexDataController extends \MainController {
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
 		$errors->original_value = $jsonData['value'];
 		$errors->toSuperUser = 0;
+		$errors->entry_created_by = $colInfo['username'];
 		$errors->beforeSave();
-
 		if (!$errors->save($jsonData)) {
-			$this->SetResponse(500, null, ['Could not save error report: ' . implode($errors->getMessages(), ', ')]);
-			return;
+			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
 
-		$colInfo = $entry->GetContext();
+
 
 		$event = new Events();
 		$event->users_id = $this->auth->GetUserId();
@@ -107,7 +122,7 @@ class IndexDataController extends \MainController {
 		$event->event_type = Events::TypeReportError;
 		$event->save();
 
-		$this->SetResponse(200, null, ['message' => 'error report saved']);
+		$this->response->setJsonContent(['message' => 'error report saved']);
 	}
 
 	public function UpdateErrorReport($errorReportId) {
@@ -117,28 +132,24 @@ class IndexDataController extends \MainController {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		if (!isset($jsonData['to_super_user'])) {
-			$this->SetResponse(400, null, ['The field to_super_user is required']);
-			return;
+			throw new InvalidArgumentException('to_super_user is required');
 		}
 
 		$errorReport = ErrorReports::findFirstById($errorReportId);
 
 		if ($errorReport == false) {
-			$this->SetResponse(400, null, ['No error report found for id ' . $errorReportId]);
-			return;
+			throw new InvalidArgumentException('No error report found for id ' . $errorReportId);
 		}
 
 		if ($this->auth->GetUserId() !== $errorReport->users_id) {
-			$this->SetResponse(403, null, ['The user has no privileg to change the error report with id ' . $errorReportId]);
-			return;
+			throw new InvalidArgumentException('The user cannot change the error report with id ' . $errorReportId);
 		}
 
 		$errorReport->toSuperUser = $jsonData['to_super_user'];
 
 		$errorReport->save();
 
-		$this->SetResponse(200, null, ['message' => 'error report updated']);
-	}
+		$this->response->setJsonContent(['message' => 'error report updated']);
 	}
 
 	public function SaveEntry() {
@@ -158,6 +169,13 @@ class IndexDataController extends \MainController {
 			return;
 		}
 
+		//Mission Impossible: We can't check for the post when we don't have an id
+		/*$existingPosts = Posts::find(['conditions' => 'task_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
+
+		if ($existingPosts) {
+			$this->response->setStatusCode(401, 'Entry already exists');
+			$this->response->setJsonContent(['message' => 'An entry exists for post id ' . $jsonData['post_id'] . ' and task_id ' . $jsonData['task_id']]);
+		}*/
 
 		try {
 			//Saving the post
@@ -196,7 +214,7 @@ class IndexDataController extends \MainController {
 			$entry->complete = 1;
 			$entry->save();
 
-			$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND units_id = ' . $entry->GetContext()['unit_id']]);
+			/*$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND units_id = ' . $entry->GetContext()['unit_id']]);
 
 			$maxPosts = $taskUnit->columns * $taskUnit->rows;
 
@@ -207,7 +225,7 @@ class IndexDataController extends \MainController {
 
 				$taskUnit->pages_done = $taskUnit->pages_done + 1;
 				$taskUnit->save();
-			}
+			}*/
 
 			$event = new Events();
 			$event->users_id = $this->auth->GetUserId();
@@ -218,6 +236,9 @@ class IndexDataController extends \MainController {
 			$event->tasks_id = $solrData['task_id'];
 			$event->event_type = Events::TypeCreate;
 
+			if (!$event->save()) {
+				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()));
+			}
 
 		} catch (Exception $e) {
 			$this->response->setStatusCode(401, 'Save error');
@@ -225,14 +246,14 @@ class IndexDataController extends \MainController {
 			return;
 		}
 
-		$this->SetResponse(200, null, ['post_id' => $post->id, 'concrete_entry_id' => $concreteId, 'pages_done' => $taskUnit->pages_done]);
+		$this->response->setStatusCode(200, 'OK');
+		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId, 'pages_done' => $taskUnit->pages_done]);
 	}
 
 	/**
 	 * Updates part of an entry. Note that this method only supports updating one entry at a time
 	 *
 	 */
-	//TODO: Slim!
 	public function UpdateEntry($entryId) {
 
 		$this->RequireAccessControl();
@@ -243,38 +264,42 @@ class IndexDataController extends \MainController {
 		$entityName = $jsonData['entity_name'];
 		$fieldName = $jsonData['field_name'];
 		$value = $jsonData['value'];
-		$taskId = $jsonData['task_id'];
 
-		$entity = Entities::findFirst(['conditions' => 'name = :entity_name: AND task_id = :task_id:', 'bind' => ['entity_name' => $entityName, 'task_id' => $taskId]]);
+		$entity = Entities::findFirst(['conditions' => 'name = :entity_name: AND task_id = :task_id:', 'bind' => ['entity_name' => $jsonData['entity_name'], 'task_id' => $jsonData['task_id']]]);
 
 		if ($entity == false) {
-			$this->SetResponse(400, null, 'Not entity found with name ' . $entityName . ' for task id ' . $taskId);
-			return;
+			throw new InvalidArgumentException('Not entity found with name ' . $jsonData['entity_name'] . ' for task id ' . $jsonData['task_id']);
 		}
 
 		$entry = Entries::findFirstById($entryId);
 
 		if ($entry == false) {
-			$this->SetResponse(400, null, 'No entry found with id ' . $entryId);
-			return;
+			throw new InvalidArgumentException('No entry found with id ' . $entryId);
 		}
 
 		if (!$this->auth->UserCanEdit($entry->users_id, $entity->task_id)) {
-			$this->SetResponse(403, null, 'User cannot edit this entry');
+			$this->response->setStatusCode(401, 'User cannot edit this entry');
+			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
 			return;
 		}
 
 		$conEntry = new ConcreteEntries($this->getDI());
-		$entryData = $conEntry->Load($entity, 'id', $concreteId);
+		
+
+		if($entity->type == 'array')
+		{
+			$entryData = $conEntry->Load($entity, 'id', $concreteId)[0];
+		}
+		else{
+			$entryData = $conEntry->Load($entity, 'id', $concreteId);
+		}
 
 		if (is_null($entryData)) {
-			$this->SetResponse(400, null, 'No entry data found for ' . $entityName . ' with id ' . $concreteId);
-			return;
+			throw new InvalidArgumentException('no entry data found for ' . $jsonData['entity_name'] . ' with id ' . $concreteId);
 		}
 
 		if ($entryData[$entity->entityKeyName] !== $entry->concrete_entries_id) {
-			$this->SetResponse(400, null, 'The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
-			return;
+			throw new InvalidArgumentException('The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
 		}
 
 		$entryData[$fieldName] = $value;
@@ -282,8 +307,7 @@ class IndexDataController extends \MainController {
 		$concreteId = $conEntry->Save($entity, $entryData);
 
 		if (!is_numeric($concreteId)) {
-			$this->SetResponse(400, null, 'Could not update entry wth id ' . $concreteId);
-			return;
+			throw new RuntimeException('could not update entry wth id ' . $concreteId);
 		}
 
 		$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entry->GetContext());
@@ -295,6 +319,14 @@ class IndexDataController extends \MainController {
 			$solrData, $conEntry->GetSolrData($entities, $completeEntry)
 		), $entryId);
 
+		//Remove any error reports for the field
+		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
+		foreach($errorReports as $error){
+			if($error->delete() === false){
+				echo 'Notice: Could not delete error: ' . $error->getMessages();
+			}
+		}
+
 		$event = new Events();
 		$event->users_id = $this->auth->GetUserId();
 		$event->collections_id = $solrData['collection_id'];
@@ -304,7 +336,7 @@ class IndexDataController extends \MainController {
 		$event->event_type = Events::TypeEdit;
 		$event->save();
 
-		$this->SetResponse(200, null, ['message' => 'entry updated']);
+		$this->response->setJsonContent(['message' => 'entry updated']);
 	}
 
 	public function UpdateTasksPages() {
@@ -317,22 +349,19 @@ class IndexDataController extends \MainController {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		if (is_null($taskId) || is_null($pageId)) {
-			$this->SetResponse(400, null, ['task_id and page_id is required']);
-			return;
+			throw new InvalidArgumentException('task_id and page_id is required');
 		}
 
 		$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = :taskId: AND pages_id = :pageId:', 'bind' => ['taskId' => $taskId, 'pageId' => $pageId]]);
 
 		if (!$taskPage) {
-			$this->SetResponse(400, null, 'No taskpage found with for task_id ' . $taskId . ' and page_id ' . $pageId);
-			return;
+			throw new InvalidArgumentException('No taskpage found with for task_id ' . $taskId . ' and page_id ' . $pageId);
 		}
 
 		$taskPage->is_done = $jsonData['is_done'];
 
 		if (!$taskPage->save()) {
-			$this->SetResponse(500, null, ['Could not save taskpage: ' . implode($tasksUnits->getMessages())]);
-			return;
+			throw new RuntimeException('could not update task page');
 		}
 
 		//Updating stats for TasksUnits (pages done)
@@ -341,10 +370,9 @@ class IndexDataController extends \MainController {
 		$tasksUnits->pages_done = $tasksUnits->pages_done + 1;
 
 		if (!$tasksUnits->save()) {
-			$this->SetResponse(500, null, ['could not update tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages())]);
-			return;
+			throw new RuntimeException('could not udpate tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages()));
 		}
 
-		$this->SetResponse(200, null, $taskPage->toArray());
+		$this->response->setJsonContent($taskPage->toArray(), JSON_NUMERIC_CHECK);
 	}
 }

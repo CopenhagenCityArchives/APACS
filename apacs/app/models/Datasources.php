@@ -11,11 +11,6 @@ class Datasources extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetData($searchString) {
-
-		if (!is_null($this->values)) {
-			$this->GetValuesAsArray();
-		}
-
 		$query = str_replace(':query', $searchString, $this->sql);
 		$result = $this->getDI()->get('db')->query($query);
 		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
@@ -23,10 +18,26 @@ class Datasources extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetValuesAsArray() {
-		if (!is_null($this->values)) {
-			return explode(';', $this->values);
-		} else {
-			return false;
+		if ($this->includeValuesInForm == 1) {
+			$allRowsQuery = substr($this->sql, 0, strpos($this->sql, 'WHERE'));
+			
+			//If the query contains a 'order by' part, include it in the query
+			$orderByPos = strpos($this->sql, ' order by');
+			if($orderByPos){
+				$allRowsQuery .= substr($this->sql, $orderByPos);
+			}
+
+			$result = $this->getDI()->get('db')->query($allRowsQuery);
+			$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
+
+			$resultRows = [];
+			foreach ($result->fetchAll() as $row) {
+				$resultRows[] = $row[$this->valueField];
+			}
+
+			return $resultRows;
 		}
+
+		return false;
 	}
 }

@@ -25,6 +25,7 @@ class AccessController implements IAccessController {
 		$response = $this->getWebPage($url);
 
 		if ($response == false) {
+			$this->message = 'no response from server';
 			return false;
 		}
 
@@ -104,7 +105,7 @@ class AccessController implements IAccessController {
 		if (is_null($this->authResponse)) {
 			if ($this->AuthenticateUser() == false);
 			{
-				return null;
+				return -1;
 			}
 		}
 
@@ -123,13 +124,23 @@ class AccessController implements IAccessController {
 		$user->save();
 	}
 
-	public function UserCanEdit(int $userId, int $taskId) {
+	public function UserCanEdit($context) {
 		//Is the user the same as the one asking for permission?
-		if ($this->GetUserId() == $userId) {
+		if ($this->GetUserId() == $context['user_id']) {
 			return true;
 		}
 
-		//Is the user a super user?
-		return count(SuperUsers::find(['conditions' => 'users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $taskId])) == 1;
+		if($this->GetUserId()){
+			$isSuperUser = count(SuperUsers::find(['conditions' => 'users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $context['task_id']])) == 1;
+		
+			if( $isSuperUser ) { 
+				$time = strtotime($context['last_update']);
+				$one_week_ago = strtotime('-1 week');
+
+				return $time < $one_week_ago;
+			}
+		}
+
+		return false;
 	}
 }

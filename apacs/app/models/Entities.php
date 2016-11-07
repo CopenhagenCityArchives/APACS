@@ -3,9 +3,7 @@
 class Entities extends \Phalcon\Mvc\Model {
 	public static $publicFields = ['id', 'required', 'countPerEntry', 'isMarkable', 'guiName', 'task_id'];
 	public static $entityJsonSchemaFields = ['id', 'validationErrorMessage', 'pattern', 'title', 'isRequired'];
-
-	public $name;
-	public $fields;
+	private $validationStatus = [];
 
 	public function getSource() {
 		return 'apacs_' . 'entities';
@@ -14,6 +12,28 @@ class Entities extends \Phalcon\Mvc\Model {
 	public function initialize() {
 		$this->hasMany('id', 'Fields', 'entities_id');
 		$this->belongsTo('task_id', 'Task', 'id');
+	}
+
+	public function isDataValid($data = null) {
+		$isValid = true;
+		if ($this->required == '1' && $data == null) {
+			$this->validationStatus[] = 'No data given for entity ' . $this->name;
+			return false;
+		}
+		foreach ($this->getFields() as $field) {
+			$validator = new Validator(new ValidationRuleSet($field->validationRegularExpression, $field->isRequired, $field->validationErrorMessage));
+
+			if (!$validator->IsValid($data, $field->GetRealFieldName())) {
+				$this->validationStatus[] = $field->GetRealFieldName() . ': ' . $validator->GetErrorMessage();
+				$isValid = false;
+			}
+		}
+
+		return $isValid;
+	}
+
+	public function GetValidationStatus() {
+		return count($this->validationStatus) == 1 ? $this->validationStatus[0] : implode('. ', $this->validationStatus);
 	}
 
 	/**
@@ -50,6 +70,10 @@ class Entities extends \Phalcon\Mvc\Model {
 				if ($field['formFieldType'] == 'typeahead') {
 					$field['type'] = 'string';
 					$field['format'] = 'typeahead';
+				}
+				if ($field['formFieldType'] == 'date') {
+					$field['type'] = 'string';
+					$field['format'] = 'date';
 				}
 			}
 			//	echo $field['datasources_id'];
@@ -149,21 +173,30 @@ class Entities extends \Phalcon\Mvc\Model {
 		if ($this->type == 'array') {
 			foreach (array_filter($this->getFields()->toArray(), function ($el) {return $el['includeInSOLR'] == '1';}) as $field) {
 				foreach ($data as $row) {
-					if (isset($row[Fields::GetRealFieldNameFromField($field)])) {
-						$concat[$field['SOLRFieldName']][] = $row[Fields::GetRealFieldNameFromField($field)];
-					}
+					$concat[$field['SOLRFieldName']][] = $this->getFieldData($field, $row);
 				}
 			}
 			return $concat;
 		} else {
 			foreach (array_filter($this->getFields()->toArray(), function ($el) {return $el['includeInSOLR'] == '1';}) as $field) {
-				if (isset($data[Fields::GetRealFieldNameFromField($field)])) {
-					$concat[$field['SOLRFieldName']] = $data[Fields::GetRealFieldNameFromField($field)];
-				}
-
+				$concat[$field['SOLRFieldName']] = $this->getFieldData($field, $data);
 			}
 			return $concat;
 		}
+	}
+
+	private function getFieldData($field, $data)
+	{
+		if (isset($data[Fields::GetRealFieldNameFromField($field)])) {
+			if ($field->formFieldType == 'date') {
+				return date('d-m-Y', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
+			}
+			else{
+				return $data[Fields::GetRealFieldNameFromField($field)];
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -189,7 +222,7 @@ class Entities extends \Phalcon\Mvc\Model {
 	 * @param ResultSet $entities A ResultSet representing the entities to search
 	 * @return Entities The first occuring primary entity. If none is found null is returned
 	 */
-	public static function GetPrimaryEntity(ResultSet $entities) {
+	public static function GetPrimaryEntity($entities) {
 		$entities->rewind();
 		while ($entities->valid()) {
 			$entity = $entities->current();
@@ -203,7 +236,7 @@ class Entities extends \Phalcon\Mvc\Model {
 		return null;
 	}
 
-	public static function GetSecondaryEntities(ResultSet $entities) {
+	public static function GetSecondaryEntities($entities) {
 		$entities->rewind();
 		$secondaryEntities = [];
 		while ($entities->valid()) {

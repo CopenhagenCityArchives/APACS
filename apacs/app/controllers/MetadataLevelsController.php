@@ -1,6 +1,6 @@
 <?php
 
-class MetadataLevelsController extends \MainController {
+class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 	public function getMetadataLevels($collectionId = false, $metadataLevelName = false) {
 		if (!is_numeric($collectionId)) {
 			throw new Exception('No collection id given');
@@ -129,5 +129,44 @@ class MetadataLevelsController extends \MainController {
 		$errorModel = new MetadataErrors();
 		!$errorModel->setError($errorReports, $itemId, $errorId) ? $this->returnError(500, 'Could not set error') : $this->returnJson('Error set');
 
+	}
+
+	private function returnJson($data) {
+		//Create a response instance
+		$response = $this->getDI()->get('response');
+
+		$request = new Phalcon\Http\Request();
+		$callback = $request->get('callback');
+
+		//Converts single item arrays to object
+		/*  if(count($data) == 1){
+	            $data = $data[0];
+*/
+		try {
+			//Set the content of the response
+			if ($callback) {
+				$response->setContent($callback . '(' . json_encode($data) . ')');
+			} else {
+				$response->setContent(json_encode($data));
+			}
+		} catch (Exception $e) {
+			$this->returnError(500, 'Could not load data: ' . $e);
+		}
+	}
+
+	/**
+	 * Returns an error
+	 * @param int Error code. Defaults to 404 (not found)
+	 * @param string Error message. Defaults to blank
+	 */
+	private function returnError($errorCode = 400, $errorMessage = '') {
+		//Getting a response instance
+		$response = $this->getDI()->get('response');
+
+		//Set status code
+		$response->setStatusCode($errorCode, '');
+
+		//Set the content of the response
+		$response->setContent($errorMessage);
 	}
 }

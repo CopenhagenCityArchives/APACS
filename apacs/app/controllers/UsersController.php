@@ -1,6 +1,6 @@
 <?php
 
-class UsersController extends \MainController {
+class UsersController extends \Phalcon\Mvc\Controller {
 	private $config;
 	private $response;
 	private $request;
@@ -17,8 +17,8 @@ class UsersController extends \MainController {
 		$pageId = $this->request->query('page_id', 'int', false);
 
 		if ($collectionId == false && $unitId == false && $pageId == false) {
-			$this->SetResponse(400, null, ['collection_id, unit_id or page_id is required']);
-			return;
+			$this->response->setStatusCode('400', 'Wrong parameter');
+			$this->response->setJsonContent(['error_message' => 'collection_id, unit_id or page_id is required']);
 		}
 
 		$conditions = '';
@@ -39,9 +39,9 @@ class UsersController extends \MainController {
 
 		$results = $query->execute();
 		if (count($results) == 1) {
-			$this->SetResponse(200, null, $results[0]);
+			$this->response->setJsonContent($results[0]);
 		} else {
-			$this->SetResponse(200, null, $results);
+			$this->response->setJsonContent($results);
 		}
 	}
 }
