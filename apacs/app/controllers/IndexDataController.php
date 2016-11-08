@@ -282,7 +282,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			throw new InvalidArgumentException('No entry found with id ' . $entryId);
 		}
 
-		if (!$this->auth->UserCanEdit($entry->users_id, $entity->task_id)) {
+		if (!$this->auth->UserCanEdit($entry->GetContext())) {
 			$this->response->setStatusCode(401, 'User cannot edit this entry');
 			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
 			return;
@@ -321,7 +321,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$completeEntry = $conEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
 
 		$conEntry->SaveInSolr(array_merge(
-			$solrData, $conEntry->GetSolrData($entities, $completeEntry)
+			$solrData, $conEntry->GetSolrData($entities, $completeEntry), ['user_id' => $this->auth->GetUserId(), 'user_name' => $this->auth->GetUserName()]
 		), $entryId);
 
 		//Remove any error reports for the field
