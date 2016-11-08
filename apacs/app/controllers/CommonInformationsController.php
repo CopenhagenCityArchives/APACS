@@ -187,7 +187,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetPage($pageId) {
 		$page = Pages::findFirst($pageId);
 		$taskId = $this->request->getQuery('task_id', null, null);
-
+	
 		$taskPageConditions = 'pages_id = ' . $pageId;
 		if (!is_null($taskId)) {
 			$taskPageConditions .= ' AND tasks_id = ' . $taskId;
@@ -196,11 +196,9 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$result = $page->toArray();
 		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions, 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
 		$taskUnit = TasksUnits::findFirst(['conditions' => ['tasks_id = ' . $taskId]]);
-
 		if ($taskUnit == false) {
 			throw new Exception('TaskUnit not found for page id ' . $pageId);
 		}
-
 		$post = new Posts();
 		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
 		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId]);//, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
@@ -212,7 +210,14 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		foreach ($posts as $curPos) {
 			$postEntries = $curPos->getEntries();
 			$post = $curPos->toArray();
-			$post['user_can_edit'] = $auth->userCanEdit($postEntries[0]->getContext());
+
+			if(count($postEntries) > 0){
+				$post['user_can_edit'] = $auth->userCanEdit($postEntries[0]->getContext());
+			}
+			else{
+				$post['user_can_edit'] = false;
+			}
+			
 			$result['posts'][] = $post;
 		}
 
