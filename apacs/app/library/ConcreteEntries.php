@@ -90,7 +90,7 @@ class ConcreteEntries {
 		$results = [];
 
 		foreach ($entities as $entity) {
-			if( isset($entityData[$entity->name][0]) ){
+			//if( isset($entityData[$entity->name][0]) ){
 				$data = $entityData[$entity->name];
 
 				if ($entity->type == 'object') {
@@ -130,7 +130,7 @@ class ConcreteEntries {
 					$i++;
 				}
 				$results[] = $entityRow;
-			}
+		//	}
 		}
 
 		return $results;
