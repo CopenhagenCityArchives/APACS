@@ -160,6 +160,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		$userId = $this->auth->GetUserId();
+		$userName = $this->auth->GetUserName();
 
 		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
@@ -207,9 +208,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entry->GetContext());
 
-			$concreteEntry->SaveInSolr(array_merge(
-				$solrData, $concreteEntry->GetSolrData($entities, $jsonData)
-			));
+			$solrDataToSave = array_merge(
+				$solrData, 
+				$concreteEntry->GetSolrData($entities, $jsonData),
+				[ 'user_id' => $userId, 'user_name' => $userName ]
+			);
+
+			$concreteEntry->SaveInSolr($solrDataToSave);
 
 			$entry->complete = 1;
 			$entry->save();
