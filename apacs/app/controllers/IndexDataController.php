@@ -179,6 +179,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}*/
 
 		try {
+			$this->db->begin();
 			//Saving the post
 			$post = new Posts();
 			$jsonData['post']['complete'] = 1;
@@ -191,6 +192,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			//Saving the concrete entry
 			$concreteEntry = new ConcreteEntries($this->getDI());
+			$concreteEntry->startTransaction();
 			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
 
 			//Saving the meta entry, holding information about the concrete entry
@@ -245,14 +247,19 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()));
 			}
 
+			$concreteEntry->commitTransaction();
+			$this->db->commit();
+
 		} catch (Exception $e) {
+			$this->db->rollback();
+			$concreteEntry->rollbackTransaction();
 			$this->response->setStatusCode(401, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry', 'userMessage' => $e->getMessage()]);
 			return;
 		}
 
 		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId, 'pages_done' => $taskUnit->pages_done]);
+		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId]);
 	}
 
 	/**

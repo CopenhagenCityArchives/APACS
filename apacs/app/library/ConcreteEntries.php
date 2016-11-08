@@ -265,6 +265,27 @@ class ConcreteEntries {
 		return $fieldsAndData;
 	}
 
+	public function startTransaction()
+	{
+		//Let's start a transaction
+		$dbCon = ORM::get_db();
+		$dbCon->beginTransaction();
+	}
+
+	public function rollbackTransaction()
+	{
+		//Let's start a transaction
+		$dbCon = ORM::get_db();
+		$dbCon->rollBack();
+	}
+
+	public function commitTransaction()
+	{
+		//Let's start a transaction
+		$dbCon = ORM::get_db();
+		$dbCon->commit();
+	}
+
 	/**
 	 * Saving entries for a task. Each entry is validated and saved
 	 * The primary entity is special, as it's insert id is used for the following entities
@@ -275,9 +296,7 @@ class ConcreteEntries {
 	 * @throws RuntimeException if data could not be saved to the database
 	 */
 	public function SaveEntriesForTask($entities, $data) {
-		//Let's start a transaction
 		$dbCon = ORM::get_db();
-		$dbCon->beginTransaction();
 
 		//Save primary entity and get id
 		$primaryEntity = Entities::GetPrimaryEntity($entities);
@@ -314,14 +333,14 @@ class ConcreteEntries {
 				$data[$primaryEntity->name][$entity->name][$entity->entityKeyName] = $primaryId;
 
 				if (!$entity->isDataValid($data[$primaryEntity->name][$entity->name])) {
-					$dbCon->rollback();
+					//$dbCon->rollback();
 					throw new InvalidArgumentException('could not save single row of secondary entity ' . $entity->name . ' data. Input error ' . $primaryEntity->GetValidationStatus());
 				}
 
 				try {
 					$this->Save($entity, $data[$primaryEntity->name][$entity->name]);
 				} catch (Exception $e) {
-					$dbCon->rollback();
+					//$dbCon->rollback();
 					throw new RuntimeException('Error while saving: ' . $e);
 				}
 			} else {
@@ -330,21 +349,21 @@ class ConcreteEntries {
 					$row[$entity->entityKeyName] = $primaryId;
 
 					if (!$entity->isDataValid($row)) {
-						$dbCon->rollback();
+						//$dbCon->rollback();
 						throw new InvalidArgumentException('could not save array row of secondary entity ' . $entity->name . ' data. Input error ' . $entity->GetValidationStatus());
 					}
 
 					try {
 						$this->Save($entity, $row);
 					} catch (Exception $e) {
-						$dbCon->rollback();
+						//$dbCon->rollback();
 						throw new RuntimeException('Error while saving: ' . $e);
 					}
 				}
 			}
 		}
 
-		$dbCon->commit();
+		//$dbCon->commit();
 		return $primaryId;
 	}
 
