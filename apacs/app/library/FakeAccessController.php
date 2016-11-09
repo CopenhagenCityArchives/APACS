@@ -25,7 +25,7 @@ class FakeAccessController implements IAccessController {
 		return "FakeUserName";
 	}
 
-	public function UserCanEdit($context) {
+	public function UserCanEdit($userId, $timestamp, $taskId) {
 		return true;
 	}
 }

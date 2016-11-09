@@ -121,20 +121,25 @@ class AccessController implements IAccessController {
 		$user->save();
 	}
 
-	public function UserCanEdit($context) {
+	//user_id, task_id, timestamp
+	public function UserCanEdit($userId, $timestamp, $taskId) {
 		//Is the user the same as the one asking for permission?
-		if ($this->GetUserId() == $context['user_id']) {
+		if ($this->GetUserId() == $userId) {
 			return true;
 		}
 
 		if ($this->GetUserId()) {
-			$isSuperUser = count(SuperUsers::find(['conditions' => 'users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $context['task_id']])) == 1;
+			$isSuperUser = count(SuperUsers::find(['conditions' => 'users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $taskId])) == 1;
+			if ($isSuperUser > 0) {
+				//The user is a super user, no time limit given, so grant edit rights
+				if (is_null($timestamp)) {
+					return true;
+				}
 
-			if ($isSuperUser) {
-				$time = strtotime($context['last_update']);
+				$time = strtotime($timestamp);
 				$one_week_ago = strtotime('-1 week');
 
-				return $time < $one_week_ago;
+				return $time > $one_week_ago;
 			}
 		}
 
