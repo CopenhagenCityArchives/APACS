@@ -139,16 +139,28 @@ try {
 	$app->before(function () use ($app, $di) {
 		$origin = $app->request->getHeader("ORIGIN") ? $app->request->getHeader("ORIGIN") : '*';
 
-		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin)
+		$di->get('response')
+			->setHeader("Access-Control-Allow-Origin", $origin)
 			->setHeader("Access-Control-Allow-Methods", 'GET,PUT,PATCH,POST,OPTIONS')
 			->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
 			->setHeader("Access-Control-Allow-Credentials", true)
 			->setHeader("Accept-Charset", "UTF-8")
-			->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
-			->setHeader("Pragma", "no-cache")
-			->setHeader("Expires", "0")
 			->setContentType("application/json");
+
+		//Cache flight checks
+		if ($di->get('request')->getMethod() == 'OPTIONS') {
+			$di->get('response')
+				->setHeader("Cache-Control", "max-age=6000");
+		} else {
+			//Set cache to zero as default
+			if (strlen($di->get('response')->getHeaders()->get('Cache-Control')) == 0) {
+				$di->get('response')
+					->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+					->setHeader("Pragma", "no-cache")
+					->setHeader("Expires", "0");
+			}
+		}
 	});
 
 	$app->handle();
