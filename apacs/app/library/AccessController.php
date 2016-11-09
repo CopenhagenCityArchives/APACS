@@ -139,7 +139,7 @@ class AccessController implements IAccessController {
 				$time = strtotime($timestamp);
 				$one_week_ago = strtotime('-1 week');
 
-				return $time > $one_week_ago;
+				return $time < $one_week_ago;
 			}
 		}
 
