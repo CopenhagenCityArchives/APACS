@@ -42,9 +42,9 @@ class ConcreteEntries {
 			$result = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
 
 			if (isset($result[0])) {
-				foreach($entity->fields as $field){
+				foreach ($entity->fields as $field) {
 					if ($field->formFieldType == 'date') {
-						$result[0][$field->fieldName] = date('Y-m-d', strtotime($result[0][$field->fieldName]));
+						$result[0][$field->fieldName] = date('d-m-Y', strtotime($result[0][$field->fieldName]));
 					}
 				}
 
@@ -91,46 +91,46 @@ class ConcreteEntries {
 
 		foreach ($entities as $entity) {
 			//if( isset($entityData[$entity->name][0]) ){
-				$data = $entityData[$entity->name];
+			$data = $entityData[$entity->name];
 
-				if ($entity->type == 'object') {
-					$temp = $data;
-					unset($data);
-					$data = [];
-					$data[] = $temp;
-					//var_dump($data);
-				}
+			if ($entity->type == 'object') {
+				$temp = $data;
+				unset($data);
+				$data = [];
+				$data[] = $temp;
+				//var_dump($data);
+			}
 
-				$entityRow = [];
-				$entityRow['entity_name'] = $entity->name;
-				$entityRow['label'] = $entity->guiName;
-				$entityRow['entry_id'] = $entry_id;
-				$entityRow['task_id'] = $entity->task_id;
-				$entityRow['concrete_entries_id'] = $data[0]['id'];
-				$entityRow['fields'] = [];
-				$i = 0;
-				$addFieldsAsArray = $entity->type == 'array';
-				foreach ($data as $row) {
-					$fieldValueRow = [];
-					//Set field name and value for each field
-					foreach ($entity->fields as $field) {
-						if (isset($row[$field->GetRealFieldName()])) {
-							$fieldValueRow['field_name'] = $field->GetRealFieldName();
-							$fieldValueRow['label'] = $field->formName;
-							$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
-							$fieldValueRow['parent_id'] = $row['id'];
+			$entityRow = [];
+			$entityRow['entity_name'] = $entity->name;
+			$entityRow['label'] = $entity->guiName;
+			$entityRow['entry_id'] = $entry_id;
+			$entityRow['task_id'] = $entity->task_id;
+			$entityRow['concrete_entries_id'] = $data[0]['id'];
+			$entityRow['fields'] = [];
+			$i = 0;
+			$addFieldsAsArray = $entity->type == 'array';
+			foreach ($data as $row) {
+				$fieldValueRow = [];
+				//Set field name and value for each field
+				foreach ($entity->fields as $field) {
+					if (isset($row[$field->GetRealFieldName()])) {
+						$fieldValueRow['field_name'] = $field->GetRealFieldName();
+						$fieldValueRow['label'] = $field->formName;
+						$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
+						$fieldValueRow['parent_id'] = $row['id'];
 
-							if ($addFieldsAsArray == true) {
-								$entityRow['fields'][$i][] = $fieldValueRow;
-							} else {
-								$entityRow['fields'][] = $fieldValueRow;
-							}
+						if ($addFieldsAsArray == true) {
+							$entityRow['fields'][$i][] = $fieldValueRow;
+						} else {
+							$entityRow['fields'][] = $fieldValueRow;
 						}
 					}
-					$i++;
 				}
-				$results[] = $entityRow;
-		//	}
+				$i++;
+			}
+			$results[] = $entityRow;
+			//	}
 		}
 
 		return $results;
@@ -242,7 +242,7 @@ class ConcreteEntries {
 
 		//Let's save the data
 		$id = isset($data['id']) ? $data['id'] : null;
-	
+
 		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data), $id);
 		if (!$newId) {
 			throw new RuntimeException('could not save the entry ' . $entity->name);
@@ -260,27 +260,26 @@ class ConcreteEntries {
 				if ($field['formFieldType'] == 'date') {
 					$fieldsAndData[$field['fieldName']] = date('Y-m-d', strtotime($fieldsAndData[$field['fieldName']]));
 				}
+			} else {
+				$fieldsAndData[$field['fieldName']] = null;
 			}
 		}
 		return $fieldsAndData;
 	}
 
-	public function startTransaction()
-	{
+	public function startTransaction() {
 		//Let's start a transaction
 		$dbCon = ORM::get_db();
 		$dbCon->beginTransaction();
 	}
 
-	public function rollbackTransaction()
-	{
+	public function rollbackTransaction() {
 		//Let's start a transaction
 		$dbCon = ORM::get_db();
 		$dbCon->rollBack();
 	}
 
-	public function commitTransaction()
-	{
+	public function commitTransaction() {
 		//Let's start a transaction
 		$dbCon = ORM::get_db();
 		$dbCon->commit();
