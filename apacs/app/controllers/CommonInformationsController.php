@@ -185,7 +185,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetPage($pageId) {
-		$page = Pages::findFirst($pageId);
+		$page = Pages::findFirstById($pageId);
 		$taskId = $this->request->getQuery('task_id', null, null);
 
 		$taskPageConditions = 'pages_id = ' . $pageId;
@@ -294,14 +294,19 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetPostEntries($id) {
 		$response = [];
 
-		$post = Posts::findFirstById($id);
+		/*$post = Posts::findFirstById($id);
 
-		if (!$post) {
+			if (!$post) {
+				$this->error('no post found');
+				return;
+			}
+		*/
+		$entries = Entries::find('posts_id = ' . $id);
+
+		if (count($entries) == 0) {
 			$this->error('no post found');
 			return;
 		}
-
-		$entries = $post->getEntries();
 
 		$postData = [];
 		foreach ($entries as $entry) {
