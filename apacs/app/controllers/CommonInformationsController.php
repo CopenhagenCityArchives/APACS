@@ -31,6 +31,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 	public function GetTask($taskId) {
 		$confLoader = new DBConfigurationLoader();
+		$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($confLoader->GetTask($taskId), JSON_NUMERIC_CHECK);
 	}
 
@@ -45,6 +46,8 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 
 		$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
+
+		$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($task->GetTaskSchema($taskId));
 	}
 
@@ -67,6 +70,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$collections->next();
 		}
 
+		$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
 	}
 
@@ -89,6 +93,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 
 		$taskUnits = TasksUnits::FindUnitsAndTasks(implode(' AND ', $conditions));
+
 		$this->response->setJsonContent($taskUnits->toArray(), JSON_NUMERIC_CHECK);
 	}
 
@@ -126,6 +131,9 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$results[$i]['tasks'] = $row->getTasksUnits(['conditions' => $conditions])->toArray();
 			$i++;
 		}
+
+		$this->response->setHeader("Cache-Control", "max-age=600");
+
 		if (count($results) > 0) {
 			$this->response->setJsonContent($results, JSON_NUMERIC_CHECK);
 		} else {
@@ -231,6 +239,8 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 
 		$this->response->setHeader('Content-type', 'image/jpeg');
+		$this->response->setHeader("Cache-Control", "max-age=600");
+
 		$this->response->setContent($post->image);
 	}
 
