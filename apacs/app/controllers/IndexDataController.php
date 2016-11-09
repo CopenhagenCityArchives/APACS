@@ -321,6 +321,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			throw new InvalidArgumentException('The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
 		}
 
+		if (trim($value) == "") {
+			$value = NULL;
+		}
+
 		$entryData[$fieldName] = $value;
 
 		$concreteId = $conEntry->Save($entity, $entryData);
