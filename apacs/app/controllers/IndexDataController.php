@@ -111,8 +111,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
 
-
-
 		$event = new Events();
 		$event->users_id = $this->auth->GetUserId();
 		$event->collections_id = $colInfo['collection_id'];
@@ -211,9 +209,9 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entry->GetContext());
 
 			$solrDataToSave = array_merge(
-				$solrData, 
+				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
-				[ 'user_id' => $userId, 'user_name' => $userName ]
+				['user_id' => $userId, 'user_name' => $userName]
 			);
 
 			$concreteEntry->SaveInSolr($solrDataToSave);
@@ -223,16 +221,16 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			/*$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND units_id = ' . $entry->GetContext()['unit_id']]);
 
-			$maxPosts = $taskUnit->columns * $taskUnit->rows;
+				$maxPosts = $taskUnit->columns * $taskUnit->rows;
 
-			if (count(Posts::find(['conditions' => 'pages_id = ' . $jsonData['page_id']])) == $maxPosts) {
-				$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND pages_id = ' . $jsonData['page_id']]);
-				$taskPage->is_done = 1;
-				$taskPage->save();
+				if (count(Posts::find(['conditions' => 'pages_id = ' . $jsonData['page_id']])) == $maxPosts) {
+					$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND pages_id = ' . $jsonData['page_id']]);
+					$taskPage->is_done = 1;
+					$taskPage->save();
 
-				$taskUnit->pages_done = $taskUnit->pages_done + 1;
-				$taskUnit->save();
-			}*/
+					$taskUnit->pages_done = $taskUnit->pages_done + 1;
+					$taskUnit->save();
+			*/
 
 			$event = new Events();
 			$event->users_id = $this->auth->GetUserId();
@@ -289,20 +287,29 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			throw new InvalidArgumentException('No entry found with id ' . $entryId);
 		}
 
-		if (!$this->auth->UserCanEdit($entry->GetContext())) {
-			$this->response->setStatusCode(401, 'User cannot edit this entry');
-			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
-			return;
+		$entryContext = $entry->GetContext();
+
+		//Authorize using error reports, if any
+		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
+		if (count($errorReports) > 0) {
+			if (!$this->auth->UserCanEdit($errorReports[0]->user_id, $errorReports[0]->last_update, $errorReports[0]->tasks_id)) {
+				$this->response->setStatusCode(401, 'User cannot edit this entry');
+				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden, at det er fejlmeldt']);
+				return;
+			}
+		} else {
+			if (!$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['tasks_id'])) {
+				$this->response->setStatusCode(401, 'User cannot edit this entry');
+				$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
+				return;
+			}
 		}
 
 		$conEntry = new ConcreteEntries($this->getDI());
-		
 
-		if($entity->type == 'array')
-		{
+		if ($entity->type == 'array') {
 			$entryData = $conEntry->Load($entity, 'id', $concreteId)[0];
-		}
-		else{
+		} else {
 			$entryData = $conEntry->Load($entity, 'id', $concreteId);
 		}
 
@@ -322,7 +329,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			throw new RuntimeException('could not update entry wth id ' . $concreteId);
 		}
 
-		$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entry->GetContext());
+		$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entryContext);
 		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
 
 		$completeEntry = $conEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
@@ -332,9 +339,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		), $entryId);
 
 		//Remove any error reports for the field
-		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
-		foreach($errorReports as $error){
-			if($error->delete() === false){
+		foreach ($errorReports as $error) {
+			if ($error->delete() === false) {
 				echo 'Notice: Could not delete error: ' . $error->getMessages();
 			}
 		}
