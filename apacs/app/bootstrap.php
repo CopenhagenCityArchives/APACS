@@ -153,8 +153,8 @@ try {
 			$di->get('response')
 				->setHeader("Cache-Control", "max-age=6000");
 		} else {
-			//Set cache to zero as default
-			if (strlen($di->get('response')->getHeaders()->get('Cache-Control')) == 0) {
+			//Set cache to zero if it is not set
+			if (!$di->get('response')->getHeaders()->get('Cache-Control')) {
 				$di->get('response')
 					->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
 					->setHeader("Pragma", "no-cache")
