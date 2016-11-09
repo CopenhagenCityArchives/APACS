@@ -187,7 +187,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetPage($pageId) {
 		$page = Pages::findFirst($pageId);
 		$taskId = $this->request->getQuery('task_id', null, null);
-	
+
 		$taskPageConditions = 'pages_id = ' . $pageId;
 		if (!is_null($taskId)) {
 			$taskPageConditions .= ' AND tasks_id = ' . $taskId;
@@ -201,7 +201,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 		$post = new Posts();
 		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
-		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId]);//, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
+		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId]); //, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
 
 		$result['posts'] = [];
 
@@ -211,13 +211,12 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$postEntries = $curPos->getEntries();
 			$post = $curPos->toArray();
 
-			if(count($postEntries) > 0){
-				$post['user_can_edit'] = $auth->userCanEdit($postEntries[0]->getContext());
-			}
-			else{
+			if (count($postEntries) > 0) {
+				$post['user_can_edit'] = $auth->UserCanEdit($postEntries[0]->getContext());
+			} else {
 				$post['user_can_edit'] = false;
 			}
-			
+
 			$result['posts'][] = $post;
 		}
 
@@ -297,7 +296,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 		$post = Posts::findFirstById($id);
 
-		if(!$post){
+		if (!$post) {
 			$this->error('no post found');
 			return;
 		}
@@ -318,7 +317,8 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$metadata = $entries[0]->GetContext();
 
 		$auth = $this->getDI()->get('AccessController');
-		$metadata['user_can_edit'] = $auth->userCanEdit($entries[0]->getContext());
+
+		$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]->getContext());
 		unset($metadata['entry_id']);
 		$response['metadata'] = $metadata;
 		$response['data'] = $postData;
@@ -347,7 +347,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 		//User id and task id is set
 		if (!is_null($userId) && !is_null($taskId)) {
-			//Get all errors for the user (where user id matches and the age is under 1 week) 
+			//Get all errors for the user (where user id matches and the age is under 1 week)
 			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
 
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
@@ -363,7 +363,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 				//return;
 			}
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
-		}	
+		}
 	}
 
 	public function GetUser($userId) {

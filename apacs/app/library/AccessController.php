@@ -7,33 +7,34 @@ class AccessController implements IAccessController {
 
 	public function __construct($request) {
 		$this->request = $request;
+		$this->authResponse = null;
 	}
 
 	public function AuthenticateUser() {
 
-		$accessToken = $this->getAccessToken();
+		if (is_null($this->authResponse)) {
+			$accessToken = $this->getAccessToken();
 
-		if ($accessToken == false) {
-			$this->message = 'access denied: No token given';
-			return false;
-		}
+			if ($accessToken == false) {
+				$this->message = 'access denied: No token given';
+				return false;
+			}
 
-		$this->authResponse = null;
+			$url = 'http://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
 
-		$url = 'http://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
+			$response = $this->getWebPage($url);
 
-		$response = $this->getWebPage($url);
+			if ($response == false) {
+				$this->message = 'no response from server';
+				return false;
+			}
 
-		if ($response == false) {
-			$this->message = 'no response from server';
-			return false;
-		}
+			$this->authResponse = json_decode($response, true);
 
-		$this->authResponse = json_decode($response, true);
-
-		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->message = 'could not decode response from auth server';
-			return false;
+			if (json_last_error() !== JSON_ERROR_NONE) {
+				$this->message = 'could not decode response from auth server';
+				return false;
+			}
 		}
 
 		$this->SyncronizeUser();
@@ -101,12 +102,8 @@ class AccessController implements IAccessController {
 	}
 
 	public function GetUserId() {
-
-		if (is_null($this->authResponse)) {
-			if ($this->AuthenticateUser() == false);
-			{
-				return -1;
-			}
+		if (!$this->AuthenticateUser()) {
+			return -1;
 		}
 
 		return $this->authResponse['profile']['id'];
@@ -130,10 +127,10 @@ class AccessController implements IAccessController {
 			return true;
 		}
 
-		if($this->GetUserId()){
+		if ($this->GetUserId()) {
 			$isSuperUser = count(SuperUsers::find(['conditions' => 'users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $context['task_id']])) == 1;
-		
-			if( $isSuperUser ) { 
+
+			if ($isSuperUser) {
 				$time = strtotime($context['last_update']);
 				$one_week_ago = strtotime('-1 week');
 
