@@ -428,9 +428,10 @@ class ConcreteEntries {
 	public static function ProxySolrRequest() {
 		header("Access-Control-Allow-Origin: *");
 		header('Content-type: application/json; charset=UTF-8');
-		header("Cache-Control: no-cache, no-store, must-revalidate");
-		header("Pragma: no-cache");
-		header("Expires: 0");
+		header('Cache-Control: max-age=60');
+		//header("Cache-Control: no-cache, no-store, must-revalidate");
+		//header("Pragma: no-cache");
+		//header("Expires: 0");
 
 		$queryStr = $_SERVER['QUERY_STRING'];
 		//$queryStr = str_replace('_url=/search?', '', $queryStr);
