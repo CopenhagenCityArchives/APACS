@@ -60,7 +60,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		$reportingUserId = $this->auth->GetUserId();
-		$requiredFields = ['post_id', 'entity_name', 'field_name', 'concrete_entries_id', 'comment', 'value'];
+		$requiredFields = ['post_id', 'entity_name', 'field_name', 'concrete_entries_id', 'value'];
 
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
