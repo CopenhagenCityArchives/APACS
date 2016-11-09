@@ -294,7 +294,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		if (count($errorReports) > 0) {
 			if (!$this->auth->UserCanEdit($errorReports[0]->user_id, $errorReports[0]->last_update, $errorReports[0]->tasks_id)) {
 				$this->response->setStatusCode(401, 'User cannot edit this entry');
-				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden, at det er fejlmeldt']);
+				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden det er fejlmeldt']);
 				return;
 			}
 		} else {
