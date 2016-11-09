@@ -7,7 +7,7 @@ services:
     links:
       - db
     ports:
-      - "80:80"
+      - "8000:80"
     volumes:
       - ./apacs:/var/www/
     environment:
