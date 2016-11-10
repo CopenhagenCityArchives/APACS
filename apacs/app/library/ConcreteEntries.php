@@ -43,7 +43,7 @@ class ConcreteEntries {
 
 			if (isset($result[0])) {
 				foreach ($entity->fields as $field) {
-					if ($field->formFieldType == 'date') {
+					if ($field->formFieldType == 'date' && isset($result[0][$field->fieldName])) {
 						$result[0][$field->fieldName] = date('d-m-Y', strtotime($result[0][$field->fieldName]));
 					}
 				}
