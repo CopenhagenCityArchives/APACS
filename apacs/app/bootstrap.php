@@ -170,6 +170,6 @@ try {
 
 } catch (Exception $e) {
 	$di->get('response')->setStatusCode(500, "Server error");
-	$di->get('response')->setContent("Global exception: " . $e->getMessage());
+	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
 	$di->get('response')->send();
 }
