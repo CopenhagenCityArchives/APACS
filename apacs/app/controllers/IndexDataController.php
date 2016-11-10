@@ -269,7 +269,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->RequireAccessControl();
 
 		$jsonData = $this->GetAndValidateJsonPostData();
-
 		$concreteId = $jsonData['concrete_entries_id'];
 		$entityName = $jsonData['entity_name'];
 		$fieldName = $jsonData['field_name'];
@@ -298,7 +297,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				return;
 			}
 		} else {
-			if (!$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['tasks_id'])) {
+			if (!$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['task_id'])) {
 				$this->response->setStatusCode(401, 'User cannot edit this entry');
 				$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
 				return;

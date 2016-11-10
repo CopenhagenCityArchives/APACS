@@ -129,7 +129,8 @@ class AccessController implements IAccessController {
 		}
 
 		if ($this->GetUserId()) {
-			$isSuperUser = count(SuperUsers::find(['conditions' => 'users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $taskId])) == 1;
+			$isSuperUser = count(SuperUsers::find('users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $taskId)) == 1;
+
 			if ($isSuperUser > 0) {
 				//The user is a super user, no time limit given, so grant edit rights
 				if (is_null($timestamp)) {
