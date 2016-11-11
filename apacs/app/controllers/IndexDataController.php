@@ -338,8 +338,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$completeEntry = $conEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
 
 		$conEntry->SaveInSolr(array_merge(
-			$solrData, $conEntry->GetSolrData($entities, $completeEntry), ['user_id' => $this->auth->GetUserId(), 'user_name' => $this->auth->GetUserName()]
-		), $entryId);
+			$solrData, $conEntry->GetSolrData($entities, $completeEntry) /*, ['user_id' => $this->auth->GetUserId(), 'user_name' => $this->auth->GetUserName()]*/
+		), $concreteId);
 
 		//Remove any error reports for the field
 		foreach ($errorReports as $error) {

@@ -401,7 +401,7 @@ class ConcreteEntries {
 		$update = $client->createUpdate();
 
 		if (!is_null($id)) {
-			$update->addDeleteById(123);
+			$update->addDeleteById($id);
 			$update->addCommit();
 		}
 
