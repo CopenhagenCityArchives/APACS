@@ -58,6 +58,7 @@ class Posts extends \Phalcon\Mvc\Model {
 
 	//Returns the next possible post for a page, calculated from previous posts for the page
 	public function GetNextPossiblePostForPage($pageId, $columns, $rows) {
+		$resultSet = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'width', 'height', 'x', 'y']]);
 		$posts = $resultSet->toArray();
 
 		//No posts found. Return a post based on theoretical layout
