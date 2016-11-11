@@ -261,7 +261,9 @@ class ConcreteEntries {
 					$fieldsAndData[$field['fieldName']] = date('Y-m-d', strtotime($fieldsAndData[$field['fieldName']]));
 				}
 			} else {
-				$fieldsAndData[$field['fieldName']] = null;
+				if ($field['includeInForm'] == 1) {
+					$fieldsAndData[$field['fieldName']] = null;
+				}
 			}
 		}
 
