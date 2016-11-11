@@ -209,14 +209,15 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 		$post = new Posts();
 		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
-		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId]); //, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
+		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
 
 		$result['posts'] = [];
 
 		$auth = $this->getDI()->get('AccessController');
 
 		foreach ($posts as $curPos) {
-			$postEntries = $curPos->getEntries();
+			$postEntries = Entries::find('posts_id = ' . $curPos->id);
+			//$postEntries = $curPos->getEntries();
 			$post = $curPos->toArray();
 
 			if (count($postEntries) > 0) {
