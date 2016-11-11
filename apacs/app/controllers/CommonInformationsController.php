@@ -386,6 +386,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 		$user['super_user_tasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
 
+		$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($user, JSON_NUMERIC_CHECK);
 	}
 
