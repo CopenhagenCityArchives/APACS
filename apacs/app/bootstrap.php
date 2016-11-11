@@ -125,8 +125,10 @@ try {
 	$app->mount($indexing);
 
 	//Catch all for preflight checks (typically performed with an OPTIONS request)
-	$app->options('/{catch:(.*)}', function () use ($app) {
-		$app->response->setStatusCode(200, "OK")->send();
+	$app->options('/{catch:(.*)}', function () use ($app, $di) {
+		$di->get('response')->setHeader("Cache-Control", "max-age=6000");
+		$di->get('response')->setStatusCode(200, "OK");
+		return;
 	});
 
 	//Not found-handling
@@ -147,25 +149,24 @@ try {
 			->setHeader("Access-Control-Allow-Credentials", true)
 			->setHeader("Accept-Charset", "UTF-8")
 			->setContentType("application/json");
+		//	$di->get('response')->setHeader('Cache-Control', "max-age=5999");
 
-		//Cache flight checks
-		if ($di->get('request')->getMethod() == 'OPTIONS') {
-			$di->get('response')
-				->setHeader("Cache-Control", "max-age=6000");
-		} else {
-			//Set cache to zero if it is not set
-			if (!$di->get('response')->getHeaders()->get('Cache-Control')) {
-				$di->get('response')
-					->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
-					->setHeader("Pragma", "no-cache")
-					->setHeader("Expires", "0");
-			}
-		}
 	});
 
 	$app->handle();
-	//Send any responses collected in the controllers
+
+	//Always use utf-8!
 	$di->get('response')->setHeader('charset', 'utf-8');
+
+	//Set cache to zero if it is not set
+	if (!$di->get('response')->getHeaders()->get('Cache-Control')) {
+		$di->get('response')
+			->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+			->setHeader("Pragma", "no-cache")
+			->setHeader("Expires", "0");
+	}
+
+	//Send any responses collected in the controllers
 	$di->get('response')->send();
 
 } catch (Exception $e) {
