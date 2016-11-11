@@ -264,6 +264,13 @@ class ConcreteEntries {
 				$fieldsAndData[$field['fieldName']] = null;
 			}
 		}
+
+		//TODO: HARDCODED calculation!
+		if (isset($data['dateOfDeath']) && isset($data['ageYears'])) {
+
+			$fieldsAndData['yearOfBirth'] = date('Y', strtotime($data['dateOfDeath'])) - $data['ageYears'];
+		}
+
 		return $fieldsAndData;
 	}
 
