@@ -185,15 +185,15 @@ class Entities extends \Phalcon\Mvc\Model {
 		}
 	}
 
-	private function getFieldData($field, $data)
-	{
+	private function getFieldData($field, $data) {
 		if (isset($data[Fields::GetRealFieldNameFromField($field)])) {
-			if ($field->formFieldType == 'date') {
+			if ($field['formFieldType'] == 'date') {
 				return date('d-m-Y', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
 			}
-			else{
-				return $data[Fields::GetRealFieldNameFromField($field)];
+			if (trim($data[Fields::GetRealFieldNameFromField($field)]) == '') {
+				$fieldsAndData[$field['fieldName']] = null;
 			}
+			return $data[Fields::GetRealFieldNameFromField($field)];
 		}
 
 		return null;
