@@ -254,7 +254,12 @@ class ConcreteEntries {
 		$fieldsAndData = [];
 		foreach ($fields as $field) {
 			if (isset($data[$field['fieldName']])) {
-				$fieldsAndData[$field['fieldName']] = $data[$field['fieldName']];
+
+				if (trim($data[$field['fieldName']]) == '') {
+					$fieldsAndData[$field['fieldName']] = null;
+				} else {
+					$fieldsAndData[$field['fieldName']] = $data[$field['fieldName']];
+				}
 				//Converting danish date to english (for database)
 				//TODO: This should be implemented elsewhere...
 				if ($field['formFieldType'] == 'date') {
