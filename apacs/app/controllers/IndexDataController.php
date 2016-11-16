@@ -251,6 +251,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		} catch (Exception $e) {
 			$this->db->rollback();
 			$concreteEntry->rollbackTransaction();
+
+			//Logging any exceptions with raw body data
+			file_put_contents('/var/www/kbharkiv.dk/public_html/1508/stable/app/exceptions.log', $this->request->getRawBody(), FILE_APPEND);
+
 			$this->response->setStatusCode(401, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry', 'userMessage' => $e->getMessage()]);
 			return;
