@@ -178,6 +178,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		try {
 			$this->db->begin();
+
+			$concreteEntry = new ConcreteEntries($this->getDI());
+			$concreteEntry->startTransaction();
+
 			//Saving the post
 			$post = new Posts();
 			$jsonData['post']['complete'] = 1;
@@ -189,8 +193,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$post->SaveThumbImage();
 
 			//Saving the concrete entry
-			$concreteEntry = new ConcreteEntries($this->getDI());
-			$concreteEntry->startTransaction();
 			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
 
 			//Saving the meta entry, holding information about the concrete entry
