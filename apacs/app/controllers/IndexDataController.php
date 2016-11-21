@@ -6,7 +6,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 	private $request;
 	private $auth;
 
-	private $dbCon;
+	private $db;
 
 	public function onConstruct() {
 		$this->config = $this->getDI()->get('configuration');
@@ -175,6 +175,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$this->response->setStatusCode(401, 'Entry already exists');
 			$this->response->setJsonContent(['message' => 'An entry exists for post id ' . $jsonData['post_id'] . ' and task_id ' . $jsonData['task_id']]);
 		}*/
+
+		$this->db = $this->getDI()->get('db');
 
 		try {
 			$this->db->begin();
