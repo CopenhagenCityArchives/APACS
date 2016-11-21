@@ -7,7 +7,7 @@
   ],
   "Volumes": [
     {
-      "HostDirectory": "/var/app",
+      "HostDirectory": "/d/Udviklingsprojekter/KSA_backend/apacs",
       "ContainerDirectory": "/var/www/html"
     }
   ],
