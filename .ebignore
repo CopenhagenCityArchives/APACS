@@ -9,7 +9,6 @@
 apacs/tests/coverage
 xdebug.log
 node_modules*
-apacs/app/config/config.php
 mysql.log
 apacs/app/exceptions.log
 old_server_setups
