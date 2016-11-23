@@ -22,11 +22,24 @@ class Events extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetUserActivitiesForUnits($userId) {
-		$sql = 'SELECT username, Units.description, Pages.page_number, Pages.id as page_id, Events.tasks_id as task_id, Events.timestamp FROM apacs_events as Events
+		/*$sql = 'SELECT username, Units.description, Pages.page_number, Pages.id as page_id, Events.tasks_id as task_id, Events.timestamp FROM apacs_events as Events
 			LEFT JOIN apacs_users as Users on Events.users_id = Users.id
 			LEFT JOIN apacs_units as Units on Events.units_id = Units.id
 			LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
-			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') GROUP BY units_id order by Events.timestamp limit 10';
+			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') GROUP BY units_id order by Events.timestamp desc';*/
+		//Getting the last activity for the user in each unit
+		$sql = 'SELECT username, Units.description, Units.id, Pages.page_number, Pages.id as page_id, Events.tasks_id as task_id, timestamp  FROM apacs_events as Events
+			LEFT JOIN apacs_users as Users on Events.users_id = Users.id
+			LEFT JOIN apacs_units as Units on Events.units_id = Units.id
+			LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
+			INNER JOIN (select unit_id, max(timestamp) as time
+						FROM apacs_events as Events
+									LEFT JOIN apacs_users as Users on Events.users_id = Users.id
+									LEFT JOIN apacs_units as Units on Events.units_id = Units.id
+									LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
+									WHERE Events.users_id = 651 group by unit_id) SUBQ
+			ON SUBQ.unit_id = Units.id AND SUBQ.time = timestamp
+			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') order by Units.id';
 
 		// Base model
 		$events = new Events();
