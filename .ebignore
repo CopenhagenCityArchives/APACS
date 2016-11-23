@@ -1,0 +1,26 @@
+.AppleDouble
+.DS_Store
+._*
+.project
+.settings
+.vagrant*
+apacs/vendor*
+apacs/tests/coverage
+xdebug.log
+node_modules*
+apacs/lib/config/config.php
+apacs/app/config/config.php
+mysql.log
+apacs/app/exceptions.log
+old_server_setups
+
+
+# Elastic Beanstalk Files
+
+.elasticbeanstalk/*
+
+!.elasticbeanstalk/*.cfg.yml
+
+!.elasticbeanstalk/*.global.yml
+
+.elasticbeanstalk/config.yml
