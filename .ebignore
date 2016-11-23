@@ -8,7 +8,6 @@ apacs/vendor*
 apacs/tests/coverage
 xdebug.log
 node_modules*
-apacs/lib/config/config.php
 apacs/app/config/config.php
 mysql.log
 apacs/app/exceptions.log
