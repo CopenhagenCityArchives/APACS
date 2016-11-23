@@ -296,18 +296,27 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		$entryContext = $entry->GetContext();
 
-		//Authorize using error reports, if any
+		/**
+		 * Who can edit when:
+		 * 1) Users who created the post, at any time
+		 * 2) Super users if no error reports are present
+		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
+		 */
+
 		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
+
+		//No error reports found, check if user can edit without using a time of reference
+		if (count($errorReports) == 0 && !$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['task_id'])) {
+			$this->response->setStatusCode(401, 'User cannot edit this entry');
+			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
+			return;
+		}
+
+		//Error reports found, check if user can edit by using last_update as time of reference
 		if (count($errorReports) > 0) {
-			if (!$this->auth->UserCanEdit($errorReports[0]->user_id, $errorReports[0]->last_update, $errorReports[0]->tasks_id)) {
+			if (!$this->auth->UserCanEdit($entryContext['user_id'], $errorReports[0]->last_update, $entryContext['task_id'])) {
 				$this->response->setStatusCode(401, 'User cannot edit this entry');
 				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden det er fejlmeldt']);
-				return;
-			}
-		} else {
-			if (!$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['task_id'])) {
-				$this->response->setStatusCode(401, 'User cannot edit this entry');
-				$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
 				return;
 			}
 		}
