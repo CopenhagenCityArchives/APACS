@@ -1,13 +1,7 @@
 FROM artburkart/nginx-php-fpm-phalcon:latest
 
-#RUN apt-get update
-#RUN apt-get upgrade nginx -y
-
-COPY apacs/app /var/www/html/app
-COPY apacs/public /var/www/html/public
-COPY apacs/vendor /var/www/html/vendor
+COPY /apacs /var/www/html
+RUN cd /var/www/html && php composer.phar install
 COPY default.conf /etc/nginx/sites-enabled/default.conf
 
-#RUN service nginx restart
-
-#VOLUME apacs /mnt/tmp
+EXPOSE 80

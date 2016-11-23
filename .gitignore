@@ -13,9 +13,15 @@ apacs/lib/config/config.php
 apacs/app/config/config.php
 mysql.log
 apacs/app/exceptions.log
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
+old_server_setups
+
+
+# Elastic Beanstalk Files
+
+.elasticbeanstalk/*
+
+!.elasticbeanstalk/*.cfg.yml
+
+!.elasticbeanstalk/*.global.yml
+
 .elasticbeanstalk/config.yml
