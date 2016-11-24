@@ -37,7 +37,7 @@ class Events extends \Phalcon\Mvc\Model {
 									LEFT JOIN apacs_users as Users on Events.users_id = Users.id
 									LEFT JOIN apacs_units as Units on Events.units_id = Units.id
 									LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
-									WHERE Events.users_id = 651 group by unit_id) SUBQ
+									WHERE Events.users_id =  ' . $userId . ' group by unit_id) SUBQ
 			ON SUBQ.unit_id = Units.id AND SUBQ.time = timestamp
 			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') order by Units.id';
 
