@@ -3,6 +3,21 @@ Copenhagen City Archives' configurable backend system used to present and crowds
 
 The system runs on Ubuntu using PHP and MySQL.
 
+##Deploy to AWS EBS
+
+Run the following command using eb cli:
+
+```
+eb deploy
+```
+
+Setup cli:
+
+eb init
+
+If not provided, add IAM credentials. 
+
+
 ## Operating the server
 ### Docker compose
 
