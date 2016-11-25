@@ -424,10 +424,10 @@ class ConcreteEntries {
 		//	$post = new Posts();
 		//		$doc1->id = $solrData['id'];
 
-//		var_dump(($solrData));
+		//var_dump(($solrData));
 
 		foreach ($solrData as $key => $row) {
-			if (strlen($key) > 0 && strlen(trim($row)) > 0) {
+			if (is_array($row) || (strlen($key) > 0 && strlen(trim($row)) > 0)) {
 				$doc1->{$key} = $row;
 			}
 
