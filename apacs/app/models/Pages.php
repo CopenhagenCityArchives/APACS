@@ -23,6 +23,14 @@ class Pages extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetLocalPathToConcreteImage() {
+
+		//Get pageImageLocation to figure out where to get images from
+		$pathInfo = $this->getDI()->get('pageImageLocation');
+
+		if ($pathInfo['type'] == 'http') {
+			return $pathInfo['path'] . $this->former_id;
+		}
+
 		//Settings for ORM db access
 		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname']);
 		ORM::configure('username', $this->getDI()->get('config')['username']);
@@ -34,7 +42,10 @@ class Pages extends \Phalcon\Mvc\Model {
 		$crud = new CRUD\CRUD();
 
 		$joins = ORM::for_table($this->getUnits()->getCollections()->concreteImagesTableName);
-		return $_SERVER['DOCUMENT_ROOT'] . '/../collections/' . $joins->select('relative_filename_converted')->where('id', $this->former_id)->find_one()['relative_filename_converted'];
+
+		if ($pathInfo['type'] == 'file') {
+			return $pathInfo['path'] . $joins->select('relative_filename_converted')->where('id', $this->former_id)->find_one()['relative_filename_converted'];
+		}
 	}
 
 	private function getImportCreateSQL() {
