@@ -197,6 +197,17 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			} else {
 				$entry = Entries::findFirstById($entryId);
 				$post = Posts::findFirstById($entry->posts_id);
+
+				$errorReports = ErrorReports::find(['conditions' => 'concrete_entries_id = :concreteEntriesId: AND tasks_id = :taskId:', 'bind' => [
+					'concreteEntriesId' => $entry->concrete_entries_id,
+					'tasks_id' => $entry->tasks_id,
+				]]);
+
+				if (!$this->AuthorizeUser($entry->GetContext(), $errorReports)) {
+					return;
+				}
+
+				//Delete existing data for the entry
 				$concreteEntry->delete($entities, $jsonData);
 			}
 
@@ -273,6 +284,38 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 	}
 
 	/**
+	 * Method to authorize user changes in entries. Based on entry context, error reports and user privileges
+	 * @param Array $entryContext         The context of the entry
+	 * @param Array $errorReportsForEntry An array of error reports for the entry
+	 */
+	private function AuthorizeUser($entryContext, $errorReportsForEntry) {
+		/**
+		 * Who can edit when:
+		 * 1) Users who created the post, at any time
+		 * 2) Super users if no error reports are present
+		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
+		 */
+
+		//No error reports found, check if user can edit without using a time of reference
+		if (count($errorReportsForEntry) == 0 && !$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['task_id'])) {
+			$this->response->setStatusCode(401, 'User cannot edit this entry');
+			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
+			return false;
+		}
+
+		//Error reports found, check if user can edit by using last_update as time of reference
+		if (count($errorReportsForEntry) > 0) {
+			if (!$this->auth->UserCanEdit($entryContext['user_id'], $errorReportsForEntry[0]->last_update, $entryContext['task_id'])) {
+				$this->response->setStatusCode(401, 'User cannot edit this entry');
+				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden det er fejlmeldt']);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Updates part of an entry. Note that this method only supports updating one entry at a time
 	 *
 	 */
@@ -300,29 +343,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		$entryContext = $entry->GetContext();
 
-		/**
-		 * Who can edit when:
-		 * 1) Users who created the post, at any time
-		 * 2) Super users if no error reports are present
-		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
-		 */
-
 		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
 
-		//No error reports found, check if user can edit without using a time of reference
-		if (count($errorReports) == 0 && !$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['task_id'])) {
-			$this->response->setStatusCode(401, 'User cannot edit this entry');
-			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
+		if (!$this->AuthorizeUser($entryContext, $errorReports)) {
 			return;
-		}
-
-		//Error reports found, check if user can edit by using last_update as time of reference
-		if (count($errorReports) > 0) {
-			if (!$this->auth->UserCanEdit($entryContext['user_id'], $errorReports[0]->last_update, $entryContext['task_id'])) {
-				$this->response->setStatusCode(401, 'User cannot edit this entry');
-				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden det er fejlmeldt']);
-				return;
-			}
 		}
 
 		$conEntry = new ConcreteEntries($this->getDI());
