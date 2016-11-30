@@ -160,21 +160,27 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$userId = $this->auth->GetUserId();
 		$userName = $this->auth->GetUserName();
 
+		//Check if there are existing posts for the page that are placed in the same spot
+		$existingPosts = Posts::find(['columns' => 'id', 'conditions' => 'task_id = :taskId: AND pages_id = :pagesId: AND x = :x: AND y = :y:', 'bind' => [
+			'taskId' => $jsonData['task_id'],
+			'pagesId' => $jsonData['post']['pages_id'],
+			'y' => $jsonData['post']['y'],
+			'x' => $jsonData['post']['x'],
+		]]);
+
+		if (count($existingPosts) > 0) {
+			$this->response->setStatusCode(401, 'Entry already exists');
+			$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
+		}
+
 		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
+		//Check if the task has any entities (...?)
 		if (count($entities) == 0) {
 			$this->response->setStatusCode(401, 'Input error');
 			$this->response->setJsonContent(['No entities found for task ' . $jsonData['task_id']]);
 			return;
 		}
-
-		//Mission Impossible: We can't check for the post when we don't have an id
-		/*$existingPosts = Posts::find(['conditions' => 'task_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
-
-		if ($existingPosts) {
-			$this->response->setStatusCode(401, 'Entry already exists');
-			$this->response->setJsonContent(['message' => 'An entry exists for post id ' . $jsonData['post_id'] . ' and task_id ' . $jsonData['task_id']]);
-		}*/
 
 		$this->db = $this->getDI()->get('db');
 
