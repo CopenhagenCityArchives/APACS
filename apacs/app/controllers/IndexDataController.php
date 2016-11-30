@@ -181,7 +181,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 				//Check if there are existing posts for the page that are placed in the same spot
 				$existingPosts = Posts::find(['columns' => 'id', 'conditions' => 'pages_id = :pagesId: AND x = :x: AND y = :y:', 'bind' => [
-					'taskId' => $jsonData['task_id'],
 					'pagesId' => $jsonData['post']['pages_id'],
 					'y' => $jsonData['post']['y'],
 					'x' => $jsonData['post']['x'],
