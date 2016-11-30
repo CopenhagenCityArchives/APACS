@@ -246,8 +246,12 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$this->db->commit();
 
 		} catch (Exception $e) {
-			$this->db->rollback();
-			$concreteEntry->rollbackTransaction();
+			try {
+				$this->db->rollback();
+				$concreteEntry->rollbackTransaction();
+			} catch (Exception $ex) {
+				//Could not roll back
+			}
 
 			//Logging any exceptions with raw body data
 			file_put_contents('/var/www/kbharkiv.dk/public_html/1508/stable/app/exceptions.log', $this->request->getRawBody(), FILE_APPEND);
