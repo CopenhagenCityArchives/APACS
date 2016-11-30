@@ -126,8 +126,11 @@ try {
 
 	//Catch all for preflight checks (typically performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
-		$di->get('response')->setHeader("Cache-Control", "max-age=6000");
-		$di->get('response')->setStatusCode(200, "OK");
+		$di->get('response')->setHeader("Cache-Control", "max-age=1728000");
+		$di->get('response')->setHeader('Access-Control-Max-Age', '1728000');
+		$di->get('response')->setHeader('Content-Type', 'text/plain charset=UTF-8');
+		$di->get('response')->setHeader('Content-Length', 0);
+		$di->get('response')->setStatusCode(204, "No Content");
 		return;
 	});
 

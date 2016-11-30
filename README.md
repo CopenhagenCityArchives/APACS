@@ -41,6 +41,15 @@ Access bash in the webserver
 docker exec -i -t webserver /bin/bash
 ```
 
+Run local webserver
+```
+docker build -t apacs_dev .
+```
+
+```
+docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 --name apacs_test apacs_dev
+```
+
 ## Dependencies
 Install PHP dependencies by running:
 
