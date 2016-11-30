@@ -229,19 +229,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$entry->complete = 1;
 			$entry->save();
 
-			/*$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND units_id = ' . $entry->GetContext()['unit_id']]);
-
-				$maxPosts = $taskUnit->columns * $taskUnit->rows;
-
-				if (count(Posts::find(['conditions' => 'pages_id = ' . $jsonData['page_id']])) == $maxPosts) {
-					$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = ' . $jsonData['task_id'] . ' AND pages_id = ' . $jsonData['page_id']]);
-					$taskPage->is_done = 1;
-					$taskPage->save();
-
-					$taskUnit->pages_done = $taskUnit->pages_done + 1;
-					$taskUnit->save();
-			*/
-
 			$event = new Events();
 			$event->users_id = $this->auth->GetUserId();
 			$event->collections_id = $solrData['collection_id'];
