@@ -126,6 +126,7 @@ try {
 
 	//Catch all for preflight checks (typically performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
+		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET,PUT,PATCH,POST,OPTIONS');
 		$di->get('response')->setHeader("Cache-Control", "max-age=1728000");
 		$di->get('response')->setHeader('Access-Control-Max-Age', '1728000');
 		$di->get('response')->setHeader('Content-Type', 'text/plain charset=UTF-8');
