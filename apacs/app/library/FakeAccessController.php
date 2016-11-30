@@ -25,7 +25,29 @@ class FakeAccessController implements IAccessController {
 		return "FakeUserName";
 	}
 
+	//user_id, task_id, timestamp
 	public function UserCanEdit($userId, $timestamp, $taskId) {
-		return true;
+		//Is the user the same as the one asking for permission?
+		if ($this->GetUserId() == $userId) {
+			return true;
+		}
+
+		if ($this->GetUserId()) {
+			$isSuperUser = count(SuperUsers::find('users_id = ' . $this->GetUserId() . ' AND tasks_id = ' . $taskId)) == 1;
+
+			if ($isSuperUser > 0) {
+				//The user is a super user, no time limit given, so grant edit rights
+				if (is_null($timestamp)) {
+					return true;
+				}
+
+				$time = strtotime($timestamp);
+				$one_week_ago = strtotime('-1 week');
+
+				return $time < $one_week_ago;
+			}
+		}
+
+		return false;
 	}
 }
