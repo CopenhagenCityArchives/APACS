@@ -150,7 +150,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(['message' => 'error report updated']);
 	}
 
-	public function SaveEntry() {
+	public function SaveEntry($entryId = null) {
 
 		$this->RequireAccessControl();
 
@@ -159,19 +159,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		$userId = $this->auth->GetUserId();
 		$userName = $this->auth->GetUserName();
-
-		//Check if there are existing posts for the page that are placed in the same spot
-		$existingPosts = Posts::find(['columns' => 'id', 'conditions' => 'task_id = :taskId: AND pages_id = :pagesId: AND x = :x: AND y = :y:', 'bind' => [
-			'taskId' => $jsonData['task_id'],
-			'pagesId' => $jsonData['post']['pages_id'],
-			'y' => $jsonData['post']['y'],
-			'x' => $jsonData['post']['x'],
-		]]);
-
-		if (count($existingPosts) > 0) {
-			$this->response->setStatusCode(401, 'Entry already exists');
-			$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
-		}
 
 		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
@@ -190,22 +177,42 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$concreteEntry = new ConcreteEntries($this->getDI());
 			$concreteEntry->startTransaction();
 
+			if (is_null($entryId)) {
+
+				//Check if there are existing posts for the page that are placed in the same spot
+				$existingPosts = Posts::find(['columns' => 'id', 'conditions' => 'tasks_id = :taskId: AND pages_id = :pagesId: AND x = :x: AND y = :y:', 'bind' => [
+					'taskId' => $jsonData['task_id'],
+					'pagesId' => $jsonData['post']['pages_id'],
+					'y' => $jsonData['post']['y'],
+					'x' => $jsonData['post']['x'],
+				]]);
+
+				if (count($existingPosts) > 0) {
+					$this->response->setStatusCode(401, 'Entry already exists');
+					$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
+				}
+
+				$entry = new Entries();
+				$post = new Posts();
+			} else {
+				$entry = Entries::findFirstById($entryId);
+				$post = Posts::findFirstById($entry->posts_id);
+				$concreteEntry->delete($entities, $jsonData);
+			}
+
 			//Saving the post
-			$post = new Posts();
 			$jsonData['post']['complete'] = 1;
 			$jsonData['post']['pages_id'] = $jsonData['page_id'];
 			if (!$post->save($jsonData['post'])) {
 				throw new InvalidArgumentException('Could not save post.');
 			}
-			$post = Posts::findFirst($post->id);
+			$post = Posts::findFirstById($post->id);
 			$post->SaveThumbImage();
 
 			//Saving the concrete entry
 			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
 
 			//Saving the meta entry, holding information about the concrete entry
-			$entry = new Entries();
-
 			$entry->tasks_id = $jsonData['task_id'];
 			$entry->posts_id = $post->id;
 			$entry->concrete_entries_id = $concreteId;
