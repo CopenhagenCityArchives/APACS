@@ -32,6 +32,21 @@ class Entities extends \Phalcon\Mvc\Model {
 		return $isValid;
 	}
 
+	/**
+	 * Returns the position of the entity in the format primaryEntityName.secondaryEntityName
+	 * @param Array $entities The entities
+	 * @param Entity $entity   The entity for which the position is needed
+	 */
+	public function GetEntityPosition($entities, $entity) {
+		$primaryEntity = $this->GetPrimaryEntity($entities);
+
+		if ($entity == $primaryEntity) {
+			return $entity->name;
+		}
+
+		return $primaryEntity->name . '.' . $entity->name;
+	}
+
 	public function GetValidationStatus() {
 		return count($this->validationStatus) == 1 ? $this->validationStatus[0] : implode('. ', $this->validationStatus);
 	}
