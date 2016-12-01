@@ -184,6 +184,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$userId = $this->auth->GetUserId();
 		$userName = $this->auth->GetUserName();
 
+		if (!isset($jsonData['task_id']) || !isset($jsonData['page_id'])) {
+			throw new Exception('task_id and page_id are required');
+		}
+
 		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
 		//Check if the task has any entities (...?)
@@ -202,7 +206,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$concreteEntry->startTransaction();
 
 			if (is_null($entryId)) {
-
 				//Check if there are existing posts for the page that are placed in the same spot
 				$existingPosts = Posts::find(['columns' => 'id', 'conditions' => 'pages_id = :pagesId: AND x = :x: AND y = :y:', 'bind' => [
 					'pagesId' => $jsonData['post']['pages_id'],
@@ -220,15 +223,34 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			} else {
 				$entry = Entries::findFirstById($entryId);
 				$post = Posts::findFirstById($entry->posts_id);
+				$jsonData['post']['id'] = $post->id;
 
-				$errorReports = ErrorReports::find(['conditions' => 'concrete_entries_id = :concreteEntriesId: AND tasks_id = :taskId:', 'bind' => [
-					'concreteEntriesId' => $entry->concrete_entries_id,
-					'tasks_id' => $entry->tasks_id,
-				]]);
+				//if (!$this->AuthorizeUser($entry->GetContext(), $errorReports)) {
+				//					return;
+				//	}
 
-				if (!$this->AuthorizeUser($entry->GetContext(), $errorReports)) {
-//					return;
-				}
+				//	$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true)['persons'];
+
+				$oldData = $concreteEntry->convertDataFromHierarchy($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true));
+				$newData = $concreteEntry->convertDataFromHierarchy($entities, $jsonData);
+
+				//var_dump($oldData, $newData);
+				//var_dump('new data', $jsonData['persons']);
+				//var_dump($oldData, $newData);
+				//var_dump(ArrayComparer::getDifference($oldData['persons'], $newData['persons']));
+
+				/*	if (!$this->auth->UserCanEdit()) {
+					$this->response->setStatusCode(401, 'User cannot edit this entry');
+					$this->response->setJsonContent([$this->auth->GetMessage()]);
+					return;
+				}*/
+
+				//$oldEntriesData = $concreteEntry->convertDataFromHierarchy($entities, $jsonData);
+
+				/*	foreach ($oldEntriesData as $entityRow => $value) {
+						$errorReports[] = ErrorReports::find(['conditions' => []]);
+					}
+				*/
 
 				//Delete existing data for the entry
 				//		$concreteEntry->Delete($entities, $entry->concrete_entries_id);
