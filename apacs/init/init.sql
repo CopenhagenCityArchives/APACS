@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `apacs_errorreports` (
   `concrete_entries_id` int(11) NOT NULL,
   `original_value` char(250) COLLATE utf8_danish_ci NOT NULL,
   `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `toSuperUser` tinyint(1) DEFAULT '0',
-  `superUserTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `to_super_user` tinyint(1) DEFAULT '0',
+  `super_user_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `apacs_errorreportscol` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;

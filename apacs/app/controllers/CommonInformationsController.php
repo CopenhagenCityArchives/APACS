@@ -368,7 +368,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		//User id and task id is set
 		if (!is_null($userId) && !is_null($taskId)) {
 			//Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
+			$conditions = 'users_id = ' . $userId . ' AND to_super_user != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
 
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
@@ -376,7 +376,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 			//The user is a super user. Let's also get error reports older than 7 days
 			if ($superUsers !== false) {
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $taskId;
+				$conditions = '((to_super_user = 1) OR (apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $taskId;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
 				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
