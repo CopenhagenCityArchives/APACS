@@ -227,7 +227,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				]]);
 
 				if (!$this->AuthorizeUser($entry->GetContext(), $errorReports)) {
-					return;
+//					return;
 				}
 
 				//Delete existing data for the entry
