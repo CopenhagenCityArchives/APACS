@@ -231,7 +231,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				}
 
 				//Delete existing data for the entry
-				$concreteEntry->delete($entities, $jsonData);
+				//		$concreteEntry->Delete($entities, $entry->concrete_entries_id);
 			}
 
 			//Saving the post
@@ -277,7 +277,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$event->pages_id = $solrData['page_id'];
 			$event->posts_id = $post->id;
 			$event->tasks_id = $solrData['task_id'];
-			$event->event_type = Events::TypeCreate;
+			$event->event_type = is_null($entryId) ? Events::TypeCreate : Events::TypeEdit;
 
 			if (!$event->save()) {
 				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()));
