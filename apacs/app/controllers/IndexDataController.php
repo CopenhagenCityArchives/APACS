@@ -101,11 +101,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->posts_id = $jsonData['post_id'];
 		$errors->entity_name = $jsonData['entity_name'];
 		$errors->field_name = $jsonData['field_name'];
+		$errors->entity_position = $entity->GetEntityPosition(Entities::find(['condition' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $entity->task_id]]), $entity);
 		$errors->comment = $jsonData['comment'];
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
 		$errors->original_value = $jsonData['value'];
-		$errors->toSuperUser = 0;
+		$errors->to_super_user = 0;
 		$errors->entry_created_by = $colInfo['username'];
+		$errors->entries_id = $entry->id;
 		$errors->beforeSave();
 		if (!$errors->save($jsonData)) {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
@@ -123,31 +125,53 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(['message' => 'error report saved']);
 	}
 
-	public function UpdateErrorReport($errorReportId) {
+	public function UpdateErrorReports() {
+		$jsonData = $this->GetAndValidateJsonPostData();
+
+		$rows = isset($jsonData[0]) ? $jsonData : [$jsonData];
+
+		$messages = [];
+		foreach ($rows as $row) {
+			try {
+				$this->UpdateErrorReport($row['id'], $row);
+				$messages[] = 'Updated errorreport ' . $row['id'];
+			} catch (Exception $e) {
+				$messages[] = $e->getMessage();
+			}
+		}
+
+		$this->response->setJsonContent(['messages' => $messages]);
+	}
+
+	public function UpdateErrorReport($errorReportId, $row = null) {
 
 		$this->RequireAccessControl();
 
-		$jsonData = $this->GetAndValidateJsonPostData();
-
-		if (!isset($jsonData['to_super_user'])) {
-			throw new InvalidArgumentException('to_super_user is required');
+		if (is_null($row)) {
+			$row = $this->GetAndValidateJsonPostData();
 		}
 
-		$errorReport = ErrorReports::findFirstById($errorReportId);
+		if (!isset($errorReportId)) {
+			throw new InvalidArgumentException('error report id is required');
+		}
 
-		if ($errorReport == false) {
+		$er = ErrorReports::findFirstById($errorReportId);
+
+		if ($er == false) {
 			throw new InvalidArgumentException('No error report found for id ' . $errorReportId);
 		}
 
-		if ($this->auth->GetUserId() !== $errorReport->users_id) {
+		if ($this->auth->GetUserId() !== $er->users_id && count(SuperUsers::findFirstById($er->users_id)) == 0) {
 			throw new InvalidArgumentException('The user cannot change the error report with id ' . $errorReportId);
 		}
 
-		$errorReport->toSuperUser = $jsonData['to_super_user'];
+		$er->to_super_user = isset($row['to_super_user']) ? $row['to_super_user'] : $er->to_super_user;
+		$er->deleted = isset($row['deleted']) ? $row['deleted'] : $er->deleted;
+		$er->deleted_reason = isset($row['deleted_reason']) ? $row['deleted_reason'] : $er->deleted_reason;
 
-		$errorReport->save();
-
-		$this->response->setJsonContent(['message' => 'error report updated']);
+		if (!$er->save()) {
+			throw new Exception($er->getMessages());
+		}
 	}
 
 	public function SaveEntry($entryId = null) {

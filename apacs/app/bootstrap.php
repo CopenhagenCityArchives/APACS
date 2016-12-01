@@ -90,7 +90,7 @@ try {
 	$info->get('/collections2', 'GetCollections');
 	$info->get('/collections2/{collectionId:[0-9]+}', 'GetCollection');
 
-	$info->get('/entries/{entry_id:[0-9]+}', 'GetEntry');
+	$info->get('/entries/{entryId:[0-9]+}', 'GetEntry');
 	$info->get('/entries', 'GetEntries');
 
 	$info->get('/errorreports', 'GetErrorReports');
@@ -112,13 +112,15 @@ try {
 	$indexing->get('/search', 'SolrProxy');
 
 	$indexing->post('/entries', 'SaveEntry');
-	$indexing->patch('/entries/{entry_id:[0-9]+}', 'UpdateEntry');
+	$indexing->put('/entries/{entryId:[0-9]+}', 'SaveEntry');
+	//$indexing->patch('/entries/{entry_id:[0-9]+}', 'UpdateEntry');
 
 	$indexing->patch('/taskspages', 'UpdateTasksPages');
 
 	$indexing->post('/errorreports', 'ReportError');
 
 	$indexing->patch('/errorreports/{errorreportId:[0-9]+}', 'UpdateErrorReport');
+	$indexing->patch('/errorreports', 'UpdateErrorReports');
 
 	$indexing->get('/test', 'authCheck');
 
