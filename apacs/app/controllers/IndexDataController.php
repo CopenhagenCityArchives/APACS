@@ -27,13 +27,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$jsonData = json_decode($this->request->getRawBody(), true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setStatusCode(400, 'Input error');
 			$this->response->setJsonContent(['Invalid JSON format']);
 			return;
 		}
 
 		if (count($jsonData) == 0) {
-			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setStatusCode(400, 'Input error');
 			$this->response->setJsonContent(['No data given']);
 			return;
 		}
@@ -188,7 +188,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		//Check if the task has any entities (...?)
 		if (count($entities) == 0) {
-			$this->response->setStatusCode(401, 'Input error');
+			$this->response->setStatusCode(403, 'Input error');
 			$this->response->setJsonContent(['No entities found for task ' . $jsonData['task_id']]);
 			return;
 		}
@@ -211,7 +211,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				]]);
 
 				if (count($existingPosts) > 0) {
-					$this->response->setStatusCode(401, 'Entry already exists');
+					$this->response->setStatusCode(403, 'Entry already exists');
 					$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
 				}
 
@@ -297,7 +297,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			//Logging any exceptions with raw body data
 			file_put_contents('/var/www/kbharkiv.dk/public_html/1508/stable/app/exceptions.log', $this->request->getRawBody(), FILE_APPEND);
 
-			$this->response->setStatusCode(401, 'Save error');
+			$this->response->setStatusCode(403, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry', 'userMessage' => $e->getMessage()]);
 			return;
 		}
