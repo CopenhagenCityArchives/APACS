@@ -22,6 +22,7 @@ class ConcreteEntries {
 		ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
 		ORM::configure('username', $this->getDI()->get('config')['username']);
 		ORM::configure('password', $this->getDI()->get('config')['password']);
+		ORM::configure('id_column', 'id');
 		//This is necessary for PDO for PHP earlier than 5.3.some, as the charset=utf8 option above is ignored
 		ORM::get_db()->exec("set names utf8");
 		//ORM::configure('logging', true);
@@ -177,6 +178,32 @@ class ConcreteEntries {
 		}
 
 		return $results;
+	}
+
+	public function convertDataFromHierarchy($entities, $data) {
+		$results = [];
+
+		$primaryEntity = Entities::GetPrimaryEntity($entities);
+
+		$results[$primaryEntity->name] = $data[$primaryEntity->name];
+
+		foreach (Entities::GetSecondaryEntities($entities) as $entity) {
+			$results[$entity->name] = $data[$primaryEntity->name][$entity->name];
+			unset($results[$primaryEntity->name][$entity->name]);
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Deletes a concrete entry
+	 * Note that it is assumed that related tables are deleted using cascading constraints!
+	 * @param Array $entities The entities array
+	 * @param integer $id       the id of the concrete entry
+	 */
+	public function Delete($entities, $id) {
+		$primaryEntity = Entities::GetPrimaryEntity($entities);
+		$this->crud->delete($primaryEntity->primaryTableName, $id);
 	}
 
 	/**
