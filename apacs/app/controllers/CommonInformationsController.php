@@ -342,7 +342,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		unset($metadata['entry_id']);
 		$response['metadata'] = $metadata;
 		$response['data'] = $postData;
-		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id])->toArray();
+		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
 		$response['error_reports'] = $errorReports;
 
 		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);

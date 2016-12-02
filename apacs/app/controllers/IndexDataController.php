@@ -83,7 +83,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		//Check if the entity and field of the concrete id is already reported as an error
-		$existingReports = ErrorReports::find(['conditions' => 'entity_name = :entity: AND field_name = :field: AND concrete_entries_id = :concreteId:',
+		$existingReports = ErrorReports::find(['conditions' => 'entity_name = :entity: AND field_name = :field: AND concrete_entries_id = :concreteId: AND deleted = 0',
 			'bind' => ['entity' => $jsonData['entity_name'], 'field' => $jsonData['field_name'], 'concreteId' => $jsonData['concrete_entries_id']]]);
 
 		if (count($existingReports) > 0) {
