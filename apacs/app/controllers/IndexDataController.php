@@ -207,8 +207,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 			if (is_null($entryId)) {
 				//Check if there are existing posts for the page that are placed in the same spot
-				$existingPosts = Posts::find(['columns' => 'id', 'conditions' => 'pages_id = :pagesId: AND x = :x: AND y = :y:', 'bind' => [
-					'pagesId' => $jsonData['post']['pages_id'],
+				$existingPosts = Posts::find(['conditions' => 'pages_id = :pagesId: AND ROUND(x,5) = ROUND(:x:,5) AND ROUND(y,5) = ROUND(:y:,5)', 'bind' => [
+					'pagesId' => $jsonData['page_id'],
 					'y' => $jsonData['post']['y'],
 					'x' => $jsonData['post']['x'],
 				]]);
@@ -216,6 +216,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				if (count($existingPosts) > 0) {
 					$this->response->setStatusCode(403, 'Entry already exists');
 					$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
+					return;
 				}
 
 				$entry = new Entries();
