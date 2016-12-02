@@ -122,7 +122,7 @@ class AccessController implements IAccessController {
 	}
 
 	//user_id, task_id, timestamp
-	public function UserCanEdit($userId, $timestamp, $taskId) {
+	/*public function UserCanEdit($userId, $timestamp, $taskId) {
 		//Is the user the same as the one asking for permission?
 		if ($this->GetUserId() == $userId) {
 			return true;
@@ -144,6 +144,42 @@ class AccessController implements IAccessController {
 			}
 		}
 
+		return false;
+	}*/
+
+	public function UserCanEdit($entry) {
+		/**
+		 * Who can edit when:
+		 * 1) Users who created the post, at any time
+		 * 2) Super users if no error reports are present
+		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
+		 */
+
+		$attemptingUser = $this->GetUserId();
+
+		//Creating user can always edit
+		if ($entry->users_id == $attemptingUser) {
+			return true;
+		}
+
+		$errorReport = ErrorReports::findFirst(['conditions' => 'entries_id = :entriesId:', 'bind' => ['entriesId' => $entry->id], 'order' => 'last_update']);
+
+		$attemptingUserIsSuperUser = count(SuperUsers::findById($attemptingUser)) == 1;
+
+		//If no error reports are given and the user is super user
+		if ($attemptingUserIsSuperUser && !$errorReport) {
+			return true;
+		}
+
+		//If error reports are given and the error report are older than a week and the user is super user
+		if (!is_false($errorReport) &&
+			$attemptingUserIsSuperUser &&
+			strtotime($errorReport->created) > strtotime('-1 week')) {
+			$this->message = 'Du har ikke rettighed til at rette indtastningen, da det er under 7 dage siden, den er blevet fejlmeldt';
+			return false;
+		}
+
+		$this->message = 'Du har ikke rettighed til at ændre indtastningen';
 		return false;
 	}
 }

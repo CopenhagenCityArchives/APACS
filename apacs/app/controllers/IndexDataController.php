@@ -226,15 +226,24 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				$post = Posts::findFirstById($entry->posts_id);
 				$jsonData['post']['id'] = $post->id;
 
+				if (!$this->AuthorizeUser($entry)) {
+					return;
+				}
+
 				//if (!$this->AuthorizeUser($entry->GetContext(), $errorReports)) {
 				//					return;
 				//	}
 
 				//	$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true)['persons'];
 
-				$oldData = $concreteEntry->convertDataFromHierarchy($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true));
-				$newData = $concreteEntry->convertDataFromHierarchy($entities, $jsonData);
+				//	$oldData = $concreteEntry->convertDataFromHierarchy($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true));
+				//		$newData = $concreteEntry->convertDataFromHierarchy($entities, $jsonData);
 
+				$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
+				$newData = $jsonData;
+
+				//	var_dump(ArrayComparer::getDifference($oldData, $newData));
+				$concreteEntry->deleteConcreteEntries($entities, ArrayComparer::getDifference($oldData, $newData));
 				//var_dump($oldData, $newData);
 				//var_dump('new data', $jsonData['persons']);
 				//var_dump($oldData, $newData);
@@ -329,33 +338,11 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId]);
 	}
 
-	/**
-	 * Method to authorize user changes in entries. Based on entry context, error reports and user privileges
-	 * @param Array $entryContext         The context of the entry
-	 * @param Array $errorReportsForEntry An array of error reports for the entry
-	 */
 	private function AuthorizeUser($entryContext, $errorReportsForEntry) {
-		/**
-		 * Who can edit when:
-		 * 1) Users who created the post, at any time
-		 * 2) Super users if no error reports are present
-		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
-		 */
-
-		//No error reports found, check if user can edit without using a time of reference
-		if (count($errorReportsForEntry) == 0 && !$this->auth->UserCanEdit($entryContext['user_id'], null, $entryContext['task_id'])) {
+		if (!$this->auth->UserCanEdit($entry)) {
 			$this->response->setStatusCode(401, 'User cannot edit this entry');
-			$this->response->setJsonContent(['Du har ikke rettighed til at rette denne indtastning']);
+			$this->response->setJsonContent($this->auth->getMessage());
 			return false;
-		}
-
-		//Error reports found, check if user can edit by using last_update as time of reference
-		if (count($errorReportsForEntry) > 0) {
-			if (!$this->auth->UserCanEdit($entryContext['user_id'], $errorReportsForEntry[0]->last_update, $entryContext['task_id'])) {
-				$this->response->setStatusCode(401, 'User cannot edit this entry');
-				$this->response->setJsonContent(['Du har ikke rettighed til at rette feltet, da det er under 7 dage siden det er fejlmeldt']);
-				return false;
-			}
 		}
 
 		return true;
@@ -391,7 +378,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
 
-		if (!$this->AuthorizeUser($entryContext, $errorReports)) {
+		if (!$this->AuthorizeUser($entry)) {
 			return;
 		}
 
@@ -434,9 +421,9 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		//Remove any error reports for the field
 		foreach ($errorReports as $error) {
-			if ($error->delete() === false) {
+			/*if ($error->delete() === false) {
 				echo 'Notice: Could not delete error: ' . $error->getMessages();
-			}
+			}*/
 		}
 
 		$event = new Events();

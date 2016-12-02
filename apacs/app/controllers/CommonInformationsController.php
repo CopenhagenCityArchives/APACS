@@ -221,7 +221,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$post = $curPos->toArray();
 
 			if (count($postEntries) > 0) {
-				$post['user_can_edit'] = $auth->UserCanEdit($postEntries[0]->users_id, null, $postEntries[0]->tasks_id);
+				$post['user_can_edit'] = $auth->UserCanEdit($postEntries[0]);
 			} else {
 				$post['user_can_edit'] = false;
 			}
@@ -338,7 +338,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 		$auth = $this->getDI()->get('AccessController');
 
-		$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]->users_id, null, $entries[0]->tasks_id);
+		$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
 		unset($metadata['entry_id']);
 		$response['metadata'] = $metadata;
 		$response['data'] = $postData;
