@@ -105,7 +105,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->comment = $jsonData['comment'];
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
 		$errors->original_value = $jsonData['value'];
-		$errors->to_super_user = 0;
+		$errors->toSuperUser = 0;
 		$errors->entry_created_by = $colInfo['username'];
 		$errors->entries_id = $entry->id;
 		$errors->beforeSave();
@@ -165,7 +165,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			throw new InvalidArgumentException('The user cannot change the error report with id ' . $errorReportId);
 		}
 
-		$er->to_super_user = isset($row['to_super_user']) ? $row['to_super_user'] : $er->to_super_user;
+		$er->toSuperUser = isset($row['toSuperUser']) ? $row['toSuperUser'] : $er->to_super_user;
 		$er->deleted = isset($row['deleted']) ? $row['deleted'] : $er->deleted;
 		$er->deleted_reason = isset($row['deleted_reason']) ? $row['deleted_reason'] : $er->deleted_reason;
 
