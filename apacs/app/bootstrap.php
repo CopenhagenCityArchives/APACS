@@ -128,10 +128,11 @@ try {
 
 	//Catch all for preflight checks (typically performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
-		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET,PUT,PATCH,POST,OPTIONS');
-		$di->get('response')->setHeader("Cache-Control", "max-age=1728000");
+		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
+		$di->get('response')->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept');
+		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS');
 		$di->get('response')->setHeader('Access-Control-Max-Age', '1728000');
-		$di->get('response')->setHeader('Content-Type', 'text/plain charset=UTF-8');
+		$di->get('response')->setHeader('Connection', 'keep-alive');
 		$di->get('response')->setHeader('Content-Length', 0);
 		$di->get('response')->setStatusCode(204, "No Content");
 		return;
@@ -145,32 +146,40 @@ try {
 
 	//Access-Control-Allow-Origin header (note: this is not secure!)
 	$app->before(function () use ($app, $di) {
-		$origin = $app->request->getHeader("ORIGIN") ? $app->request->getHeader("ORIGIN") : '*';
 
-		$di->get('response')
-			->setHeader("Access-Control-Allow-Origin", $origin)
-			->setHeader("Access-Control-Allow-Methods", 'GET,PUT,PATCH,POST,OPTIONS')
-			->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
-			->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
-			->setHeader("Access-Control-Allow-Credentials", true)
-			->setHeader("Accept-Charset", "UTF-8")
-			->setContentType("application/json");
+		//Always set Access-Control-Allow-Origin
+		$origin = $app->request->getHeader("ORIGIN") ? $app->request->getHeader("ORIGIN") : '*';
+		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
+
+		//Data is always returned as utf-8
+		$di->get('response')->setHeader('Content-Type', 'application/json; charset=utf-8');
+
+		//OPTIONS preflights are handled elsewhere
+		if ($di->get('request')->isOptions()) {
+			return;
+		}
+
+		//Headers used for request types other than OPTIONS
+		//$di->get('response')
+		//->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS')
+		//->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
+		//->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
+		//->setHeader("Access-Control-Allow-Credentials", true)
+		//->setHeader("Accept-Charset", "UTF-8")
+		//		->setContentType("application/json");
 		//	$di->get('response')->setHeader('Cache-Control', "max-age=5999");
+
+		//Set cache to zero if it is not set
+		if (!$di->get('response')->getHeaders()->get('Cache-Control')) {
+			$di->get('response')
+				->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
+				->setHeader("Pragma", "no-cache")
+				->setHeader("Expires", "0");
+		}
 
 	});
 
 	$app->handle();
-
-	//Always use utf-8!
-	$di->get('response')->setHeader('charset', 'utf-8');
-
-	//Set cache to zero if it is not set
-	if (!$di->get('response')->getHeaders()->get('Cache-Control')) {
-		$di->get('response')
-			->setHeader("Cache-Control", "no-cache, no-store, must-revalidate")
-			->setHeader("Pragma", "no-cache")
-			->setHeader("Expires", "0");
-	}
 
 	//Send any responses collected in the controllers
 	$di->get('response')->send();
