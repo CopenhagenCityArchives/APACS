@@ -244,8 +244,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
 				$newData = $jsonData;
 
+				$concreteEntry->deleteConcreteEntries($oldData, $newData);
+
 				//	var_dump(ArrayComparer::getDifference($oldData, $newData));
-				$concreteEntry->deleteConcreteEntries($entities, ArrayComparer::getDifference($oldData, $newData));
+				//$concreteEntry->deleteConcreteEntries($entities, ArrayComparer::getDifference($oldData, $newData));
 				//var_dump($oldData, $newData);
 				//var_dump('new data', $jsonData['persons']);
 				//var_dump($oldData, $newData);

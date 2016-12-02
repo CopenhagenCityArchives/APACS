@@ -195,16 +195,47 @@ class ConcreteEntries {
 		return $results;
 	}
 
+	//TODO: Hardcoded!
+	public function deleteConcreteEntries($oldData, $newData) {
+		foreach ($oldData['persons']['deathcauses'] as $row) {
+			if (!in_array($row, $newData['persons']['deathcauses'])) {
+				$this->DeleteConcreteEntry('burial_persons_deathcauses', $row['id']);
+				//	echo 'deleted burial_deathcauses' . $row['id'];
+			}
+		}
+
+		foreach ($oldData['persons']['positions'] as $row) {
+			if (!in_array($row, $newData['persons']['positions'])) {
+				$this->DeleteConcreteEntry('burial_persons_positions', $row['id']);
+				//	echo 'deleted burial_positions' . $row['id'];
+			}
+		}
+
+		/*	$primaryEntity = Entities::GetPrimaryEntity($entities);
+			foreach (Entities::GetSecondaryEntities($entities) as $entity) {
+				//	var_dump($dataToDelete[$primaryEntity->name][$entity->name]);
+				if (isset($dataToDelete[$primaryEntity->name][$entity->name]['id'])) {
+					//		echo 'deleting: ';
+					//		var_dump($entity, $dataToDelete[$primaryEntity->name][$entity->name]);
+					//$this->DeleteConcreteEntry($entity, $dataToDelete[$primaryEntity][$entity]['id']);
+				}
+			}
+		*/}
+
+	public function DeleteConcreteEntry($tableName, $id) {
+		$this->crud->delete($tableName, $id);
+	}
+
 	/**
 	 * Deletes a concrete entry
 	 * Note that it is assumed that related tables are deleted using cascading constraints!
 	 * @param Array $entities The entities array
 	 * @param integer $id       the id of the concrete entry
 	 */
-	public function Delete($entities, $id) {
+	/*public function Delete($entities, $id) {
 		$primaryEntity = Entities::GetPrimaryEntity($entities);
 		$this->crud->delete($primaryEntity->primaryTableName, $id);
-	}
+	}*/
 
 	/**
 	 * Saves an entry based on an entity.
