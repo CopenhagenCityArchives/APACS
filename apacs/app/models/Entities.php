@@ -40,7 +40,7 @@ class Entities extends \Phalcon\Mvc\Model {
 	public function GetEntityPosition($entities, $entity) {
 		$primaryEntity = $this->GetPrimaryEntity($entities);
 
-		if ($entity == $primaryEntity) {
+		if ($entity->name == $primaryEntity->name) {
 			return $entity->name;
 		}
 

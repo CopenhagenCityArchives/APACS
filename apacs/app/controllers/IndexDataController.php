@@ -109,6 +109,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->toSuperUser = 0;
 		$errors->entry_created_by = $colInfo['username'];
 		$errors->entries_id = $entry->id;
+		$errors->deleted = 0;
 		$errors->beforeSave();
 		if (!$errors->save($jsonData)) {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
