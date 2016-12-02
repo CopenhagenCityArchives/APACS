@@ -172,7 +172,7 @@ class AccessController implements IAccessController {
 		}
 
 		//If error reports are given and the error report are older than a week and the user is super user
-		if (!is_false($errorReport) &&
+		if ($errorReport &&
 			$attemptingUserIsSuperUser &&
 			strtotime($errorReport->created) > strtotime('-1 week')) {
 			$this->message = 'Du har ikke rettighed til at rette indtastningen, da det er under 7 dage siden, den er blevet fejlmeldt';

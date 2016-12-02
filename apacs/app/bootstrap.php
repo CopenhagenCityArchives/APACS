@@ -126,7 +126,7 @@ try {
 
 	$app->mount($indexing);
 
-	//Catch all for preflight checks (typically performed with an OPTIONS request)
+	//Catch all for preflight checks (always performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
 		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
 		$di->get('response')->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept');
@@ -135,7 +135,6 @@ try {
 		$di->get('response')->setHeader('Connection', 'keep-alive');
 		$di->get('response')->setHeader('Content-Length', 0);
 		$di->get('response')->setStatusCode(204, "No Content");
-		return;
 	});
 
 	//Not found-handling
@@ -144,7 +143,6 @@ try {
 		$di->get('response')->setContent('<h1>Bad request!</h1>');
 	});
 
-	//Access-Control-Allow-Origin header (note: this is not secure!)
 	$app->before(function () use ($app, $di) {
 
 		//Always set Access-Control-Allow-Origin

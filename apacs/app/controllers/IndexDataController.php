@@ -101,6 +101,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$errors->posts_id = $jsonData['post_id'];
 		$errors->entity_name = $jsonData['entity_name'];
 		$errors->field_name = $jsonData['field_name'];
+		$errors->field_id = Fields::findFirst(['conditions' => 'fieldName = :fieldName: AND entities_id = :entities_id:', 'bind' => ['fieldName' => $jsonData['fieldName'], 'entities_id' => $entity->id]])->id;
 		$errors->entity_position = $entity->GetEntityPosition(Entities::find(['condition' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $entity->task_id]]), $entity);
 		$errors->comment = $jsonData['comment'];
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
@@ -338,7 +339,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId]);
 	}
 
-	private function AuthorizeUser($entryContext, $errorReportsForEntry) {
+	private function AuthorizeUser($entry) {
 		if (!$this->auth->UserCanEdit($entry)) {
 			$this->response->setStatusCode(401, 'User cannot edit this entry');
 			$this->response->setJsonContent($this->auth->getMessage());
