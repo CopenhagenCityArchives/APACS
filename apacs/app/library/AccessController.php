@@ -2,7 +2,7 @@
 
 class AccessController implements IAccessController {
 	private $authResponse;
-	private $message;
+	private $message = '';
 	private $request;
 
 	public function __construct($request) {
@@ -174,12 +174,16 @@ class AccessController implements IAccessController {
 		//If error reports are given and the error report are older than a week and the user is super user
 		if ($errorReport &&
 			$attemptingUserIsSuperUser &&
-			strtotime($errorReport->last_update) > strtotime('-1 week')) {
+			strtotime($errorReport->last_update) < strtotime('-1 week')) {
+			return true;
+		} else {
 			$this->message = 'Du har ikke rettighed til at rette indtastningen, da det er under 7 dage siden, den er blevet fejlmeldt';
-			return false;
 		}
 
-		//$this->message = 'Du har ikke rettighed til at ændre indtastningen';
-		return true;
+		if ($this->message == '') {
+			$this->message = 'Du har ikke rettighed til at tilføje eller rette';
+		}
+
+		return false;
 	}
 }
