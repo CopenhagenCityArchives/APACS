@@ -164,7 +164,7 @@ class AccessController implements IAccessController {
 
 		$errorReport = ErrorReports::findFirst(['conditions' => 'entries_id = :entriesId:', 'bind' => ['entriesId' => $entry->id], 'order' => 'last_update']);
 
-		$attemptingUserIsSuperUser = count(SuperUsers::findById($attemptingUser)) == 1;
+		$attemptingUserIsSuperUser = count(SuperUsers::findByUsersId($attemptingUser)) == 1;
 
 		//If no error reports are given and the user is super user
 		if ($attemptingUserIsSuperUser && !$errorReport) {
