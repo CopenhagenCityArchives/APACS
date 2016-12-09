@@ -232,42 +232,18 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 					return;
 				}
 
-				//if (!$this->AuthorizeUser($entry->GetContext(), $errorReports)) {
-				//					return;
-				//	}
-
-				//	$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true)['persons'];
-
-				//	$oldData = $concreteEntry->convertDataFromHierarchy($entities, $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true));
-				//		$newData = $concreteEntry->convertDataFromHierarchy($entities, $jsonData);
-
 				$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
 				$newData = $jsonData;
 
+				$concreteEntry->removeAdditionalDataFromNewData($oldData, $newData);
+
+				//
+
 				$concreteEntry->deleteConcreteEntries($oldData, $newData);
 
-				//	var_dump(ArrayComparer::getDifference($oldData, $newData));
-				//$concreteEntry->deleteConcreteEntries($entities, ArrayComparer::getDifference($oldData, $newData));
-				//var_dump($oldData, $newData);
-				//var_dump('new data', $jsonData['persons']);
-				//var_dump($oldData, $newData);
-				//var_dump(ArrayComparer::getDifference($oldData['persons'], $newData['persons']));
-
-				/*	if (!$this->auth->UserCanEdit()) {
-					$this->response->setStatusCode(401, 'User cannot edit this entry');
-					$this->response->setJsonContent([$this->auth->GetMessage()]);
-					return;
-				}*/
-
-				//$oldEntriesData = $concreteEntry->convertDataFromHierarchy($entities, $jsonData);
-
-				/*	foreach ($oldEntriesData as $entityRow => $value) {
-						$errorReports[] = ErrorReports::find(['conditions' => []]);
-					}
-				*/
-
-				//Delete existing data for the entry
-				//		$concreteEntry->Delete($entities, $entry->concrete_entries_id);
+				//TODO: Hardcoded!
+				$jsonData['persons'] = $newData['persons'];
+				//var_dump($jsonData);
 			}
 
 			//Saving the post

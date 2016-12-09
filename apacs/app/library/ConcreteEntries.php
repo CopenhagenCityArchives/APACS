@@ -210,17 +210,22 @@ class ConcreteEntries {
 				//	echo 'deleted burial_positions' . $row['id'];
 			}
 		}
+	}
 
-		/*	$primaryEntity = Entities::GetPrimaryEntity($entities);
-			foreach (Entities::GetSecondaryEntities($entities) as $entity) {
-				//	var_dump($dataToDelete[$primaryEntity->name][$entity->name]);
-				if (isset($dataToDelete[$primaryEntity->name][$entity->name]['id'])) {
-					//		echo 'deleting: ';
-					//		var_dump($entity, $dataToDelete[$primaryEntity->name][$entity->name]);
-					//$this->DeleteConcreteEntry($entity, $dataToDelete[$primaryEntity][$entity]['id']);
-				}
-			}
-		*/}
+	//TODO: Hardcoded!
+	public function removeAdditionalDataFromNewData(&$oldData, &$newData) {
+		array_walk($newData['persons']['deathcauses'], [$this, 'removeIds'], $oldData['persons']['deathcauses']);
+		array_walk($newData['persons']['positions'], [$this, 'removeIds'], $oldData['persons']['positions']);
+	}
+
+	private function removeIds(&$item, $key, $orgArray) {
+
+		//If item is not found in the original array, remove all ids
+		if (!in_array($item, $orgArray)) {
+			unset($item['persons_id']);
+			unset($item['id']);
+		}
+	}
 
 	public function DeleteConcreteEntry($tableName, $id) {
 		$this->crud->delete($tableName, $id);
