@@ -277,7 +277,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				['user_id' => $userId, 'user_name' => $userName]
 			);
 
-			$concreteEntry->SaveInSolr($solrDataToSave, $entry->id);
+			$concreteEntry->SaveInSolr($solrDataToSave, $entry->concrete_entries_id);
 
 			$entry->complete = 1;
 			$entry->save();
