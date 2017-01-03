@@ -175,30 +175,29 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		]);
 
 		if (count($resultSet) == 1) {
-			$this->GetPage($resultSet->toArray()[0]['id']);
+			$this->GetPage($resultSet->toArray()[0]['id'], $resultSet[0]);
 		} else {
 			$results = $resultSet->toArray();
 			$this->response->setJsonContent($results, JSON_NUMERIC_CHECK);
 		}
 	}
 
-	public function GetPage($pageId) {
-		$page = Pages::findFirstById($pageId);
-		$taskId = $this->request->getQuery('task_id', null, null);
-
-		$taskPageConditions = 'pages_id = ' . $pageId;
-		if (!is_null($taskId)) {
-			$taskPageConditions .= ' AND tasks_id = ' . $taskId;
+	public function GetPage($pageId, $page = null) {
+		if (is_null($page)) {
+			$page = Pages::findFirstById($pageId);
 		}
 
 		$result = $page->toArray();
-		$result['task_page'] = TasksPages::find(['conditions' => $taskPageConditions, 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
-		$taskUnit = TasksUnits::findFirst(['conditions' => ['tasks_id = ' . $taskId]]);
+		$result['task_page'] = TasksPages::find(['conditions' => 'pages_id = :pageId:', 'bind' => ['pageId' => $pageId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
+
+		$taskUnit = TasksUnits::find(['conditions' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $result['task_page'][0]['tasks_id']]]);
+
 		if ($taskUnit == false) {
 			throw new Exception('TaskUnit not found for page id ' . $pageId);
 		}
+
 		$post = new Posts();
-		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
+		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit[0]->columns, $taskUnit[0]->rows);
 		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
 
 		$result['posts'] = [];
