@@ -48,7 +48,7 @@ class Events extends \Phalcon\Mvc\Model {
 		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
 	}
 
-	public function GetActiveUsers($conditions = null) {
+	/*public function GetActiveUsers($conditions = null) {
 		$sql = 'SELECT distinct username, page_number FROM apacs_events as Events
 			LEFT JOIN apacs_users as Users ON Events.users_id = Users.id
 			LEFT JOIN apacs_pages as Pages ON Events.pages_id = Pages.id
@@ -62,5 +62,5 @@ class Events extends \Phalcon\Mvc\Model {
 
 		// Execute the query
 		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
-	}
+	}*/
 }

@@ -75,26 +75,16 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetTasksUnits() {
+		$taskId = $this->request->getQuery('task_id', 'int', null);
+		$unitId = $this->request->getQuery('unit_id', 'int', null);
 		$indexActive = $this->request->getQuery('index_active', null, null);
-		$taskId = $this->request->getQuery('task_id', null, null);
 
-		$conditions = [];
-
-		if (is_null($taskId) && is_null($indexActive)) {
-			throw new InvalidArgumentException('task_id or index_active is required');
+		if (is_null($taskId)) {
+			throw new InvalidArgumentException('task_id or task_id and unit_id are required');
 		}
 
-		if (!is_null($indexActive)) {
-			$conditions[] = 'index_active = ' . $indexActive;
-		}
-
-		if (!is_null($taskId)) {
-			$conditions[] = 'tasks_id = ' . $taskId;
-		}
-
-		$taskUnits = TasksUnits::FindUnitsAndTasks(implode(' AND ', $conditions));
-
-		$this->response->setJsonContent($taskUnits->toArray(), JSON_NUMERIC_CHECK);
+		$this->response->setJsonContent(TasksUnits::GetTasksUnitsAndActiveUsers($taskId, $unitId, $indexActive), JSON_NUMERIC_CHECK
+		);
 	}
 
 	public function GetUnits() {
