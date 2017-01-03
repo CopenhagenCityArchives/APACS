@@ -38,7 +38,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetTaskFieldsSchema() {
 		$request = $this->getDI()->get('request');
 
-		$taskId = $request->getQuery('task_id', null, null);
+		$taskId = $request->getQuery('task_id', 'int', null);
 
 		if (is_null($taskId)) {
 			$this->error('task_id is required');
@@ -53,7 +53,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 
 	public function GetSearchConfig() {
 		$request = $this->getDI()->get('request');
-		$collectionId = $request->getQuery('collection_id', null, null);
+		$collectionId = $request->getQuery('collection_id', 'int', null);
 
 		$conditions = '';
 		if (!is_null($collectionId)) {
@@ -77,7 +77,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetTasksUnits() {
 		$taskId = $this->request->getQuery('task_id', 'int', null);
 		$unitId = $this->request->getQuery('unit_id', 'int', null);
-		$indexActive = $this->request->getQuery('index_active', null, null);
+		$indexActive = $this->request->getQuery('index_active', 'int', null);
 
 		if (is_null($taskId)) {
 			throw new InvalidArgumentException('task_id or task_id and unit_id are required');
@@ -90,11 +90,11 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetUnits() {
 		$request = $this->getDI()->get('request');
 
-		$collectionId = $request->getQuery('collection_id', null, false);
-		$taskId = $request->getQuery('task_id', null, null);
-		$index_active = $request->getQuery('index_active', null, null);
+		$collectionId = $request->getQuery('collection_id', 'int', null);
+		$taskId = $request->getQuery('task_id', 'int', null);
+		$index_active = $request->getQuery('index_active', 'int', null);
 
-		if (!$collectionId) {
+		if (is_null($collectionId)) {
 			$this->error('collection_id is required');
 			return;
 		}
@@ -147,21 +147,21 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetPages() {
 		$request = $this->getDI()->get('request');
 
-		$unitId = $request->getQuery('unit_id', 'int', false);
-		$pageNumber = $request->getQuery('page_number', 'int', false);
-		$pageId = $request->getQuery('page_id', 'int', false);
+		$unitId = $request->getQuery('unit_id', 'int', null);
+		$pageNumber = $request->getQuery('page_number', 'int', null);
+		$pageId = $request->getQuery('page_id', 'int', null);
 
 		$conditions = [];
 
-		if ($unitId !== false) {
+		if (!is_null($unitId)) {
 			$conditions[] = 'unit_id = ' . $unitId;
 		}
 
-		if ($pageNumber !== false) {
+		if (!is_null($pageNumber)) {
 			$conditions[] = 'page_number = ' . $pageNumber;
 		}
 
-		if ($pageId !== false) {
+		if (!is_null($pageId)) {
 			$conditions[] = 'id = ' . $pageId;
 		}
 
@@ -239,9 +239,9 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	 * for which there haven't been activity the last 5 minutes, based on the current page number
 	 */
 	public function GetNextAvailablePage() {
-		$taskId = $this->request->getQuery('task_id', null, null);
-		$unitId = $this->request->getQuery('unit_id', null, null);
-		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
+		$taskId = $this->request->getQuery('task_id', 'int', null);
+		$unitId = $this->request->getQuery('unit_id', 'int', null);
+		$currentPageNumber = $this->request->getQuery('current_number', 'int', null);
 
 		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
 			$this->error('task_id, unit_id and current_number are required');
@@ -276,8 +276,8 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetEntries() {
-		$taskId = $this->request->getQuery('task_id', null, null);
-		$postId = $this->request->getQuery('post_id', null, null);
+		$taskId = $this->request->getQuery('task_id', 'int', null);
+		$postId = $this->request->getQuery('post_id', 'int', null);
 
 		if (is_null($taskId) || is_null($postId)) {
 			$this->error('task_id and post_id are required');
@@ -338,9 +338,9 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetErrorReports() {
-		$taskId = $this->request->getQuery('task_id', null, null);
-		$postId = $this->request->getQuery('post_id', null, null);
-		$userId = $this->request->getQuery('relevant_user_id', null, null);
+		$taskId = $this->request->getQuery('task_id', 'int', null);
+		$postId = $this->request->getQuery('post_id', 'int', null);
+		$userId = $this->request->getQuery('relevant_user_id', 'int', null);
 		$errors = [];
 
 		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
@@ -398,7 +398,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetUserActivities() {
-		$userId = $this->request->getQuery('user_id', null, null);
+		$userId = $this->request->getQuery('user_id', 'int', null);
 
 		if (is_null($userId)) {
 			$this->error('user_id is required');

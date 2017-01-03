@@ -422,8 +422,8 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		$this->RequireAccessControl();
 
-		$taskId = $this->request->getQuery('task_id', null, null);
-		$pageId = $this->request->getQuery('page_id', null, null);
+		$taskId = $this->request->getQuery('task_id', 'int', null);
+		$pageId = $this->request->getQuery('page_id', 'int', null);
 
 		$jsonData = $this->GetAndValidateJsonPostData();
 
