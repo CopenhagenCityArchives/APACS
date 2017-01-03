@@ -386,25 +386,16 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function GetActiveUsers() {
-		$taskId = $this->request->getQuery('task_id', null, null);
-		$unitId = $this->request->getQuery('unit_id', null, null);
+		$taskId = $this->request->getQuery('task_id', 'int', null);
+		$unitId = $this->request->getQuery('unit_id', 'int', null);
 
-		if (is_null($taskId) && is_null($unitId)) {
-			$this->error('task_id or unit_id are required');
+		if (is_null($taskId) || is_null($unitId)) {
+			$this->error('task_id and unit_id are required');
 			return;
 		}
 
-		$conditions = '';
-		if (!is_null($taskId)) {
-			$conditions = 'tasks_id = ' . $taskId;
-		}
-
-		if (!is_null($unitId)) {
-			$conditions = 'units_id = ' . $unitId;
-		}
-
-		$events = new Events();
-		$this->response->setJsonContent($events->GetActiveUsers($conditions)->toArray(), JSON_NUMERIC_CHECK);
+		$tasksUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitId:', 'bind' => ['taskId' => $taskId, 'unitId' => $unitId]]);
+		$this->response->setJsonContent($tasksUnit->GetActiveUsers()->toArray());
 	}
 
 	public function GetUserActivities() {
