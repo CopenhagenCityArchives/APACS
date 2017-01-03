@@ -69,6 +69,7 @@
   <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="hood" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="birthplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="institution" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields for burial records -->
   <field name="deathcauses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -91,6 +92,7 @@
   <copyField source="deathcauses" dest="freetext_store"/>
   <copyField source="addresses" dest="freetext_store"/>
   <copyField source="positions" dest="freetext_store"/>
+  <copyField source="institution" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="true" required="false" multiValued="true" />
