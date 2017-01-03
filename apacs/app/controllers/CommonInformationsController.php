@@ -241,7 +241,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetNextAvailablePage() {
 		$taskId = $this->request->getQuery('task_id', 'int', null);
 		$unitId = $this->request->getQuery('unit_id', 'int', null);
-		$currentPageNumber = $this->request->getQuery('current_number', 'int', null);
+		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
 
 		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
 			$this->error('task_id, unit_id and current_number are required');
