@@ -247,10 +247,11 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 			$this->error('task_id, unit_id and current_number are required');
 			return;
 		}
-		$result = TasksPages::GetNextAvailablePage($taskId, $unitId, $currentPageNumber);
+		$result = TasksPages::GetRandomAvailablePage($taskId, $unitId, $currentPageNumber);
 
 		if ($result !== false) {
-			$this->response->setJsonContent($result[0], JSON_NUMERIC_CHECK);
+			//$this->response->setJsonContent($result[0], JSON_NUMERIC_CHECK);
+			$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
 		} else {
 			$this->response->setJsonContent([]);
 		}

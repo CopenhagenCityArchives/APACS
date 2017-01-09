@@ -29,4 +29,19 @@ class TasksPages extends \Phalcon\Mvc\Model {
 
 		return $result;
 	}
+
+	public static function GetRandomAvailablePage($taskId, $unitId, $curPageNumber) {
+		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND is_done = 0 ORDER BY Pages.page_number';
+
+		$taskPage = new TasksPages();
+		$result = new Resultset(null, $taskPage,
+			$taskPage->getReadConnection()->query($query,
+				['unit_id' => $unitId, 'task_id' => $taskId]
+			)
+		);
+
+		$rand = rand(0, count($result));
+
+		return $result[$rand];
+	}
 }
