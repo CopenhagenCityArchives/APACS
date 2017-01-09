@@ -56,7 +56,7 @@
   <!-- Burial records -->
   <field name="birthname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="sex" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="placeOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="civilstatus" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
@@ -80,7 +80,7 @@
   <copyField source="firstnames" dest="freetext_store"/> 
   <copyField source="lastname" dest="freetext_store"/>
   <copyField source="sex" dest="freetext_store"/>
-  <copyField source="placeOutsideCph" dest="freetext_store"/>
+  <copyField source="adressOutsideCph" dest="freetext_store"/>
   <copyField source="civilstatus" dest="freetext_store"/>
   <copyField source="yearOfBirth" dest="freetext_store"/>
   <copyField source="record_number" dest="freetext_store"/>
