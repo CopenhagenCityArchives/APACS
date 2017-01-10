@@ -183,9 +183,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		//This is incomming data!
 		$jsonData = $this->GetAndValidateJsonPostData();
 
-		$userId = $this->auth->GetUserId();
-		$userName = $this->auth->GetUserName();
-
 		if (!isset($jsonData['task_id']) || !isset($jsonData['page_id'])) {
 			throw new Exception('task_id and page_id are required');
 		}
@@ -208,6 +205,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$concreteEntry->startTransaction();
 
 			if (is_null($entryId)) {
+				//New entry
+				$userId = $this->auth->GetUserId();
+				$userName = $this->auth->GetUserName();
+
 				//Check if there are existing posts for the page that are placed in the same spot
 				$existingPosts = Posts::find(['conditions' => 'pages_id = :pagesId: AND ROUND(x,5) = ROUND(:x:,5) AND ROUND(y,5) = ROUND(:y:,5)', 'bind' => [
 					'pagesId' => $jsonData['page_id'],
@@ -224,9 +225,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				$entry = new Entries();
 				$post = new Posts();
 			} else {
+				//Existing entry
 				$entry = Entries::findFirstById($entryId);
 				$post = Posts::findFirstById($entry->posts_id);
 				$jsonData['post']['id'] = $post->id;
+
+				$userId = $entry->users_id;
+				$userName = Users::findFirstById($entry->users_id)->username;
 
 				if (!$this->AuthorizeUser($entry)) {
 					return;
