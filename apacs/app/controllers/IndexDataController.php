@@ -450,11 +450,14 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 		//Updating stats for TasksUnits (pages done)
 		$page = Pages::findFirst(['conditions' => 'id = :pageId:', 'bind' => ['pageId' => $taskPage->pages_id]]);
+
+		$taskPagesCount = TasksPages::find(['conditions' => 'is_done = 1 AND units_id = :unitId:', 'bind' => ['unitId' => $taskPage->units_id]]);
+
 		$tasksUnits = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitsId:', 'bind' => ['taskId' => $taskPage->tasks_id, 'unitsId' => $page->unit_id]]);
-		$tasksUnits->pages_done = $tasksUnits->pages_done + 1;
+		$tasksUnits->pages_done = count($taskPagesCount);
 
 		if (!$tasksUnits->save()) {
-			throw new RuntimeException('could not udpate tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages()));
+			throw new RuntimeException('could not update tasksunits pages done: ' . implode(', ', $tasksUnits->getMessages()));
 		}
 
 		$this->response->setJsonContent($taskPage->toArray(), JSON_NUMERIC_CHECK);
