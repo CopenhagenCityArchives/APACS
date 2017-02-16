@@ -25,3 +25,5 @@ old_server_setups
 !.elasticbeanstalk/*.global.yml
 
 .elasticbeanstalk/config.yml
+apacs/public/api/incomming_create_or_update_units.log
+apacs/public/api/incomming_update_collection.log

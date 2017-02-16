@@ -48,14 +48,17 @@ class Pages extends \Phalcon\Mvc\Model {
 		}
 	}
 
+	//TODO: Delete when starbas API is implemented
 	private function getImportCreateSQL() {
 		return 'INSERT INTO ' . $this->getSource() . ' (concrete_page_id, collection_id, concrete_unit_id, tablename, image_url) SELECT :id, :collectionId, :unitId, ":table", :imageUrl FROM :table :conditions';
 	}
 
+	//TODO: Delete when starbas API is implemented
 	private function getImportUpdateSQL() {
 		return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_page_id = :table.:id SET tablename = ":table", image_url = :imageUrl :conditions';
 	}
 
+	//TODO: Delete when starbas API is implemented
 	public function Import($type, $collectionId, $idField, $unitIdField, $table, $image_url_field, $conditions = NULL) {
 		if ($type == self::OPERATION_TYPE_CREATE && $this->dataAlreadyImported('apacs_pages', $collectionId)) {
 			$this->status = ['error' => 'pages are already imported (collection and tablename already exists'];
@@ -74,6 +77,7 @@ class Pages extends \Phalcon\Mvc\Model {
 		return $this->runQueryGetStatus($sql);
 	}
 
+	//TODO: Delete when starbas API is implemented. Check for usage!
 	private function runQueryGetStatus($query) {
 		$connection = $this->getDI()->get('database');
 		$success = $connection->execute($query);
@@ -87,6 +91,7 @@ class Pages extends \Phalcon\Mvc\Model {
 		return $success;
 	}
 
+	//TODO: Delete when starbas API is implemented
 	private function dataAlreadyImported($type, $collectionId) {
 		$sql = 'SELECT * FROM ' . $type . ' WHERE collection_id = \'' . $collectionId . '\' LIMIT 1';
 		$resultSet = $this->getDI()->get('database')->query($sql);

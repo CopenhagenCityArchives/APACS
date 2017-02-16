@@ -1,6 +1,6 @@
 <?php
 
-class CommonInformationsController extends \Phalcon\Mvc\Controller {
+class CommonInformationsController extends MainController {
 	private $response;
 	private $request;
 
@@ -9,6 +9,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->request = $this->getDI()->get('request');
 	}
 
+	//TODO: Should be removed. Use returnError in MainController instead
 	private function error($error_message) {
 		$this->response->setStatusCode(400, 'Wrong parameters');
 		$this->response->setJsonContent(['message' => $error_message]);
@@ -22,6 +23,24 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 	public function GetCollection($collectionId) {
 		$confLoader = new DBConfigurationLoader();
 		$this->response->setJsonContent($confLoader->GetCollection($collectionId), JSON_NUMERIC_CHECK);
+	}
+
+	/*
+		Creates a new collection in database
+	*/
+	public function CreateCollection() {
+		$data = $this->GetAndValidateJsonPostData();
+		file_put_contents('incomming_create_collections.log', $this->request->getRawBody());
+		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
+	}
+
+	/*
+		Updates an existing collection
+	*/
+	public function UpdateCollection($id) {
+		$data = $this->GetAndValidateJsonPostData();
+		file_put_contents('incomming_update_collection.log', $this->request->getRawBody());
+		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}
 
 	public function GetTasks() {
@@ -142,6 +161,12 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$result['tasks'] = $unit->getTasksUnits()->toArray();
 
 		$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
+	}
+
+	public function CreateOrUpdateUnits() {
+		$data = $this->GetAndValidateJsonPostData();
+		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody());
+		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}
 
 	public function GetPages() {
@@ -410,6 +435,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray(), JSON_NUMERIC_CHECK);
 	}
 
+	//TODO: Delete when starbas API is implemented
 	public function ImportUnits() {
 		$request = $this->getDI()->get('request');
 
@@ -434,6 +460,7 @@ class CommonInformationsController extends \Phalcon\Mvc\Controller {
 		}
 	}
 
+	//TODO: Delete when starbas API is implemented
 	public function ImportPages() {
 		$request = $this->getDI()->get('request');
 

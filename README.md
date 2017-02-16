@@ -1,4 +1,4 @@
-## APACS (Archival Presentation And Crowsourcing System)
+## APACS (Archival Presentation And Crowdsourcing System)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
 The system runs on Ubuntu using PHP and MySQL.

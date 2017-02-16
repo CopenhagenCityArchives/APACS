@@ -101,6 +101,15 @@ try {
 
 	$info->get('/users/{id:[0-9]+}', 'GetUser');
 
+	//Add new collection
+	$info->post('/collections', 'CreateCollection');
+
+	//Change existing collection
+	$info->patch('/collection/{id:[0-9]+}', 'UpdateCollection');
+
+	//Add or change units
+	$info->post('/units', 'CreateOrUpdateUnits');
+
 	$app->mount($info);
 
 	//Index data routes
