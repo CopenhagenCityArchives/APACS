@@ -239,7 +239,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function CreateOrUpdatePost($id = null) {
-		//	$this->RequireAccessControl();
+		$this->RequireAccessControl();
 
 		$input = $this->GetAndValidateJsonPostData();
 

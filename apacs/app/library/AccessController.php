@@ -26,7 +26,7 @@ class AccessController implements IAccessController {
 			$response = $this->getWebPage($url);
 
 			if ($response == false) {
-				$this->message = 'no response from server';
+				$this->message = 'Could not get response from auth server';
 				return false;
 			}
 
