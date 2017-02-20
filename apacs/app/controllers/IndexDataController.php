@@ -183,20 +183,13 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		//This is incomming data!
 		$jsonData = $this->GetAndValidateJsonPostData();
 
-		if (!isset($jsonData['task_id']) || !isset($jsonData['page_id'])) {
-			throw new Exception('task_id and page_id are required');
-		}
-
-		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
-
-		//Check if the task has any entities (...?)
-		if (count($entities) == 0) {
-			$this->response->setStatusCode(403, 'Input error');
-			$this->response->setJsonContent(['No entities found for task ' . $jsonData['task_id']]);
-			return;
+		if (!isset($jsonData['task_id']) || !isset($jsonData['post_id'])) {
+			throw new Exception('task_id and post_id are required');
 		}
 
 		$this->db = $this->getDI()->get('db');
+
+		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
 		try {
 			$this->db->begin();
@@ -208,27 +201,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				//New entry
 				$userId = $this->auth->GetUserId();
 				$userName = $this->auth->GetUserName();
-
-				//Check if there are existing posts for the page that are placed in the same spot
-				$existingPosts = Posts::find(['conditions' => 'pages_id = :pagesId: AND ROUND(x,5) = ROUND(:x:,5) AND ROUND(y,5) = ROUND(:y:,5)', 'bind' => [
-					'pagesId' => $jsonData['page_id'],
-					'y' => $jsonData['post']['y'],
-					'x' => $jsonData['post']['x'],
-				]]);
-
-				if (count($existingPosts) > 0) {
-					$this->response->setStatusCode(403, 'Entry already exists');
-					$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
-					return;
-				}
-
 				$entry = new Entries();
-				$post = new Posts();
 			} else {
 				//Existing entry
 				$entry = Entries::findFirstById($entryId);
-				$post = Posts::findFirstById($entry->posts_id);
-				$jsonData['post']['id'] = $post->id;
 
 				$userId = $entry->users_id;
 				$userName = Users::findFirstById($entry->users_id)->username;
@@ -242,8 +218,6 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 
 				$concreteEntry->removeAdditionalDataFromNewData($oldData, $newData);
 
-				//
-
 				$concreteEntry->deleteConcreteEntries($oldData, $newData);
 
 				//TODO: Hardcoded!
@@ -251,21 +225,12 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 				//var_dump($jsonData);
 			}
 
-			//Saving the post
-			$jsonData['post']['complete'] = 1;
-			$jsonData['post']['pages_id'] = $jsonData['page_id'];
-			if (!$post->save($jsonData['post'])) {
-				throw new InvalidArgumentException('Could not save post.');
-			}
-			$post = Posts::findFirstById($post->id);
-			$post->SaveThumbImage();
-
 			//Saving the concrete entry
 			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
 
 			//Saving the meta entry, holding information about the concrete entry
 			$entry->tasks_id = $jsonData['task_id'];
-			$entry->posts_id = $post->id;
+			$entry->posts_id = $jsonData['post_id'];
 			$entry->concrete_entries_id = $concreteId;
 			$entry->users_id = $userId;
 			$entry->complete = 0;
@@ -292,12 +257,12 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 			$event->collections_id = $solrData['collection_id'];
 			$event->units_id = $solrData['unit_id'];
 			$event->pages_id = $solrData['page_id'];
-			$event->posts_id = $post->id;
+			$event->posts_id = $jsonData['post_id'];
 			$event->tasks_id = $solrData['task_id'];
 			$event->event_type = is_null($entryId) ? Events::TypeCreate : Events::TypeEdit;
 
 			if (!$event->save()) {
-				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()));
+				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()) . '. The entry is saved.');
 			}
 
 			$concreteEntry->commitTransaction();
@@ -320,7 +285,7 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 
 		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['post_id' => $post->id, 'concrete_entry_id' => $concreteId]);
+		$this->response->setJsonContent(['post_id' => $jsonData['post_id'], 'concrete_entry_id' => $concreteId]);
 	}
 
 	private function AuthorizeUser($entry) {
