@@ -22,8 +22,8 @@ class MainController extends \Phalcon\Mvc\Controller {
 	 */
 	public function RequireAccessControl($authenticationRequired = true) {
 		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
-			$this->response->setStatusCode(401, $this->auth->GetMessage());
-			$this->response->setJsonContent(['message' => 'Unauthorized access']);
+			$this->response->setStatusCode(401, 'Unauthorized access');
+			$this->response->setJsonContent(['message' => $this->auth->GetMessage()]);
 			$this->response->send();
 			die();
 		}
