@@ -176,6 +176,10 @@ class IndexDataController extends \Phalcon\Mvc\Controller {
 		}
 	}
 
+	/**
+	 * Saves a new Entry, or updates an old one
+	 * @param int $entryId The id of the entry to update. If not given, a new Entry is created
+	 */
 	public function SaveEntry($entryId = null) {
 
 		$this->RequireAccessControl();
