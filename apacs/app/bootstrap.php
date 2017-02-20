@@ -80,6 +80,12 @@ try {
 
 	$info->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
 
+	//Create post
+	$info->post('/posts', 'CreateOrUpdatePost');
+
+	//Update post
+	$info->patch('/posts/{id:[0-9]+}', 'CreateOrUpdatePost');
+
 	$info->get('/posts/{post:[0-9]+}/image', 'GetPostImage');
 
 	$info->get('/taskschema', 'GetTaskFieldsSchema');

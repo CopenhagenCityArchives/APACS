@@ -13,6 +13,24 @@ class Posts extends \Phalcon\Mvc\Model {
 	}
 
 	/**
+	 * Checks wheter an approximately post already exists on a page
+	 * @param int $page_id
+	 * @param decimal $x
+	 * @param decimal $y
+	 */
+	public function ApproximatePostExists() {
+		//Check if there are existing posts for the page that are placed in the same spot
+		$existingPosts = Posts::find(['conditions' => 'pages_id = :pagesId: AND ROUND(x,5) = ROUND(:x:,5) AND ROUND(y,5) = ROUND(:y:,5) AND id != :id:', 'bind' => [
+			'pagesId' => $this->pages_id,
+			'y' => $this->y,
+			'x' => $this->x,
+			'id' => $this->id,
+		]]);
+
+		return count($existingPosts) > 0;
+	}
+
+	/**
 	 * Save a snippet of the image to which the post relates.
 	 */
 	public function SaveThumbImage() {

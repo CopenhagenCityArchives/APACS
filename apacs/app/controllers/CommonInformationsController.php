@@ -246,6 +246,43 @@ class CommonInformationsController extends MainController {
 		$this->response->setContent(json_encode($result, JSON_NUMERIC_CHECK));
 	}
 
+	public function CreateOrUpdatePost($id = null) {
+		$this->error('task_id, unit_id and current_number are required');
+		$input = $this->GetAndValidateJsonPostData();
+
+		$requiredFields = ['x', 'y', 'height', 'width', 'page_id'];
+
+		array_map($requiredFields, function ($field) {
+			if (!isset($input[$field]) || is_null($input[$field])) {
+				$this->error($input[$field] . ' is required');
+				return;
+			}
+		});
+
+		$post = new Posts();
+		$post->id = $id;
+		$post->pages_id = $input['page_id'];
+		$post->x = $input['x'];
+		$post->y = $input['y'];
+		$post->height = $input['height'];
+		$post->width = $input['width'];
+		$post->complete = 0;
+
+		if ($post->ApproximatePostExists()) {
+			$this->response->setStatusCode(403, 'Entry already exists');
+			$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
+			return;
+		}
+
+		//Saving the post
+		if (!$post->save()) {
+			throw new InvalidArgumentException('Could not save post.');
+		}
+
+		//Saving the thumb
+		$post->SaveThumbImage();
+	}
+
 	public function GetPostImage($postId) {
 		$post = Posts::findFirstById($postId);
 
