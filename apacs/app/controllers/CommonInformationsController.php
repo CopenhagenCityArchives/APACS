@@ -277,6 +277,9 @@ class CommonInformationsController extends MainController {
 
 		//Saving the thumb
 		$post->SaveThumbImage();
+
+		$this->response->setStatusCode(200, 'Post created');
+		$this->response->setJsonContent(['post_id' => $post->id]);
 	}
 
 	public function GetPostImage($postId) {
@@ -367,7 +370,7 @@ class CommonInformationsController extends MainController {
 		$entries = Entries::find('posts_id = ' . $id);
 
 		if (count($entries) == 0) {
-			$this->error('no post found');
+			$this->error('no entries found for post ' . $id);
 			return;
 		}
 
