@@ -3,22 +3,44 @@
 use Phalcon\Mvc\Controller;
 
 class MainController extends \Phalcon\Mvc\Controller {
+	protected $config;
+	protected $response;
+	protected $request;
+	protected $auth;
+
+	public function onConstruct() {
+		$this->config = $this->getDI()->get('configuration');
+		$this->response = $this->getDI()->get('response');
+		$this->request = $this->getDI()->get('request');
+		$this->auth = $this->getDI()->get('AccessController');
+	}
+
 	/**
-	 * Set the Response object with a return code and a message
-	 * @param int responseCode The response code. Defaults to 200 (OK)
-	 * @param string responseMessage The response message
-	 * @param string or array responseData Additional data returned as JSON
-
+	 * Checks if the user is logged in.
+	 * Dies if authentication is required when the user is not logged in
+	 * @param boolean $authenticationRequired Is authentication required?
 	 */
-	public function SetResponse($responseCode = 200, $responseMessage = null, $responseData = null) {
-		if ($responseMessage == null) {
-			$this->getDI()->get('response')->setStatusCode($responseCode, null);
-		} else {
-			$this->getDI()->get('response')->setStatusCode($responseCode, $responseMessage);
+	public function RequireAccessControl($authenticationRequired = true) {
+		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
+			$this->response->setStatusCode(401, $this->auth->GetMessage());
+			$this->response->setJsonContent(['message' => 'Unauthorized access']);
+			$this->response->send();
+			die();
 		}
+	}
 
-		if ($responseData != null) {
-			$this->getDI()->get('response')->setJsonContent($responseData);
+	public function CheckFields($input, $requiredFields) {
+		$error = false;
+		array_map(function ($field) use ($input, &$error) {
+			if (!isset($input[$field]) || is_null($input[$field])) {
+				$error = true;
+			}
+		}, $requiredFields);
+
+		if ($error) {
+			$this->returnError(400, 'Necessary fields not set', 'the fields ' . implode($requiredFields, ', ') . ' are required');
+			$this->response->send();
+			die();
 		}
 	}
 
@@ -36,13 +58,30 @@ class MainController extends \Phalcon\Mvc\Controller {
 			return false;
 		}
 
-		if (count($jsonData) == 0) {
+		if (is_null($jsonData) || count($jsonData) == 0) {
 			$this->SetResponse(401, 'Input error', ['No data given']);
-			$this->response->setStatusCode(401, 'Input error');
 			return false;
 		}
 
 		return $jsonData;
+	}
+	/**
+	 * Set the Response object with a return code and a message
+	 * @param int responseCode The response code. Defaults to 200 (OK)
+	 * @param string responseMessage The response message
+	 * @param string or array responseData Additional data returned as JSON
+
+	 */
+	public function SetResponse($responseCode = 200, $responseMessage = null, $responseData = null) {
+		if ($responseMessage == null) {
+			$this->response->setStatusCode($responseCode, null);
+		} else {
+			$this->response->setStatusCode($responseCode, $responseMessage);
+		}
+
+		if ($responseData != null) {
+			$this->response->setJsonContent($responseData);
+		}
 	}
 
 	/**
@@ -52,14 +91,12 @@ class MainController extends \Phalcon\Mvc\Controller {
 	 * @param string Error message. Defaults to blank
 	 */
 	public function returnError($errorCode = 404, $errorCodeMessage = '', $errorMessage = '') {
-		//Getting a response instance
-		$response = $this->getDI()->get('response');
 
 		//Set status code
-		$response->setStatusCode($errorCode, $errorCodeMessage);
+		$this->response->setStatusCode($errorCode, $errorCodeMessage);
 
 		//Set the content of the response
-		$response->setContent($errorMessage);
+		$this->response->setContent($errorMessage);
 	}
 
 	/**
@@ -67,9 +104,6 @@ class MainController extends \Phalcon\Mvc\Controller {
 	 * @param  Array $data The array to return as JSON
 	 */
 	public function returnJson($data) {
-		//Create a response instance
-		$response = $this->getDI()->get('response');
-
 		$request = new Phalcon\Http\Request();
 		$callback = $request->get('callback');
 
@@ -80,9 +114,9 @@ class MainController extends \Phalcon\Mvc\Controller {
 		try {
 			//Set the content of the response
 			if ($callback) {
-				$response->setContent($callback . '(' . json_encode($data) . ')');
+				$this->response->setContent($callback . '(' . json_encode($data) . ')');
 			} else {
-				$response->setContent(json_encode($data));
+				$this->response->setContent(json_encode($data));
 			}
 		} catch (Exception $e) {
 			$this->returnError(500, 'Could not load data: ' . $e);

@@ -172,16 +172,6 @@ try {
 			return;
 		}
 
-		//Headers used for request types other than OPTIONS
-		//$di->get('response')
-		//->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS')
-		//->setHeader("Access-Control-Request-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
-		//->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept')
-		//->setHeader("Access-Control-Allow-Credentials", true)
-		//->setHeader("Accept-Charset", "UTF-8")
-		//		->setContentType("application/json");
-		//	$di->get('response')->setHeader('Cache-Control', "max-age=5999");
-
 		//Set cache to zero if it is not set
 		if (!$di->get('response')->getHeaders()->get('Cache-Control')) {
 			$di->get('response')

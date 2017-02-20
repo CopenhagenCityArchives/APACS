@@ -1,13 +1,6 @@
 <?php
 
 class CommonInformationsController extends MainController {
-	private $response;
-	private $request;
-
-	public function onConstruct() {
-		$this->response = $this->getDI()->get('response');
-		$this->request = $this->getDI()->get('request');
-	}
 
 	//TODO: Should be removed. Use returnError in MainController instead
 	private function error($error_message) {
@@ -55,7 +48,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetTaskFieldsSchema() {
-		$request = $this->getDI()->get('request');
+		$request = $this->request;
 
 		$taskId = $request->getQuery('task_id', 'int', null);
 
@@ -71,7 +64,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetSearchConfig() {
-		$request = $this->getDI()->get('request');
+		$request = $this->request;
 		$collectionId = $request->getQuery('collection_id', 'int', null);
 
 		$conditions = '';
@@ -107,7 +100,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetUnits() {
-		$request = $this->getDI()->get('request');
+		$request = $this->request;
 
 		$collectionId = $request->getQuery('collection_id', 'int', null);
 		$taskId = $request->getQuery('task_id', 'int', null);
@@ -170,8 +163,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetPages() {
-		$request = $this->getDI()->get('request');
-
+		$request = $this->request;
 		$unitId = $request->getQuery('unit_id', 'int', null);
 		$pageNumber = $request->getQuery('page_number', 'int', null);
 		$pageId = $request->getQuery('page_id', 'int', null);
@@ -247,17 +239,21 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function CreateOrUpdatePost($id = null) {
-		$this->error('task_id, unit_id and current_number are required');
+		//	$this->RequireAccessControl();
+
 		$input = $this->GetAndValidateJsonPostData();
 
-		$requiredFields = ['x', 'y', 'height', 'width', 'page_id'];
+		if (!$input) {
+			return;
+		}
 
-		array_map($requiredFields, function ($field) {
-			if (!isset($input[$field]) || is_null($input[$field])) {
-				$this->error($input[$field] . ' is required');
-				return;
-			}
-		});
+		//Check if all required fields are set
+		$this->CheckFields($input, ['x', 'y', 'height', 'width', 'page_id']);
+
+		if (!is_null($id) && Posts::findFirstById($id) == false) {
+			$this->returnError(400, 'Unknown post', 'The post with id ' . $id . ' does not exist');
+			return;
+		}
 
 		$post = new Posts();
 		$post->id = $id;
@@ -269,8 +265,8 @@ class CommonInformationsController extends MainController {
 		$post->complete = 0;
 
 		if ($post->ApproximatePostExists()) {
-			$this->response->setStatusCode(403, 'Entry already exists');
-			$this->response->setJsonContent(['message' => 'Posten eksisterer allerede.']);
+			$this->response->setStatusCode(403, 'Approximate post already exists');
+			$this->response->setJsonContent(['message' => 'Der findes allerede en post på denne placering.']);
 			return;
 		}
 
@@ -474,7 +470,7 @@ class CommonInformationsController extends MainController {
 
 	//TODO: Delete when starbas API is implemented
 	public function ImportUnits() {
-		$request = $this->getDI()->get('request');
+		$request = $this->request;
 
 		$collectionId = $request->getPost('collection_id', null, false);
 
@@ -499,7 +495,7 @@ class CommonInformationsController extends MainController {
 
 	//TODO: Delete when starbas API is implemented
 	public function ImportPages() {
-		$request = $this->getDI()->get('request');
+		$request = $this->request;
 
 		$collectionId = $request->getPost('collection_id', null, false);
 

@@ -8,6 +8,7 @@ class AccessController implements IAccessController {
 	public function __construct($request) {
 		$this->request = $request;
 		$this->authResponse = null;
+		$this->message = 'No access error message given';
 	}
 
 	public function AuthenticateUser() {

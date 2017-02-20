@@ -1,45 +1,7 @@
 <?php
 
-class IndexDataController extends \Phalcon\Mvc\Controller {
-	private $config;
-	private $response;
-	private $request;
-	private $auth;
-
+class IndexDataController extends MainController {
 	private $db;
-
-	public function onConstruct() {
-		$this->config = $this->getDI()->get('configuration');
-		$this->response = $this->getDI()->get('response');
-		$this->request = $this->getDI()->get('request');
-	}
-
-	private function RequireAccessControl($authenticationRequired = true) {
-		$this->auth = $this->getDI()->get('AccessController');
-		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
-			$this->response->setStatusCode(401, $this->auth->GetMessage());
-			$this->response->send();
-			die();
-		}
-	}
-
-	private function GetAndValidateJsonPostData() {
-		$jsonData = json_decode($this->request->getRawBody(), true);
-
-		if (json_last_error() !== JSON_ERROR_NONE) {
-			$this->response->setStatusCode(400, 'Input error');
-			$this->response->setJsonContent(['Invalid JSON format']);
-			return;
-		}
-
-		if (count($jsonData) == 0) {
-			$this->response->setStatusCode(400, 'Input error');
-			$this->response->setJsonContent(['No data given']);
-			return;
-		}
-
-		return $jsonData;
-	}
 
 	public function GetDataFromDatasouce($dataSourceId) {
 		$query = $this->request->getQuery('q', null, null);
