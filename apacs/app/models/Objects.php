@@ -2,7 +2,7 @@
 /**
  * Handles loading of metadata from tables as configured
  */
-class Objects extends \Phalcon\Mvc\Model
+class ObjectsModel extends \Phalcon\Mvc\Model
 {       
     /**
      * Loads and returns the results from the database based on the sql
@@ -18,8 +18,7 @@ class Objects extends \Phalcon\Mvc\Model
             return $result->fetchAll();
         }
         catch(Exception $e){
-            echo $e;
-            die('Could not execute query: ' . $sql);
+            die('Could not execute query: ' . $e);
         }
     }
     
@@ -77,14 +76,14 @@ class Objects extends \Phalcon\Mvc\Model
     public function createObjectQuery($sql, $levels){
         $searchString = '';
         foreach($levels as $level){
-           /* if(isset($level['sql_condition']) && $level['sql_condition']){
+            if(isset($level['sql_condition']) && $level['sql_condition']){
                // $searchString = $searchString . vsprintf($level['sql_condition'],$level['value']);
                 $searchString = $searchString . str_replace('%d', $level['value'], $level['sql_condition']) . ' AND ';
                // $searchString = $searchString . str_replace('%s', $level['value'], $level['sql_condition']);
             }
-            else{*/
-            $searchString = $searchString . $level['name'] . ' = \'' . $level['value'] . '\' AND ';
-            //}
+            else{
+                $searchString = $searchString . $level['name'] . ' = \'' . $level['value'] . '\' AND ';
+            }
         }
         
         $searchString = substr($searchString, 0, strlen($searchString)-5);
