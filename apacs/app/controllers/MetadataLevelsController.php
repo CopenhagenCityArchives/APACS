@@ -177,8 +177,5 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 
 		//Set the content of the response
 		$response->setContent($errorMessage);
-
-		//Send response to the client
-		$response->send();
 	}
 }
