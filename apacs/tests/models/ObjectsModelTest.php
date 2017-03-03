@@ -25,7 +25,7 @@ class ObjectsModelTest extends \UnitTestCase {
 	}
 
 	public function tearDown() {
-		$this->getDI()->get('database')->query('DELETE FROM insert_table');
+		$this->getDI()->get('db')->query('DELETE FROM insert_table');
 		parent::tearDown();
 		$this->_model = null;
 	}
@@ -120,7 +120,7 @@ class ObjectsModelTest extends \UnitTestCase {
 	}
 
 	public function testGetData() {
-		$this->getDI()->get('database')->query("INSERT INTO insert_table (firstname) VALUES ('firstnameOne')");
+		$this->getDI()->get('db')->query("INSERT INTO insert_table (firstname) VALUES ('firstnameOne')");
 
 		$sql = $this->_model->createObjectQuery('select * from insert_table WHERE :query', [['name' => 'firstname', 'value' => 'firstnameOne']]);
 

@@ -9,7 +9,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			throw new Exception('No collection id given');
 		}
 
-		$configuration = $this->initConfiguration();
+		$configuration = $this->getConfig();
 
 		if ($metadataLevelName) {
 			$this->returnJson($configuration->getMetadataLevels($collectionId, $metadataLevelName));
@@ -18,41 +18,21 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		}
 	}
 
-	private function initConfiguration() {
-		if (!$this->configurationLocation) {
-			throw new Exception('No configuration location given');
-		}
-
-		if (!$this->_configuration) {
-			try {
-				$configuration = new CollectionsConfigurationModel();
-				$configuration->loadConfig(require ($this->configurationLocation));
-				$this->_configuration = $configuration;
-
-			} catch (Exception $ex) {
-				throw new Exception('Could not load configuration!');
-				//$this->returnError(404, 'Could not load data');
-			}
-
-			return $configuration;
-		} else {
-			return $this->_configuration;
-		}
+	private function getConfig() {
+		return $this->getDI()->get('configuration');
 	}
 
 	public function getCollectionInfo($collectionId = false) {
-		$configuration = $this->initConfiguration();
-
-		$collectionData = $configuration->getConfigurationForCollection($collectionId, true);
+		$collectionData = $this->getConfig()->getCollection($collectionId, true);
 
 		$this->returnJson($collectionData);
 	}
 
 	public function displayInfo($collectionId = false) {
 		if ($collectionId) {
-			$configuration = $this->initConfiguration();
+			$configuration = $this->getConfig();
 
-			$obj = $configuration->getConfigurationForCollection($collectionId, true)[0];
+			$obj = $configuration->getCollection($collectionId, true)[0];
 
 			$i = 0;
 			foreach ($obj['levels'] as $level) {
@@ -100,11 +80,11 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 	public function getMetadata($collectionId, $metadataLevelName) {
 		$metadataLevel = $configuration = $metadataModel = $sql = null;
 
-		$configuration = $this->initConfiguration();
+		$configuration = $this->getConfig();
 
 		$metadataLevel = $configuration->getMetadataLevels($collectionId, $metadataLevelName);
 
-		$metadataModel = new MetadataModel();
+		$metadataModel = new Metadata();
 
 		if ($metadataLevel['data']) {
 			$this->returnJson($metadataLevel['data']);
@@ -119,11 +99,11 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function getObjectData($collectionId) {
-		$configuration = $this->initConfiguration();
-		$config = $configuration->getConfigurationForCollection($collectionId);
+		$configuration = $this->getConfig();
+		$config = $configuration->getCollection($collectionId);
 		$searchableFilters = $configuration->getSearchableFilters($collectionId);
 
-		$objectsModel = new ObjectsModel();
+		$objectsModel = new Objects();
 		$incomingFilters = $objectsModel->getFilters($searchableFilters, $configuration->getRequiredFilters($collectionId));
 		//Filters no set, id filter assumed
 		if (count($incomingFilters) == 0) {
@@ -152,7 +132,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 	}
 
 	public function reportError($collectionId, $itemId, $errorId) {
-		$configuration = $this->initConfiguration();
+		$configuration = $this->getConfig();
 		$errorReports = $configuration->getErrorReports($collectionId);
 
 		$errorModel = new MetadataErrors();

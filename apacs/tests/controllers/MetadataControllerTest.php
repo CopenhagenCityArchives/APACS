@@ -30,7 +30,7 @@ class MetadataControllerTest extends \UnitTestCase {
 	}
 
 	public function tearDown() {
-		$this->getDI()->getDatabase()->query('delete from PRB_registerblade');
+		$this->getDI()->get('db')->query('delete from PRB_registerblade');
 		$this->getDI()->get('response')->setContent(null);
 		unset($_GET);
 		parent::tearDown();
@@ -48,7 +48,7 @@ class MetadataControllerTest extends \UnitTestCase {
 
 	public function testGetObjectData() {
 		$_GET['station'] = 1;
-		$this->getDI()->getDatabase()->query('insert into PRB_registerblade (id, station) values (1,1)');
+		$this->getDI()->get('db')->query('insert into PRB_registerblade (id, station) values (1,1)');
 
 		$this->_controller->getObjectData(1);
 		$this->assertEquals(1, count(json_decode($this->getDI()->get('response')->getContent())), 'should return an array of data');
@@ -56,7 +56,7 @@ class MetadataControllerTest extends \UnitTestCase {
 
 	public function testGetDataById() {
 		$_GET['id'] = 10;
-		$this->getDI()->getDatabase()->query('insert into PRB_registerblade (id, station) values (10,100)');
+		$this->getDI()->get('db')->query('insert into PRB_registerblade (id, station) values (10,100)');
 
 		$this->_controller->getObjectData(1);
 

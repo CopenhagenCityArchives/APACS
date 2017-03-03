@@ -79,7 +79,7 @@ class Pages extends \Phalcon\Mvc\Model {
 
 	//TODO: Delete when starbas API is implemented. Check for usage!
 	private function runQueryGetStatus($query) {
-		$connection = $this->getDI()->get('database');
+		$connection = $this->getDI()->get('db');
 		$success = $connection->execute($query);
 
 		if ($success) {
@@ -94,7 +94,7 @@ class Pages extends \Phalcon\Mvc\Model {
 	//TODO: Delete when starbas API is implemented
 	private function dataAlreadyImported($type, $collectionId) {
 		$sql = 'SELECT * FROM ' . $type . ' WHERE collection_id = \'' . $collectionId . '\' LIMIT 1';
-		$resultSet = $this->getDI()->get('database')->query($sql);
+		$resultSet = $this->getDI()->get('db')->query($sql);
 		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
 		$results = $resultSet->fetchAll();
 
