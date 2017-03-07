@@ -115,18 +115,18 @@ class ConcreteEntries {
 				$fieldValueRow = [];
 				//Set field name and value for each field
 				foreach ($entity->fields as $field) {
-					if (isset($row[$field->GetRealFieldName()])) {
-						$fieldValueRow['field_name'] = $field->GetRealFieldName();
-						$fieldValueRow['label'] = $field->formName;
-						$fieldValueRow['value'] = $row[$field->GetRealFieldName()];
-						$fieldValueRow['parent_id'] = $row['id'];
+					//if (isset($row[$field->GetRealFieldName()])) {
+					$fieldValueRow['field_name'] = $field->GetRealFieldName();
+					$fieldValueRow['label'] = $field->formName;
+					$fieldValueRow['value'] = isset($row[$field->GetRealFieldName()]) ? $row[$field->GetRealFieldName()] : null;
+					$fieldValueRow['parent_id'] = $row['id'];
 
-						if ($addFieldsAsArray == true) {
-							$entityRow['fields'][$i][] = $fieldValueRow;
-						} else {
-							$entityRow['fields'][] = $fieldValueRow;
-						}
+					if ($addFieldsAsArray == true) {
+						$entityRow['fields'][$i][] = $fieldValueRow;
+					} else {
+						$entityRow['fields'][] = $fieldValueRow;
 					}
+					//}
 				}
 				$i++;
 			}
