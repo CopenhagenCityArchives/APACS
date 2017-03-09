@@ -75,13 +75,13 @@ class IndexDataController extends MainController {
 		$errors->posts_id = $jsonData['post_id'];
 		$errors->entity_name = $jsonData['entity_name'];
 		$errors->field_name = $jsonData['field_name'];
-		$errors->field_id = Fields::findFirst(['conditions' => 'fieldName = :fieldName: AND entities_id = :entities_id:', 'bind' => ['fieldName' => $jsonData['field_name'], 'entities_id' => $entity->id]])->id;
+		$errors->field_id = Fields::findFirst(['conditions' => '(fieldName = :fieldName: OR decodeField = :fieldName:) AND entities_id = :entities_id:', 'bind' => ['fieldName' => $jsonData['field_name'], 'entities_id' => $entity->id]])->id;
 		$errors->entity_position = $entity->GetEntityPosition(Entities::find(['condition' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $entity->task_id]]), $entity);
 		$errors->comment = $jsonData['comment'];
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
 		$errors->original_value = $jsonData['value'];
 		$errors->toSuperUser = 0;
-		$errors->entry_created_by = $colInfo['username'];
+		$errors->entry_created_by = $colInfo['user_name'];
 		$errors->entries_id = $entry->id;
 		$errors->deleted = 0;
 		$errors->beforeSave();
