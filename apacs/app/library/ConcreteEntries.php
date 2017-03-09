@@ -405,6 +405,11 @@ class ConcreteEntries {
 			}
 
 			if ($entity->type == 'object') {
+				if ($entity->AllEntityFieldsAreEmpty($entity, $data[$primaryEntity->name][$entity->name])) {
+					var_dump('entiteten havde intet data:', $data[$primaryEntity->name][$entity->name]);
+					continue;
+				}
+
 				//Setting the identifier of the primary entity
 				$data[$primaryEntity->name][$entity->name][$entity->entityKeyName] = $primaryId;
 
@@ -421,6 +426,10 @@ class ConcreteEntries {
 				}
 			} else {
 				foreach ($data[$primaryEntity->name][$entity->name] as $row) {
+					if ($entity->AllEntityFieldsAreEmpty($entity, $row)) {
+						continue;
+					}
+
 					//Setting the identifier of the primary entity
 					$row[$entity->entityKeyName] = $primaryId;
 

@@ -51,6 +51,16 @@ class Entities extends \Phalcon\Mvc\Model {
 		return count($this->validationStatus) == 1 ? $this->validationStatus[0] : implode('. ', $this->validationStatus);
 	}
 
+	public function AllEntityFieldsAreEmpty($entity, $data) {
+		foreach ($entity->getFields() as $field) {
+			if (!is_null($data[$field->getRealFieldName()])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * Converts the entity to JSON schema form
 	 * @return Array An array representing the entity in JSON schema form
