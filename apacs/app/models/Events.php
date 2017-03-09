@@ -28,7 +28,7 @@ class Events extends \Phalcon\Mvc\Model {
 			LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
 			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') GROUP BY units_id order by Events.timestamp desc';*/
 		//Getting the last activity for the user in each unit
-		$sql = 'SELECT username, Units.description, Units.id, Pages.page_number, Pages.id as page_id, Events.tasks_id as task_id, timestamp, TaskUnits.index_active FROM apacs_events as Events
+		$sql = 'SELECT username, Units.description, Units.id, Pages.page_number, Pages.id as page_id, Events.tasks_id as task_id, timestamp, TaskUnits.index_active, TaskUnits.pages_done as task_unit_pages_done, Units.pages as unit_pages FROM apacs_events as Events
 			LEFT JOIN apacs_users as Users on Events.users_id = Users.id
 			LEFT JOIN apacs_units as Units on Events.units_id = Units.id
 			LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
