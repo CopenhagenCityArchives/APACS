@@ -22,13 +22,25 @@ class IndexDataController extends MainController {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		$reportingUserId = $this->auth->GetUserId();
-		$requiredFields = ['post_id', 'entity_name', 'field_name', 'concrete_entries_id', 'value'];
+		$requiredFields = ['post_id', 'entity_name'];
 
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
 				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
 			}
 		});
+
+		if (!isset($jsonData['value'])) {
+			$jsonData['value'] = null;
+		}
+
+		if (!isset($jsonData['concrete_entries_id'])) {
+			$jsonData['concrete_entries_id'] = null;
+		}
+
+		if (!isset($jsonData['field_name'])) {
+			$jsonData['field_name'] = null;
+		}
 
 		$entity = Entities::findFirst(['conditions' => 'name = "' . $jsonData['entity_name'] . '"']);
 
@@ -63,7 +75,7 @@ class IndexDataController extends MainController {
 		$errors->posts_id = $jsonData['post_id'];
 		$errors->entity_name = $jsonData['entity_name'];
 		$errors->field_name = $jsonData['field_name'];
-		$errors->field_id = Fields::findFirst(['conditions' => 'fieldName = :fieldName: AND entities_id = :entities_id:', 'bind' => ['fieldName' => $jsonData['fieldName'], 'entities_id' => $entity->id]])->id;
+		$errors->field_id = Fields::findFirst(['conditions' => 'fieldName = :fieldName: AND entities_id = :entities_id:', 'bind' => ['fieldName' => $jsonData['field_name'], 'entities_id' => $entity->id]])->id;
 		$errors->entity_position = $entity->GetEntityPosition(Entities::find(['condition' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $entity->task_id]]), $entity);
 		$errors->comment = $jsonData['comment'];
 		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
@@ -251,7 +263,7 @@ class IndexDataController extends MainController {
 		}
 
 		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['post_id' => $jsonData['post_id'], 'concrete_entry_id' => $concreteId]);
+		$this->response->setJsonContent(['post_id' => $jsonData['post_id'], 'concrete_entry_id' => $concreteId, 'entry_id' => $entry->id]);
 	}
 
 	private function AuthorizeUser($entry) {
@@ -266,6 +278,7 @@ class IndexDataController extends MainController {
 
 	/**
 	 * Updates part of an entry. Note that this method only supports updating one entry at a time
+	 * DEPRECATED
 	 *
 	 */
 	public function UpdateEntry($entryId) {
