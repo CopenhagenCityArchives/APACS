@@ -53,7 +53,7 @@ class Entities extends \Phalcon\Mvc\Model {
 
 	public function AllEntityFieldsAreEmpty($entity, $data) {
 		foreach ($entity->getFields() as $field) {
-			if (!is_null($data[$field->getRealFieldName()])) {
+			if (isset($data[$field->getRealFieldName()]) && !is_null($data[$field->getRealFieldName()])) {
 				return false;
 			}
 		}
