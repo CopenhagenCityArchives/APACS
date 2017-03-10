@@ -169,6 +169,14 @@ class IndexDataController extends MainController {
 
 		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
+		//If the post already have an entry, get the id of the entry, so the existing entry will be updated, instead of a new one created
+		if (is_null($entryId)) {
+			$existingEntry = Entries::findFirst(['conditions' => 'posts_id = :postId:', 'bind' => ['postId' => $jsonData['post_id']]]);
+			if ($existingEntry) {
+				$entryId = $existingEntry->id;
+			}
+		}
+
 		try {
 			$this->db->begin();
 
