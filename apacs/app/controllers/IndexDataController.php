@@ -251,8 +251,7 @@ class IndexDataController extends MainController {
 				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()) . '. The entry is saved.');
 			}
 
-			$post = new Posts();
-			$post->id = $jsonData['post_id'];
+			$post = Posts::findFirstById($jsonData['post_id']);
 			$post->complete = 1;
 			$post->save();
 
