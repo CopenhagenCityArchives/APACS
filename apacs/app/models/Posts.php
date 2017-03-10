@@ -20,7 +20,7 @@ class Posts extends \Phalcon\Mvc\Model {
 	 */
 	public function ApproximatePostExists() {
 		//Check if there are existing posts for the page that are placed in the same spot
-		$existingPosts = Posts::find(['conditions' => 'pages_id = :pagesId: AND ROUND(x,5) = ROUND(:x:,5) AND ROUND(y,5) = ROUND(:y:,5) AND id != :id:', 'bind' => [
+		$existingPosts = Posts::find(['conditions' => 'pages_id = :pagesId: AND ROUND(x,5) = ROUND(:x:,5) AND ROUND(y,5) = ROUND(:y:,5) AND complete = 1 AND id != :id:', 'bind' => [
 			'pagesId' => $this->pages_id,
 			'y' => $this->y,
 			'x' => $this->x,

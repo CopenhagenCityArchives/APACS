@@ -215,7 +215,7 @@ class CommonInformationsController extends MainController {
 
 		$post = new Posts();
 		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit[0]->columns, $taskUnit[0]->rows);
-		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId, 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
+		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId . ' AND complete = 1', 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
 
 		$result['posts'] = [];
 
