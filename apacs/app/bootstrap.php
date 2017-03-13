@@ -164,7 +164,7 @@ try {
 		$origin = $app->request->getHeader("ORIGIN") ? $app->request->getHeader("ORIGIN") : '*';
 		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
 
-		//Data is always returned as utf-8
+		//Default return is JSON in utf-8
 		$di->get('response')->setHeader('Content-Type', 'application/json; charset=utf-8');
 
 		//OPTIONS preflights are handled elsewhere

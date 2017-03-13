@@ -289,9 +289,8 @@ class CommonInformationsController extends MainController {
 			throw new Exception('Post image not found for post id ' . $postId);
 		}
 
-		$this->response->setHeader('Content-type', 'image/jpeg');
+		$this->response->setHeader('Content-Type', 'image/jpeg');
 		$this->response->setHeader("Cache-Control", "max-age=600");
-
 		$this->response->setContent($post->image);
 	}
 
