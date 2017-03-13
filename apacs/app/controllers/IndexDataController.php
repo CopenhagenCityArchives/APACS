@@ -253,7 +253,9 @@ class IndexDataController extends MainController {
 
 			$post = Posts::findFirstById($jsonData['post_id']);
 			$post->complete = 1;
-			$post->save();
+			if (!$post->save()) {
+				throw new RuntimeException('could not set post to complete: ' . implode(',', $post->getMessages()) . ' The entry is saved.');
+			}
 
 			$concreteEntry->commitTransaction();
 			$this->db->commit();
