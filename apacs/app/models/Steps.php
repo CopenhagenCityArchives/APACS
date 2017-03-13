@@ -53,7 +53,7 @@ class Steps extends \Phalcon\Mvc\Model {
 				$elementName['key'] = $prefix . $elementName['key'];
 			}
 
-			if (!array_search($elementName, $stepsFields)) {
+			if (!is_numeric(array_search($elementName, $stepsFields))) {
 				$stepsFields[] = $elementName;
 			}
 		}
