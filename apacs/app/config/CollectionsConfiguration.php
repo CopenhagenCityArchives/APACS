@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * The uber configuration
  * Contains the following:
