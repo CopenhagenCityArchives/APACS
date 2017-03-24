@@ -1,11 +1,23 @@
-CREATE TABLE IF NOT EXISTS `apacs_collections` (
+CREATE TABLE `apacs_collections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` char(50) COLLATE utf8_danish_ci NOT NULL,
-  `description` char(250) COLLATE utf8_danish_ci NOT NULL,
-  `url` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `concreteImagesTableName` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `name` char(250) COLLATE utf8_danish_ci NOT NULL,
+  `info` text COLLATE utf8_danish_ci NOT NULL,
+  `level1_name` char(100) COLLATE utf8_danish_ci NOT NULL,
+  `level1_info` char(250) COLLATE utf8_danish_ci NOT NULL,
+  `level2_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `link` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `link_text` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `link_mouse_over` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `date_create` timestamp NULL DEFAULT NULL,
+  `date_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_public` timestamp NULL DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 
 CREATE TABLE IF NOT EXISTS `apacs_datasources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -199,10 +211,20 @@ CREATE TABLE IF NOT EXISTS `apacs_units` (
   `collections_id` int(11) DEFAULT NULL,
   `pages` int(11) NOT NULL DEFAULT '0',
   `starbas_id` int(11) unsigned DEFAULT NULL,
-  `description` char(100) COLLATE utf8_danish_ci NOT NULL,
+  `description` char(250) COLLATE utf8_danish_ci NOT NULL,
   `former_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=256 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+  `level1_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level1_order` int(11) DEFAULT NULL,
+  `level2_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_order` int(11) DEFAULT NULL,
+  `level3_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_order` int(11) DEFAULT NULL,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_public` int(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `level_value` (`level1_value`,`level2_value`,`level3_value`) COMMENT 'Used to make distinct queries for values faster',
+  KEY `level_order` (`level1_order`,`level2_order`,`level3_order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE IF NOT EXISTS `apacs_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
