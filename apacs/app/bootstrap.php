@@ -108,10 +108,10 @@ try {
 	$info->get('/users/{id:[0-9]+}', 'GetUser');
 
 	//Add new collection
-	$info->post('/collections', 'CreateCollection');
+	$info->post('/collections', 'CreateOrUpdateCollection');
 
 	//Change existing collection
-	$info->patch('/collection/{id:[0-9]+}', 'UpdateCollection');
+	$info->patch('/collection/{id:[0-9]+}', 'CreateOrUpdateCollection');
 
 	//Add or change units
 	$info->post('/units', 'CreateOrUpdateUnits');

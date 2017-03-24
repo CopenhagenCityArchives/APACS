@@ -19,20 +19,27 @@ class CommonInformationsController extends MainController {
 	}
 
 	/*
-		Creates a new collection in database
+		Creates or updates a new collection in database
 	*/
-	public function CreateCollection() {
+	public function CreateOrUpdateCollection() {
 		$data = $this->GetAndValidateJsonPostData();
-		file_put_contents('incomming_create_collections.log', $this->request->getRawBody());
-		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
-	}
+		file_put_contents('create_or_update_collections.log', $this->request->getRawBody());
 
-	/*
-		Updates an existing collection
-	*/
-	public function UpdateCollection($id) {
-		$data = $this->GetAndValidateJsonPostData();
-		file_put_contents('incomming_update_collection.log', $this->request->getRawBody());
+		if ($data->id < 50) {
+			$this->response->setStatusCode(500, 'Invalid collection id');
+			$this->response->setJsonContent(['error' => 'The collection id must be greater than 50!']);
+			file_put_contents('create_or_update_collections.log', 'The collection id must be greater than 50!');
+		}
+
+		$collection = new Collections();
+
+		if (!$collection->save($data)) {
+			$this->response->setStatusCode(500, 'Could not create or update collection');
+			$this->response->setJsonContent(['error' => 'Could not create or update collection: ' . implode(', ', $collection->getMessages())]);
+			file_put_contents('create_or_update_collections.log', 'Could not create or update collection: ' . implode(', ', $collection->getMessages()));
+			return;
+		}
+
 		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}
 
@@ -159,6 +166,29 @@ class CommonInformationsController extends MainController {
 	public function CreateOrUpdateUnits() {
 		$data = $this->GetAndValidateJsonPostData();
 		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody());
+
+		foreach ($data as $row) {
+			$unit = new Units();
+
+			$unit->id = $data['col_unit_id'];
+			$unit->collections_id = $data['col_id'];
+			$unit->description = $data['description']; //TODO: mangler data fra Starbas...
+			$unit->level1_value = $data['level1_value'];
+			$unit->level1_order = $data['level1_order'];
+			$unit->level2_value = $data['level2_value'];
+			$unit->level2_order = $data['level2_order'];
+			$unit->level3_value = $data['level3_value'];
+			$unit->level3_order = $data['level3_order'];
+			$unit->is_public = $data['is_public'];
+
+			if (!$unit->save($row)) {
+				$this->response->setStatusCode(500, 'Could not create or update collection');
+				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
+				file_put_contents('incomming_create_or_update_units.log', 'could not save data: ' . implode(', ', $unit->getMessages()));
+				return;
+			}
+		}
+
 		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}
 
