@@ -112,7 +112,7 @@ class ConfigurationLoader {
 
 		$conf['primary_table_name'] = 'apacs_pages';
 
-		$conf['objects_query'] = 'select apacs_pages.id, apacs_collections.name, apacs_units.id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		$conf['objects_query'] = 'select apacs_pages.id, apacs_collections.name, apacs_units.id, apacs_units.level1_value, apacs_units.level2_value, apacs_units.level3_value, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL, apacs_units.id as starbas_id
             FROM apacs_pages
             LEFT JOIN apacs_units ON apacs_pages.unit_id = apacs_units.id
             LEFT JOIN apacs_collections ON apacs_units.collections_id = apacs_collections.id
@@ -147,7 +147,7 @@ class ConfigurationLoader {
 		//Starbas-reference, ikke søgebar
 		$conf['levels'][] = [
 			'order' => $collection->num_of_filters + 1,
-			'gui_name' => '',
+			'gui_name' => 'starbas_id',
 			'gui_description' => '',
 			'gui_info_link' => false,
 			'name' => 'starbas_id',

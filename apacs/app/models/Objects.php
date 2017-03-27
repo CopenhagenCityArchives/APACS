@@ -101,6 +101,7 @@ class Objects extends \Phalcon\Mvc\Model {
 	public function convertResultToObjects($results, $metadataLevels) {
 		$objects = array();
 		$i = 0;
+
 		foreach ($results as $curRow) {
 			$objects[$i]['id'] = $curRow['id'];
 
