@@ -110,12 +110,14 @@ class ConfigurationLoader {
 
 		$conf['image_type'] = 'image';
 
-		$conf['primary_table_name'] = 'pages';
+		$conf['primary_table_name'] = 'apacs_pages';
 
-		$conf['objects_query'] = 'select apacs_pages.id, apacs_collections.name, units.id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		$conf['objects_query'] = 'select apacs_pages.id, apacs_collections.name, apacs_units.id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
             FROM apacs_pages
-            LEFT JOIN apacs_units ON apacs_pages.units_id = apacs_units.id
-            WHERE apacs_collections.is_public = 1 AND :query';
+            LEFT JOIN apacs_units ON apacs_pages.unit_id = apacs_units.id
+            LEFT JOIN apacs_collections ON apacs_units.collections_id = apacs_collections.id
+            WHERE :query';
+		//apacs_collections.is_public = 1 AND
 
 		$conf['levels_type'] = 'hierarchy';
 

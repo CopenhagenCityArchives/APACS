@@ -105,19 +105,27 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 
 		$objectsModel = new Objects();
 		$incomingFilters = $objectsModel->getFilters($searchableFilters, $configuration->getRequiredFilters($collectionId));
-		//Filters no set, id filter assumed
-		if (count($incomingFilters) == 0) {
-			$incomingFilters = $objectsModel->getFilters(array(array('name' => 'id')), array(array('name' => 'id')));
-			if (count($incomingFilters) > 0 && $incomingFilters[0]['name'] == 'id') {
-				$newFilter = array();
-				$newFilter['name'] = $config[0]['primary_table_name'] . '.id';
-				$newFilter['value'] = $incomingFilters[0]['value'];
 
-				//$incomingFilters[][$config[0]['primary_table_name'] .'.id'] = $incomingFilters[0]['value'];
-				unset($incomingFilters[0]);
+		//Filters no set, check id of page or unit
+		if (count($incomingFilters) == 0) {
+			$request = $this->getDI()->get('request');
+			$id = $request->getQuery("id", null, null);
+			$unit_id = $request->getQuery("unit_id", null, null);
+
+			if (!is_null($id)) {
+				$newFilter = [];
+				$newFilter['name'] = $config[0]['primary_table_name'] . '.id';
+				$newFilter['value'] = $id;
 				$incomingFilters[] = $newFilter;
-			} else {
-				$this->returnError(400, 'No filters given');
+			}
+
+			//Unit id is assumed to be working only with collections > 50 (the ones from starbas API integration)
+			if (!is_null($unit_id)) {
+				$newFilter = [];
+				//Hence the hardcoded units table name
+				$newFilter['name'] = 'apacs_units.id';
+				$newFilter['value'] = $unit_id;
+				$incomingFilters[] = $newFilter;
 			}
 		}
 
@@ -127,7 +135,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			$this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getFilters($collectionId)));
 			//$this->returnJson($results);
 		} else {
-			$this->returnError(400, 'No filters given');
+			$this->returnError(400, 'No filters given.');
 		}
 	}
 
