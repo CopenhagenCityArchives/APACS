@@ -24,7 +24,7 @@
 /*
  * New structure
  */
-ini_set('display_errors',1);
+ini_set('display_errors', 1);
 error_reporting(E_ALL);
 $collectionsSettings = array(
 
@@ -93,7 +93,7 @@ $collectionsSettings = array(
 		),
 		'error_intro' => 'Har du opdaget, at et billede er registreret forkert eller ikke passer ind, kan du give os besked. Når du fejlmelder et billede, fejlmelder du hele mandtallet. Tak for hjælpen.',
 		'error_confirm' => 'Vi har modtaget fejlen. Tak for dit bidrag.',
-		'error_reports' =>  array(
+		'error_reports' => array(
 			array(
 				'id' => 1,
 				'name' => 'Gade, årstal eller måned er forkert',
@@ -333,12 +333,12 @@ $collectionsSettings = array(
 		'long_name' => 'Begravelsesprotokoller 1861-1940',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, year, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
                         WHERE volumetype_id = 1 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
@@ -397,7 +397,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -415,11 +415,11 @@ $collectionsSettings = array(
 		'long_name' => 'Registre til begravelsesprotokoller 1861-1940',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT begrav_page.id, riv_1, sex, begrav_page.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 2 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -493,7 +493,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke et register',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -511,12 +511,12 @@ $collectionsSettings = array(
 		'long_name' => 'Registre for lysningsjournaler for København 1923 - 1965',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, riv_1, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 4 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -559,7 +559,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -577,11 +577,11 @@ $collectionsSettings = array(
 		'long_name' => 'Lysningsjournaler for København 1923 - 1965',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'select DISTINCT begrav_page.id, riv_1, begrav_page.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select DISTINCT apacs_pages.id, riv_1, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 3 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -639,7 +639,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke et register',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -657,12 +657,12 @@ $collectionsSettings = array(
 		'long_name' => 'Registre til borgerlige vielser 1851 - 1922',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 6 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -705,7 +705,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -723,12 +723,12 @@ $collectionsSettings = array(
 		'long_name' => 'Protokoller med borgerlige vielser 1851-1922',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 5 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -771,7 +771,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -789,12 +789,12 @@ $collectionsSettings = array(
 		'long_name' => 'Skoleprotokoller og registre 1753-1937',
 		'gui_required_fields_text' => 'Vælg en skole',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, creator_name, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 7 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -853,7 +853,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -871,12 +871,12 @@ $collectionsSettings = array(
 		'long_name' => 'Borgerskabsprotokoller 1860-1932',
 		'gui_required_fields_text' => 'Vælg en protokol',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, creator_name, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 8 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -919,7 +919,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -937,12 +937,12 @@ $collectionsSettings = array(
 		'long_name' => 'Registre til borgerskabsprotokoller 1860-1932',
 		'gui_required_fields_text' => 'Vælg en protokol',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, creator_name, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 9 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -985,12 +985,11 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
 	),
-
 
 	/**
 	 * Register til borgerskabsprotokoller
@@ -1004,12 +1003,12 @@ $collectionsSettings = array(
 		'long_name' => 'Referat- og resolutionsprotokoller 1806-1857',
 		'gui_required_fields_text' => 'Vælg en protokol',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select begrav_page.id, creator_name, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 10 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -1052,7 +1051,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -1070,12 +1069,12 @@ $collectionsSettings = array(
 		'long_name' => 'Begravelsesprotokoller fra Assistens Kirkegård, 1805-1862',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT begrav_page.id, year, nicetitle, begrav_page.starbas_id, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'SELECT apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
                         WHERE volumetype_id = 11 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
@@ -1119,7 +1118,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke en begravelsesprotokol',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
@@ -1137,11 +1136,11 @@ $collectionsSettings = array(
 		'long_name' => 'Registre til begravelsemvsprotokoller fra Assistens Kirkegård, 1805-1860',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
-		'primary_table_name' => 'begrav_page',
+		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT begrav_page.id, riv_1, sex, begrav_page.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', begrav_page.id) as imageURL
-                        FROM begrav_page
-                        LEFT JOIN begrav_volume ON begrav_page.volume_id = begrav_volume.id
+		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+                        FROM apacs_pages
+                        LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 12 AND is_public = 1 AND :query',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
@@ -1200,7 +1199,7 @@ $collectionsSettings = array(
 			            array(
 			                'id' => 1,
 			                'name' => 'Billedet er ikke et register',
-			                'sql' => 'UPDATE begrav_page SET error_image = 1 WHERE id = :itemId LIMIT 1',
+			                'sql' => 'UPDATE apacs_pages SET error_image = 1 WHERE id = :itemId LIMIT 1',
 			                'order' => 1
 			            )
 		*/
