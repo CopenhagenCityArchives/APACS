@@ -111,7 +111,7 @@ try {
 	$info->post('/collections', 'CreateOrUpdateCollection');
 
 	//Change existing collection
-	$info->patch('/collection/{id:[0-9]+}', 'CreateOrUpdateCollection');
+	//$info->patch('/collection/{id:[0-9]+}', 'CreateOrUpdateCollection');
 
 	//Add or change units
 	$info->post('/units', 'CreateOrUpdateUnits');

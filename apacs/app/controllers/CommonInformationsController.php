@@ -22,21 +22,33 @@ class CommonInformationsController extends MainController {
 		Creates or updates a new collection in database
 	*/
 	public function CreateOrUpdateCollection() {
+		file_put_contents('create_or_update_collections.log', 'her: ' . $this->request->getRawBody(), FILE_APPEND);
 		$data = $this->GetAndValidateJsonPostData();
-		file_put_contents('create_or_update_collections.log', $this->request->getRawBody());
 
-		if ($data->id < 50) {
+		if ($data['col_id'] < 50) {
 			$this->response->setStatusCode(500, 'Invalid collection id');
 			$this->response->setJsonContent(['error' => 'The collection id must be greater than 50!']);
-			file_put_contents('create_or_update_collections.log', 'The collection id must be greater than 50!');
+			file_put_contents('create_or_update_collections.log', 'The collection id must be greater than 50!', FILE_APPEND);
+			return;
 		}
 
 		$collection = new Collections();
 
+		$value;
+		$i = 1;
+		do {
+			$value = 'filter' . $i . '_name';
+			$i++;
+		} while (isset($data[$value]));
+		$data['num_of_filters'] = $i;
+
+		$data['id'] = $data['col_id'];
+		$data['description'] = $data['info'];
+
 		if (!$collection->save($data)) {
 			$this->response->setStatusCode(500, 'Could not create or update collection');
 			$this->response->setJsonContent(['error' => 'Could not create or update collection: ' . implode(', ', $collection->getMessages())]);
-			file_put_contents('create_or_update_collections.log', 'Could not create or update collection: ' . implode(', ', $collection->getMessages()));
+			file_put_contents('create_or_update_collections.log', 'Could not create or update collection: ' . implode(', ', $collection->getMessages()), FILE_APPEND);
 			return;
 		}
 
@@ -164,27 +176,35 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function CreateOrUpdateUnits() {
+		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody(), FILE_APPEND);
 		$data = $this->GetAndValidateJsonPostData();
-		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody());
+
+		if (!Collections::findFirstById($data[0]['unit']['col_id'])) {
+			$this->response->setStatusCode(403, 'Collection not found');
+			$this->response->setJsonContent(['error' => 'No collection with id ' . $data[0]['unit']['col_id'] . ' found']);
+			return;
+		}
 
 		foreach ($data as $row) {
 			$unit = new Units();
 
-			$unit->id = $data['col_unit_id'];
-			$unit->collections_id = $data['col_id'];
-			$unit->description = $data['description']; //TODO: mangler data fra Starbas...
-			$unit->level1_value = $data['level1_value'];
-			$unit->level1_order = $data['level1_order'];
-			$unit->level2_value = $data['level2_value'];
-			$unit->level2_order = $data['level2_order'];
-			$unit->level3_value = $data['level3_value'];
-			$unit->level3_order = $data['level3_order'];
-			$unit->is_public = $data['is_public'];
+			$unit->id = $row['unit']['col_unit_id'];
+			$unit->collections_id = $row['unit']['col_id'];
+			$unit->description = 'test_description'; //$row['unit']['description']; //TODO: mangler data fra Starbas...
+			$unit->pages = count(Pages::find(['conditions' => ['units_id = ' . $row['unit']['col_unit_id']]]));
+			$unit->updated = date('Y-m-d H:i:s');
+			$unit->level1_value = $row['unit']['level1_value'];
+			$unit->level1_order = $row['unit']['level1_order'];
+			$unit->level2_value = $row['unit']['level2_value'];
+			$unit->level2_order = $row['unit']['level2_order'];
+			$unit->level3_value = $row['unit']['level3_value'];
+			$unit->level3_order = $row['unit']['level3_order'];
+			$unit->is_public = $row['unit']['is_public'];
 
-			if (!$unit->save($row)) {
+			if (!$unit->save()) {
 				$this->response->setStatusCode(500, 'Could not create or update collection');
 				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
-				file_put_contents('incomming_create_or_update_units.log', 'could not save data: ' . implode(', ', $unit->getMessages()));
+				file_put_contents('incomming_create_or_update_units.log', 'could not save data: ' . implode(', ', $unit->getMessages()), FILE_APPEND);
 				return;
 			}
 		}
