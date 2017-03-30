@@ -31,21 +31,7 @@ class Pages extends \Phalcon\Mvc\Model {
 			return $pathInfo['path'] . $this->former_id;
 		}
 
-		//Settings for ORM db access
-		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname']);
-		ORM::configure('username', $this->getDI()->get('config')['username']);
-		ORM::configure('password', $this->getDI()->get('config')['password']);
-		ORM::configure('charset', $this->getDI()->get('config')['charset']);
-		//ORM::configure('logging', true);
-		//echo ORM::get_last_query();
-
-		$crud = new CRUD\CRUD();
-
-		$joins = ORM::for_table($this->getUnits()->getCollections()->concreteImagesTableName);
-
-		if ($pathInfo['type'] == 'file') {
-			return $pathInfo['path'] . $joins->select('relative_filename_converted')->where('id', $this->former_id)->find_one()['relative_filename_converted'];
-		}
+		return $pathInfo['path'] . $this->relative_filename_converted;
 	}
 
 	//TODO: Delete when starbas API is implemented
