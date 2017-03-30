@@ -19,7 +19,7 @@ If not provided, add IAM credentials.
 
 
 ## Operating the server
-### Docker compose
+### Running webserver (Apache) and database (MySQL)
 
 Start services
 ```
@@ -41,7 +41,7 @@ Access bash in the webserver
 docker exec -i -t webserver /bin/bash
 ```
 
-Run local webserver
+### Running webserver (nginx) and remote database
 ```
 docker build -t apacs_dev .
 ```
