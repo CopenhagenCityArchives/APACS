@@ -28,7 +28,7 @@ class Pages extends \Phalcon\Mvc\Model {
 		$pathInfo = $this->getDI()->get('pageImageLocation');
 
 		if ($pathInfo['type'] == 'http') {
-			return $pathInfo['path'] . $this->former_id;
+			return $pathInfo['path'] . $this->id;
 		}
 
 		return $pathInfo['path'] . $this->relative_filename_converted;
