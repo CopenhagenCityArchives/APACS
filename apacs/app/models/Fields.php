@@ -25,6 +25,75 @@ class Fields extends \Phalcon\Mvc\Model {
 	public static function GetRealFieldNameFromField($field) {
 		return !is_null($field['decodeField']) ? $field['decodeField'] : $field['fieldName'];
 	}
+
+	public static function GetFieldSearchOperators($field) {
+
+		$operators = [];
+		switch ($field['formFieldType']) {
+		case 'string':
+			$operators[] = [
+				'label' => 'starter med',
+				'solr_query' => '*%q%',
+			];
+
+			$operators[] = [
+				'label' => 'ender med',
+				'solr_query' => '%q%*',
+			];
+
+			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%q%',
+			];
+			break;
+
+		case 'date':
+			$operators[] = [
+				'label' => 'mindr end',
+				'solr_query' => '[0001-01-01T00:00:00Z TO *]',
+			];
+
+			$operators[] = [
+				'label' => 'større end',
+				'solr_query' => '[* TO NOW]',
+			];
+
+			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%q%',
+			];
+			break;
+
+		case 'numeric':
+			$operators[] = [
+				'label' => 'mindre end',
+				'solr_query' => '[0001-01-01T00:00:00Z TO %q%]',
+			];
+
+			$operators[] = [
+				'label' => 'større end',
+				'solr_query' => '[%q% TO NOW]',
+			];
+
+			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%q%',
+			];
+
+			break;
+
+		case 'typeahead':
+			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%q%',
+			];
+			break;
+
+		}
+
+		return $operators;
+	}
+
 	public static function SetDatasourceOrEnum($field) {
 		if (!is_null($field['datasources_id'])) {
 			$datasource = Datasources::findFirst(['conditions' => 'id = ' . $field['datasources_id']]);
