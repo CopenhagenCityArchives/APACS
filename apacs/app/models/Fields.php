@@ -43,13 +43,13 @@ class Fields extends \Phalcon\Mvc\Model {
 
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%q%',
+				'solr_query' => '"%q%"',
 			];
 			break;
 
 		case 'date':
 			$operators[] = [
-				'label' => 'mindr end',
+				'label' => 'mindre end',
 				'solr_query' => '[0001-01-01T00:00:00Z TO *]',
 			];
 
@@ -85,7 +85,7 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'typeahead':
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%q%',
+				'solr_query' => '"%q%"',
 			];
 			break;
 
