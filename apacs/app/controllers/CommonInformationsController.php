@@ -101,6 +101,7 @@ class CommonInformationsController extends MainController {
 			for ($i = 0; $i < count($resRow['fields']); $i++) {
 				$resRow['fields'][$i]['operators'] = Fields::GetFieldSearchOperators($resRow['fields'][$i]);
 				$resRow['fields'][$i] = Fields::SetDatasourceOrEnum($resRow['fields'][$i]);
+				$resRow['fields'][$i]['facets'] = Fields::SetFieldSearchFacets($resRow['fields'][$i]);
 			}
 
 			$result[] = $resRow;

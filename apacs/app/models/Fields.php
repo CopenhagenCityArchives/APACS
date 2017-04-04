@@ -28,56 +28,66 @@ class Fields extends \Phalcon\Mvc\Model {
 
 	public static function GetFieldSearchOperators($field) {
 
+		if ($field['includeInSolr'] == 0) {
+			return $field;
+		}
+
 		$operators = [];
 		switch ($field['formFieldType']) {
 		case 'string':
 			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%f%: "%q%"',
+			];
+
+			$operators[] = [
+				'label' => 'indeholder ikke',
+				'solr_query' => '-%f%: "*%q%*"',
+			];
+
+			$operators[] = [
 				'label' => 'starter med',
-				'solr_query' => '*%q%',
+				'solr_query' => '%f%: *%q%',
 			];
 
 			$operators[] = [
 				'label' => 'ender med',
-				'solr_query' => '%q%*',
+				'solr_query' => '%f%: %q%*',
 			];
 
-			$operators[] = [
-				'label' => 'lig med',
-				'solr_query' => '"%q%"',
-			];
 			break;
 
 		case 'date':
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '[0001-01-01T00:00:00Z TO *]',
+				'solr_query' => '%f%: [0001-01-01T00:00:00Z TO *]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '[* TO NOW]',
+				'solr_query' => '%f%: [* TO NOW]',
 			];
 
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%q%',
+				'solr_query' => '%f%: %q%',
 			];
 			break;
 
 		case 'numeric':
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '[0001-01-01T00:00:00Z TO %q%]',
+				'solr_query' => '%f%: [0001-01-01T00:00:00Z TO %q%]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '[%q% TO NOW]',
+				'solr_query' => '%f%: [%q% TO NOW]',
 			];
 
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%q%',
+				'solr_query' => '%f%: %q%',
 			];
 
 			break;
@@ -85,13 +95,47 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'typeahead':
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '"%q%"',
+				'solr_query' => '%f%: "%q%"',
 			];
 			break;
 
 		}
 
 		return $operators;
+	}
+
+	public static function SetFieldSearchFacets($field) {
+
+		if ($field['includeInSolr'] == 0 || $field['SOLRFacet'] == 0) {
+			return null;
+		}
+
+		$facet = [];
+		switch ($field['formFieldType']) {
+		case 'string':
+		case 'typeahead':
+			$facet = [
+				'result_key' => 'facet_fields',
+				'url_key' => 'facet.field=' . $field['solr_name'] . '&facet.limit=10',
+			];
+			break;
+
+		case 'numeric':
+			$facet = [
+				'result_key' => 'facet_ranges',
+				'url_key' => 'facet.range=' . $field['solr_name'] . '&facet.range.start=0&facet.range.end=100000&facet.range.gap=10&facet.limit=10',
+			];
+			break;
+
+			/*case 'date':
+				$facet = [
+					'result_key' => 'facet_ranges',
+					'url_key' => 'facet.date=' . $field['solr_name'] . '&facet.date.start=0001-01-01T00:00:00Z&facet.date.end=NOW&facet.date.gap=+5YEAR&facet.limit=25',
+				];
+			*/
+		}
+
+		return $facet;
 	}
 
 	public static function SetDatasourceOrEnum($field) {
