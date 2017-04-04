@@ -97,6 +97,12 @@ class CommonInformationsController extends MainController {
 		while ($collections->valid()) {
 			$resRow = $collections->current()->toArray();
 			$resRow['fields'] = $collections->current()->GetSearchConfig();
+
+			for ($i = 0; $i < count($resRow['fields']); $i++) {
+				$resRow['fields'][$i]['operators'] = Fields::GetFieldSearchOperators($resRow['fields'][$i]);
+				$resRow['fields'][$i] = Fields::SetDatasourceOrEnum($resRow['fields'][$i]);
+			}
+
 			$result[] = $resRow;
 			$collections->next();
 		}
