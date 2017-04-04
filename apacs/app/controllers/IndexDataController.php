@@ -271,7 +271,14 @@ class IndexDataController extends MainController {
 			}
 
 			//Logging any exceptions with raw body data
-			file_put_contents('/var/www/kbharkiv.dk/public_html/1508/stable/app/exceptions.log', json_encode(['time' => date('Y-m-d H:i:s'), 'exception' => $e->getMessage()]) . $this->request->getRawBody(), FILE_APPEND);
+			//file_put_contents('/var/www/kbharkiv.dk/public_html/1508/stable/app/exceptions.log', json_encode(['time' => date('Y-m-d H:i:s'), 'exception' => $e->getMessage()]) . $this->request->getRawBody(), FILE_APPEND);
+
+			$exception = new SystemExceptions();
+			if (!$exception->save(['type' => 'event_save', 'details' => json_encode(['exception' => $e->message, 'rawPostData' => $this->request->getRawBody()])])) {
+				var_dump($exception->getMessages());
+			}
+
+			//if(!$exception->save)
 
 			$this->response->setStatusCode(403, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry', 'userMessage' => $e->getMessage()]);
