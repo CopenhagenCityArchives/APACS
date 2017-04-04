@@ -116,14 +116,14 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'typeahead':
 			$facet = [
 				'result_key' => 'facet_fields',
-				'url_key' => 'facet.field=' . $field['solr_name'] . '&facet.limit=10',
+				'url_parameter' => 'facet.field=' . $field['solr_name'] . '&facet.limit=10',
 			];
 			break;
 
 		case 'numeric':
 			$facet = [
 				'result_key' => 'facet_ranges',
-				'url_key' => 'facet.range=' . $field['solr_name'] . '&facet.range.start=0&facet.range.end=100000&facet.range.gap=10&facet.limit=10',
+				'url_parameter' => 'facet.range=' . $field['solr_name'] . '&facet.range.start=0&facet.range.end=100000&facet.range.gap=10&facet.limit=10',
 			];
 			break;
 
