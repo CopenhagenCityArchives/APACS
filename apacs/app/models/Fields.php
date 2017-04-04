@@ -25,4 +25,22 @@ class Fields extends \Phalcon\Mvc\Model {
 	public static function GetRealFieldNameFromField($field) {
 		return !is_null($field['decodeField']) ? $field['decodeField'] : $field['fieldName'];
 	}
+	public static function SetDatasourceOrEnum($field) {
+		if (!is_null($field['datasources_id'])) {
+			$datasource = Datasources::findFirst(['conditions' => 'id = ' . $field['datasources_id']]);
+
+			if (isset($datasource) && $datasource !== false) {
+				$values = $datasource->GetValuesAsArray();
+				if (!$values) {
+					$field['datasource'] = 'http://www.kbhkilder.dk/1508/stable/api/datasource/' . $datasource->id . '?q=';
+					$field['datasourceValueField'] = $datasource->valueField;
+				} else {
+					$field['enum'] = $values;
+					$field['type'] = 'string';
+				}
+			}
+		}
+
+		return $field;
+	}
 }
