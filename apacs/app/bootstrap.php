@@ -107,6 +107,8 @@ try {
 
 	$info->get('/users/{id:[0-9]+}', 'GetUser');
 
+	$info->get('/exceptions', 'GetSystemExceptions');
+
 	//Add new collection
 	$info->post('/collections', 'CreateOrUpdateCollection');
 

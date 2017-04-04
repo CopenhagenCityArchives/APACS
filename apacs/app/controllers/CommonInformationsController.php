@@ -520,6 +520,20 @@ class CommonInformationsController extends MainController {
 		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray(), JSON_NUMERIC_CHECK);
 	}
 
+	public function GetSystemExceptions() {
+		$hours = $this->request->getQuery('hours', 'int', null);
+		$type = $this->request->getQuery('type', 'string', null);
+
+		if (is_null($hours) || is_null($type)) {
+			throw new Exception('Type and hours are required');
+		}
+
+		$exceptions = new SystemExceptions();
+		$results = $exceptions->getLastExceptionsByTypeAndHours($type, $hours);
+
+		$this->response->setJsonContent($results);
+	}
+
 	//TODO: Delete when starbas API is implemented
 	public function ImportUnits() {
 		$request = $this->request;
