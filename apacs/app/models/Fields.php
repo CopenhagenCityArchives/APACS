@@ -70,12 +70,12 @@ class Fields extends \Phalcon\Mvc\Model {
 
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '%f%: [0001-01-01T00:00:00Z TO %q%]',
+				'solr_query' => '%f%: [* TO %q%]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '%f%: [%q% TO NOW]',
+				'solr_query' => '%f%: [%q% TO *]',
 			];
 			break;
 
@@ -87,12 +87,12 @@ class Fields extends \Phalcon\Mvc\Model {
 
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '%f%: [0001-01-01T00:00:00Z TO %q%]',
+				'solr_query' => '%f%: [0 TO %q%]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '%f%: [%q% TO NOW]',
+				'solr_query' => '%f%: [%q% TO *]',
 			];
 
 			break;
