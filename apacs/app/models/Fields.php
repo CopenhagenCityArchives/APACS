@@ -41,6 +41,11 @@ class Fields extends \Phalcon\Mvc\Model {
 			];
 
 			$operators[] = [
+				'label' => 'indeholder',
+				'solr_query' => '%f%: *%q%*',
+			];
+
+			$operators[] = [
 				'label' => 'indeholder ikke',
 				'solr_query' => '-%f%: "*%q%*"',
 			];
@@ -59,6 +64,11 @@ class Fields extends \Phalcon\Mvc\Model {
 
 		case 'date':
 			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%f%: %q%',
+			];
+
+			$operators[] = [
 				'label' => 'mindre end',
 				'solr_query' => '%f%: [0001-01-01T00:00:00Z TO %q%]',
 			];
@@ -66,16 +76,16 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'større end',
 				'solr_query' => '%f%: [%q% TO NOW]',
-			];
-
-			$operators[] = [
-				'label' => 'lig med',
-				'solr_query' => '%f%: %q%',
 			];
 			break;
 
 		case 'numeric':
 			$operators[] = [
+				'label' => 'lig med',
+				'solr_query' => '%f%: %q%',
+			];
+
+			$operators[] = [
 				'label' => 'mindre end',
 				'solr_query' => '%f%: [0001-01-01T00:00:00Z TO %q%]',
 			];
@@ -83,11 +93,6 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'større end',
 				'solr_query' => '%f%: [%q% TO NOW]',
-			];
-
-			$operators[] = [
-				'label' => 'lig med',
-				'solr_query' => '%f%: %q%',
 			];
 
 			break;
