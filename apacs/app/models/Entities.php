@@ -103,20 +103,7 @@ class Entities extends \Phalcon\Mvc\Model {
 			}
 			//	echo $field['datasources_id'];
 			//Getting info from datasource, if any
-			if (!is_null($field['datasources_id'])) {
-				$datasource = Datasources::findFirst(['conditions' => 'id = ' . $field['datasources_id']]);
-
-				if (isset($datasource) && $datasource !== false) {
-					$values = $datasource->GetValuesAsArray();
-					if (!$values) {
-						$field['datasource'] = 'http://www.kbhkilder.dk/1508/stable/api/datasource/' . $datasource->id . '?q=';
-						$field['datasourceValueField'] = $datasource->valueField;
-					} else {
-						$field['enum'] = $values;
-						$field['type'] = 'string';
-					}
-				}
-			}
+			$field = Fields::SetDatasourceOrEnum($field);
 
 			//When using decode fields, the decode field name is used as name
 			if ($field['hasDecode'] == 1) {
