@@ -234,7 +234,7 @@ class IndexDataController extends MainController {
 				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
 				['user_id' => $userId, 'user_name' => $userName],
-				['jsonObj' => json_encode(['metadata' => $context, 'data' => $jsonData['person']])]//TODO: Hardcoded name of main entity
+				['jsonObj' => json_encode(['metadata' => $context, 'data' => $jsonData['persons']])]//TODO: Hardcoded name of main entity
 			);
 
 			$concreteEntry->SaveInSolr($solrDataToSave, $entry->concrete_entries_id);
