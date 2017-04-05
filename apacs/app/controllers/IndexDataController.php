@@ -227,13 +227,14 @@ class IndexDataController extends MainController {
 				throw new RuntimeException('could not save entry information' . $entry->getMessages()[0]);
 			}
 
-			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entry->GetContext());
+			$context = $entry->GetContext();
+			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context);
 
 			$solrDataToSave = array_merge(
 				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
 				['user_id' => $userId, 'user_name' => $userName],
-				['jsonObj' => json_encode($jsonData)]
+				['jsonObj' => json_encode(['metadata' => $context, 'data' => $jsonData['person']])]//TODO: Hardcoded name of main entity
 			);
 
 			$concreteEntry->SaveInSolr($solrDataToSave, $entry->concrete_entries_id);
