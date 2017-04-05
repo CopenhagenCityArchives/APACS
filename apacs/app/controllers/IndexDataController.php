@@ -278,7 +278,7 @@ class IndexDataController extends MainController {
 			$exception = new SystemExceptions();
 			$exception->save([
 				'type' => 'event_save',
-				'details' => json_encode(['exception' => $e->getMessage, 'rawPostData' => $this->request->getRawBody()]),
+				'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
 			]);
 
 			$this->response->setStatusCode(403, 'Save error');
