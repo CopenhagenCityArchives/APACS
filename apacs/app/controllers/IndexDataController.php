@@ -232,7 +232,8 @@ class IndexDataController extends MainController {
 			$solrDataToSave = array_merge(
 				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
-				['user_id' => $userId, 'user_name' => $userName]
+				['user_id' => $userId, 'user_name' => $userName],
+				['jsonObj' => $jsonData]
 			);
 
 			$concreteEntry->SaveInSolr($solrDataToSave, $entry->concrete_entries_id);
