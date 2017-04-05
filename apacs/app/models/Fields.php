@@ -79,7 +79,7 @@ class Fields extends \Phalcon\Mvc\Model {
 			];
 			break;
 
-		case 'numeric':
+		case 'number':
 			$operators[] = [
 				'label' => 'lig med',
 				'solr_query' => '%f%: %q%',
@@ -125,7 +125,7 @@ class Fields extends \Phalcon\Mvc\Model {
 			];
 			break;
 
-		case 'numeric':
+		case 'number':
 			$facet = [
 				'result_key' => 'facet_ranges',
 				'url_parameter' => 'facet.range=' . $field['solr_name'] . '&facet.range.start=0&facet.range.end=100000&facet.range.gap=10&facet.limit=10',
