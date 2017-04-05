@@ -5,6 +5,10 @@ class SystemExceptions extends \Phalcon\Mvc\Model {
 		return 'apacs_' . 'exceptions';
 	}
 
+	public function initialize() {
+		$this->skipAttributesOnCreate(['time']);
+	}
+
 	public function getLastExceptionsByTypeAndHours($type, $hours) {
 		$phql = 'SELECT * FROM apacs_exceptions WHERE CURRENT_TIMESTAMP - INTERVAL :hours HOUR AND type = :type';
 		$resultSet = $this->getDI()->get('db')->query($phql, ['hours' => $hours, 'type' => $type]);

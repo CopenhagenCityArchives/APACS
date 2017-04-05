@@ -190,6 +190,13 @@ try {
 	$di->get('response')->send();
 
 } catch (Exception $e) {
+	//Saving system exception
+	$exception = new SystemExceptions();
+	$exception->save([
+		'type' => 'global_exception',
+		'details' => json_encode(['exception' => $e->getMessage()]),
+	]);
+
 	$di->get('response')->setStatusCode(500, "Server error");
 	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
 	$di->get('response')->send();
