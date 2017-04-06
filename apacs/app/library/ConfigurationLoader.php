@@ -140,7 +140,7 @@ class ConfigurationLoader {
 				'gui_type' => 'typeahead',
 				'data_sql' => 'SELECT DISTINCT id, level' . $i . '_value as text, level' . $i . '_order FROM apacs_units WHERE collections_id = ' . $collectionId . ' ORDER BY level' . $i . '_order',
 				'data' => false,
-				'gui_hide_name' => true,
+				'gui_hide_name' => false,
 				'gui_hide_value' => false,
 				//One filter is always required
 				'required' => $i < 2 ? true : false,

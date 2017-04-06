@@ -35,7 +35,7 @@ class CommonInformationsController extends MainController {
 		$collection = new Collections();
 
 		$value;
-		$i = 1;
+		$i = 0;
 		do {
 			$value = 'filter' . $i . '_name';
 			$i++;
