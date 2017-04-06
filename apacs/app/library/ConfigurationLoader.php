@@ -124,7 +124,12 @@ class ConfigurationLoader {
 		$conf['levels'] = [];
 
 		for ($i = 1; $i <= $collection->num_of_filters; $i++) {
-			$requiredLevels = array_merge(array_column($conf['levels'], 'name'));
+			$requiredLevels = [];
+			foreach ($conf['levels'] as $level) {
+				$requiredLevels[] = $level['name'];
+			}
+			//TODO: Use this instead, when PHP version is updated to >= 5.5
+			//$requiredLevels = array_merge(array_column($conf['levels'], 'name'));
 
 			$conf['levels'][] = [
 				'order' => $i,
