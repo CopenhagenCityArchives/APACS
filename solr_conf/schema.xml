@@ -51,6 +51,8 @@
   <field name="user_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="user_name" type="string_ci" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="lastname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="comment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="jsonObj" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Specific APACS fields. Note that these can be relevant in more than one collection type -->
   <!-- Burial records -->
@@ -61,7 +63,7 @@
   <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="yearOfBirth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="dateOfDeath" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfDeath" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="record_number" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="chapel" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
@@ -75,6 +77,8 @@
   <field name="deathcauses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="workplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+
 
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/> 
