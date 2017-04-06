@@ -200,7 +200,8 @@ class Entities extends \Phalcon\Mvc\Model {
 	private function getFieldData($field, $data) {
 		if (isset($data[Fields::GetRealFieldNameFromField($field)])) {
 			if ($field['formFieldType'] == 'date') {
-				return date('d-m-Y', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
+				return gmdate('Y-m-d\TH:i:s\Z', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
+				//return date('d-m-Y', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
 			}
 			if (trim($data[Fields::GetRealFieldNameFromField($field)]) == '') {
 				$fieldsAndData[$field['fieldName']] = null;
