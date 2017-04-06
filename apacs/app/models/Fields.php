@@ -65,17 +65,17 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'date':
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%f%: %q%',
+				'solr_query' => '%f%:"%q%"',
 			];
 
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '%f%: [* TO %q%]',
+				'solr_query' => '%f%:[* TO %q%]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '%f%: [%q% TO *]',
+				'solr_query' => '%f%:[%q% TO *]',
 			];
 			break;
 
