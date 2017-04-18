@@ -198,7 +198,7 @@ class CommonInformationsController extends MainController {
 			$unit->id = $row['unit']['col_unit_id'];
 			$unit->collections_id = $row['unit']['col_id'];
 			$unit->description = 'test_description'; //$row['unit']['description']; //TODO: mangler data fra Starbas...
-			$unit->pages = count(Pages::find(['conditions' => ['units_id = ' . $row['unit']['col_unit_id']]]));
+			$unit->pages = count(Pages::find('units_id = ' . $row['unit']['col_unit_id']));
 			$unit->updated = date('Y-m-d H:i:s');
 			$unit->level1_value = $row['unit']['level1_value'];
 			$unit->level1_order = $row['unit']['level1_order'];
