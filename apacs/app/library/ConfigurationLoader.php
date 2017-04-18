@@ -266,7 +266,7 @@ class ConfigurationLoader {
 				throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
 			}
 
-			$collectionConfig['api_documentation_url'] = 'http://www.kbhkilder.dk/api/info/' . $collectionConfig['id'];
+			$collectionConfig['api_documentation_url'] =  self::getCurrentApiUrl()  . 'collections/' . $collectionConfig['id'] . '/info';
 			$i++;
 		}
 
@@ -518,5 +518,15 @@ class ConfigurationLoader {
 		}
 
 		throw new Exception('Could not load configuration for entity id ' . $entityId);
+	}
+
+	/**
+	*	Returns the API base url for the current location
+	*/
+	public static function getCurrentApiUrl(){
+		$protocol = isset($_SERVER['https']) ? 'https://' : 'http://';
+		$subDir = str_replace('public/', '', str_replace('index.php', '', $_SERVER['PHP_SELF']));
+
+		return $protocol . $_SERVER['HTTP_HOST'] . $subDir;
 	}
 }
