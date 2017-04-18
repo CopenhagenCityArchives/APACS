@@ -52,11 +52,11 @@
                 <?php } ?>
                 <?php } ?>
                 <div class="span9">
-                    <h2>Billeder</h2>
+                    <h2>Protokolsider</h2>
                     <p>
                         <span class="label label-success">Service</span> <strong><?php echo $obj['data_url']; ?><?php echo $obj['id']; ?></strong>
                     </p>
-                    <p>Henter billeder for en given collection baseret på filtre.</p>
+                    <p>Henter siderne for en given collection baseret på filtre.</p>
                     <p>
                         Parametre:
                     </p>
