@@ -36,7 +36,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 
 			$i = 0;
 			foreach ($obj['levels'] as $level) {
-				$obj['levels'][$i]['url'] = 'http://' . $_SERVER['HTTP_HOST'] . '/api/metadata/' . $obj['id'] . '/' . $level['name'];
+				$obj['levels'][$i]['url'] = $this->getCurrentUrl() . 'metadata/' . $obj['id'] . '/' . $level['name'];
 				$obj['levels'][$i]['required_levels_url'] = '';
 				if ($level['required_levels']) {
 					$url = '?';
@@ -53,7 +53,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			$obj['data_filters'] = $configuration->getAllFilters($collectionId);
 
 			$i = 0;
-			$url = 'http://' . $_SERVER['HTTP_HOST'] . '/api/data/' . $obj['id'] . '?';
+			$url = $this->getCurrentUrl() . 'data/' . $obj['id'] . '?';
 			foreach ($obj['data_filters'] as $level) {
 				$obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
 				if ($obj['data_filters'][$i]['required']) {
@@ -72,6 +72,14 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			die();
 		}
 	}
+
+	private function getCurrentUrl(){
+		$protocol = isset($_SERVER['https']) ? 'https://' : 'http://';
+		$subDir = str_replace('public/', '', str_replace('index.php', '', $_SERVER['PHP_SELF']));
+
+		return $protocol . $_SERVER['HTTP_HOST'] . $subDir;
+	}
+
 	public function displayAllInfo() {
 		require '../../app/templates/info.php';
 	}

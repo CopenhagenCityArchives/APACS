@@ -54,7 +54,7 @@
                 <div class="span9">
                     <h2>Billeder</h2>
                     <p>
-                        <span class="label label-success">Service</span> <strong><?php echo 'http://' . $_SERVER['HTTP_HOST']; ?>/api/data/<?php echo $obj['id']; ?></strong>
+                        <span class="label label-success">Service</span> <strong><?php echo $obj['data_url']; ?><?php echo $obj['id']; ?></strong>
                     </p>
                     <p>Henter billeder for en given collection baseret på filtre.</p>
                     <p>
