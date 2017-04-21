@@ -198,7 +198,7 @@ class CommonInformationsController extends MainController {
 			$unit->id = $row['unit']['col_unit_id'];
 			$unit->collections_id = $row['unit']['col_id'];
 			$unit->description = 'test_description'; //$row['unit']['description']; //TODO: mangler data fra Starbas...
-			$unit->pages = count(Pages::find('units_id = ' . $row['unit']['col_unit_id']));
+			$unit->pages = count(Pages::find('unit_id = ' . $row['unit']['col_unit_id']));
 			$unit->updated = date('Y-m-d H:i:s');
 			$unit->level1_value = $row['unit']['level1_value'];
 			$unit->level1_order = $row['unit']['level1_order'];
@@ -207,7 +207,6 @@ class CommonInformationsController extends MainController {
 			$unit->level3_value = $row['unit']['level3_value'];
 			$unit->level3_order = $row['unit']['level3_order'];
 			$unit->is_public = $row['unit']['is_public'];
-
 			if (!$unit->save()) {
 				$this->response->setStatusCode(500, 'Could not create or update collection');
 				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
@@ -215,6 +214,8 @@ class CommonInformationsController extends MainController {
 				return;
 			}
 		}
+
+		Collections::updateUnitPages($data[0]['unit']['col_id']);
 
 		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}

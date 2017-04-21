@@ -126,10 +126,14 @@ class ConfigurationLoader {
 		for ($i = 1; $i <= $collection->num_of_filters; $i++) {
 			$requiredLevels = [];
 			$conditions = '';
+			$order = '';
 			foreach ($conf['levels'] as $level) {
 				$requiredLevels[] = $level['name'];
 				$conditions .= ' AND ' . $level['name'] . ' = \'%s\'';
+				$order .= ' ' . str_replace('value', 'order', $level['name']) . ',';
 			}
+
+			$order = ' ORDER BY' . $order . ' level' . $i . '_order';
 
 		//	$conditions = substr($conditions, 0, strlen($conditions)-3);
 
@@ -143,7 +147,7 @@ class ConfigurationLoader {
 				'gui_info_link' => false,
 				'name' => 'level' . $i . '_value',
 				'gui_type' => 'typeahead',
-				'data_sql' => 'SELECT DISTINCT level' . $i . '_value as id, level' . $i . '_value as text, level' . $i . '_order FROM apacs_units WHERE collections_id = ' . $collectionId . $conditions . ' ORDER BY level' . $i . '_order',
+				'data_sql' => 'SELECT DISTINCT level' . $i . '_value as id, level' . $i . '_value as text, level' . $i . '_order FROM apacs_units WHERE collections_id = ' . $collectionId . $conditions . $order,
 				'data' => false,
 				'gui_hide_name' => false,
 				'gui_hide_value' => false,
