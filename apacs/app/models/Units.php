@@ -22,6 +22,16 @@ class Units extends \Phalcon\Mvc\Model {
 		$this->belongsTo('collections_id', 'Collections', 'id');
 	}
 
+	public function updatePagesCountByCollection($collectionId)
+	{
+		$sql = 'UPDATE apacs_units SET pages = (
+  					SELECT COUNT(id) FROM apacs_pages
+    				WHERE apacs_pages.unit_id = apacs_units.id
+				) WHERE collections_id = :id';
+
+		return $this->getDI()->get('db')->query($sql, ['id' => $collectionId]);
+	}
+
 	private function getImportCreateSQL() {
 		return 'INSERT INTO ' . $this->getSource() . ' (concrete_unit_id, description, collection_id, tablename) SELECT :id, :fields, :collectionId, ":table" FROM :table :conditions';
 	}

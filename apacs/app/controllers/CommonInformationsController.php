@@ -186,7 +186,8 @@ class CommonInformationsController extends MainController {
 		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody(), FILE_APPEND);
 		$data = $this->GetAndValidateJsonPostData();
 
-		if (!Collections::findFirstById($data[0]['unit']['col_id'])) {
+		$collection = Collections::findFirstById($data[0]['unit']['col_id']);
+		if (!$collection) {
 			$this->response->setStatusCode(403, 'Collection not found');
 			$this->response->setJsonContent(['error' => 'No collection with id ' . $data[0]['unit']['col_id'] . ' found']);
 			return;
@@ -198,7 +199,7 @@ class CommonInformationsController extends MainController {
 			$unit->id = $row['unit']['col_unit_id'];
 			$unit->collections_id = $row['unit']['col_id'];
 			$unit->description = 'test_description'; //$row['unit']['description']; //TODO: mangler data fra Starbas...
-			$unit->pages = count(Pages::find('unit_id = ' . $row['unit']['col_unit_id']));
+			$unit->pages = 0;//count(Pages::find('unit_id = ' . $row['unit']['col_unit_id']));
 			$unit->updated = date('Y-m-d H:i:s');
 			$unit->level1_value = $row['unit']['level1_value'];
 			$unit->level1_order = $row['unit']['level1_order'];
@@ -215,7 +216,10 @@ class CommonInformationsController extends MainController {
 			}
 		}
 
-		Collections::updateUnitPages($data[0]['unit']['col_id']);
+		if($collection->status == 4){
+			$unit = new Units();
+			$unit->updatePagesCountByCollection($collection->id);
+		}
 
 		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}
