@@ -40,7 +40,7 @@ class CommonInformationsController extends MainController {
 			$value = 'filter' . $i . '_name';
 			$i++;
 		} while (isset($data[$value]));
-		$data['num_of_filters'] = $i;
+		$data['num_of_filters'] = $i+1;
 
 		$data['id'] = $data['col_id'];
 		$data['description'] = $data['info'];
