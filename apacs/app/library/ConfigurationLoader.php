@@ -125,9 +125,14 @@ class ConfigurationLoader {
 
 		for ($i = 1; $i <= $collection->num_of_filters; $i++) {
 			$requiredLevels = [];
+			$conditions = '';
 			foreach ($conf['levels'] as $level) {
 				$requiredLevels[] = $level['name'];
+				$conditions .= ' AND ' . $level['name'] . ' = \'%s\'';
 			}
+
+		//	$conditions = substr($conditions, 0, strlen($conditions)-3);
+
 			//TODO: Use this instead, when PHP version is updated to >= 5.5
 			//$requiredLevels = array_merge(array_column($conf['levels'], 'name'));
 
@@ -138,7 +143,7 @@ class ConfigurationLoader {
 				'gui_info_link' => false,
 				'name' => 'level' . $i . '_value',
 				'gui_type' => 'typeahead',
-				'data_sql' => 'SELECT DISTINCT id, level' . $i . '_value as text, level' . $i . '_order FROM apacs_units WHERE collections_id = ' . $collectionId . ' ORDER BY level' . $i . '_order',
+				'data_sql' => 'SELECT DISTINCT level' . $i . '_value as id, level' . $i . '_value as text, level' . $i . '_order FROM apacs_units WHERE collections_id = ' . $collectionId . $conditions . ' ORDER BY level' . $i . '_order',
 				'data' => false,
 				'gui_hide_name' => false,
 				'gui_hide_value' => false,
