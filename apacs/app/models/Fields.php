@@ -102,8 +102,11 @@ class Fields extends \Phalcon\Mvc\Model {
 				'label' => 'lig med',
 				'solr_query' => '%f%: "%q%"',
 			];
-			break;
 
+			$operators[] = [
+				'label' => 'ikke lig med',
+				'solr_query' => '-%f%: "%q%"',
+			];
 		}
 
 		return $operators;
