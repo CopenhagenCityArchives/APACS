@@ -34,6 +34,12 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 
 			$obj = $configuration->getCollection($collectionId, true)[0];
 
+			//Build an array of levels indexed by name
+			$levelsByName = [];
+			foreach($obj['levels'] as $level){
+				$levelsByName[$level['name']] = $level;
+			}
+
 			$i = 0;
 			foreach ($obj['levels'] as $level) {
 				$obj['levels'][$i]['url'] = ConfigurationLoader::getCurrentApiUrl() . 'metadata/' . $obj['id'] . '/' . $level['name'];
@@ -42,8 +48,10 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 					$url = '?';
 
 					foreach ($level['required_levels'] as $req) {
-						$url = $url . $req . '=:' . $req . '&';
+						$value = isset($levelsByName[$req]['example_value']) ? $levelsByName[$req]['example_value'] : ':' . $req . '_value';
+						$url = $url . $req . '=' . urlencode($value) . '&';
 					}
+
 					$url = substr($url, 0, strlen($url) - 1);
 					$obj['levels'][$i]['required_levels_url'] = $url;
 				}
@@ -57,7 +65,8 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			foreach ($obj['data_filters'] as $level) {
 				$obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
 				if ($obj['data_filters'][$i]['required']) {
-					$url = $url . $level['name'] . '=:' . $level['name'] . '&';
+					$value = isset($levelsByName[$level['name']]['example_value']) ? $levelsByName[$level['name']]['example_value'] : ':' . $level['name'];
+					$url = $url . $level['name'] . '=' . urlencode($value) . '&';
 				}
 
 				$i++;

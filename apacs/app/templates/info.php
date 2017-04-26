@@ -15,7 +15,7 @@
                         <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></strong>
                     </p>-->
                     <p><?php echo $obj['info']; ?></p>
-                    <!--<span class="label label-info">Example</span>
+                    <!--<span class="label label-info">Eksempel</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/collections">http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
                 </span>
                 <div class="span9">&nbsp;</div>
@@ -44,7 +44,7 @@
                         <li>Ingen</li>
                     </ul>
                     <?php } ?>
-                    <span class="label label-info">Example</span>
+                    <span class="label label-info">Eksempel</span>
                     <a target="_blank" href="<?php echo $level['url'] ?><?php echo $level['required_levels_url']; ?>"><?php echo $level['url'] ?><?php echo $level['required_levels_url']; ?></a>
                     <div class="span9">&nbsp;</div>
                 </div>
@@ -54,7 +54,7 @@
                 <div class="span9">
                     <h2>Protokolsider</h2>
                     <p>
-                        <span class="label label-success">Service</span> <strong><?php echo $obj['data_url']; ?><?php echo $obj['id']; ?></strong>
+                        <span class="label label-success">Service</span> <strong><?php echo $obj['data_url']; ?></strong>
                     </p>
                     <p>Henter siderne for en given collection baseret på filtre.</p>
                     <p>
@@ -73,7 +73,7 @@
                         <li>Ingen</li>
                     </ul>
                     <?php } ?>
-                    <span class="label label-info">Example</span>
+                    <span class="label label-info">eksempel</span>
                     <a target="_blank" href="<?php echo $obj['data_url']; ?>"><?php echo $obj['data_url']; ?></a>
                 </div>
                 <?php if(count($obj['indexes'])> 0){ ?>

@@ -146,6 +146,7 @@ class ConfigurationLoader {
 				'gui_description' => $collection->{'level' . $i . '_info'},
 				'gui_info_link' => false,
 				'name' => 'level' . $i . '_value',
+				'example_value' => $collection->{'level' . $i . '_example_value'},
 				'gui_type' => 'typeahead',
 				'data_sql' => 'SELECT DISTINCT level' . $i . '_value as id, level' . $i . '_value as text, level' . $i . '_order FROM apacs_units WHERE collections_id = ' . $collectionId . $conditions . $order,
 				'data' => false,
