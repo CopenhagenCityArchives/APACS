@@ -193,6 +193,7 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
+		$first = true;
 		foreach ($data as $row) {
 			$unit = new Units();
 
@@ -213,6 +214,19 @@ class CommonInformationsController extends MainController {
 				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
 				file_put_contents('incomming_create_or_update_units.log', 'could not save data: ' . implode(', ', $unit->getMessages()), FILE_APPEND);
 				return;
+			}
+
+			if($first){
+				$first = false;
+				$collection->level1_example_value = $unit->level1_value;
+				$collection->level2_example_value = $unit->level2_value;
+				$collection->level3_example_value = $unit->level3_value;
+				if (!$collection->save()) {
+					$this->response->setStatusCode(500, 'Could not create or update collection');
+					$this->response->setJsonContent(['error' => 'could not save collection with example data: ' . implode(', ', $collection->getMessages())]);
+					file_put_contents('incomming_create_or_update_units.log', 'could not collection with example save data: ' . implode(', ', $collection->getMessages()), FILE_APPEND);
+					return;
+				}
 			}
 		}
 
