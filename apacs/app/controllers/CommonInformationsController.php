@@ -37,10 +37,11 @@ class CommonInformationsController extends MainController {
 		$value;
 		$i = 0;
 		do {
-			$value = 'filter' . $i . '_name';
 			$i++;
+			$value = 'filter' . $i . '_name';
 		} while (isset($data[$value]));
-		$data['num_of_filters'] = $i+1;
+
+		$data['num_of_filters'] = $i;
 
 		$data['id'] = $data['col_id'];
 		$data['description'] = $data['info'];
@@ -204,10 +205,10 @@ class CommonInformationsController extends MainController {
 			$unit->updated = date('Y-m-d H:i:s');
 			$unit->level1_value = $row['unit']['level1_value'];
 			$unit->level1_order = $row['unit']['level1_order'];
-			$unit->level2_value = $row['unit']['level2_value'];
-			$unit->level2_order = $row['unit']['level2_order'];
-			$unit->level3_value = $row['unit']['level3_value'];
-			$unit->level3_order = $row['unit']['level3_order'];
+			$unit->level2_value = $row['unit']['level2_value'] != '' ? $row['unit']['level2_value'] : null;
+			$unit->level2_order = $row['unit']['level2_order'] != '' ? $row['unit']['level2_order'] : null;;
+			$unit->level3_value = $row['unit']['level3_value'] != '' ? $row['unit']['level3_value'] : null;;
+			$unit->level3_order = $row['unit']['level3_order'] != '' ? $row['unit']['level3_order'] : null;;
 			$unit->is_public = $row['unit']['is_public'];
 			if (!$unit->save()) {
 				$this->response->setStatusCode(500, 'Could not create or update collection');
@@ -218,9 +219,10 @@ class CommonInformationsController extends MainController {
 
 			if($first){
 				$first = false;
-				$collection->level1_example_value = $unit->level1_value;
-				$collection->level2_example_value = $unit->level2_value;
-				$collection->level3_example_value = $unit->level3_value;
+				$collection->level1_example_value = !is_null($unit->level1_value) ? $unit->level1_value : null;
+				$collection->level2_example_value = !is_null($unit->level2_value) ? $unit->level2_value : null;
+				$collection->level3_example_value = !is_null($unit->level3_value) ? $unit->level3_value : null;
+
 				if (!$collection->save()) {
 					$this->response->setStatusCode(500, 'Could not create or update collection');
 					$this->response->setJsonContent(['error' => 'could not save collection with example data: ' . implode(', ', $collection->getMessages())]);
