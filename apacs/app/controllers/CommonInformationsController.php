@@ -34,14 +34,7 @@ class CommonInformationsController extends MainController {
 
 		$collection = new Collections();
 
-		$value;
-		$i = 0;
-		do {
-			$i++;
-			$value = 'filter' . $i . '_name';
-		} while (isset($data[$value]));
-
-		$data['num_of_filters'] = $i;
+		$data['num_of_filters'] = $data['level_count'];
 
 		$data['id'] = $data['col_id'];
 		$data['description'] = $data['info'];
