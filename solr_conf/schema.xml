@@ -68,14 +68,14 @@
   <field name="chapel" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="cemetary" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="hood" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="birthplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="institution" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields for burial records -->
   <field name="deathcauses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="workplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
