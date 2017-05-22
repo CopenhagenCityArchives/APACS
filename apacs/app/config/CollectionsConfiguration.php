@@ -328,8 +328,8 @@ $collectionsSettings = array(
 		'test' => true,
 		'info' => 'Brug år og nummer fra  det alfabetiske register til at finde begravelsen.',
 		'link' => 'http://www.kbharkiv.dk/sog-i-arkivet/kilder-pa-nettet/begravelser',
-		'short_name' => 'Begravelsesprotokoller 1861-1940',
-		'long_name' => 'Begravelsesprotokoller 1861-1940',
+		'short_name' => 'Begravelsesprotokoller 1861-1942',
+		'long_name' => 'Begravelsesprotokoller 1861-1942',
 		'gui_required_fields_text' => 'Vælg et år',
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
@@ -516,7 +516,7 @@ $collectionsSettings = array(
 		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 4 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 4 AND is_public = 1 AND :query ORDER BY apacs_page.page_number',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -581,7 +581,7 @@ $collectionsSettings = array(
 		'objects_query' => 'select DISTINCT apacs_pages.id, riv_1, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 3 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 3 AND is_public = 1 AND :query ORDER BY page_number',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
