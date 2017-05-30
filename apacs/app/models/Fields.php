@@ -52,12 +52,12 @@ class Fields extends \Phalcon\Mvc\Model {
 
 			$operators[] = [
 				'label' => 'starter med',
-				'solr_query' => '%f%: *%q%',
+				'solr_query' => '%f%: %q%*',
 			];
 
 			$operators[] = [
 				'label' => 'ender med',
-				'solr_query' => '%f%: %q%*',
+				'solr_query' => '%f%: *%q%',
 			];
 
 			break;
