@@ -43,8 +43,10 @@ try {
 
 	//Collection info
 	$metadata->get('/collections/{collection:[0-9]+}/info', 'displayinfo');
-	$metadata->get('/collections', 'getcollectioninfo');
-	$metadata->get('/collections/{collection:[0-9]+}', 'getcollectioninfo');
+	$metadata->get('/collections/info', 'displayAllCollectionsInfo');
+
+	$metadata->get('/collections', 'getcollectioninfoJSON');
+	$metadata->get('/collections/{collection:[0-9]+}', 'getcollectioninfoJSON');
 
 	//Metadata levels
 	$metadata->get('/levels/{collection:[0-9]+}', 'getmetadatalevels');

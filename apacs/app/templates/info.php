@@ -18,6 +18,19 @@
                     <!--<span class="label label-info">Eksempel</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/collections">http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
                 </span>
+                <?php if(!is_null($obj['stats'])){ ?>
+                <div class="span9">&nbsp;</div>
+                <span class='span9'>
+                    <h2>Protokoller og sider (total/publiceret)</h2>
+                </span>
+                <div class="span9">
+                    <p>Protokoller: <b><?php echo number_format($obj['stats']['public_units'], 0, ',', '.'); ?> / <?php echo number_format($obj['stats']['units'], 0, ',', '.'); ?></b></p>
+                    <p>Sider: <b><?php echo number_format($obj['stats']['public_pages'], 0, ',', '.'); ?> / <?php echo number_format($obj['stats']['pages'], 0, ',', '.'); ?></b></p>
+                    <?php if($obj['stats']['units_without_pages'] > 0){ ?>
+                        <p>Der er <?php echo $obj['stats']['units_without_pages']; ?> protokoller uden tilknyttede sider</p>
+                    <?php } ?>
+                </div>
+                <?php } ?>
                 <div class="span9">&nbsp;</div>
                 <span class='span9'>
                     <h2>Metadata</h2>

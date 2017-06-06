@@ -119,6 +119,8 @@ class ConfigurationLoader {
             WHERE apacs_collections.id = ' . $collectionId . ' AND :query ORDER BY apacs_pages.page_number';
 		//apacs_collections.is_public = 1 AND
 
+		$conf['api_documentation_url'] = self::getCurrentApiUrl() . 'collections/' . $collectionId . '/info';
+
 		$conf['levels_type'] = 'hierarchy';
 
 		$conf['levels'] = [];

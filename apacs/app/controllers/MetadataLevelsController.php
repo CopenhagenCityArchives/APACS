@@ -22,64 +22,113 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		return $this->getDI()->get('configuration');
 	}
 
-	public function getCollectionInfo($collectionId = false) {
+	public function getCollectionInfoJSON($collectionId = false) {
 		$collectionData = $this->getConfig()->getCollection($collectionId, true);
 
 		$this->returnJson($collectionData);
 	}
 
 	public function displayInfo($collectionId = false) {
-		if ($collectionId) {
-			$configuration = $this->getConfig();
-
-			$obj = $configuration->getCollection($collectionId, true)[0];
-
-			//Build an array of levels indexed by name
-			$levelsByName = [];
-			foreach($obj['levels'] as $level){
-				$levelsByName[$level['name']] = $level;
-			}
-
-			$i = 0;
-			foreach ($obj['levels'] as $level) {
-				$obj['levels'][$i]['url'] = ConfigurationLoader::getCurrentApiUrl() . 'metadata/' . $obj['id'] . '/' . $level['name'];
-				$obj['levels'][$i]['required_levels_url'] = '';
-				if ($level['required_levels']) {
-					$url = '?';
-
-					foreach ($level['required_levels'] as $req) {
-						$value = isset($levelsByName[$req]['example_value']) ? $levelsByName[$req]['example_value'] : ':' . $req . '_value';
-						$url = $url . $req . '=' . urlencode($value) . '&';
-					}
-
-					$url = substr($url, 0, strlen($url) - 1);
-					$obj['levels'][$i]['required_levels_url'] = $url;
-				}
-				$i++;
-			}
-
-			$obj['data_filters'] = $configuration->getAllFilters($collectionId);
-
-			$i = 0;
-			$url = ConfigurationLoader::getCurrentApiUrl() . 'data/' . $obj['id'] . '?';
-			foreach ($obj['data_filters'] as $level) {
-				$obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
-				if ($obj['data_filters'][$i]['required']) {
-					$value = isset($levelsByName[$level['name']]['example_value']) ? $levelsByName[$level['name']]['example_value'] : ':' . $level['name'];
-					$url = $url . $level['name'] . '=' . urlencode($value) . '&';
-				}
-
-				$i++;
-			}
-
-			$url = substr($url, 0, strlen($url) - 1);
-
-			$obj['data_url'] = $url;
-
-			require '../../app/templates/info.php';
-
-			die();
+		if (!$collectionId) {
+			return;
 		}
+
+		$obj = $this->getCollectionInfo($collectionId);
+
+		require '../../app/templates/info.php';
+
+		die();
+	}
+
+	public function displayAllCollectionsInfo()
+	{
+		$config = $this->getConfig();
+		$collections = Collections::find();
+		$cols = [];
+		$totals = [];
+		$totals['pages'] = 0;
+		$totals['public_pages'] = 0;
+		$totals['units'] = 0;
+		$totals['public_units'] = 0;
+		$totals['units_without_pages'] = 0;
+
+		foreach($collections as $col){
+			//var_dump($col->id);
+			$newCol = $col->toArray();
+			$newCol['stats'] = $col->getStats();
+			$newCol['api_documentation_url'] = ConfigurationLoader::getCurrentApiUrl() . 'collections/' . $col->id . '/info';
+			$cols[] = $newCol;
+
+			if(is_null($newCol['stats'])){
+				continue;
+			}
+
+			$totals['pages'] += $newCol['stats']['pages'];
+			$totals['public_pages'] += $newCol['stats']['public_pages'];
+			$totals['units'] += $newCol['stats']['units'];
+			$totals['public_units'] += $newCol['stats']['public_units'];
+			$totals['units_without_pages'] += $newCol['stats']['units_without_pages'];
+		}
+
+		require '../../app/templates/info_all_collections.php';
+
+		die();
+	}
+
+	private function getCollectionInfo($collectionId)
+	{
+		$configuration = $this->getConfig();
+
+		$obj = $configuration->getCollection($collectionId, true)[0];
+
+		$collection = new Collections();
+		$collection->id = $collectionId;
+
+		$obj['stats'] = $collection->getStats();
+
+		//Build an array of levels indexed by name
+		$levelsByName = [];
+		foreach($obj['levels'] as $level){
+			$levelsByName[$level['name']] = $level;
+		}
+
+		$i = 0;
+		foreach ($obj['levels'] as $level) {
+			$obj['levels'][$i]['url'] = ConfigurationLoader::getCurrentApiUrl() . 'metadata/' . $obj['id'] . '/' . $level['name'];
+			$obj['levels'][$i]['required_levels_url'] = '';
+			if ($level['required_levels']) {
+				$url = '?';
+
+				foreach ($level['required_levels'] as $req) {
+					$value = isset($levelsByName[$req]['example_value']) ? $levelsByName[$req]['example_value'] : ':' . $req . '_value';
+					$url = $url . $req . '=' . urlencode($value) . '&';
+				}
+
+				$url = substr($url, 0, strlen($url) - 1);
+				$obj['levels'][$i]['required_levels_url'] = $url;
+			}
+			$i++;
+		}
+
+		$obj['data_filters'] = $configuration->getAllFilters($collectionId);
+
+		$i = 0;
+		$url = ConfigurationLoader::getCurrentApiUrl() . 'data/' . $obj['id'] . '?';
+		foreach ($obj['data_filters'] as $level) {
+			$obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
+			if ($obj['data_filters'][$i]['required']) {
+				$value = isset($levelsByName[$level['name']]['example_value']) ? $levelsByName[$level['name']]['example_value'] : ':' . $level['name'];
+				$url = $url . $level['name'] . '=' . urlencode($value) . '&';
+			}
+
+			$i++;
+		}
+
+		$url = substr($url, 0, strlen($url) - 1);
+
+		$obj['data_url'] = $url;
+
+		return $obj;
 	}
 
 	public function displayAllInfo() {
