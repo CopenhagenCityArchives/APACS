@@ -42,8 +42,8 @@ try {
 	$metadata->setHandler(new MetadataLevelsController());
 
 	//Collection info
-	$metadata->get('/collections/{collection:[0-9]+}/info', 'displayinfo');
-	$metadata->get('/collections/info', 'displayAllCollectionsInfo');
+	$metadata->get('/collections/{collection:[0-9]+}/info', 'displayCollectionInfo');
+	$metadata->get('/info', 'displayAllCollectionsInfo');
 
 	$metadata->get('/collections', 'getcollectioninfoJSON');
 	$metadata->get('/collections/{collection:[0-9]+}', 'getcollectioninfoJSON');

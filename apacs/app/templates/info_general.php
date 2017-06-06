@@ -1,23 +1,45 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Kildeoverblik</title>
+        <title>Kbhkilder.dk</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Latest compiled and minified CSS, Twitter Bootstrap -->
-        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
     </head>
     <body>
         <div class="container">
             <div class="row-fluid">
-                <span class="span9">
-                    <h2>Kildeoverblik</h2>
+                <div>
+                    <div class="span9">
+                        <h2>Kbhkilder.dk</h2>
+                        <p>Kbhkilder.dk udgør den centrale indgang til Københavns Stadsarkivs digitaliserede kilder og deres metadata.</p>
+                        <p>Disse data er tilgængelige gennem et JSON-baseret REST-API.</p>
+                        <p>Herunder ses grundlæggende informationer om hver digitaliseret samling.</p>
+                        <p>&nbsp;</p>
+                    </div>
                     <!--<p>
                         <span class="label label-success">Service</span> <strong>http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></strong>
                     </p>-->
-                    <p>Kort overblik over kilder i Kildeviseren</p>
-                    <p>Bemærk at der kun er tale om collections >= 100</p>
+                </div>
+                <div class="span9">
+                    <h3>Overblik overblik over kilder i Kildeviseren</h3>
+                    <p>Bemærk at der kun er tale om collections med id >= 100.</p>
+                    <p>Særlige collections:</p>
                     <p>Collection 1 (Begravelsesprotokollerne) er Task-udgaven af en prædefineret collection. Den skal overføres fra Starbas ved lejlighed.</p>
                     <p>Collection 60 (Politiets Registerblade) er en midlertidig overførsel af metadata, som højst sandsynligt skal fjernes igen.</p>
+                    <p>&nbsp;</p>
+                    <div class='span9'>
+                        <p>Protokoller og sider i alt (publiceret/total)</p>
+                    </div>
+                    <div class="span9">
+                        <p>Protokoller: <b><?php echo number_format($totals['public_units'], 0, ',', '.'); ?> / <?php echo number_format($totals['units'], 0, ',', '.'); ?></b></p>
+                        <p>Sider: <b><?php echo number_format($totals['public_pages'], 0, ',', '.'); ?> / <?php echo number_format($totals['pages'], 0, ',', '.'); ?></b></p>
+                        <?php if($totals['units_without_pages'] > 0){ ?>
+                            <p>Der er <?php echo $totals['units_without_pages']; ?> protokoller uden tilknyttede sider</p>
+                        <?php } ?>
+                    </div>
+                    <div class="span9">&nbsp;</div>
+
                     <h3>Indhold</h3>
                     <div class="span9">
                         <ul>
@@ -28,21 +50,11 @@
                         <?php } ?>
                         </ul>
                     </div>
-                    <span class='span9'>
-                        <h3>Protokoller og sider i alt (publiceret/total)</h3>
-                    </span>
-                    <div class="span9">
-                        <p>Protokoller: <b><?php echo number_format($totals['public_units'], 0, ',', '.'); ?> / <?php echo number_format($totals['units'], 0, ',', '.'); ?></b></p>
-                        <p>Sider: <b><?php echo number_format($totals['public_pages'], 0, ',', '.'); ?> / <?php echo number_format($totals['pages'], 0, ',', '.'); ?></b></p>
-                        <?php if($totals['units_without_pages'] > 0){ ?>
-                            <p>Der er <?php echo $totals['units_without_pages']; ?> protokoller uden tilknyttede sider</p>
-                        <?php } ?>
-                    </div>
-                    <div class="span9">&nbsp;</div>
-                    <div class="span9">&nbsp;</div>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
                     <!--<span class="label label-info">Eksempel</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/collections">http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
-                </span>
+                </div>
                 <?php foreach($cols as $obj){ ?>
                     <?php if(!is_null($obj['stats'])){ ?>
                     <h3 id="collection-<?php echo $obj['id']; ?>"><?php echo $obj['name']; ?></h3>

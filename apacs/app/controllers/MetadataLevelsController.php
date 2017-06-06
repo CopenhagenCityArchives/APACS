@@ -28,20 +28,21 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		$this->returnJson($collectionData);
 	}
 
-	public function displayInfo($collectionId = false) {
+	public function displayCollectionInfo($collectionId = false) {
 		if (!$collectionId) {
 			return;
 		}
 
 		$obj = $this->getCollectionInfo($collectionId);
 
-		require '../../app/templates/info.php';
+		require '../../app/templates/info_collection.php';
 
 		die();
 	}
 
 	public function displayAllCollectionsInfo()
 	{
+		$startTime = microtime(true);
 		$config = $this->getConfig();
 		$collections = Collections::find();
 		$cols = [];
@@ -70,7 +71,8 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			$totals['units_without_pages'] += $newCol['stats']['units_without_pages'];
 		}
 
-		require '../../app/templates/info_all_collections.php';
+		require '../../app/templates/info_general.php';
+			echo (int)microtime(true) - $startTime;
 
 		die();
 	}
@@ -129,10 +131,6 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		$obj['data_url'] = $url;
 
 		return $obj;
-	}
-
-	public function displayAllInfo() {
-		require '../../app/templates/info.php';
 	}
 
 	//Should load data from a metadata level, either by query or at once, defined by the filter
