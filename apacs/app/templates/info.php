@@ -21,7 +21,7 @@
                 <?php if(!is_null($obj['stats'])){ ?>
                 <div class="span9">&nbsp;</div>
                 <span class='span9'>
-                    <h2>Protokoller og sider (total/publiceret)</h2>
+                    <h2>Protokoller og sider (publiceret/total)</h2>
                 </span>
                 <div class="span9">
                     <p>Protokoller: <b><?php echo number_format($obj['stats']['public_units'], 0, ',', '.'); ?> / <?php echo number_format($obj['stats']['units'], 0, ',', '.'); ?></b></p>

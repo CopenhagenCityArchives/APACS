@@ -16,6 +16,9 @@
                     </p>-->
                     <p>Kort overblik over kilder i Kildeviseren</p>
                     <p>Bemærk at der kun er tale om collections >= 100</p>
+                    <p>Collection 1 (Begravelsesprotokollerne) er Task-udgaven af en prædefineret collection. Den skal overføres fra Starbas ved lejlighed.</p>
+                    <p>Collection 60 (Politiets Registerblade) er en midlertidig overførsel af metadata, som højst sandsynligt skal fjernes igen.</p>
+                    <h3>Indhold</h3>
                     <div class="span9">
                         <ul>
                         <?php foreach($cols as $obj){ ?>
@@ -26,7 +29,7 @@
                         </ul>
                     </div>
                     <span class='span9'>
-                        <h3>Protokoller og sider i alt (publiceret/publiceret)</h3>
+                        <h3>Protokoller og sider i alt (publiceret/total)</h3>
                     </span>
                     <div class="span9">
                         <p>Protokoller: <b><?php echo number_format($totals['public_units'], 0, ',', '.'); ?> / <?php echo number_format($totals['units'], 0, ',', '.'); ?></b></p>
@@ -45,7 +48,7 @@
                     <h3 id="collection-<?php echo $obj['id']; ?>"><?php echo $obj['name']; ?></h3>
                     <p>Collection id <?php echo $obj['id']; ?></p>
                     <span class='span9'>
-                        <h4>Protokoller og sider (total/publiceret)</h4>
+                        <h4>Protokoller og sider (publiceret/total)</h4>
                     </span>
                     <div class="span9">
                         <p>Protokoller: <b><?php echo number_format($obj['stats']['public_units'], 0, ',', '.'); ?> / <?php echo number_format($obj['stats']['units'], 0, ',', '.'); ?></b></p>
