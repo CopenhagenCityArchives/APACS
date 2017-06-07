@@ -56,7 +56,11 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		foreach($collections as $col){
 			//var_dump($col->id);
 			$newCol = $col->toArray();
-			$newCol['stats'] = $col->getStats();
+			if($col->id >= 100){
+				$newCol['stats'] = $col->getStats();
+			}else{
+				$newCol['stats'] = null;
+			}
 			$newCol['api_documentation_url'] = ConfigurationLoader::getCurrentApiUrl() . 'collections/' . $col->id . '/info';
 			$cols[] = $newCol;
 
@@ -72,7 +76,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		}
 
 		require '../../app/templates/info_general.php';
-			echo (int)microtime(true) - $startTime;
+			//echo (int)microtime(true) - $startTime;
 
 		die();
 	}

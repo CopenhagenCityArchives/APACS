@@ -29,7 +29,7 @@
                     <p>Collection 60 (Politiets Registerblade) er en midlertidig overførsel af metadata, som højst sandsynligt skal fjernes igen.</p>
                     <p>&nbsp;</p>
                     <div class='span9'>
-                        <p>Protokoller og sider i alt (publiceret/total)</p>
+                        <h4>Protokoller og sider i alt (publiceret/total)</h4>
                     </div>
                     <div class="span9">
                         <p>Protokoller: <b><?php echo number_format($totals['public_units'], 0, ',', '.'); ?> / <?php echo number_format($totals['units'], 0, ',', '.'); ?></b></p>
@@ -50,7 +50,6 @@
                         <?php } ?>
                         </ul>
                     </div>
-                    <p>&nbsp;</p>
                     <p>&nbsp;</p>
                     <!--<span class="label label-info">Eksempel</span>
                     <a target="_blank" href="http://www.kbhkilder.dk/api/collections">http://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
