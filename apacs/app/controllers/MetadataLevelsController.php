@@ -47,6 +47,8 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		$collections = Collections::find();
 		$cols = [];
 		$totals = [];
+		$stats = new Stats();
+		$totals['displayCount'] = $stats->getCountSince('+1 day');
 		$totals['pages'] = 0;
 		$totals['public_pages'] = 0;
 		$totals['units'] = 0;

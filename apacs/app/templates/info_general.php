@@ -39,6 +39,10 @@
                         <?php } ?>
                     </div>
                     <div class="span9">&nbsp;</div>
+                    <div class='span9'>
+                        <h4>Sidevisninger det seneste døgn: <?php echo number_format($totals['displayCount'], 0, ',', '.'); ?></h4>
+                    </div>
+                    <div class="span9">&nbsp;</div>
 
                     <h3>Indhold</h3>
                     <div class="span9">
