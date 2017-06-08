@@ -203,6 +203,11 @@ class Entities extends \Phalcon\Mvc\Model {
 				return date('Y-m-d\TH:i:s.000\Z', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
 				//return date('d-m-Y', strtotime($data[Fields::GetRealFieldNameFromField($field)]));
 			}
+
+			if($field['fieldName'] == 'ageWeeks' || $field['fieldName'] == 'ageDays' || $field['fieldName'] == 'ageHours' || $field['fieldName'] == 'ageMonth' || $field['fieldName'] == 'ageYears'){
+				return str_replace(',', '.', $data[Fields::GetRealFieldNameFromField($field)]);
+			}
+
 			if (trim($data[Fields::GetRealFieldNameFromField($field)]) == '') {
 				$fieldsAndData[$field['fieldName']] = null;
 			}

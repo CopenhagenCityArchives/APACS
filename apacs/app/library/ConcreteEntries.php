@@ -53,7 +53,7 @@ class ConcreteEntries {
 					}*/
 
 					//TODO: Hardcoded! Fix when form supports decimal data types
-					if(($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours' || $field->fieldName == 'ageMonth') && isset($result[0][$field->fieldName])){
+					if(($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours' || $field->fieldName == 'ageMonth' || $field->fieldName == 'ageYears') && isset($result[0][$field->fieldName])){
 						$result[0][$field->fieldName] = str_replace('.', ',', $result[0][$field->fieldName]);
 					}
 				}
@@ -342,7 +342,7 @@ class ConcreteEntries {
 					$fieldsAndData[$field['fieldName']] = str_replace(',', '.', $fieldsAndData[$field['fieldName']]);
 				}*/
 				//TODO: Hardcoded! Fix when form supports decimal data types
-				if($field['fieldName'] == 'ageWeeks' || $field['fieldName'] == 'ageDays' || $field['fieldName'] == 'ageHours' || $field['fieldName'] == 'ageMonth'){
+				if($field['fieldName'] == 'ageWeeks' || $field['fieldName'] == 'ageDays' || $field['fieldName'] == 'ageHours' || $field['fieldName'] == 'ageMonth' || $field['fieldName'] == 'ageYears'){
 					$fieldsAndData[$field['fieldName']] = str_replace(',', '.', $fieldsAndData[$field['fieldName']]);
 				}
 			} else {
