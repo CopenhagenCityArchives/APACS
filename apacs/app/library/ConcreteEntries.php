@@ -47,6 +47,15 @@ class ConcreteEntries {
 					if ($field->formFieldType == 'date' && isset($result[0][$field->fieldName])) {
 						$result[0][$field->fieldName] = date('d-m-Y', strtotime($result[0][$field->fieldName]));
 					}
+
+					/*if ($field->formFieldType == 'decimal' && isset($result[0][$field->fieldName])) {
+						$result[0][$field->fieldName] = str_replace('.', ',', $result[0][$field->fieldName]);
+					}*/
+
+					//TODO: Hardcoded! Fix when form supports decimal data types
+					if(($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours') && isset($result[0][$field->fieldName])){
+						$result[0][$field->fieldName] = str_replace('.', ',', $result[0][$field->fieldName]);
+					}
 				}
 
 				return $result[0];
@@ -327,6 +336,14 @@ class ConcreteEntries {
 				//TODO: This should be implemented elsewhere...
 				if ($field['formFieldType'] == 'date') {
 					$fieldsAndData[$field['fieldName']] = date('Y-m-d', strtotime($fieldsAndData[$field['fieldName']]));
+				}
+
+				/*if($field['formFieldType'] == 'decimal'){
+					$fieldsAndData[$field['fieldName']] = str_replace(',', '.', $fieldsAndData[$field['fieldName']]);
+				}*/
+				//TODO: Hardcoded! Fix when form supports decimal data types
+				if($field['fieldName'] == 'ageWeeks' || $field['fieldName'] == 'ageDays' || $field['fieldName'] == 'ageHours'){
+					$fieldsAndData[$field['fieldName']] = str_replace(',', '.', $fieldsAndData[$field['fieldName']]);
 				}
 			} else {
 				if ($field['includeInForm'] == 1) {
