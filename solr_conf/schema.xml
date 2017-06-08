@@ -60,8 +60,8 @@
   <field name="sex" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="civilstatus" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="ageYears" type="float" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="ageMonth" type="float" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="yearOfBirth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="dateOfDeath" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="record_number" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
