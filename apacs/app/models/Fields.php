@@ -47,7 +47,7 @@ class Fields extends \Phalcon\Mvc\Model {
 
 			$operators[] = [
 				'label' => 'indeholder ikke',
-				'solr_query' => '-%f%: "*%q%*"',
+				'solr_query' => '-%f%: *%q%*',
 			];
 
 			$operators[] = [
