@@ -349,6 +349,13 @@ class CommonInformationsController extends MainController {
 		//Saving the thumb
 		$post->SaveThumbImage();
 
+		//Set last activity on the TaskPage, so it is not received when getting available pages
+		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $input['page_id']]);
+		if(!is_null($taskPage)){
+			$taskPage->last_activity = time();
+			$taskPage->save();
+		}
+
 		$this->response->setStatusCode(200, 'Post created');
 		$this->response->setJsonContent(['post_id' => $post->id]);
 	}
