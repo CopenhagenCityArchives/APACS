@@ -378,7 +378,8 @@ class CommonInformationsController extends MainController {
 			$this->error('task_id, unit_id and current_number are required');
 			return;
 		}
-		$result = TasksPages::GetRandomAvailablePage($taskId, $unitId, $currentPageNumber);
+		//$result = TasksPages::GetRandomAvailablePage($taskId, $unitId, $currentPageNumber);
+		$result = TasksPages::GetNextAvailablePage($taskId, $unitId, $currentPageNumber);
 
 		if ($result !== false) {
 			//$this->response->setJsonContent($result[0], JSON_NUMERIC_CHECK);
