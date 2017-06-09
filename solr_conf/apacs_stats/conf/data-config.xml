@@ -1,0 +1,69 @@
+<dataConfig>
+<dataSource type="JdbcDataSource" 
+            driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://148.251.122.164/kbharkiv" 
+            user="kbharkiv" 
+            password="***REMOVED***"
+            batchSize="-1" 
+             />
+<document name="apacs_stats">
+  <entity name="events"  
+    pk="id"	
+    query="
+    SELECT stats.id, collection, file, loadTime, time, fileId, apacs_pages.page_number, apacs_units.description, 
+
+    CASE
+        WHEN apacs_units.description is null THEN collection
+        ELSE CONCAT(collection, ' ', apacs_units.description)
+    END as unit_description
+
+
+    FROM stats
+    left join apacs_pages ON apacs_pages.id = stats.fileId
+    left join apacs_units on apacs_pages.unit_id = apacs_units.id
+    left join apacs_collections ON apacs_collections.id = apacs_units.collections_id
+    "
+
+    deltaQuery="SELECT stats.id, collection, file, loadTime, time, fileId, apacs_pages.page_number, apacs_units.description, 
+
+    CASE
+        WHEN apacs_units.description is null THEN collection
+        ELSE CONCAT(collection, ' ', apacs_units.description)
+    END as unit_description
+
+
+    FROM stats
+    left join apacs_pages ON apacs_pages.id = stats.fileId
+    left join apacs_units on apacs_pages.unit_id = apacs_units.id
+    left join apacs_collections ON apacs_collections.id = apacs_units.collections_id
+
+    WHERE time &lt; '${dataimporter.last_index_time}'" 
+    
+    deltaImportQuery="
+    SELECT stats.id, collection, file, loadTime, time, fileId, apacs_pages.page_number, apacs_units.description, 
+
+    CASE
+        WHEN apacs_units.description is null THEN collection
+        ELSE CONCAT(collection, ' ', apacs_units.description)
+    END as unit_description
+
+
+    FROM stats
+    left join apacs_pages ON apacs_pages.id = stats.fileId
+    left join apacs_units on apacs_pages.unit_id = apacs_units.id
+    left join apacs_collections ON apacs_collections.id = apacs_units.collections_id
+
+    WHERE id &lt; '${dih.delta.id}'"
+
+    onError="skip"
+    >
+     <field column="id" name="id"/>
+     <field column="collection" name="collection"/>
+     <field column="file" name="file"/>
+     <field column="loadTime" name="loadTime"/>
+     <field column="time" name="time"/>
+     <field column="fileId" name="fileId"/>
+  </entity>
+
+</document>
+</dataConfig>
