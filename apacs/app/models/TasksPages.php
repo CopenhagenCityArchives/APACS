@@ -18,16 +18,14 @@ class TasksPages extends \Phalcon\Mvc\Model {
 	}
 
 	public static function GetNextAvailablePage($taskId, $unitId, $curPageNumber) {
-		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND Pages.page_number > :current_page_number AND Pages.unit_id = :unit_id AND last_activity < DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND is_done = 0 ORDER BY Pages.page_number LIMIT 1';
+		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = ' . $taskId . ' AND unit_id = ' . $unitId . ' AND Pages.page_number > ' . $curPageNumber . ' AND last_activity < DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND is_done = 0 ORDER BY Pages.page_number LIMIT 1';
 
 		$taskPage = new TasksPages();
 		$result = new Resultset(null, $taskPage,
-			$taskPage->getReadConnection()->query($query,
-				['unit_id' => $unitId, 'task_id' => $taskId, 'current_page_number' => $curPageNumber]
-			)
+			$taskPage->getReadConnection()->query($query)
 		);
 
-		return $result;
+		return $result[0];
 	}
 
 	public static function GetRandomAvailablePage($taskId, $unitId, $curPageNumber) {
