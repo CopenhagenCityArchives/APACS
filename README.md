@@ -15,7 +15,7 @@ Setup cli:
 
 eb init
 
-If not provided, add IAM credentials. 
+If not provided, add IAM credentials.
 
 
 ## Operating the server
@@ -49,6 +49,16 @@ docker build -t apacs_dev .
 ```
 docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 --name apacs_test apacs_dev
 ```
+
+### Stats to solr
+Stats from the system are feed to Solr using Solrs DataImportHandler.
+
+Stats consists of data from image requests (the source is not included in this code), and system exceptions.
+
+The datatimport is run using these cron commands:
+```0,2 * * * * /usr/bin/wget http://localhost:8983/solr/apacs_stats/dataimport?command=full-import&wt=json&clean=false&entity=system_exceptions```
+
+```0,10 * * * * /usr/bin/wget http://localhost:8983/solr/apacs_stats/dataimport?command=full-import&wt=json&clean=false&entity=image_requests```
 
 ## Dependencies
 Install PHP dependencies by running:
