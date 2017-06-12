@@ -194,7 +194,7 @@ try {
 	$exception = new SystemExceptions();
 	$exception->save([
 		'type' => 'global_exception',
-		'details' => json_encode(['exception' => $e->getMessage()]),
+		'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
 	]);
 
 	$di->get('response')->setStatusCode(500, "Server error");
