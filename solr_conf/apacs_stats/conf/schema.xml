@@ -33,10 +33,12 @@
     <field name="collection" type="text_general" indexed="true" stored="true"/>
     <field name="file" type="text_general" indexed="true" stored="true"/>
     <field name="loadTime" type="tfloat" indexed="true" stored="true"/>
-    <field name="time" type="text_general" indexed="true" stored="true"/>
+    <field name="time" type="tdate" indexed="true" stored="true"/>
     <field name="fileId" type="int" indexed="true" stored="true"/>
     <field name="unit_description" type="text_general" indexed="true" stored="true"/>
     <field name="page_number" type="int" indexed="true" stored="true"/>
+    <field name="type" type="text_general" indexed="true" stored="true"/>
+    <field name="details" type="text_general" indexed="true" stored="true"/>
 
   <!-- Nested document addresses -->
  <!-- <field name="registerblad_id" type="int" indexed="true" stored="true"/>
