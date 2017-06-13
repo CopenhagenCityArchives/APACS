@@ -47,6 +47,20 @@ class CommonInformationsController extends MainController {
 		}
 
 		$unit = new Units();
+		$exampleUnit = $unit->findFirst('collections_id = ' . $collection->id);
+
+		if($exampleUnit !== false){
+			$first = false;
+			$collection->level1_example_value = !is_null($exampleUnit->level1_value) ? $exampleUnit->level1_value : null;
+			$collection->level2_example_value = !is_null($exampleUnit->level2_value) ? $exampleUnit->level2_value : null;
+			$collection->level3_example_value = !is_null($exampleUnit->level3_value) ? $exampleUnit->level3_value : null;
+			if (!$collection->save()) {
+					//$this->response->setStatusCode(500, 'Could not create or update collection');
+					//$this->response->setJsonContent(['error' => 'could not save collection with example data: ' . implode(', ', $collection->getMessages())]);
+					file_put_contents('incomming_create_or_update_units.log', 'could not update collection with example unit data: ' . implode(', ', $collection->getMessages()), FILE_APPEND);
+				}
+		}
+
 		$isPublic = $collection->status == 4 ? 1 : 0;
 		$unit->updateIsPublicStatusByCollection($collection->id, $isPublic);
 
@@ -195,7 +209,6 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
-		$first = true;
 		foreach ($data as $row) {
 			$unit = new Units();
 
@@ -216,20 +229,6 @@ class CommonInformationsController extends MainController {
 				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
 				file_put_contents('incomming_create_or_update_units.log', 'could not save data: ' . implode(', ', $unit->getMessages()), FILE_APPEND);
 				return;
-			}
-
-			if($first){
-				$first = false;
-				$collection->level1_example_value = !is_null($unit->level1_value) ? $unit->level1_value : null;
-				$collection->level2_example_value = !is_null($unit->level2_value) ? $unit->level2_value : null;
-				$collection->level3_example_value = !is_null($unit->level3_value) ? $unit->level3_value : null;
-
-				if (!$collection->save()) {
-					$this->response->setStatusCode(500, 'Could not create or update collection');
-					$this->response->setJsonContent(['error' => 'could not save collection with example data: ' . implode(', ', $collection->getMessages())]);
-					file_put_contents('incomming_create_or_update_units.log', 'could not collection with example save data: ' . implode(', ', $collection->getMessages()), FILE_APPEND);
-					return;
-				}
 			}
 		}
 
