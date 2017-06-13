@@ -124,7 +124,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		$url = ConfigurationLoader::getCurrentApiUrl() . 'data/' . $obj['id'] . '?';
 		foreach ($obj['data_filters'] as $level) {
 			$obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
-			if ($obj['data_filters'][$i]['required']) {
+			if ($obj['data_filters'][$i] && $level['name'] != 'starbas_id') {
 				$value = isset($levelsByName[$level['name']]['example_value']) ? $levelsByName[$level['name']]['example_value'] : ':' . $level['name'];
 				$url = $url . $level['name'] . '=' . urlencode($value) . '&';
 			}
