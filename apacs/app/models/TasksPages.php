@@ -25,7 +25,11 @@ class TasksPages extends \Phalcon\Mvc\Model {
 			$taskPage->getReadConnection()->query($query)
 		);
 
-		return $result[0];
+		if (isset($result[0])) {
+			return $result[0];
+		}
+
+		return false;
 	}
 
 	public static function GetRandomAvailablePage($taskId, $unitId, $curPageNumber) {
@@ -40,6 +44,10 @@ class TasksPages extends \Phalcon\Mvc\Model {
 
 		$rand = rand(0, count($result));
 
-		return $result[$rand];
+		if (isset($result[$rand])) {
+			return $result[$rand];
+		}
+
+		return false;
 	}
 }
