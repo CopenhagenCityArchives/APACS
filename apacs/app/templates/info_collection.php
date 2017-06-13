@@ -70,6 +70,7 @@
                         <span class="label label-success">Service</span> <strong><?php echo $obj['data_url']; ?></strong>
                     </p>
                     <p>Henter siderne for en given collection baseret på filtre.</p>
+                    <p>Bemærk at kun publicerede sider vises.</p>
                     <p>
                         Parametre:
                     </p>
