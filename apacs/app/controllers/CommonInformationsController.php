@@ -46,6 +46,14 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
+		$unit = new Units();
+		$isPublic = $collection->status == 4 ? 1 : 0;
+		$unit->updateIsPublicStatusByCollection($collection->id, $isPublic);
+
+		if($isPublic){
+			$unit->updatePagesCountByCollection($collection->id);
+		}
+
 		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
 	}
 
@@ -202,7 +210,7 @@ class CommonInformationsController extends MainController {
 			$unit->level2_order = $row['unit']['level2_order'] != '' ? $row['unit']['level2_order'] : null;;
 			$unit->level3_value = $row['unit']['level3_value'] != '' ? $row['unit']['level3_value'] : null;;
 			$unit->level3_order = $row['unit']['level3_order'] != '' ? $row['unit']['level3_order'] : null;;
-			$unit->is_public = $row['unit']['is_public'];
+
 			if (!$unit->save()) {
 				$this->response->setStatusCode(500, 'Could not create or update collection');
 				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
@@ -223,11 +231,6 @@ class CommonInformationsController extends MainController {
 					return;
 				}
 			}
-		}
-
-		if($collection->status == 4){
-			$unit = new Units();
-			$unit->updatePagesCountByCollection($collection->id);
 		}
 
 		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);

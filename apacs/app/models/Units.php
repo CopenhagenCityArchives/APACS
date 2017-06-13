@@ -32,6 +32,12 @@ class Units extends \Phalcon\Mvc\Model {
 		return $this->getDI()->get('db')->query($sql, ['id' => $collectionId]);
 	}
 
+	public function updateIsPublicStatusByCollection($collectionId, $isPublic){
+		$sql = 'UPDATE apacs_units set is_public = :isPublic WHERE collections_id = :id';
+
+		return $this->getDI()->get('db')->query($sql, ['isPublic' => $isPublic, 'id' => $collectionId]);
+	}
+
 	private function getImportCreateSQL() {
 		return 'INSERT INTO ' . $this->getSource() . ' (concrete_unit_id, description, collection_id, tablename) SELECT :id, :fields, :collectionId, ":table" FROM :table :conditions';
 	}
