@@ -116,7 +116,7 @@ class ConfigurationLoader {
             FROM apacs_pages
             LEFT JOIN apacs_units ON apacs_pages.unit_id = apacs_units.id
             LEFT JOIN apacs_collections ON apacs_units.collections_id = apacs_collections.id
-            WHERE apacs_collections.id = ' . $collectionId . ' AND :query ORDER BY apacs_pages.page_number';
+            WHERE apacs_collections.id = ' . $collectionId . ' AND :query AND apacs_units.is_public = 1 ORDER BY apacs_pages.page_number';
 		//apacs_collections.is_public = 1 AND
 
 		$conf['api_documentation_url'] = self::getCurrentApiUrl() . 'collections/' . $collectionId . '/info';
