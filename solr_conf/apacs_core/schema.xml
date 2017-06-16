@@ -72,6 +72,7 @@
   <field name="hood" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="birthplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="institution" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="deathplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields for burial records -->
   <field name="deathcauses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
