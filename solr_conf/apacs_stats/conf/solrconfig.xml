@@ -21,8 +21,10 @@
      this file, see http://wiki.apache.org/solr/SolrConfigXml. 
 -->
 <config>
-  <lib dir="/opt/bitnami/apache-solr/contrib/dataimporthandler/lib" regex="mysql-connector-java-5.0.8-bin.jar" />
-  <lib dir="/opt/bitnami/apache-solr/dist" regex="solr-dataimporthandler-6.1.0.jar" />
+  <lib dir="/opt/solr/server/solr/configsets/solr_conf/lib" regex="mysql-connector-java-5\.0\.8-bin\.jar" />
+  
+  <lib dir="/opt/solr/dist" regex="solr-dataimporthandler-6\.4\.2\.jar" />
+
   <requestHandler name="/dataimport" class="org.apache.solr.handler.dataimport.DataImportHandler">
     <lst name="defaults">
     <str name="config">data-config.xml</str>
@@ -44,7 +46,7 @@
        that you fully re-index after changing this setting as it can
        affect both how text is indexed and queried.
   -->
-  <luceneMatchVersion>5.2.1</luceneMatchVersion>
+  <luceneMatchVersion>6.1.0</luceneMatchVersion>
 
   <!-- Data Directory
 

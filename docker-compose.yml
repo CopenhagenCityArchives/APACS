@@ -24,3 +24,34 @@ services:
       MYSQL_USER: dev
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: apacs
+  solr:
+    image: library/solr
+    container_name: solr
+    ports:
+      - "8988:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_core
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+    volumes:
+        - ./solr_conf:/opt/solr/server/solr/configsets/solr_conf
+  solr_stats:
+    image: library/solr
+    container_name: solr_stats
+    ports:
+      - "8989:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_stats
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_stats
+    volumes:
+        - ./solr_conf:/opt/solr/server/solr/configsets/solr_conf
+  solr_stats_refresher:
+    image: xordiv/docker-alpine-cron
+    container_name: solr_stats_refresher
+    links:
+      - solr_stats
+    environment:
+      - CRON_STRINGS=* * * * * root wget -qO- solr_stats:8983/solr/apacs_stats/dataimport?wt=json&clean=true&entity=system_exceptions&command=full-import &> /dev/null && echo '$$(date)  Got system_exceptions'
