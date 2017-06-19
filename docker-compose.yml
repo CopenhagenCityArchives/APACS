@@ -47,11 +47,11 @@ services:
       - apacs_stats
       - /opt/solr/server/solr/configsets/solr_conf/apacs_stats
     volumes:
-        - ./solr_conf:/opt/solr/server/solr/configsets/solr_conf
+        - ./solr_conf/:/opt/solr/server/solr/configsets/solr_conf/
   solr_stats_refresher:
     image: xordiv/docker-alpine-cron
     container_name: solr_stats_refresher
     links:
       - solr_stats
     environment:
-      - CRON_STRINGS=* * * * * root wget -qO- solr_stats:8983/solr/apacs_stats/dataimport?wt=json&clean=true&entity=system_exceptions&command=full-import &> /dev/null && echo '$$(date)  Got system_exceptions'
+      - CRON_STRINGS=* * * * * wget -qO- --no-cache --post-data="command=full-import&verbose=false&clean=false&commit=true&optimize=false&core=apacs_stats&name=dataimport" http://solr_stats:8983/solr/apacs_stats/dataimport?indent=on && echo '$$(date)  Got system_exceptions'

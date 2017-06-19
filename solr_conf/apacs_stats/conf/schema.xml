@@ -39,8 +39,9 @@
     <field name="page_number" type="int" indexed="true" stored="true"/>
     <field name="type" type="text_general" indexed="true" stored="true"/>
     <field name="details" type="text_general" indexed="true" stored="true"/>
-
-  <!-- Nested document addresses -->
+    <field name="statType" type="text_general" indexed="true" stored="true"/>
+  
+<!-- Nested document addresses -->
  <!-- <field name="registerblad_id" type="int" indexed="true" stored="true"/>
   <field name="adresse" type="text_general" indexed="true" stored="true"/>
   <field name="boendeHos" type="text_general" indexed="true" stored="true"/>
