@@ -65,17 +65,17 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'date':
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%f%:"%q%"',
+				'solr_query' => '%f%: "%q%"',
 			];
 
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '%f%:[* TO %q%]',
+				'solr_query' => '%f%: [* TO %q%]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '%f%:[%q% TO *]',
+				'solr_query' => '%f%: [%q% TO *]',
 			];
 			break;
 
@@ -121,9 +121,10 @@ class Fields extends \Phalcon\Mvc\Model {
 		$facet = [];
 
 		//TODO: Hardcoded
-		if($field['name'] == 'yearOfBirth'){
+		if($field['solr_name'] == 'yearOfBirth'){
 			$facet = [
-				'result_key' => 'facet.queries',
+				'result_key' => 'facet_queries',
+				'facet_label' => 'Fødselsår',
 				'mappings' => [
 					[
 						'label' => '1760 - 1780',
@@ -181,15 +182,17 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'string':
 		case 'typeahead':
 			$facet = [
-				'result_key' => 'facet_fields',
-				'url_parameter' => 'facet.field=' . $field['solr_name'] . '&facet.limit=10',
+				'result_key' => 'facet_queries',
+				'facet_label' => $field['name'],
+				'facet_query' => '%f%:"%q%"',
 			];
 			break;
 
 		case 'number':
 			$facet = [
-				'result_key' => 'facet_ranges',
-				'url_parameter' => 'facet.range=' . $field['solr_name'] . '&facet.range.start=0&facet.range.end=100000&facet.range.gap=10&facet.limit=10',
+				'result_key' => 'facet_queries',
+				'facet_label' => $field['name'],
+				'facet_query' => '%f%:"%q%"',
 			];
 			break;
 
