@@ -124,6 +124,7 @@ class Fields extends \Phalcon\Mvc\Model {
 		if($field['solr_name'] == 'yearOfBirth'){
 			$facet = [
 				'result_key' => 'facet_queries',
+				'facet_key' => 'yearOfBirth',
 				'facet_label' => 'Fødselsår',
 				'mappings' => [
 					[
@@ -182,7 +183,8 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'string':
 		case 'typeahead':
 			$facet = [
-				'result_key' => 'facet_queries',
+				'result_key' => 'facet_fields',
+				'facet_key' => $field['solr_name'],
 				'facet_label' => $field['name'],
 				'facet_query' => '%f%:"%q%"',
 			];
@@ -190,7 +192,8 @@ class Fields extends \Phalcon\Mvc\Model {
 
 		case 'number':
 			$facet = [
-				'result_key' => 'facet_queries',
+				'result_key' => 'facet_fields',
+				'facet_key' => $field['solr_name'],
 				'facet_label' => $field['name'],
 				'facet_query' => '%f%:"%q%"',
 			];
