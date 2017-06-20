@@ -1,3 +1,0 @@
-* * * * * wget -qO- solr_stats:8983/solr/apacs_stats/dataimport?command=full-import&wt=json&clean=false&entity=system_exceptions &> /dev/null && echo "Updated image_request stats" >> /var/log/crontab_log
-
-0/10 * * * * wget -qO- solr_stats:8983/solr/apacs_stats/dataimport?command=full-import&wt=json&clean=false&entity=system_exceptions &> /dev/null && echo "Update system_exceptions" >> /var/log/crontab_log
