@@ -2,15 +2,17 @@ version: '2'
 services:
   phalcon:
     build:
-      context: .
-      dockerfile: ./docker_webserver/Dockerfile_copy_src
+      context: ./
+      dockerfile: ./docker_webserver/Dockerfile
     container_name: webserver
     links:
       - db
     ports:
-      - "80:80"
+      - "8000:80"
+    volumes:
+      - ./apacs:/var/www/
     environment:
-      - PROD_DEV=PROD
+      - PROD_DEV=DEV
   db:
     image: mysql
     container_name: database
@@ -24,13 +26,14 @@ services:
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: apacs
   solr:
+    image: library/solr:6.6
     container_name: solr
-    build:
-      context: ./solr/
     ports:
-      - "8983:8983"
+      - "8989:8983"
     entrypoint:
       - docker-entrypoint.sh
       - solr-precreate
       - apacs_core
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+    volumes:
+        - ./solr_conf:/opt/solr/server/solr/configsets/solr_conf
