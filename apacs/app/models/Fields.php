@@ -65,17 +65,17 @@ class Fields extends \Phalcon\Mvc\Model {
 		case 'date':
 			$operators[] = [
 				'label' => 'lig med',
-				'solr_query' => '%f%:"%q%"',
+				'solr_query' => '%f%: "%q%"',
 			];
 
 			$operators[] = [
 				'label' => 'mindre end',
-				'solr_query' => '%f%:[* TO %q%]',
+				'solr_query' => '%f%: [* TO %q%]',
 			];
 
 			$operators[] = [
 				'label' => 'større end',
-				'solr_query' => '%f%:[%q% TO *]',
+				'solr_query' => '%f%: [%q% TO *]',
 			];
 			break;
 
@@ -117,30 +117,88 @@ class Fields extends \Phalcon\Mvc\Model {
 		if ($field['includeInSolr'] == 0 || $field['SOLRFacet'] == 0) {
 			return null;
 		}
+		
 
 		$facet = null;
+
+		//TODO: Hardcoded
+		if($field['solr_name'] == 'yearOfBirth'){
+			$facet = [
+				'result_key' => 'facet_queries',
+				'facet_key' => 'yearOfBirth',
+				'facet_label' => 'Fødselsår',
+				'mappings' => [
+					[
+						'label' => '1760 - 1780',
+						'key'	=> '1760 - 1780',
+						'facet_query' => '[* TO 1780]'
+					],
+					[
+						'label' => '1780 - 1800',
+						'key'	=> '1780 - 1800',
+						'facet_query' => '[1780 TO 1800]'
+					],
+					[
+						'label' => '1800 - 1810',
+						'key'	=> '1800 - 1810',
+						'facet_query' => '[1800 TO 1810]'
+					],
+					[
+						'label' => '1810 - 1820',
+						'key'	=> '1810 - 1820',
+						'facet_query' => '[1810 TO 1820]'
+					],
+					[
+						'label' => '1820 - 1830',
+						'key'	=> '1820 - 1830',
+						'facet_query' => '[1820 TO 1830]'
+					],
+					[
+						'label' => '1830 - 1840',
+						'key'	=> '1830 - 1840',
+						'facet_query' => '1830 TO 1840]'
+					],
+					[
+						'label' => '1840 - 1850',
+						'key'	=> '1840 - 1850',
+						'facet_query' => '1840 TO 1850]'
+					],
+					[
+						'label' => '1850 - 1860',
+						'key'	=> '1850 - 1860',
+						'facet_query' => '1850 TO 1860]'
+					],
+					[
+						'label' => '1860 - 1870',
+						'key'	=> '1860 - 1870',
+						'facet_query' => '1860 TO 1870]'
+					]
+				]
+
+			];
+
+			return $facet;
+		}
+
 		switch ($field['formFieldType']) {
 		case 'string':
 		case 'typeahead':
 			$facet = [
 				'result_key' => 'facet_fields',
-				'url_parameter' => 'facet.field=' . $field['solr_name'] . '&facet.limit=10',
+				'facet_key' => $field['solr_name'],
+				'facet_label' => $field['name'],
+				'facet_query' => '%f%:"%q%"',
 			];
 			break;
 
 		case 'number':
 			$facet = [
-				'result_key' => 'facet_ranges',
-				'url_parameter' => 'facet.range=' . $field['solr_name'] . '&facet.range.start=0&facet.range.end=100000&facet.range.gap=10&facet.limit=10',
+				'result_key' => 'facet_fields',
+				'facet_key' => $field['solr_name'],
+				'facet_label' => $field['name'],
+				'facet_query' => '%f%:"%q%"',
 			];
 			break;
-
-			/*case 'date':
-				$facet = [
-					'result_key' => 'facet_ranges',
-					'url_key' => 'facet.date=' . $field['solr_name'] . '&facet.date.start=0001-01-01T00:00:00Z&facet.date.end=NOW&facet.date.gap=+5YEAR&facet.limit=25',
-				];
-			*/
 		}
 
 		return $facet;

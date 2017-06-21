@@ -6,6 +6,11 @@ class IndexDataController extends MainController {
 	public function GetDataFromDatasouce($dataSourceId) {
 		$query = $this->request->getQuery('q', null, null);
 
+		if(is_null($dataSourceId) || is_null($query)){
+			$this->response->setJsonContent([]);
+			return;
+		}
+
 		$datasource = Datasources::findFirst(['conditions' => 'id = ' . $dataSourceId]);
 
 		$this->response->setJsonContent($datasource->GetData($query), JSON_NUMERIC_CHECK);
