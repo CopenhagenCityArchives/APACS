@@ -118,7 +118,7 @@ class Fields extends \Phalcon\Mvc\Model {
 			return null;
 		}
 
-		$facet = [];
+		$facet = null;
 		switch ($field['formFieldType']) {
 		case 'string':
 		case 'typeahead':
