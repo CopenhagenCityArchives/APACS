@@ -28,8 +28,8 @@ class Fields extends \Phalcon\Mvc\Model {
 
 	public static function GetFieldSearchOperators($field) {
 
-		if ($field['includeInSolr'] == 0) {
-			return $field;
+		if ($field['includeInSolr'] == 0 && $field['solr_name'] !== 'freetext_store') {
+			return [];
 		}
 
 		$operators = [];
@@ -114,10 +114,10 @@ class Fields extends \Phalcon\Mvc\Model {
 
 	public static function SetFieldSearchFacets($field) {
 
-		if ($field['includeInSolr'] == 0 || $field['SOLRFacet'] == 0) {
+		if ($field['includeInSolr'] == 0) {
 			return null;
 		}
-		
+
 
 		$facet = null;
 
