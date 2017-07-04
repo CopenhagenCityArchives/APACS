@@ -423,7 +423,11 @@ class ConcreteEntries {
 
 			if ($entity->type == 'object') {
 				if ($entity->AllEntityFieldsAreEmpty($entity, $data[$primaryEntity->name][$entity->name])) {
-					var_dump('entiteten havde intet data:', $data[$primaryEntity->name][$entity->name]);
+					//Delete entity id empty but id is set
+					if(isset($data[$primaryEntity->name][$entity->name]['id'])){
+						$this->DeleteConcreteEntry($entity->primaryTableName, $data[$primaryEntity->name][$entity->name]['id']);
+					}
+					//var_dump('entiteten havde intet data:', $data[$primaryEntity->name][$entity->name]);
 					continue;
 				}
 
