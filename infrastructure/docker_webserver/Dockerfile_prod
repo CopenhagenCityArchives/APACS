@@ -1,0 +1,11 @@
+FROM szeist/phalcon-apache2
+
+RUN apt-get update
+RUN apt-get install phpunit --assume-yes
+
+ENV MAX_EXECUTION_TIME=90
+
+# Set Max execution time
+RUN sed -i "s@^max_execution_time = .*@max_execution_time = $MAX_EXECUTION_TIME@" /etc/php5/apache2/php.ini
+
+COPY ./apacs /var/www/
