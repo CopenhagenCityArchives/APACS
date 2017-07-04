@@ -44,13 +44,13 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'indeholder',
 				'solr_query' => '%f%: *%q%*',
-				'escape_special_chars' => false
+				'escape_special_chars' => true
 			];
 
 			$operators[] = [
 				'label' => 'indeholder ikke',
 				'solr_query' => '-%f%: *%q%*',
-				'escape_special_chars' => false
+				'escape_special_chars' => true
 			];
 
 			$operators[] = [
