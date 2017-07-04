@@ -38,26 +38,31 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'lig med',
 				'solr_query' => '%f%: "%q%"',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'indeholder',
 				'solr_query' => '%f%: *%q%*',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'indeholder ikke',
 				'solr_query' => '-%f%: *%q%*',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'starter med',
 				'solr_query' => '%f%: %q%*',
+				'escape_special_chars' => true
 			];
 
 			$operators[] = [
 				'label' => 'ender med',
 				'solr_query' => '%f%: *%q%',
+				'escape_special_chars' => true
 			];
 
 			break;
@@ -66,16 +71,19 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'lig med',
 				'solr_query' => '%f%: "%q%"',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'mindre end',
 				'solr_query' => '%f%: [* TO %q%]',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'større end',
 				'solr_query' => '%f%: [%q% TO *]',
+				'escape_special_chars' => false
 			];
 			break;
 
@@ -83,16 +91,19 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'lig med',
 				'solr_query' => '%f%: %q%',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'mindre end',
 				'solr_query' => '%f%: [0 TO %q%]',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'større end',
 				'solr_query' => '%f%: [%q% TO *]',
+				'escape_special_chars' => false
 			];
 
 			break;
@@ -101,11 +112,13 @@ class Fields extends \Phalcon\Mvc\Model {
 			$operators[] = [
 				'label' => 'lig med',
 				'solr_query' => '%f%: "%q%"',
+				'escape_special_chars' => false
 			];
 
 			$operators[] = [
 				'label' => 'ikke lig med',
 				'solr_query' => '-%f%: "%q%"',
+				'escape_special_chars' => false
 			];
 		}
 
