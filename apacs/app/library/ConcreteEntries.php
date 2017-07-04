@@ -432,7 +432,7 @@ class ConcreteEntries {
 
 				if (!$entity->isDataValid($data[$primaryEntity->name][$entity->name])) {
 					//$dbCon->rollback();
-					throw new InvalidArgumentException('could not save single row of secondary entity ' . $entity->name . ' data. Input error ' . $primaryEntity->GetValidationStatus());
+					throw new InvalidArgumentException('could not save single row of secondary entity ' . $entity->name . ' data. Input error ' . $entity->GetValidationStatus());
 				}
 
 				try {
