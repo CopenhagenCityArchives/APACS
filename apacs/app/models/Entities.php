@@ -100,6 +100,9 @@ class Entities extends \Phalcon\Mvc\Model {
 					$field['type'] = 'string';
 					$field['format'] = 'date';
 				}
+				if ($field['formFieldType'] == 'number') {
+					$field['type'] = 'string';
+				}
 			}
 			//	echo $field['datasources_id'];
 			//Getting info from datasource, if any
