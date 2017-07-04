@@ -3,7 +3,7 @@ services:
   phalcon:
     build:
       context: .
-      dockerfile: ./docker_webserver/Dockerfile_copy_src
+      dockerfile: ./docker_webserver/Dockerfile_prod
     container_name: webserver
     links:
       - db
