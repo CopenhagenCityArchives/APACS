@@ -13,18 +13,6 @@ services:
       - ./apacs:/var/www/
     environment:
       - PROD_DEV=DEV
-  db:
-    image: mysql
-    container_name: database
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./apacs/init:/docker-entrypoint-initdb.d
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: 123456
-      MYSQL_DATABASE: apacs
   solr:
     image: library/solr:6.6
     container_name: solr
@@ -37,3 +25,15 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
         - ./solr_conf:/opt/solr/server/solr/configsets/solr_conf
+  db:
+    image: mysql
+    container_name: database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./apacs/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: apacs

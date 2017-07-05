@@ -2,27 +2,13 @@ version: '2'
 services:
   phalcon:
     build:
-      context: .
+      context: ./
       dockerfile: ./docker_webserver/Dockerfile_prod
     container_name: webserver
-    links:
-      - db
     ports:
       - "80:80"
     environment:
       - PROD_DEV=PROD
-  db:
-    image: mysql
-    container_name: database
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./apacs/init:/docker-entrypoint-initdb.d
-    environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: 123456
-      MYSQL_DATABASE: apacs
   solr:
     container_name: solr
     build:
