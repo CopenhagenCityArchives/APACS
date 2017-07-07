@@ -419,7 +419,7 @@ $collectionsSettings = array(
 		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER apacs_page.page_number',
+                        WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Periode, søgebar
