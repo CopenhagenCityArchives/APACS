@@ -80,6 +80,19 @@
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="workplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
+  <!-- Maltivalue fields for registerblade -->
+  <field name="prb_spouse_names" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_children_names" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_spouse_positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_date_of_birth" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="prb_addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_living_at" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_address_coordinates_lat" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_address_coordinates_lon" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_address_streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="prb_person_comment" type="text_general" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="prb_card_comment" type="text_general" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="prb_special_comment" type="text_general" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
@@ -98,6 +111,7 @@
   <copyField source="addresses" dest="freetext_store"/>
   <copyField source="positions" dest="freetext_store"/>
   <copyField source="institution" dest="freetext_store"/>
+  <copyField source="prb_address_streets" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="true" required="false" multiValued="true" />
@@ -195,7 +209,7 @@
      in a compatible way. Any analysis applied to the <uniqueKey> should _not_ produce multiple
      tokens
    -->
-   <field name="id" type="int" indexed="true" stored="true" required="true" multiValued="false" />
+   <field name="id" type="string_ci" indexed="true" stored="true" required="true" multiValued="false" />
 
    <!-- Dynamic field definitions allow using convention over configuration
        for fields via the specification of patterns to match field names.
