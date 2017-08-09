@@ -28,4 +28,9 @@ class FakeAccessController implements IAccessController {
 	public function UserCanEdit($entry) {
 		return true;
 	}
+
+	public function IsSuperUser() {
+		return true;
+	}
+
 }

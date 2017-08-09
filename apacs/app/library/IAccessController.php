@@ -13,4 +13,6 @@ interface IAccessController {
 	public function GetUserName(); //: string;
 
 	public function UserCanEdit($entry); //: bool;
+
+	public function IsSuperUser(); //: bool;
 }
