@@ -11,28 +11,38 @@ class IndexDataController extends MainController {
 
 		$this->RequireAccessControl(true);
 
-		if(!$this->auth->IsSuperUser()){
-			throw new Exception("Only superusers are allowed to change datasource values");
+		try{
+			if(!$this->auth->IsSuperUser()){
+				throw new Exception("Only superusers are allowed to change datasource values");
+			}
+
+			$input = $this->GetAndValidateJsonPostData();
+
+			if(!isset($input['value']) || !isset($input['id']) || !is_numeric($input['id'])){
+				throw new InvalidArgumentException('one or more of the required fields \'value\' and \'id\' is not set');
+			}
+
+			$id = isset($input['id']) ? $input['id'] : null;
+
+			$datasource = Datasources::findFirst($datasourceId);
+
+			$saved = false;
+			$saved = $datasource->UpdateValue($input['id'], $input['value']);
+
+			if($saved){
+				$this->response->setJsonContent(['status' => 'ok']);
+			}
+			else{
+				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
+			}
 		}
-
-		$input = $this->GetAndValidateJsonPostData();
-
-		if(!isset($input['value']) || !isset($input['id']) || !is_numeric($input['id'])){
-			throw new InvalidArgumentException('one or more of the required fields \'value\' and \'id\' is not set');
+		catch(InvalidArgumentException $e){
+			$this->response->setJsonContent(['error' => $e->getMessage()]);
+			$this->response->setStatusCode(401, "Invalid argument");
 		}
-
-		$id = isset($input['id']) ? $input['id'] : null;
-
-		$datasource = Datasources::findFirst($datasourceId);
-
-		$saved = false;
-		$saved = $datasource->UpdateValue($input['id'], $input['value']);
-
-		if($saved){
-			$this->response->setJsonContent(['status' => 'ok']);
-		}
-		else{
-			throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
+		catch(Exception $e){
+			$this->response->setJsonContent(['error' => $e->getMessage()]);
+			$this->response->setStatusCode(500, "Server error");
 		}
 	}
 
@@ -40,26 +50,36 @@ class IndexDataController extends MainController {
 
 		$this->RequireAccessControl(true);
 
-		if(!$this->auth->IsSuperUser()){
-			throw new Exception("Only superusers are allowed to change datasource values");
+		try{
+			if(!$this->auth->IsSuperUser()){
+				throw new Exception("Only superusers are allowed to change datasource values");
+			}
+
+			$input = $this->GetAndValidateJsonPostData();
+
+			if(!isset($input['value'])){
+				throw new InvalidArgumentException('the required field \'value\' is not set');
+			}
+
+			$datasource = Datasources::findFirst($datasourceId);
+
+			$saved = false;
+			$saved = $datasource->CreateValue($input['value']);
+
+			if($saved){
+				$this->response->setJsonContent(['status' => 'ok']);
+			}
+			else{
+				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
+			}
 		}
-
-		$input = $this->GetAndValidateJsonPostData();
-
-		if(!isset($input['value'])){
-			throw new InvalidArgumentException('the required field \'value\' is not set');
+		catch(InvalidArgumentException $e){
+			$this->response->setJsonContent(['error' => $e->getMessage()]);
+			$this->response->setStatusCode(401, "Invalid argument");
 		}
-
-		$datasource = Datasources::findFirst($datasourceId);
-
-		$saved = false;
-		$saved = $datasource->CreateValue($input['value']);
-
-		if($saved){
-			$this->response->setJsonContent(['status' => 'ok']);
-		}
-		else{
-			throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
+		catch(Exception $e){
+			$this->response->setJsonContent(['error' => $e->getMessage()]);
+			$this->response->setStatusCode(500, "Server error");
 		}
 	}
 

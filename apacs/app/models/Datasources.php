@@ -16,6 +16,7 @@ class Datasources extends \Phalcon\Mvc\Model {
 		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
 		return $result->fetchAll();
 	}
+	
 	public function CreateValue($value){
 		if($this->isPublicEditable == 0){
 			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
@@ -24,11 +25,7 @@ class Datasources extends \Phalcon\Mvc\Model {
 		$existingValues = $this->getData($value);
 
 		if(count($existingValues) > 0){
-			throw new Exception('Could not create new value for datasource ' . $this->name . '. The value already exists');
-		}
-
-		if($this->isPublicEditable == 0){
-			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
+			throw new InvalidArgumentException('Could not create new value for datasource ' . $this->name . '. The value already exists');
 		}
 
 		$query = 'INSERT INTO ' . $this->dbTableName . ' (`' . $this->valueField . '`) VALUES ("' . $value . '")';
@@ -38,7 +35,13 @@ class Datasources extends \Phalcon\Mvc\Model {
 
 	public function UpdateValue($id, $value){
 		if($this->isPublicEditable == 0){
-			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
+			throw new Exception('Could not update value for datasource ' . $this->name . '. It is not public editable');
+		}
+
+		$existingValues = $this->getData($id);
+
+		if(count($existingValues) !== 1){
+			throw new InvalidArgumentException('Could not update value for datasource ' . $this->name . '. No value with id '. $id .' exists');
 		}
 
 		$query = 'UPDATE ' . $this->dbTableName . ' SET ' . $this->valueField . ' = "' . $value . '" WHERE id = ' . $id . ' LIMIT 1';
