@@ -3,7 +3,7 @@ services:
   phalcon:
     build:
       context: ./
-      dockerfile: ./docker_webserver/Dockerfile_dev
+      dockerfile: ./infrastructure/docker_webserver/Dockerfile_dev
     container_name: webserver
     links:
       - db
@@ -24,7 +24,7 @@ services:
       - apacs_core
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
-        - ./solr_conf:/opt/solr/server/solr/configsets/solr_conf
+        - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
   db:
     image: mysql
     container_name: database
