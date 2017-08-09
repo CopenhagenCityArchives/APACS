@@ -3,6 +3,66 @@
 class IndexDataController extends MainController {
 	private $db;
 
+	public function GetDatasourceList(){
+		$this->response->setJsonContent(Datasources::find(['columns' => ['id', 'name', 'valueField'], 'conditions' => 'isPublicEditable = 1'])->toArray());
+	}
+
+	public function UpdateDatasourceValue($datasourceId){
+
+		$this->RequireAccessControl(true);
+
+		if(!$this->auth->IsSuperUser()){
+			throw new Exception("Only superusers are allowed to change datasource values");
+		}
+
+		$input = $this->GetAndValidateJsonPostData();
+
+		if(!isset($input['value']) || !isset($input['id']) || !is_numeric($input['id'])){
+			throw new InvalidArgumentException('one or more of the required fields \'value\' and \'id\' is not set');
+		}
+
+		$id = isset($input['id']) ? $input['id'] : null;
+
+		$datasource = Datasources::findFirst($datasourceId);
+
+		$saved = false;
+		$saved = $datasource->UpdateValue($input['id'], $input['value']);
+
+		if($saved){
+			$this->response->setJsonContent(['status' => 'ok']);
+		}
+		else{
+			throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
+		}
+	}
+
+	public function CreateDatasourceValue($datasourceId){
+
+		$this->RequireAccessControl(true);
+
+		if(!$this->auth->IsSuperUser()){
+			throw new Exception("Only superusers are allowed to change datasource values");
+		}
+
+		$input = $this->GetAndValidateJsonPostData();
+
+		if(!isset($input['value'])){
+			throw new InvalidArgumentException('the required field \'value\' is not set');
+		}
+
+		$datasource = Datasources::findFirst($datasourceId);
+
+		$saved = false;
+		$saved = $datasource->CreateValue($input['value']);
+
+		if($saved){
+			$this->response->setJsonContent(['status' => 'ok']);
+		}
+		else{
+			throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
+		}
+	}
+
 	public function GetDataFromDatasouce($dataSourceId) {
 		$query = $this->request->getQuery('q', null, null);
 

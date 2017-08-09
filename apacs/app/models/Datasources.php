@@ -16,11 +16,40 @@ class Datasources extends \Phalcon\Mvc\Model {
 		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
 		return $result->fetchAll();
 	}
+	public function CreateValue($value){
+		if($this->isPublicEditable == 0){
+			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
+		}
+
+		$existingValues = $this->getData($value);
+
+		if(count($existingValues) > 0){
+			throw new Exception('Could not create new value for datasource ' . $this->name . '. The value already exists');
+		}
+
+		if($this->isPublicEditable == 0){
+			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
+		}
+
+		$query = 'INSERT INTO ' . $this->dbTableName . ' (`' . $this->valueField . '`) VALUES ("' . $value . '")';
+
+		return $this->getDI()->get('db')->query($query);
+	}
+
+	public function UpdateValue($id, $value){
+		if($this->isPublicEditable == 0){
+			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
+		}
+
+		$query = 'UPDATE ' . $this->dbTableName . ' SET ' . $this->valueField . ' = "' . $value . '" WHERE id = ' . $id . ' LIMIT 1';
+
+		return $this->getDI()->get('db')->query($query);
+	}
 
 	public function GetValuesAsArray() {
 		if ($this->includeValuesInForm == 1) {
 			$allRowsQuery = substr($this->sql, 0, strpos($this->sql, 'WHERE'));
-			
+
 			//If the query contains a 'order by' part, include it in the query
 			$orderByPos = strpos($this->sql, ' order by');
 			if($orderByPos){

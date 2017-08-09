@@ -21,15 +21,17 @@ CREATE TABLE `apacs_collections` (
 
 
 
-CREATE TABLE IF NOT EXISTS `apacs_datasources` (
+CREATE TABLE IF NOT EXISTS TABLE `apacs_datasources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(25) COLLATE utf8_danish_ci DEFAULT NULL,
   `sql` char(255) COLLATE utf8_danish_ci DEFAULT NULL,
-  `values` char(255) COLLATE utf8_danish_ci DEFAULT NULL,
   `url` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
   `valueField` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `includeValuesInForm` tinyint(1) NOT NULL DEFAULT '0',
+  `dbTableName` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `isPublicEditable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE IF NOT EXISTS `apacs_entities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

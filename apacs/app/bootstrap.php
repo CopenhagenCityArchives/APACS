@@ -124,7 +124,11 @@ try {
 	$indexing = new MicroCollection();
 	$indexing->setHandler(new IndexDataController());
 
+	$indexing->get('/datasource', 'GetDatasourceList');
 	$indexing->get('/datasource/{dataSourceId:[0-9]+}', 'GetDataFromDatasouce');
+
+	$indexing->post('/datasource/{dataSourceId:[0-9]+}', 'CreateDatasourceValue');
+	$indexing->patch('/datasource/{dataSourceId:[0-9]+}', 'UpdateDatasourceValue');
 
 	$indexing->get('/search', 'SolrProxy');
 
