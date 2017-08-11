@@ -16,13 +16,28 @@ class Datasources extends \Phalcon\Mvc\Model {
 		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
 		return $result->fetchAll();
 	}
-	
+
+	public function GetDataById($id) {
+		$query = "select * from " . $this->dbTableName . " WHERE id = " . $id;
+		$result = $this->getDI()->get('db')->query($query);
+		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
+		return $result->fetchAll();
+	}
+
+	public function GetDataBySpecificString($value)
+	{
+		$query = "select * from " . $this->dbTableName . " WHERE `" . $this->valueField . "` = '" . $value . "'";
+		$result = $this->getDI()->get('db')->query($query);
+		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
+		return $result->fetchAll();
+	}
+
 	public function CreateValue($value){
 		if($this->isPublicEditable == 0){
 			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');
 		}
 
-		$existingValues = $this->getData($value);
+		$existingValues = $this->GetDataBySpecificString($value);
 
 		if(count($existingValues) > 0){
 			throw new InvalidArgumentException('Could not create new value for datasource ' . $this->name . '. The value already exists');
@@ -38,7 +53,7 @@ class Datasources extends \Phalcon\Mvc\Model {
 			throw new Exception('Could not update value for datasource ' . $this->name . '. It is not public editable');
 		}
 
-		$existingValues = $this->getData($id);
+		$existingValues = $this->GetDataById($id);
 
 		if(count($existingValues) !== 1){
 			throw new InvalidArgumentException('Could not update value for datasource ' . $this->name . '. No value with id '. $id .' exists');
