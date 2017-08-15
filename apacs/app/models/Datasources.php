@@ -40,7 +40,7 @@ class Datasources extends \Phalcon\Mvc\Model {
 		$existingValues = $this->GetDataBySpecificString($value);
 
 		if(count($existingValues) > 0){
-			throw new InvalidArgumentException('Could not create new value for datasource ' . $this->name . '. The value already exists');
+			throw new InvalidArgumentException('Kunne ikke oprette værdien for datalisten ' . $this->name . '. Værdien eksisterer allerede');
 		}
 
 		$query = 'INSERT INTO ' . $this->dbTableName . ' (`' . $this->valueField . '`) VALUES ("' . $value . '")';

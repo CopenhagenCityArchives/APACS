@@ -211,7 +211,7 @@ class CommonInformationsController extends MainController {
 
 		//Delete all Units for the collection
 		if(is_numeric($collection->id)){
-			$this->getDI()->get('db')->delete("Units", "collections_id = " . $collection->id);
+			$this->getDI()->get('db')->delete("apacs_units", "collections_id = " . $collection->id);
 		}
 
 		foreach ($data as $row) {
