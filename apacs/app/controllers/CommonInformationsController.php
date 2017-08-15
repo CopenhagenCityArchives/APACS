@@ -210,8 +210,10 @@ class CommonInformationsController extends MainController {
 		}
 
 		//Delete all Units for the collection
-		$this->getDI()->get('db')->delete("Units", "collection_id = " . $collection->id);
-
+		if(is_numeric($collection->id)){
+			$this->getDI()->get('db')->delete("Units", "collection_id = " . $collection->id);
+		}
+		
 		foreach ($data as $row) {
 			$unit = new Units();
 
