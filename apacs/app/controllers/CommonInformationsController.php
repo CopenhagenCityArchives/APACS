@@ -209,6 +209,9 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
+		//Delete all Units for the collection
+		$this->getDI()->get('db')->delete("Units", "collection_id = " . $collection->id);
+
 		foreach ($data as $row) {
 			$unit = new Units();
 
