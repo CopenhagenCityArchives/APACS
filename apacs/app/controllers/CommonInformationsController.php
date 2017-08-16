@@ -61,7 +61,7 @@ class CommonInformationsController extends MainController {
 				}
 		}
 
-		$isPublic = $collection->status == 4 ? 1 : 0;
+		$isPublic = $collection->status > 2 ? 1 : 0;
 		$unit->updateIsPublicStatusByCollection($collection->id, $isPublic);
 
 		if($isPublic){
