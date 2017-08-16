@@ -9,6 +9,7 @@ class Events extends \Phalcon\Mvc\Model {
 	const TypeCreate = 'create';
 	const TypeEdit = 'edit';
 	const TypeReportError = 'report_error';
+	const TypeCreateUpdatePost = 'create_update_post';
 
 	//Constant used to determine when a user is active
 	const UserActivityTimeLimit = '15 MINUTE';
@@ -40,7 +41,7 @@ class Events extends \Phalcon\Mvc\Model {
 									LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
 									WHERE Events.users_id =  ' . $userId . ' group by unit_id) SUBQ
 			ON SUBQ.unit_id = Units.id AND SUBQ.time = timestamp
-			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') order by Units.id';
+			WHERE Events.users_id = ' . $userId . ' AND (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\' OR event_type = \'' . self::TypeCreateUpdatePost . '\') order by Units.id';
 
 		// Base model
 		$events = new Events();
@@ -62,7 +63,7 @@ class Events extends \Phalcon\Mvc\Model {
 									LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
 									WHERE Events.units_id =  :unitId AND Events.tasks_id = :taskId group by users_id) SUBQ
 			ON SUBQ.unit_id = Units.id AND SUBQ.time = timestamp
-			WHERE (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') AND timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ') order by timestamp';
+			WHERE (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\' OR event_type = \'' . self::TypeCreateUpdatePost . '\') AND timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ') order by timestamp';
 
 		// Execute the query
 		$resultSet = $this->getDI()->get('db')->query($sql, ['unitId' => $unitId, 'taskId' => $taskId]);

@@ -357,6 +357,17 @@ class CommonInformationsController extends MainController {
 		//Saving the thumb
 		$post->SaveThumbImage();
 
+		$page = Pages::findFirstById($input['page_id']);
+
+		$event = new Events();
+		$event->users_id = $this->auth->GetUserId();
+		$event->collections_id = $page->id;
+		$event->units_id = $page->unit_id;
+		$event->pages_id = $page->id;
+		$event->posts_id = $post->id;
+		$event->event_type = Events::TypeCreateUpdatePost;
+		$event->save();
+
 		//Set last activity on the TaskPage, so it is not received when getting available pages
 		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $input['page_id']]);
 		if(!is_null($taskPage)){
