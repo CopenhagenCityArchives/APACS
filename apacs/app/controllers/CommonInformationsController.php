@@ -541,8 +541,8 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
-		$tasksUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitId:', 'bind' => ['taskId' => $taskId, 'unitId' => $unitId]]);
-		$this->response->setJsonContent($tasksUnit->GetActiveUsers()->toArray());
+		$events = new Events();
+		$this->response->setJsonContent($events->GetActiveUsersForTaskAndUnit($taskId, $unitId));
 	}
 
 	public function GetUserActivities() {

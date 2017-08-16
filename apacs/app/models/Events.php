@@ -49,6 +49,27 @@ class Events extends \Phalcon\Mvc\Model {
 		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
 	}
 
+	public function GetActiveUsersForTaskAndUnit($taskId, $unitId){
+		$sql = 'SELECT username,Pages.page_number, timestamp, Pages.id as page_id FROM apacs_events as Events
+			LEFT JOIN apacs_users as Users on Events.users_id = Users.id
+			LEFT JOIN apacs_units as Units on Events.units_id = Units.id
+			LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
+			LEFT JOIN apacs_tasks_units as TaskUnits on TaskUnits.units_id = Units.id AND TaskUnits.tasks_id = Events.tasks_id
+			INNER JOIN (select unit_id, max(timestamp) as time
+						FROM apacs_events as Events
+									LEFT JOIN apacs_users as Users on Events.users_id = Users.id
+									LEFT JOIN apacs_units as Units on Events.units_id = Units.id
+									LEFT JOIN apacs_pages as Pages on Events.pages_id = Pages.id
+									WHERE Events.units_id =  :unitId AND Events.tasks_id = :taskId group by users_id) SUBQ
+			ON SUBQ.unit_id = Units.id AND SUBQ.time = timestamp
+			WHERE (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\') AND timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ') order by timestamp';
+
+		// Execute the query
+		$resultSet = $this->getDI()->get('db')->query($sql, ['unitId' => $unitId, 'taskId' => $taskId]);
+		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		return $resultSet->fetchAll();
+	}
+
 	/*public function GetActiveUsers($conditions = null) {
 		$sql = 'SELECT distinct username, page_number FROM apacs_events as Events
 			LEFT JOIN apacs_users as Users ON Events.users_id = Users.id
