@@ -364,8 +364,11 @@ class CommonInformationsController extends MainController {
 		$event->units_id = $page['unit_id'];
 		$event->pages_id = $page['id'];
 		$event->posts_id = $post->id;
+		//TODO: Hardcoded task_id and collection_id
+		$event->tasks_id = 1;
+		$event->collections_id = 1;
 		$event->event_type = Events::TypeCreateUpdatePost;
-		
+
 		if(!$event->save()){
 			$this->response->setStatusCode('500', 'could not save event');
 			$this->response->setJsonContent(implode(', ', $event->getMessages()));
