@@ -42,7 +42,8 @@ class TasksUnits extends \Phalcon\Mvc\Model {
 		$result = $resultSet->toArray();
 
 		for ($i = 0; $i < count($resultSet); $i++) {
-			$result[$i]['active_users'] = $resultSet[$i]->GetActiveUsers()->toArray();
+			$event = new Events();
+			$result[$i]['active_users'] = $event->GetActiveUsersForTaskAndUnit($resultSet[$i]->tasks_id, $resultSet[$i]->units_id);
 		}
 
 		return $result;

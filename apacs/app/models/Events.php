@@ -51,6 +51,19 @@ class Events extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetActiveUsersForTaskAndUnit($taskId, $unitId){
+
+		$sql = 'select users_id, User.username as username, page_number, timestamp, apacs_pages.id
+				from apacs_events
+				join apacs_pages on apacs_events.pages_id = apacs_pages.id
+				JOIN apacs_users User on apacs_events.users_id = User.id
+
+				where units_id = :unitId and tasks_id = :taskId AND timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ') AND event_type IN (\''. self::TypeCreate . '\',\'' . self::TypeEdit . '\',\'' . self::TypeCreateUpdatePost .'\')
+
+				order by timestamp desc';
+
+		$resultSet = $this->getDI()->get('db')->query($sql, ['unitId' => $unitId, 'taskId' => $taskId ]);
+
+/*
 		$sql = 'SELECT username,Pages.page_number, timestamp, Pages.id as page_id FROM apacs_events as Events
 			LEFT JOIN apacs_users as Users on Events.users_id = Users.id
 			LEFT JOIN apacs_units as Units on Events.units_id = Units.id
@@ -64,11 +77,22 @@ class Events extends \Phalcon\Mvc\Model {
 									WHERE Events.units_id =  :unitId AND Events.tasks_id = :taskId group by users_id) SUBQ
 			ON SUBQ.unit_id = Units.id AND SUBQ.time = timestamp
 			WHERE (event_type = \'' . self::TypeCreate . '\' OR event_type = \'' . self::TypeEdit . '\' OR event_type = \'' . self::TypeCreateUpdatePost . '\') AND timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ') order by timestamp';
-
+*/
 		// Execute the query
-		$resultSet = $this->getDI()->get('db')->query($sql, ['unitId' => $unitId, 'taskId' => $taskId]);
+		//$resultSet = $this->getDI()->get('db')->query($sql, ['unitId' => $unitId, 'taskId' => $taskId]);
 		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		return $resultSet->fetchAll();
+		//Get distinct users
+		$usersAdded = [];
+		$result = [];
+		foreach($resultSet->fetchAll() as $row){
+
+			if(!in_array($row['users_id'], $usersAdded)){
+				$result[] = $row;
+				$usersAdded[] = $row['users_id'];
+			}
+		}
+
+		return $result;
 	}
 
 	/*public function GetActiveUsers($conditions = null) {
