@@ -151,7 +151,8 @@ class AccessController implements IAccessController {
 	public function UserCanEdit($entry) {
 		/**
 		 * Who can edit when:
-		 * 1) Users who created the post, at any time
+		 * 1) Users who created the post, at any time, and super users, at any time.
+		 * No relevant by the time (commented out in the code):
 		 * 2) Super users if no error reports are present
 		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
 		 */
@@ -159,10 +160,10 @@ class AccessController implements IAccessController {
 		$attemptingUser = $this->GetUserId();
 
 		//Creating user can always edit
-		if ($entry->users_id == $attemptingUser) {
+		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($attemptingUser)) {
 			return true;
 		}
-
+/*
 		$errorReport = ErrorReports::findFirst(['conditions' => 'entries_id = :entriesId: AND deleted = 0', 'bind' => ['entriesId' => $entry->id], 'order' => 'last_update']);
 
 		$attemptingUserIsSuperUser = $this->IsSuperUser($attemptingUser);
@@ -184,6 +185,7 @@ class AccessController implements IAccessController {
 		if ($this->message == '') {
 			$this->message = 'Du har ikke rettighed til at tilføje eller rette';
 		}
+		*/
 
 		return false;
 	}
