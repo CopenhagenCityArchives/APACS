@@ -22,7 +22,7 @@ class FakeAccessController implements IAccessController {
 	}
 
 	public function GetUserName() {
-		return "FakeUserName";
+		return "ThisIsATestUser";
 	}
 
 	public function UserCanEdit($entry) {
