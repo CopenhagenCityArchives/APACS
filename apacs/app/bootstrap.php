@@ -167,11 +167,17 @@ try {
 	$app->before(function () use ($app, $di) {
 
 		//Always set Access-Control-Allow-Origin
-		$origin = $app->request->getHeader("ORIGIN") ? $app->request->getHeader("ORIGIN") : '*';
+		$origin = '*';
 		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
 
-		//Default return is JSON in utf-8
-		$di->get('response')->setHeader('Content-Type', 'application/json; charset=utf-8');
+
+		if($di->get('request')->getQuery('callback')){
+			$di->get('response')->setHeader('Content-Type', 'application/javascript');
+		}
+		else{
+			//Default return is JSON in utf-8
+			$di->get('response')->setHeader('Content-Type', 'application/json; charset=utf-8');
+		}
 
 		//OPTIONS preflights are handled elsewhere
 		if ($di->get('request')->isOptions()) {
