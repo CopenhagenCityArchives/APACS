@@ -172,7 +172,7 @@ try {
 
 
 		if($di->get('request')->getQuery('callback')){
-			$di->get('response')->setHeader('Content-Type', 'application/javascript');
+			$di->get('response')->setHeader('Content-Type', 'application/javascript; charset=utf-8');
 		}
 		else{
 			//Default return is JSON in utf-8
