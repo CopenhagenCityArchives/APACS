@@ -20,3 +20,10 @@ services:
       - solr-precreate
       - apacs_core
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+  composer:
+    restart: 'no'
+    image: composer/composer:php7
+    command: install --no-dev
+    working_dir: /apacs
+    volumes:
+      - ./apacs:/apacs      
