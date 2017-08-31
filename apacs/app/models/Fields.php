@@ -144,47 +144,47 @@ class Fields extends \Phalcon\Mvc\Model {
 					[
 						'label' => '1760 - 1780',
 						'key'	=> '1760 - 1780',
-						'facet_query' => '[* TO 1780]'
+						'facet_query' => '%f%:[* TO 1780]'
 					],
 					[
 						'label' => '1780 - 1800',
 						'key'	=> '1780 - 1800',
-						'facet_query' => '[1780 TO 1800]'
+						'facet_query' => '%f%:[1780 TO 1800]'
 					],
 					[
 						'label' => '1800 - 1810',
 						'key'	=> '1800 - 1810',
-						'facet_query' => '[1800 TO 1810]'
+						'facet_query' => '%f%:[1800 TO 1810]'
 					],
 					[
 						'label' => '1810 - 1820',
 						'key'	=> '1810 - 1820',
-						'facet_query' => '[1810 TO 1820]'
+						'facet_query' => '%f%:[1810 TO 1820]'
 					],
 					[
 						'label' => '1820 - 1830',
 						'key'	=> '1820 - 1830',
-						'facet_query' => '[1820 TO 1830]'
+						'facet_query' => '%f%:[1820 TO 1830]'
 					],
 					[
 						'label' => '1830 - 1840',
 						'key'	=> '1830 - 1840',
-						'facet_query' => '1830 TO 1840]'
+						'facet_query' => '%f%:[1830 TO 1840]'
 					],
 					[
 						'label' => '1840 - 1850',
 						'key'	=> '1840 - 1850',
-						'facet_query' => '1840 TO 1850]'
+						'facet_query' => '%f%:[1840 TO 1850]'
 					],
 					[
 						'label' => '1850 - 1860',
 						'key'	=> '1850 - 1860',
-						'facet_query' => '1850 TO 1860]'
+						'facet_query' => '%f%:[1850 TO 1860]'
 					],
 					[
 						'label' => '1860 - 1870',
 						'key'	=> '1860 - 1870',
-						'facet_query' => '1860 TO 1870]'
+						'facet_query' => '%f%:[1860 TO 1870]'
 					]
 				]
 
