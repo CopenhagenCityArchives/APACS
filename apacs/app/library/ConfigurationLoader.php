@@ -311,7 +311,7 @@ class ConfigurationLoader {
 			'dbTableName' => '',
 			'isMarkable' => true,
 			'countPerEntry' => 'one',
-			'serviceUrl' => 'http://' . $_SERVER['HTTP_HOST'] . '/api/indexing/',
+			'serviceUrl' => 'https://' . $_SERVER['HTTP_HOST'] . '/api/indexing/',
 			'fields' => [],
 		];
 
@@ -536,7 +536,7 @@ class ConfigurationLoader {
 	*	Returns the API base url for the current location
 	*/
 	public static function getCurrentApiUrl(){
-		$protocol = isset($_SERVER['https']) ? 'https://' : 'http://';
+		$protocol = 'https://';
 		$subDir = str_replace('public/', '', str_replace('index.php', '', $_SERVER['PHP_SELF']));
 
 		return $protocol . $_SERVER['HTTP_HOST'] . $subDir;

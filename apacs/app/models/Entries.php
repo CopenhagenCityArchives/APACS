@@ -22,7 +22,7 @@ class Entries extends \Phalcon\Mvc\Model {
 
 		$result = $resultSet->fetchAll()[0];
 
-		$result['kildeviser_url'] = 'http://www.kbharkiv.dk/kildeviser/#!?collection=5&item=' . $result['page_id'];
+		$result['kildeviser_url'] = 'https://www.kbharkiv.dk/kildeviser/#!?collection=5&item=' . $result['page_id'];
 
 		return $result;
 	}

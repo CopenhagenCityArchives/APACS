@@ -181,7 +181,7 @@ class ConfigurationLoader {
 				throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
 			}
 
-			$collectionConfig['api_documentation_url'] = 'http://www.kbhkilder.dk/api/info/' . $collectionConfig['id'];
+			$collectionConfig['api_documentation_url'] = 'https://www.kbhkilder.dk/api/info/' . $collectionConfig['id'];
 			$i++;
 		}
 
@@ -214,7 +214,7 @@ class ConfigurationLoader {
 			'dbTableName' => '',
 			'isMarkable' => true,
 			'countPerEntry' => 'one',
-			'serviceUrl' => 'http://' . $_SERVER['HTTP_HOST'] . '/api/indexing/',
+			'serviceUrl' => 'https://' . $_SERVER['HTTP_HOST'] . '/api/indexing/',
 			'fields' => [],
 		];
 

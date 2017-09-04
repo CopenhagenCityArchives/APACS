@@ -21,7 +21,7 @@ class AccessController implements IAccessController {
 				return false;
 			}
 
-			$url = 'http://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
+			$url = 'https://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
 
 			$response = $this->getWebPage($url);
 
