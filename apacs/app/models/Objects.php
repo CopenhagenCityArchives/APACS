@@ -69,15 +69,17 @@ class Objects extends \Phalcon\Mvc\Model {
 	 * @param array Array of inputs
 	 * @return string search query
 	 */
-	public function createObjectQuery($sql, $levels) {
+	public function createObjectQuery($sql, $levels, $db) {
 		$searchString = '';
 		foreach ($levels as $level) {
 			if (isset($level['sql_condition']) && $level['sql_condition']) {
 				// $searchString = $searchString . vsprintf($level['sql_condition'],$level['value']);
-				$searchString = $searchString . str_replace('%d', $level['value'], $level['sql_condition']) . ' AND ';
+				$value = $db->escapeString($level['value']);
+				$searchString = $searchString . str_replace('%d', $value, $level['sql_condition']) . ' AND ';
 				// $searchString = $searchString . str_replace('%s', $level['value'], $level['sql_condition']);
 			} else {
-				$searchString = $searchString . $level['name'] . ' = \'' . $level['value'] . '\' AND ';
+				$value = $db->escapeString($level['value']);
+				$searchString = $searchString . $level['name'] . ' = ' . $value . ' AND ';
 			}
 		}
 

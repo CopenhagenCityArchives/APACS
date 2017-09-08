@@ -193,7 +193,8 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		}
 
 		if (count($incomingFilters) > 0) {
-			$query = $objectsModel->createObjectQuery($config[0]['objects_query'], $incomingFilters);
+			$query = $objectsModel->createObjectQuery($config[0]['objects_query'], $incomingFilters, $this->getDI()->get('db'));
+
 			$results = $objectsModel->getData($query);
 			$this->returnJson($objectsModel->convertResultToObjects($results, $configuration->getFilters($collectionId)));
 			//$this->returnJson($results);
