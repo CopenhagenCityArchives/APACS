@@ -47,52 +47,61 @@
   <field name="collection_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_info" type="string" indexed="false" stored="true" required="true" multiValued="false"/>
   <field name="last_update" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW+1HOUR"/>
-  <field name="firstnames" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="user_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="user_name" type="string_ci" indexed="true" stored="true" required="true" multiValued="false"/>
-  <field name="lastname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="comment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="jsonObj" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Specific APACS fields. Note that these can be relevant in more than one collection type -->
-  <!-- Burial records -->
-  <field name="birthname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+
+  <!-- GENERAL -->
+  <!-- Singlevalue fields used in multiple sources -->
+  <field name="firstnames" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="lastname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="sex" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="birthname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="birthplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="civilstatus" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="ageMonth" type="float" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="yearOfBirth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="dateOfDeath" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="comment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+
+  <!-- Multivalue fields used in multiple sources -->
+  <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+
+  <!-- BURIAL RECORDS -->
+  <!-- Singlevalue fields -->
+  <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfDeath" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="record_number" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="chapel" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="cemetary" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="hood" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="birthplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="institution" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="deathplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
-  <!-- Multivalue fields for burial records -->
+  <!-- Multivalue fields -->
   <field name="deathcauses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="workplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
-  <!-- Maltivalue fields for registerblade -->
-  <field name="prb_spouse_names" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_children_names" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_spouse_positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_date_of_birth" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="prb_addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_living_at" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_address_coordinates_lat" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_address_coordinates_lon" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_address_streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="prb_person_comment" type="text_general" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="prb_card_comment" type="text_general" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="prb_special_comment" type="text_general" indexed="true" stored="true" required="false" multiValued="false"/>
+  <!-- POLITIETS REGISTERBLADE -->
+  <!-- Singlevalue fields -->
+  <field name="person_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="card_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="personType" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfBirth" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="cardComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="specialComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+
+  <!-- Multivalue fields -->
+  <field name="spousePositions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="spouseNames" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="childNames" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="livingAt" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="locations" type="location_rpt" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
@@ -104,14 +113,13 @@
   <copyField source="record_number" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
-  <copyField source="street" dest="freetext_store"/>
+  <copyField source="streets" dest="freetext_store"/>
   <copyField source="hood" dest="freetext_store"/>
   <copyField source="birthplace" dest="freetext_store"/>
   <copyField source="deathcauses" dest="freetext_store"/>
   <copyField source="addresses" dest="freetext_store"/>
   <copyField source="positions" dest="freetext_store"/>
   <copyField source="institution" dest="freetext_store"/>
-  <copyField source="prb_address_streets" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="true" required="false" multiValued="true" />
@@ -609,7 +617,7 @@
       http://wiki.apache.org/solr/SolrAdaptersForLuceneSpatial4
     -->
     <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
-        geo="true" distErrPct="0.025" maxDistErr="0.001" distanceUnits="kilometers" />
+        geo="true" distErrPct="0.025" maxDistErr="0.001" distanceUnits="degrees" />
 
     <!-- Spatial rectangle (bounding box) field. It supports most spatial predicates, and has
      special relevancy modes: score=overlapRatio|area|area2D (local-param to the query).  DocValues is recommended for
