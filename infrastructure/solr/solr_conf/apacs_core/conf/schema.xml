@@ -67,7 +67,7 @@
   <!-- Multivalue fields used in multiple sources -->
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
   <!-- Singlevalue fields -->
@@ -110,13 +110,14 @@
   <field name="erindring_handwritten_typed" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_description" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindringer_written_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindringer_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindringer_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindringer_period" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_written_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_period" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_document_text" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
 
   <!-- Multivalue fields -->
-  <field name="erindringer_keywords" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="erindring_keywords" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
 
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
@@ -128,13 +129,17 @@
   <copyField source="record_number" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
-  <copyField source="streets" dest="freetext_store"/>
+  <copyField source="street" dest="freetext_store"/>
   <copyField source="hood" dest="freetext_store"/>
   <copyField source="birthplace" dest="freetext_store"/>
   <copyField source="deathcauses" dest="freetext_store"/>
   <copyField source="addresses" dest="freetext_store"/>
   <copyField source="positions" dest="freetext_store"/>
   <copyField source="institution" dest="freetext_store"/>
+  <copyField source="erindring_position" dest="freetext_store"/>
+  <copyField source="erindring_parent_position" dest="freetext_store"/>
+  <copyField source="erindring_keywords" dest="freetext_store"/>
+  <copyField source="erindring_document_text" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="true" required="false" multiValued="true" />
