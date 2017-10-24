@@ -114,7 +114,7 @@
   <field name="erindring_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_period" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindring_document_text" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_document_text" type="text_general" indexed="true" stored="true" required="false" multiValued="false" />
 
   <!-- Multivalue fields -->
   <field name="erindring_keywords" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
