@@ -28,6 +28,7 @@
                     <p>Collection 1 (Begravelsesprotokollerne) er Task-udgaven af en prædefineret collection. Den skal overføres fra Starbas ved lejlighed.</p>
                     <p>Collection 60 (Politiets Registerblade) er en midlertidig overførsel af metadata, som højst sandsynligt skal fjernes igen.</p>
                     <p>&nbsp;</p>
+                    <p><b>Bemærk at der til det totale sideantal skal lægges 1,4 millioner registerblade, 3,7 millioner mandtaller og 150.000 siders begravelsesprotokoller.</b></p>
                     <div class='span9'>
                         <h4>Protokoller og sider i alt (publiceret/total)</h4>
                     </div>

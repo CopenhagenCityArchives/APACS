@@ -322,7 +322,7 @@ class IndexDataController extends MainController {
 				['jsonObj' => json_encode(['metadata' => $context, 'data' => $jsonData['persons']])]//TODO: Hardcoded name of main entity
 			);
 
-			$concreteEntry->SaveInSolr($solrDataToSave, $entry->concrete_entries_id);
+			$concreteEntry->SaveInSolr($solrDataToSave, 'burial_' + $entry->concrete_entries_id); //TODO: Hardcoded id generation for Solr
 
 			$entry->complete = 1;
 			$entry->save();
@@ -455,7 +455,7 @@ class IndexDataController extends MainController {
 
 		$conEntry->SaveInSolr(array_merge(
 			$solrData, $conEntry->GetSolrData($entities, $completeEntry) /*, ['user_id' => $this->auth->GetUserId(), 'user_name' => $this->auth->GetUserName()]*/
-		), $concreteId);
+		), 'burial_' + $concreteId); //TODO: Hardcoded id generation for Solr
 
 		//Remove any error reports for the field
 		foreach ($errorReports as $error) {
