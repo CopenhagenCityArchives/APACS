@@ -544,9 +544,16 @@ class ConcreteEntries {
 			die();
 		}
 
-		$url = 'http://ec2-54-194-89-54.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
+		$url = 'http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
 
-		print file_get_contents($url);
+		$content = @file_get_contents($url);
+
+		if($content)
+			print $content;
+		else{
+			print json_encode(['url' => 'http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr]);
+			
+		}
 		exit();
 	}
 
