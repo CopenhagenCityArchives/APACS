@@ -102,88 +102,63 @@ class IndexDataController extends MainController {
 
 	public function ReportError() {
 
+		//Check for user credentials (not mandatory)
 		$this->RequireAccessControl(false);
 
+		//Get input data
 		$jsonData = $this->GetAndValidateJsonPostData();
 
-		$reportingUserId = $this->auth->GetUserId();
-		$requiredFields = ['post_id', 'entity_name'];
-
+		//Validate input
+		$requiredFields = ['collection_id', 'post_id', 'comment'];
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
 				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
 			}
 		});
 
-		if (!isset($jsonData['value'])) {
-			$jsonData['value'] = null;
-		}
-
-		if (!isset($jsonData['concrete_entries_id'])) {
-			$jsonData['concrete_entries_id'] = null;
-		}
-
-		if (!isset($jsonData['field_name'])) {
-			$jsonData['field_name'] = null;
-		}
-
-		$entity = Entities::findFirst(['conditions' => 'name = "' . $jsonData['entity_name'] . '"']);
-
-		if (!$entity) {
-			throw new InvalidArgumentException('no entity found with name ' . $jsonData['entity_name']);
-		}
-
-		$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $entity->task_id, 'postId' => $jsonData['post_id']]]);
-
-		$post = Posts::findFirst(['conditions' => 'id = :postId:', 'bind' => ['postId' => $jsonData['post_id']], 'columns' => ['id', 'pages_id']]);
-
-		if (!$entry) {
-			throw new InvalidArgumentException('no entry found for task id ' . $entity->task_id . ' and post id ' . $jsonData['post_id']);
-		}
-
-		//Check if the entity and field of the concrete id is already reported as an error
-		$existingReports = ErrorReports::find(['conditions' => 'entity_name = :entity: AND field_name = :field: AND concrete_entries_id = :concreteId: AND deleted = 0',
-			'bind' => ['entity' => $jsonData['entity_name'], 'field' => $jsonData['field_name'], 'concreteId' => $jsonData['concrete_entries_id']]]);
-
-		if (count($existingReports) > 0) {
-			throw new InvalidArgumentException('Error report already exists on the given entity, field and concrete id');
-		}
-
-		$colInfo = $entry->GetContext();
-
 		$errors = new ErrorReports();
-		$errors->reporting_users_id = $reportingUserId;
-		$errors->users_id = $entry->users_id;
-		$errors->tasks_id = $entity->task_id;
-		$errors->entities_id = $entity->id;
-		$errors->pages_id = $post->pages_id;
-		$errors->posts_id = $jsonData['post_id'];
-		$errors->entity_name = $jsonData['entity_name'];
-		$errors->field_name = $jsonData['field_name'];
-		if (isset($entity) && isset($jsonData['field_name'])) {
-			$errors->field_id = Fields::findFirst(['conditions' => '(fieldName = :fieldName: OR decodeField = :fieldName:) AND entities_id = :entities_id:', 'bind' => ['fieldName' => $jsonData['field_name'], 'entities_id' => $entity->id]])->id;
+		$event = null;
+
+		//If the task_id is set, informations concerning the context of the entry
+		//such as user_id, tasks_id, pages_id, creating user and entry id is also saved
+		//An event object is also set
+		if(isset($jsonData['task_id'])){
+			$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => 1, 'postId' => $jsonData['post_id']]]);
+			$post = Posts::findFirst(['conditions' => 'id = :postId:', 'bind' => ['postId' => $jsonData['post_id']], 'columns' => ['id', 'pages_id']]);
+
+			$colInfo = $entry->GetContext();
+			$errors->users_id = $entry->users_id;
+			$errors->entries_id = $entry->id;
+			$errors->entry_created_by = $colInfo['user_name'];
+			$errors->tasks_id = $jsonData['task_id'];
+			$errors->pages_id = $post->pages_id;
+
+			//Create an event object with the informations
+			$event = new Events();
+			$event->users_id = $this->auth->GetUserId();
+			$event->collections_id = $colInfo['collection_id'];
+			$event->units_id = $colInfo['unit_id'];
+			$event->pages_id = $colInfo['page_id'];
+			$event->posts_id = $jsonData['post_id'];
+			$event->event_type = Events::TypeReportError;
 		}
-		$errors->entity_position = $entity->GetEntityPosition(Entities::find(['condition' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $entity->task_id]]), $entity);
-		$errors->comment = isset($jsonData['comment']) ? $jsonData['comment'] : null;
-		$errors->concrete_entries_id = $jsonData['concrete_entries_id'];
-		$errors->original_value = $jsonData['value'];
+
+		//An error report consists of at least these informations
+		$errors->reporting_users_id = $this->auth->GetUserId();
+		$errors->collection_id = $jsonData['collection_id'];
+		$errors->posts_id = $jsonData['post_id'];
+		$errors->comment = $jsonData['comment'];
 		$errors->toSuperUser = 0;
-		$errors->entry_created_by = $colInfo['user_name'];
-		$errors->entries_id = $entry->id;
 		$errors->deleted = 0;
+
 		$errors->beforeSave();
 		if (!$errors->save($jsonData)) {
 			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 		}
 
-		$event = new Events();
-		$event->users_id = $this->auth->GetUserId();
-		$event->collections_id = $colInfo['collection_id'];
-		$event->units_id = $colInfo['unit_id'];
-		$event->pages_id = $colInfo['page_id'];
-		$event->posts_id = $colInfo['post_id'];
-		$event->event_type = Events::TypeReportError;
-		$event->save();
+		if(!is_null($event)){
+			$event->save();
+		}
 
 		$this->response->setJsonContent(['message' => 'error report saved']);
 	}
