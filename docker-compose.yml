@@ -2,8 +2,8 @@ version: '2'
 services:
   phalcon:
     build:
-      context: ./
-      dockerfile: ./infrastructure/docker_webserver/Dockerfile_prod
+      context: .
+      dockerfile: infrastructure/docker_webserver/Dockerfile_prod
     container_name: webserver
     ports:
       - "80:80"
@@ -12,7 +12,7 @@ services:
   solr:
     container_name: solr
     build:
-      context: ./infrastructure/solr/
+      context: infrastructure/solr/
     ports:
       - "8983:8983"
     entrypoint:
@@ -26,4 +26,4 @@ services:
     command: install --no-dev
     working_dir: /apacs
     volumes:
-      - ./apacs:/apacs      
+      - ./apacs:/apacs
