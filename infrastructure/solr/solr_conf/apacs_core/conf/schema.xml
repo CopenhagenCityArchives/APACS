@@ -46,7 +46,7 @@
   <field name="page_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_info" type="string" indexed="false" stored="true" required="true" multiValued="false"/>
-  <field name="last_update" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW"/>
+  <field name="last_update" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW+1HOUR"/>
   <field name="user_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="user_name" type="string_ci" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="jsonObj" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
@@ -67,15 +67,14 @@
   <!-- Multivalue fields used in multiple sources -->
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
   <!-- Singlevalue fields -->
   <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <!-- TODO: Change dateOfDeath to tdate! -->
-  <field name="dateOfDeath" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfDeath" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="record_number" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="chapel" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
@@ -93,7 +92,7 @@
   <field name="person_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="card_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="personType" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="dateOfBirth" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfBirth" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="cardComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="specialComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
@@ -103,6 +102,22 @@
   <field name="childNames" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="livingAt" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="locations" type="location_rpt" indexed="true" stored="true" required="false" multiValued="true"/>
+
+  <!-- ERINDRINGER -->
+  <!-- Singlevalue fields -->
+  <field name="erindring_position" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_parent_position" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_handwritten_typed" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_description" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_written_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_period" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_document_text" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+
+  <!-- Multivalue fields -->
+  <field name="erindring_keywords" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
 
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
@@ -114,13 +129,17 @@
   <copyField source="record_number" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
-  <copyField source="streets" dest="freetext_store"/>
+  <copyField source="street" dest="freetext_store"/>
   <copyField source="hood" dest="freetext_store"/>
   <copyField source="birthplace" dest="freetext_store"/>
   <copyField source="deathcauses" dest="freetext_store"/>
   <copyField source="addresses" dest="freetext_store"/>
   <copyField source="positions" dest="freetext_store"/>
   <copyField source="institution" dest="freetext_store"/>
+  <copyField source="erindring_position" dest="freetext_store"/>
+  <copyField source="erindring_parent_position" dest="freetext_store"/>
+  <copyField source="erindring_keywords" dest="freetext_store"/>
+  <copyField source="erindring_document_text" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="true" required="false" multiValued="true" />
