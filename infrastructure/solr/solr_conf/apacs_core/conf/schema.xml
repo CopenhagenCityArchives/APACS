@@ -67,14 +67,14 @@
   <!-- Multivalue fields used in multiple sources -->
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
   <!-- Singlevalue fields -->
   <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="dateOfDeath" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfDeath" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="record_number" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="chapel" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
@@ -92,7 +92,7 @@
   <field name="person_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="card_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="personType" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="dateOfBirth" type="date" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfBirth" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="cardComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="specialComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
@@ -129,7 +129,7 @@
   <copyField source="record_number" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
-  <copyField source="street" dest="freetext_store"/>
+  <copyField source="streets" dest="freetext_store"/>
   <copyField source="hood" dest="freetext_store"/>
   <copyField source="birthplace" dest="freetext_store"/>
   <copyField source="deathcauses" dest="freetext_store"/>
