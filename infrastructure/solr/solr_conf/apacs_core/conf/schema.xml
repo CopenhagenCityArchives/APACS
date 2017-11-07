@@ -114,7 +114,7 @@
   <field name="erindring_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_period" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindring_document_text" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_document_text" type="text_general" indexed="false" stored="true" required="false" multiValued="false" />
 
   <!-- Multivalue fields -->
   <field name="erindring_keywords" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
@@ -142,7 +142,7 @@
   <copyField source="erindring_document_text" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
-  <field name="freetext_store" type="text_general" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />
 
   <!-- We search in store field as default -->
   <defaultSearchField>freetext_store</defaultSearchField>
