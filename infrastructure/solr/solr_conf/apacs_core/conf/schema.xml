@@ -67,7 +67,7 @@
   <!-- Multivalue fields used in multiple sources -->
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
   <!-- Singlevalue fields -->
@@ -129,7 +129,7 @@
   <copyField source="record_number" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
-  <copyField source="street" dest="freetext_store"/>
+  <copyField source="streets" dest="freetext_store"/>
   <copyField source="hood" dest="freetext_store"/>
   <copyField source="birthplace" dest="freetext_store"/>
   <copyField source="deathcauses" dest="freetext_store"/>
