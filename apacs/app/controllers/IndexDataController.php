@@ -109,7 +109,8 @@ class IndexDataController extends MainController {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		//Validate input
-		$requiredFields = ['collection_id', 'post_id', 'comment'];
+		$requiredFields = ['task_id', 'post_id', 'comment', 'entity'];
+
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
 				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
@@ -147,6 +148,8 @@ class IndexDataController extends MainController {
 		$errors->reporting_users_id = $this->auth->GetUserId();
 		$errors->collection_id = $jsonData['collection_id'];
 		$errors->posts_id = $jsonData['post_id'];
+		$errors->entity_name = $jsonData['entity'];
+		$errors->field_name = isset($jsonData['field']) ? $jsonData['field'] : null;
 		$errors->comment = $jsonData['comment'];
 		$errors->toSuperUser = 0;
 		$errors->deleted = 0;
