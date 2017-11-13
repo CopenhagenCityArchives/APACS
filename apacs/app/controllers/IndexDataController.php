@@ -109,7 +109,7 @@ class IndexDataController extends MainController {
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		//Validate input
-		$requiredFields = ['task_id', 'post_id', 'comment', 'entity'];
+		$requiredFields = ['task_id', 'post_id', 'comment', 'entity', 'add_metadata'];
 
 		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
 			if (!isset($jsonData[$el])) {
@@ -123,7 +123,7 @@ class IndexDataController extends MainController {
 		//If the task_id is set, informations concerning the context of the entry
 		//such as user_id, tasks_id, pages_id, creating user and entry id is also saved
 		//An event object is also set
-		if(isset($jsonData['task_id'])){
+		if(isset($jsonData['add_metadata']) && $jsonData['add_metadata'] == true){
 			$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => 1, 'postId' => $jsonData['post_id']]]);
 			$post = Posts::findFirst(['conditions' => 'id = :postId:', 'bind' => ['postId' => $jsonData['post_id']], 'columns' => ['id', 'pages_id']]);
 
