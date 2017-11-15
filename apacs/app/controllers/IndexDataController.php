@@ -137,10 +137,10 @@ class IndexDataController extends MainController {
 				throw new Exception("Could not find post with id " . $jsonData['post_id']);
 			}
 
-			$entity = Entities::findFirst(['conditions' => 'name = :entityName: AND task_id = :taskId:', 'bind'  => ['entityName' => $jsonData['entity'], 'taskId' => $jsonData['task_id']]]);
+			$entity = Entities::findFirst(['conditions' => 'name = :entityName: AND task_id = :taskId:', 'bind'  => ['entityName' => explode('.', $jsonData['entity'])[0], 'taskId' => $jsonData['task_id']]]);
 
 			if(!$entity){
-				throw new Exception("Could not find entity with name " . $jsonData['entity']);
+				throw new Exception("Could not find entity with name " . explode('.', $jsonData['entity'])[0]);
 			}
 
 			$colInfo = $entry->GetContext();

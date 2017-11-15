@@ -4,29 +4,24 @@
         "add_metadata": true,
         "error_reports" : [
             {
-                "label": "Person",
-                "entity": "person",
-                "field": "firstnames"
+                "label": "Fornavne",
+                "entity": "persons.firstnames"
             },
             {
-                "label": "Person",
-                "entity": "person",
-                "field": "lastname"
+                "label": "Efternavn",
+                "entity": "persons.lastname"
             },
             {
-                "label": "Person",
-                "entity": "person",
-                "field": "birthplace"
+                "label": "Fødested",
+                "entity": "persons.birthplace"
             },
             {
                 "label": "Begravelse",
-                "entity": "burial",
-                "field": null
+                "entity": "burial"
             },
             {
                 "label": "Adresse",
-                "entity": "address",
-                "field": null
+                "entity": "address"
             }
         ]
     },
@@ -36,23 +31,19 @@
         "error_reports" : [
             {
                 "label": "Person",
-                "entity": "person",
-                "field": null
+                "entity": "person"
             },
             {
                 "label": "Slægtning",
-                "entity": "relative",
-                "field": null
+                "entity": "relative"
             },
             {
                 "label": "Adresser",
-                "entity": "burial",
-                "field": null
+                "entity": "address"
             },
             {
                 "label": "Stillinger",
-                "entity": "address",
-                "field": null
+                "entity": "position"
             }
         ]
     },
@@ -62,13 +53,11 @@
         "error_reports" : [
             {
                 "label": "Forfatter",
-                "entity": "author",
-                "field": null
+                "entity": "author"
             },
             {
                 "label": "Transkribering",
-                "entity": "transcription",
-                "field": null
+                "entity": "transcription"
             }
         ]
     }

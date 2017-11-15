@@ -102,7 +102,7 @@ class CommonInformationsController extends MainController {
 	{
 		//$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
-		$this->response->setContent(file_get_contents('../../app/config/errorreport.json'));
+		$this->response->setContent(ErrorReports::GetConfig());
 	}
 
 	public function GetSearchConfig()
@@ -489,16 +489,24 @@ class CommonInformationsController extends MainController {
 
 	public function GetErrorReports() {
 
-			//Assume special errors if collection id is used
+		//Assume special errors if collection id is used
 		if(	!is_null($this->request->getQuery('collection_id', 'int', null)) &&
 			!is_null($this->request->getQuery('id', 'string', null)) &&
 			is_null($this->request->getQuery('task_id', 'int', null))){
 
+			$taskId = 0;
+			switch($this->request->getQuery('collection_id', 'int', null)){
+				case '17':
+					$taskId = 2;
+				break;
+				case '18':
+					$taskId = 3;
+				break;
+			}
+
 			$result = SpecialErrors::find(['conditions' => ['collection_id = ' . $this->request->getQuery('collection_id'), 'source_id = ' . $this->request->getQuery('id')]])->toArray();
 
-			/*if(count($result) < 1){
-				$result = [];
-			}*/
+			$result = SpecialErrors::setLabels($result, $taskId);
 
 			$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
 			return;
@@ -511,13 +519,14 @@ class CommonInformationsController extends MainController {
 		$errors = [];
 
 		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
-			$this->error('task_id and post_id or task_id and relevant_user_id are required');
+			$this->error('collection_id and id are required for special errors. task_id and post_id or task_id and relevant_user_id are required for normal errors');
 			return;
 		}
 
 		if (!is_null($taskId) && !is_null($postId)) {
 			$conditions = 'tasks_id = ' . $taskId . ' AND posts_id = ' . $postId;
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
+			$errors = ErrorReports::setLabels($errors, $taskId);
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 
@@ -538,6 +547,7 @@ class CommonInformationsController extends MainController {
 				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
 				//return;
 			}
+			$errors = ErrorReports::setLabels($errors, $taskId);
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 	}

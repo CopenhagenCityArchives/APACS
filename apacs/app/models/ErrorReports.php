@@ -24,6 +24,25 @@ class ErrorReports extends \Phalcon\Mvc\Model {
 		return $query->execute(['taskId' => $this->tasks_id, 'stepsId' => $this->id]);
 	}*/
 
+	public static function GetConfig()
+	{
+		return file_get_contents('../../app/config/errorreport.json');
+	}
+
+	public static function setLabels($errorReports, $taskId)
+	{
+		$config = json_decode(ErrorReports::GetConfig(), true);
+		for($i = 0; $i < count( $errorReports ); $i++){
+			foreach($config[$taskId]['error_reports'] as $confRow){
+				if($confRow['entity'] == $errorReports[$i]['entity_name']){
+					$errorReports[$i]['label'] = $confRow['label'];
+				}
+			}
+		}
+
+		return $errorReports;
+	}
+
 	public static function FindByRawSql($conditions = null, $params = null) {
 		// A raw SQL statement
 		$sql = "SELECT DISTINCT apacs_errorreports.*, apacs_users.username, CONCAT(apacs_collections.name, ' ', apacs_units.description) as unit_description, apacs_fields.formName as field_formName, apacs_entities.guiName as entity_name_gui FROM apacs_errorreports LEFT JOIN apacs_users ON apacs_errorreports.users_id = apacs_users.id LEFT JOIN apacs_posts ON apacs_errorreports.posts_id = apacs_posts.id LEFT JOIN apacs_pages ON apacs_posts.pages_id = apacs_pages.id LEFT JOIN apacs_units ON apacs_pages.unit_id = apacs_units.id LEFT JOIN apacs_collections ON apacs_units.collections_id = apacs_collections.id LEFT JOIN apacs_entities ON apacs_entities.id = apacs_errorreports.entities_id LEFT JOIN apacs_fields ON apacs_fields.entities_id = apacs_errorreports.entities_id AND (apacs_errorreports.field_name = apacs_fields.fieldName OR apacs_errorreports.field_name = apacs_fields.decodeField) WHERE apacs_errorreports.deleted = 0";
