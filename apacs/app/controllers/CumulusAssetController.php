@@ -23,9 +23,8 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		$options = array(
 		    'http' => array(
 		        'header'  => array(
-							"Content-type: application/x-www-form-urlencoded",
 							sprintf("Authorization: Basic %s", base64_encode(sprintf("%s:%s", $this->user, $this->pass)))),
-		        'method'  => 'POST'
+		        'method'  => 'GET'
 		    )
 		);
 		$context  = stream_context_create($options);
