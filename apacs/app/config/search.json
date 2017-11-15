@@ -229,7 +229,7 @@
 	        "type": "typeahead",
 	        "view_name": "K\u00f8n"
 	    },
-	    "street": {
+	    "streets": {
 	        "collections": [
 	            1, 17
 	        ],
@@ -237,7 +237,7 @@
 	            "field": "streetAndHood",
 	            "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/3?q="
 	        },
-	        "name": "street",
+	        "name": "streets",
 	        "searchable": true,
 	        "sortable": false,
 	        "type": "typeahead",

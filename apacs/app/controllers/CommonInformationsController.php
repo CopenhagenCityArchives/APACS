@@ -494,7 +494,13 @@ class CommonInformationsController extends MainController {
 			!is_null($this->request->getQuery('id', 'string', null)) &&
 			is_null($this->request->getQuery('task_id', 'int', null))){
 
-			$this->response->getJsonContent(SpecialErrors::find(['conditions' => ['collection_id = ' . $this->request->getQuery('collection_id'), 'source_id = ' . $this->request->getQuery('id')]]), JSON_NUMERIC_CHECK);
+			$result = SpecialErrors::find(['conditions' => ['collection_id = ' . $this->request->getQuery('collection_id'), 'source_id = ' . $this->request->getQuery('id')]])->toArray();
+
+			/*if(count($result) < 1){
+				$result = [];
+			}*/
+
+			$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
 			return;
 		}
 
