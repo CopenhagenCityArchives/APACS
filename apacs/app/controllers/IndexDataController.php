@@ -108,31 +108,67 @@ class IndexDataController extends MainController {
 		//Get input data
 		$jsonData = $this->GetAndValidateJsonPostData();
 
-		//Validate input
-		$requiredFields = ['task_id', 'post_id', 'comment', 'entity', 'add_metadata'];
-
-		array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
-			if (!isset($jsonData[$el])) {
-				throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
-			}
-		});
-
-		$errors = new ErrorReports();
-		$event = null;
-
-		//If the task_id is set, informations concerning the context of the entry
+		// If the task_id is set, informations concerning the context of the entry
 		//such as user_id, tasks_id, pages_id, creating user and entry id is also saved
 		//An event object is also set
 		if(isset($jsonData['add_metadata']) && $jsonData['add_metadata'] == true){
-			$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => 1, 'postId' => $jsonData['post_id']]]);
+
+			//Validate input
+			$requiredFields = ['task_id', 'post_id', 'comment', 'entity', 'add_metadata'];
+
+			array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
+				if (!isset($jsonData[$el])) {
+					throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
+				}
+			});
+
+			$errors = new ErrorReports();
+			$event = null;
+
+			$entry = Entries::findFirst(['conditions' => 'tasks_id = :taskId: AND posts_id = :postId:', 'bind' => ['taskId' => $jsonData['task_id'], 'postId' => $jsonData['post_id']]]);
+
+			if(!$entry){
+				throw new Exception("Could not find entry with post_id " . $jsonData['post_id']);
+			}
+
 			$post = Posts::findFirst(['conditions' => 'id = :postId:', 'bind' => ['postId' => $jsonData['post_id']], 'columns' => ['id', 'pages_id']]);
+
+			if(!$post){
+				throw new Exception("Could not find post with id " . $jsonData['post_id']);
+			}
+
+			$entity = Entities::findFirst(['conditions' => 'name = :entityName: AND task_id = :taskId:', 'bind'  => ['entityName' => $jsonData['entity'], 'taskId' => $jsonData['task_id']]]);
+
+			if(!$entity){
+				throw new Exception("Could not find entity with name " . $jsonData['entity']);
+			}
 
 			$colInfo = $entry->GetContext();
 			$errors->users_id = $entry->users_id;
 			$errors->entries_id = $entry->id;
 			$errors->entry_created_by = $colInfo['user_name'];
 			$errors->tasks_id = $jsonData['task_id'];
+			$errors->collection_id = $colInfo['collection_id'];
 			$errors->pages_id = $post->pages_id;
+
+			//An error report consists of at least these informations
+			$errors->reporting_users_id = $this->auth->GetUserId();
+			//$errors->collection_id = isset($jsonData['collection_id']) ? $jsonData['collection_id'] : null;
+			$errors->posts_id = $jsonData['post_id'];
+			$errors->entity_name = $jsonData['entity'];
+			$errors->field_name = isset($jsonData['field']) ? $jsonData['field'] : null;
+			$errors->comment = $jsonData['comment'];
+			$errors->toSuperUser = 0;
+			$errors->deleted = 0;
+
+			$errors->beforeSave();
+			if (!$errors->save($jsonData)) {
+				throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
+			}
+
+			if(!is_null($event)){
+				$event->save();
+			}
 
 			//Create an event object with the informations
 			$event = new Events();
@@ -143,27 +179,30 @@ class IndexDataController extends MainController {
 			$event->posts_id = $jsonData['post_id'];
 			$event->event_type = Events::TypeReportError;
 		}
+		//Special cases (polle or erindringer)
+		else{
 
-		//An error report consists of at least these informations
-		$errors->reporting_users_id = $this->auth->GetUserId();
-		$errors->collection_id = $jsonData['collection_id'];
-		$errors->posts_id = $jsonData['post_id'];
-		$errors->entity_name = $jsonData['entity'];
-		$errors->field_name = isset($jsonData['field']) ? $jsonData['field'] : null;
-		$errors->comment = $jsonData['comment'];
-		$errors->toSuperUser = 0;
-		$errors->deleted = 0;
+			//Validate input
+			$requiredFields = ['id','comment', 'entity', 'collection_id'];
 
-		$errors->beforeSave();
-		if (!$errors->save($jsonData)) {
-			throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
+			array_walk($requiredFields, function ($el) use ($requiredFields, $jsonData) {
+				if (!isset($jsonData[$el])) {
+					throw new InvalidArgumentException('the following fields are required: ' . implode($requiredFields, ',') . ' This field is not set: ' . $el);
+				}
+			});
+
+			$error = new SpecialErrors();
+			$error->source_id = $jsonData['id'];
+			$error->collection_id = $jsonData['collection_id'];
+			$error->comment = $jsonData['comment'];
+			$error->entity = $jsonData['entity'];
+			$error->field = isset($jsonData['field']) ? $jsonData['field'] : null;
+			if (!$error->save($jsonData)) {
+				throw new Exception('could not save special error report: ' . implode($error->getMessages(), ', '));
+			}
 		}
 
-		if(!is_null($event)){
-			$event->save();
-		}
-
-		$this->response->setJsonContent(['message' => 'error report saved']);
+		$this->response->setJsonContent(['message' => 'Fejlrapporten blev gemt']);
 	}
 
 	public function UpdateErrorReports() {

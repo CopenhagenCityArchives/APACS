@@ -98,34 +98,18 @@ class CommonInformationsController extends MainController {
 		$this->response->setJsonContent($task->GetTaskSchema($taskId));
 	}
 
-	public function GetSearchConfig() {
-		$request = $this->request;
-		$collectionId = $request->getQuery('collection_id', 'int', null);
+	public function GetErrorReportConfig()
+	{
+		//$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
+		$this->response->setContent(file_get_contents('../../app/config/errorreport.json'));
+	}
 
-		$conditions = '';
-		if (!is_null($collectionId)) {
-			$conditions = 'id = ' . $collectionId;
-		}
-
-		$collections = Collections::find($conditions);
-		$result = [];
-		$collections->rewind();
-		while ($collections->valid()) {
-			$resRow = $collections->current()->toArray();
-			$resRow['fields'] = $collections->current()->GetSearchConfig();
-
-			for ($i = 0; $i < count($resRow['fields']); $i++) {
-				$resRow['fields'][$i]['operators'] = Fields::GetFieldSearchOperators($resRow['fields'][$i]);
-				$resRow['fields'][$i] = Fields::SetDatasourceOrEnum($resRow['fields'][$i]);
-				$resRow['fields'][$i]['facets'] = Fields::SetFieldSearchFacets($resRow['fields'][$i]);
-			}
-
-			$result[] = $resRow;
-			$collections->next();
-		}
-
-		$this->response->setHeader("Cache-Control", "max-age=600");
-		$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
+	public function GetSearchConfig()
+	{
+		//$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
+		$this->response->setContent(file_get_contents('../../app/config/search.json'));
 	}
 
 	public function GetTasksUnits() {
@@ -504,6 +488,17 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetErrorReports() {
+
+			//Assume special errors if collection id is used
+		if(	!is_null($this->request->getQuery('collection_id', 'int', null)) &&
+			!is_null($this->request->getQuery('id', 'string', null)) &&
+			is_null($this->request->getQuery('task_id', 'int', null))){
+
+			$this->response->getJsonContent(SpecialErrors::find(['conditions' => ['collection_id = ' . $this->request->getQuery('collection_id'), 'source_id = ' . $this->request->getQuery('id')]]), JSON_NUMERIC_CHECK);
+			return;
+		}
+
+		//Normal cases: Task id and post id is set
 		$taskId = $this->request->getQuery('task_id', 'int', null);
 		$postId = $this->request->getQuery('post_id', 'int', null);
 		$userId = $this->request->getQuery('relevant_user_id', 'int', null);

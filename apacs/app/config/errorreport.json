@@ -1,0 +1,75 @@
+{
+    "1" : {
+        "task_id": 1,
+        "add_metadata": true,
+        "error_reports" : [
+            {
+                "label": "Person",
+                "entity": "person",
+                "field": "firstnames"
+            },
+            {
+                "label": "Person",
+                "entity": "person",
+                "field": "lastname"
+            },
+            {
+                "label": "Person",
+                "entity": "person",
+                "field": "birthplace"
+            },
+            {
+                "label": "Begravelse",
+                "entity": "burial",
+                "field": null
+            },
+            {
+                "label": "Adresse",
+                "entity": "address",
+                "field": null
+            }
+        ]
+    },
+    "2": {
+        "task_id": 2,
+        "add_metadata": false,
+        "error_reports" : [
+            {
+                "label": "Person",
+                "entity": "person",
+                "field": null
+            },
+            {
+                "label": "Slægtning",
+                "entity": "relative",
+                "field": null
+            },
+            {
+                "label": "Adresser",
+                "entity": "burial",
+                "field": null
+            },
+            {
+                "label": "Stillinger",
+                "entity": "address",
+                "field": null
+            }
+        ]
+    },
+    "3": {
+        "task_id": 3,
+        "add_metadata": false,
+        "error_reports" : [
+            {
+                "label": "Forfatter",
+                "entity": "author",
+                "field": null
+            },
+            {
+                "label": "Transkribering",
+                "entity": "transcription",
+                "field": null
+            }
+        ]
+    }
+}

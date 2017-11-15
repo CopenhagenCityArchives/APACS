@@ -90,6 +90,7 @@ try {
 
 	$info->get('/taskschema', 'GetTaskFieldsSchema');
 	$info->get('/searchconfig', 'GetSearchConfig');
+	$info->get('/errorreportconfig', 'GetErrorReportConfig');
 
 	$info->get('/tasks', 'GetTasks');
 	$info->get('/tasks/{taskId:[0-9]+}', 'GetTask');
