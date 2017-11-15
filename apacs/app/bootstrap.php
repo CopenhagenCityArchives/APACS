@@ -148,6 +148,12 @@ try {
 
 	$app->mount($indexing);
 
+	// Cumulus asset SolrProxy
+	$cumulus = new MicroCollection();
+	$cumulus->setHandler(new CumulusAssetController());
+	$cumulus->get('/asset/{assetId:[0-9]+}', 'AssetDownload');
+	$app->mount($cumulus);
+
 	//Catch all for preflight checks (always performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
 		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
