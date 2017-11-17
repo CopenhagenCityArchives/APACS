@@ -13,7 +13,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		error_reporting(~0);
 		ini_set('display_errors', 1);
 
-		$url = sprintf("%s:%d/%s/asset/download/%s?id=%d", $this->host, $this->port, $this->location, $this->catalog, $assetId);
+		$url = sprintf("%s:%d/%s/asset/download/%s/%d", $this->host, $this->port, $this->location, $this->catalog, $assetId);
 
 		// use key 'http' even if you send the request to https://...
 		$options = array(
@@ -21,7 +21,10 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		        'header'  => array(
 							sprintf("Authorization: Basic %s", base64_encode(sprintf("%s:%s", $this->user, $this->pass)))),
 		        'method'  => 'GET'
-		    )
+		    ),
+				'ssl' => array(
+					'verify_peer' => false
+				)
 		);
 		$context  = stream_context_create($options);
 		$result = file_get_contents($url, false, $context);
