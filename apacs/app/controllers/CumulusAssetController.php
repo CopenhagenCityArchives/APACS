@@ -31,7 +31,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		if ($result === FALSE) {
 			die("An error occured.");
 		} else {
-			var_dump($result);
+			echo $result;
 		}
 	}
 }
