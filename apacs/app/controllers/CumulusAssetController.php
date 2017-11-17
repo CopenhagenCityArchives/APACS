@@ -31,6 +31,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		if ($result === FALSE) {
 			die("An error occured.");
 		} else {
+			header('Content-Type: application/pdf');
 			echo $result;
 		}
 	}
