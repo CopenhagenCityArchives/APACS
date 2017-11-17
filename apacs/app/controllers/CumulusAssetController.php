@@ -2,19 +2,11 @@
 
 class CumulusAssetController extends \Phalcon\Mvc\Controller {
 
-	private $host;
-	private $port;
-	private $user;
-	private $pass;
-	private $location;
-
-	public function __construct($host, $port, $location, $user, $pass) {
-		$this->host = $host;
-		$this->port = $port;
-		$this->location = $location;
-		$this->user = $user;
-		$this->pass = $pass;
-	}
+	private $host = "192.168.20.30";
+	private $port = 8443;
+	private $user = "CIP-erindringsbilleder";
+	private $pass = "***REMOVED***";
+	private $location = "CIP-erindringsbilleder";
 
 	public function AssetDownload($assetId) {
 		$url = sprintf("%s:%d/%s/", $this->host, $this->port, $this->location);
