@@ -10,9 +10,6 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 	private $catalog = "erindringskatalog";
 
 	public function AssetDownload($assetId) {
-		error_reporting(~0);
-		ini_set('display_errors', 1);
-
 		$url = sprintf("%s:%d/%s/asset/download/%s/%d", $this->host, $this->port, $this->location, $this->catalog, $assetId);
 
 		// use key 'http' even if you send the request to https://...
@@ -27,9 +24,9 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 				)
 		);
 		$context  = stream_context_create($options);
-		$result = file_get_contents($url, false, $context);
+		$result = @file_get_contents($url, false, $context);
 		if ($result === FALSE) {
-			die("An error occured.");
+			$this->response->setStatusCode(500, "Invalid asset ID.")
 		} else {
 			header('Content-Type: application/pdf');
 			echo $result;
