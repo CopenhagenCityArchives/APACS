@@ -21,9 +21,11 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		);
 		$context  = stream_context_create($options);
 		$result = file_get_contents($url, false, $context);
-		if ($result === FALSE) { /* Handle error */ }
-
-		var_dump($result);
+		if ($result === FALSE) {
+			die("Asset does not exist!");
+		} else {
+			var_dump($result);
+		}
 	}
 }
 
