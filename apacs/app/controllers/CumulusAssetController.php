@@ -2,7 +2,7 @@
 
 class CumulusAssetController extends \Phalcon\Mvc\Controller {
 
-	private $host = "192.168.20.30";
+	private $host = "https://192.168.20.30";
 	private $port = 8443;
 	private $user = "CIP-erindringsbilleder";
 	private $pass = "***REMOVED***";
