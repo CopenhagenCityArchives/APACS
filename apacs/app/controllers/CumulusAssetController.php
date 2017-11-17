@@ -10,7 +10,13 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 	private $catalog = "erindringskatalog";
 
 	public function AssetDownload($assetId) {
-		$url = sprintf("%s:%d/%s/asset/download/%s/%d", $this->host, $this->port, $this->location, $this->catalog, $assetId);
+		$url = sprintf("%s:%d/%s/asset/download/%s/%d",
+			$this->getDI()->get('cipConfig')['host'],
+			$this->getDI()->get('cipConfig')['port'],
+			$this->getDI()->get('cipConfig')['location'],
+			$this->getDI()->get('cipConfig')['catalog'],
+			$assetId
+		);
 
 		// use key 'http' even if you send the request to https://...
 		$options = array(
@@ -26,7 +32,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		$context  = stream_context_create($options);
 		$result = @file_get_contents($url, false, $context);
 		if ($result === FALSE) {
-			$this->response->setStatusCode(500, "Invalid asset ID.");
+			$this->response->setStatusCode(400, "Invalid asset ID.");
 		} else {
 			header('Content-Type: application/pdf');
 			echo $result;
