@@ -26,7 +26,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		$context  = stream_context_create($options);
 		$result = @file_get_contents($url, false, $context);
 		if ($result === FALSE) {
-			$this->response->setStatusCode(500, "Invalid asset ID.")
+			$this->response->setStatusCode(500, "Invalid asset ID.");
 		} else {
 			header('Content-Type: application/pdf');
 			echo $result;
