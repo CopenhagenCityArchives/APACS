@@ -21,7 +21,7 @@ CREATE TABLE `apacs_collections` (
 
 
 
-CREATE TABLE IF NOT EXISTS TABLE `apacs_datasources` (
+CREATE TABLE IF NOT EXISTS `apacs_datasources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(25) COLLATE utf8_danish_ci DEFAULT NULL,
   `sql` char(255) COLLATE utf8_danish_ci DEFAULT NULL,
@@ -76,17 +76,15 @@ CREATE TABLE `apacs_errorreports` (
   `original_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `toSuperUser` tinyint(1) DEFAULT '0',
-  `superUserTime` timestamp NULL DEFAULT '0000-00-00 00:00:00',
+  `superUserTime` timestamp NULL,
   `field_id` int(11) DEFAULT NULL,
   `entry_created_by` char(150) COLLATE utf8_danish_ci DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `deleted_reason` char(50) COLLATE utf8_danish_ci DEFAULT NULL,
   `entries_id` int(11) DEFAULT NULL,
   `collection_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `apacs_pages_idx` (`pages_id`),
-  CONSTRAINT `apacs_pages` FOREIGN KEY (`pages_id`) REFERENCES `apacs_pages_old` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5803 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23135 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 
 CREATE TABLE IF NOT EXISTS `apacs_events` (
