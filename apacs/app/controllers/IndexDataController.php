@@ -97,7 +97,7 @@ class IndexDataController extends MainController {
 	}
 
 	public function SolrProxy() {
-		ConcreteEntries::ProxySolrRequest();
+		ConcreteEntries::ProxySolrRequest($this->getDI()->get('solrConfig'));
 	}
 
 	public function ReportError() {
@@ -331,15 +331,18 @@ class IndexDataController extends MainController {
 
 			$context = $entry->GetContext();
 			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context);
+			$solrId = 'burial-' . $entry->concrete_entries_id;//TODO: Hardcoded id generation for Solr
 
 			$solrDataToSave = array_merge(
 				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
 				['user_id' => $userId, 'user_name' => $userName],
-				['jsonObj' => json_encode(['metadata' => $context, 'data' => $jsonData['persons']])]//TODO: Hardcoded name of main entity
+				['jsonObj' => json_encode(array_merge(['id' => $solrId], $context, $jsonData['persons']))] //TODO: Hardcoded name of main entity
 			);
 
-			$concreteEntry->SaveInSolr($solrDataToSave, 'burial_' + $entry->concrete_entries_id); //TODO: Hardcoded id generation for Solr
+			$solrDataToSave['id'] = $solrId;
+
+			$concreteEntry->SaveInSolr($this->getDI()->get('solrConfig'), $solrDataToSave, $solrData['id']);
 
 			$entry->complete = 1;
 			$entry->save();
@@ -389,7 +392,7 @@ class IndexDataController extends MainController {
 		}
 
 		$this->response->setStatusCode(200, 'OK');
-		$this->response->setJsonContent(['post_id' => $jsonData['post_id'], 'concrete_entry_id' => $concreteId, 'entry_id' => $entry->id]);
+		$this->response->setJsonContent(['post_id' => $jsonData['post_id'], 'concrete_entry_id' => $concreteId, 'entry_id' => $entry->id, 'solr_id' => $solrId]);
 	}
 
 	private function AuthorizeUser($entry) {
@@ -407,91 +410,91 @@ class IndexDataController extends MainController {
 	 * DEPRECATED
 	 *
 	 */
-	public function UpdateEntry($entryId) {
-
-		$this->RequireAccessControl();
-
-		$jsonData = $this->GetAndValidateJsonPostData();
-		$concreteId = $jsonData['concrete_entries_id'];
-		$entityName = $jsonData['entity_name'];
-		$fieldName = $jsonData['field_name'];
-		$value = $jsonData['value'];
-
-		$entity = Entities::findFirst(['conditions' => 'name = :entity_name: AND task_id = :task_id:', 'bind' => ['entity_name' => $jsonData['entity_name'], 'task_id' => $jsonData['task_id']]]);
-
-		if ($entity == false) {
-			throw new InvalidArgumentException('Not entity found with name ' . $jsonData['entity_name'] . ' for task id ' . $jsonData['task_id']);
-		}
-
-		$entry = Entries::findFirstById($entryId);
-
-		if ($entry == false) {
-			throw new InvalidArgumentException('No entry found with id ' . $entryId);
-		}
-
-		$entryContext = $entry->GetContext();
-
-		$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
-
-		if (!$this->AuthorizeUser($entry)) {
-			return;
-		}
-
-		$conEntry = new ConcreteEntries($this->getDI());
-
-		if ($entity->type == 'array') {
-			$entryData = $conEntry->Load($entity, 'id', $concreteId)[0];
-		} else {
-			$entryData = $conEntry->Load($entity, 'id', $concreteId);
-		}
-
-		if (is_null($entryData)) {
-			throw new InvalidArgumentException('no entry data found for ' . $jsonData['entity_name'] . ' with id ' . $concreteId);
-		}
-
-		if ($entryData[$entity->entityKeyName] !== $entry->concrete_entries_id) {
-			throw new InvalidArgumentException('The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
-		}
-
-		if (trim($value) == "") {
-			$value = NULL;
-		}
-
-		$entryData[$fieldName] = $value;
-
-		$concreteId = $conEntry->Save($entity, $entryData);
-
-		if (!is_numeric($concreteId)) {
-			throw new RuntimeException('could not update entry wth id ' . $concreteId);
-		}
-
-		$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entryContext);
-		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
-
-		$completeEntry = $conEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
-
-		$conEntry->SaveInSolr(array_merge(
-			$solrData, $conEntry->GetSolrData($entities, $completeEntry) /*, ['user_id' => $this->auth->GetUserId(), 'user_name' => $this->auth->GetUserName()]*/
-		), 'burial_' + $concreteId); //TODO: Hardcoded id generation for Solr
-
-		//Remove any error reports for the field
-		foreach ($errorReports as $error) {
-			/*if ($error->delete() === false) {
-				echo 'Notice: Could not delete error: ' . $error->getMessages();
-			}*/
-		}
-
-		$event = new Events();
-		$event->users_id = $this->auth->GetUserId();
-		$event->collections_id = $solrData['collection_id'];
-		$event->units_id = $solrData['unit_id'];
-		$event->pages_id = $solrData['page_id'];
-		$event->posts_id = $solrData['post_id'];
-		$event->event_type = Events::TypeEdit;
-		$event->save();
-
-		$this->response->setJsonContent(['message' => 'entry updated']);
-	}
+	// public function UpdateEntry($entryId) {
+	//
+	// 	$this->RequireAccessControl();
+	//
+	// 	$jsonData = $this->GetAndValidateJsonPostData();
+	// 	$concreteId = $jsonData['concrete_entries_id'];
+	// 	$entityName = $jsonData['entity_name'];
+	// 	$fieldName = $jsonData['field_name'];
+	// 	$value = $jsonData['value'];
+	//
+	// 	$entity = Entities::findFirst(['conditions' => 'name = :entity_name: AND task_id = :task_id:', 'bind' => ['entity_name' => $jsonData['entity_name'], 'task_id' => $jsonData['task_id']]]);
+	//
+	// 	if ($entity == false) {
+	// 		throw new InvalidArgumentException('Not entity found with name ' . $jsonData['entity_name'] . ' for task id ' . $jsonData['task_id']);
+	// 	}
+	//
+	// 	$entry = Entries::findFirstById($entryId);
+	//
+	// 	if ($entry == false) {
+	// 		throw new InvalidArgumentException('No entry found with id ' . $entryId);
+	// 	}
+	//
+	// 	$entryContext = $entry->GetContext();
+	//
+	// 	$errorReports = ErrorReports::FindByRawSql('apacs_errorreports.field_name = \'' . $fieldName . '\' AND concrete_entries_id = \'' . $concreteId . '\'');
+	//
+	// 	if (!$this->AuthorizeUser($entry)) {
+	// 		return;
+	// 	}
+	//
+	// 	$conEntry = new ConcreteEntries($this->getDI());
+	//
+	// 	if ($entity->type == 'array') {
+	// 		$entryData = $conEntry->Load($entity, 'id', $concreteId)[0];
+	// 	} else {
+	// 		$entryData = $conEntry->Load($entity, 'id', $concreteId);
+	// 	}
+	//
+	// 	if (is_null($entryData)) {
+	// 		throw new InvalidArgumentException('no entry data found for ' . $jsonData['entity_name'] . ' with id ' . $concreteId);
+	// 	}
+	//
+	// 	if ($entryData[$entity->entityKeyName] !== $entry->concrete_entries_id) {
+	// 		throw new InvalidArgumentException('The entry with id ' . $entry->id . ' does not match a concrete entity of type ' . $entityName . ' with id ' . $concreteId);
+	// 	}
+	//
+	// 	if (trim($value) == "") {
+	// 		$value = NULL;
+	// 	}
+	//
+	// 	$entryData[$fieldName] = $value;
+	//
+	// 	$concreteId = $conEntry->Save($entity, $entryData);
+	//
+	// 	if (!is_numeric($concreteId)) {
+	// 		throw new RuntimeException('could not update entry wth id ' . $concreteId);
+	// 	}
+	//
+	// 	$solrData = ConcreteEntries::GetSolrDataFromEntryContext($entryContext);
+	// 	$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+	//
+	// 	$completeEntry = $conEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
+	//
+	// 	$conEntry->SaveInSolr($this->getDI()->get('solrConfig'), array_merge(
+	// 		$solrData, $conEntry->GetSolrData($entities, $completeEntry) /*, ['user_id' => $this->auth->GetUserId(), 'user_name' => $this->auth->GetUserName()]*/
+	// 	), 'burial_' + $concreteId); //TODO: Hardcoded id generation for Solr
+	//
+	// 	//Remove any error reports for the field
+	// 	foreach ($errorReports as $error) {
+	// 		/*if ($error->delete() === false) {
+	// 			echo 'Notice: Could not delete error: ' . $error->getMessages();
+	// 		}*/
+	// 	}
+	//
+	// 	$event = new Events();
+	// 	$event->users_id = $this->auth->GetUserId();
+	// 	$event->collections_id = $solrData['collection_id'];
+	// 	$event->units_id = $solrData['unit_id'];
+	// 	$event->pages_id = $solrData['page_id'];
+	// 	$event->posts_id = $solrData['post_id'];
+	// 	$event->event_type = Events::TypeEdit;
+	// 	$event->save();
+	//
+	// 	$this->response->setJsonContent(['message' => 'entry updated']);
+	// }
 
 	public function UpdateTasksPages() {
 
