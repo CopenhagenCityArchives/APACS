@@ -495,11 +495,11 @@ class ConcreteEntries {
 		return $solrData;
 	}
 
-	public static function SaveInSolr($solrData, $id = null) {
+	public static function SaveInSolr($config, $solrData, $id = null) {
 		$config = [
 			'endpoint' =>
 			['localhost' =>
-				['host' => '54.194.89.54', 'hostname' => '54.194.89.54', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'],
+				['host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path']],
 			],
 		];
 
@@ -533,7 +533,7 @@ class ConcreteEntries {
 		return $result->getStatus();
 	}
 
-	public static function ProxySolrRequest() {
+	public static function ProxySolrRequest($config) {
 		header("Access-Control-Allow-Origin: *");
 		header('Content-type: application/json; charset=UTF-8');
 		header('Cache-Control: max-age=60');
@@ -548,15 +548,15 @@ class ConcreteEntries {
 			die();
 		}
 
-		$url = 'http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
+		$url = $config['dns'] . $config['path'] . '/select?' . $queryStr;
 
 		$content = @file_get_contents($url);
 
 		if($content)
 			print $content;
 		else{
-			print json_encode(['url' => 'http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr]);
-			
+			print json_encode(['url' => $url]);
+
 		}
 		exit();
 	}
