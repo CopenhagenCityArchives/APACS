@@ -1,6 +1,7 @@
 {
     "1" : {
         "task_id": 1,
+        "collection_id": 1,
         "add_metadata": true,
         "error_reports" : [
             {
@@ -17,16 +18,17 @@
             },
             {
                 "label": "Begravelse",
-                "entity": "burial"
+                "entity": "burials"
             },
             {
                 "label": "Adresse",
-                "entity": "address"
+                "entity": "addresses"
             }
         ]
     },
-    "2": {
+    "17": {
         "task_id": 2,
+        "collection_id" : 17,
         "add_metadata": false,
         "error_reports" : [
             {
@@ -47,8 +49,9 @@
             }
         ]
     },
-    "3": {
+    "18": {
         "task_id": 3,
+        "collection_id": 18,
         "add_metadata": false,
         "error_reports" : [
             {
