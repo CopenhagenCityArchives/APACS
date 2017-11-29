@@ -2,13 +2,6 @@
 
 class CumulusAssetController extends \Phalcon\Mvc\Controller {
 
-	private $host = "https://192.168.20.30";
-	private $port = 8443;
-	private $user = "CIP-erindringsbilleder";
-	private $pass = "***REMOVED***";
-	private $location = "CIP-erindringsbilleder";
-	private $catalog = "erindringskatalog";
-
 	public function AssetDownload($assetId) {
 		$url = sprintf("%s:%d/%s/asset/download/%s/%d",
 			$this->getDI()->get('cipConfig')['host'],
@@ -18,11 +11,16 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 			$assetId
 		);
 
+		$auth = base64_encode(sprintf("%s:%s",
+			$this->getDI()->get('cipConfig')['user'],
+			$this->getDI()->get('cipConfig')['pass']
+		)));
+
 		// use key 'http' even if you send the request to https://...
 		$options = array(
 		    'http' => array(
 		        'header'  => array(
-							sprintf("Authorization: Basic %s", base64_encode(sprintf("%s:%s", $this->user, $this->pass)))),
+							sprintf("Authorization: Basic %s", auth),
 		        'method'  => 'GET'
 		    ),
 				'ssl' => array(
@@ -32,12 +30,13 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		$context  = stream_context_create($options);
 		$result = @file_get_contents($url, false, $context);
 		if ($result === FALSE) {
-			$this->response->setStatusCode(400, "Invalid asset ID.");
+			$this->response->setStatusCode(400, "Invalid Asset ID");
 		} else {
 			header('Content-Type: application/pdf');
 			echo $result;
 		}
 	}
+
 }
 
 ?>
