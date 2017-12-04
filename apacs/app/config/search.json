@@ -79,6 +79,16 @@
 	        "name": "civilstatus",
 	        "searchable": true,
 	        "sortable": false,
+					"enum": [
+							{ "label": "Enkestand", "value": "Enkestand" },
+							{ "label": "Forladt", "value": "Forladt" },
+							{ "label": "Gift", "value": "Gift" },
+							{ "label": "Separeret", "value": "Separeret" },
+							{ "label": "Skilt", "value": "Skilt" },
+							{ "label": "Ugift", "value": "Ugift" },
+							{ "label": "Uægte barn", "value": "Uægte barn" },
+							{ "label": "Ægtefødt barn", "value": "Ægtefødt barn" }
+					],
 	        "type": "typeahead",
 	        "view_name": "Civilstand"
 	    },
@@ -226,6 +236,11 @@
 	        "name": "sex",
 	        "searchable": true,
 	        "sortable": true,
+					"enum": [
+							{ "label": "Kvinde", "value": "Kvinde" },
+							{ "label": "Mand", "value": "Mand" },
+							{ "label": "Ukendt", "value": "Ukendt" }
+					],
 	        "type": "typeahead",
 	        "view_name": "K\u00f8n"
 	    },
@@ -266,7 +281,49 @@
 	        "sortable": false,
 	        "type": "string",
 	        "view_name": "F\u00f8dsels\u00e5r"
-	    }
+	    },
+			"erindring_photos": {
+				"collections": [
+					18
+				],
+				"name": "erindring_photos",
+				"searchable": true,
+				"sortable": false,
+				"type": "typeahead",
+				"enum": [
+					{ "label": "Ja", "value": true },
+					{ "label": "Nej", "value": false }
+				],
+				"view_name": "Indeholder fotos"
+			},
+			"erindring_handwritten_typed": {
+				"collections": [
+					18
+				],
+				"name": "erindring_handwritten_typed",
+				"searchable": true,
+				"sortable": false,
+				"type": "typeahead",
+				"enum": [
+						{ "label": "Håndskrevet", "value": "Håndskrevet" },
+						{ "label": "Maskinskrevet", "value": "Maskinskrevet" }
+				],
+				"view_name": "Håndskrevet/maskinskrevet"
+			},
+			"erindring_transcribed": {
+				"collections": [
+					18
+				],
+				"name": "erindring_transcribed",
+				"searchable": true,
+				"sortable": false,
+				"type": "typeahead",
+				"enum": [
+					{ "label": "Ja", "value": true },
+					{ "label": "Nej", "value": false }
+				],
+				"view_name": "Transkriberet"
+			}
 	},
 	"types": {
 		"string": { "operators": [ "eq", "neq", "starts", "ends", "in", "nin"] },
