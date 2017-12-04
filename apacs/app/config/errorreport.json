@@ -13,16 +13,40 @@
                 "entity": "persons.lastname"
             },
             {
+                "label": "Alder",
+                "entity": "persons.age"
+            },
+            {
+                "label": "Dødsdato",
+                "entity": "persons.dateOfDeath"
+            },
+            {
+                "label": "Civilstand",
+                "entity": "persons.civilstatus"
+            },
+            {
+                "label": "Køn",
+                "entity": "persons.sex"
+            },
+            {
+                "label": "Efternavn",
+                "entity": "persons.lastname"
+            },
+            {
                 "label": "Fødested",
                 "entity": "persons.birthplace"
             },
             {
-                "label": "Begravelse",
-                "entity": "burials"
+                "label": "Adresse (vej, gadenr.,etage osv.)",
+                "entity": "addresses"
             },
             {
-                "label": "Adresse",
-                "entity": "addresses"
+                "label": "Erhverv",
+                "entity": "positions"
+            },
+            {
+                "label": "Om begravelsen (fra, sogn, kirkegård)",
+                "entity": "burials"
             }
         ]
     },
@@ -55,12 +79,12 @@
         "add_metadata": false,
         "error_reports" : [
             {
-                "label": "Forfatter",
-                "entity": "author"
+                "label": "Transkription",
+                "entity": "transcription"
             },
             {
-                "label": "Transkribering",
-                "entity": "transcription"
+                "label": "Andre oplysninger",
+                "entity": "other_informations"
             }
         ]
     }
