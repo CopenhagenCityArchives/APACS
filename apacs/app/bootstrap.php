@@ -150,7 +150,7 @@ try {
 
 	// Cumulus asset SolrProxy
 	$cumulus = new MicroCollection();
-	$cumulus->setHandler(new CumulusAssetController("192.168.20.30", 8443, "CIP-erindringsbilleder", "***REMOVED***", "CIP-erindringsbilleder"));
+	$cumulus->setHandler(new CumulusAssetController());
 	$cumulus->get('/asset/{assetId:[0-9]+}', 'AssetDownload');
 	$app->mount($cumulus);
 
