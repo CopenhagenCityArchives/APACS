@@ -14,6 +14,105 @@
 		}
 	},
 	"fields": {
+		"firstnames": {
+	        "collections": [
+	            1, 17, 18
+	        ],
+	        "name": "firstnames",
+	        "searchable": true,
+	        "sortable": true,
+	        "type": "string",
+	        "view_name": "Fornavne"
+	    },
+		"lastname": {
+	        "collections": [
+	            1, 17, 18
+	        ],
+	        "name": "lastname",
+	        "searchable": true,
+	        "sortable": true,
+	        "type": "string",
+	        "view_name": "Efternavn"
+	    },
+		"birthname": {
+	        "collections": [
+	            1, 17
+	        ],
+	        "name": "birthname",
+	        "searchable": true,
+	        "sortable": false,
+	        "type": "string",
+	        "view_name": "F\u00f8denavn (pigenavn)"
+	    },
+		"freetext_store": {
+	        "collections": [
+	            1, 17, 18
+	        ],
+	        "name": "freetext_store",
+	        "searchable": true,
+	        "sortable": false,
+	        "type": "string",
+	        "view_name": "Fritekst"
+	    },
+		"streets": {
+			"collections": [
+				1, 17
+			],
+			"name": "streets",
+			"searchable": false,
+			"sortable": false,
+			"type": "string",
+			"view_name": "Vejnavn"
+		},
+		"streets": {
+	        "collections": [
+	            1, 17
+	        ],
+	        "datasource": {
+	            "field": "streetAndHood",
+	            "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/3?q="
+	        },
+	        "name": "streets",
+	        "searchable": true,
+	        "sortable": false,
+	        "type": "typeahead",
+	        "view_name": "Gade"
+	    },
+		"positions": {
+	        "collections": [
+	            1, 17
+	        ],
+	        "datasource": {
+	            "field": "position",
+	            "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/1?q="
+	        },
+	        "name": "positions",
+	        "searchable": true,
+	        "sortable": false,
+	        "type": "typeahead",
+	        "view_name": "Erhverv"
+	    },
+		"dateOfBirth": {
+			"name": "dateOfBirth",
+			"view_name": "F\u00f8dselsdato",
+			"collections": [
+				17
+			],
+			"type": "date",
+			"special_chars": false,
+			"searchable": true,
+			"sortable": true
+		},
+		"dateOfDeath": {
+	        "collections": [
+	            1
+	        ],
+	        "name": "dateOfDeath",
+	        "searchable": true,
+	        "sortable": true,
+	        "type": "date",
+	        "view_name": "D\u00f8dsdato"
+	    },
 	    "adressOutsideCph": {
 	        "collections": [
 	            1
@@ -33,16 +132,6 @@
 	        "sortable": true,
 	        "type": "number",
 	        "view_name": "Alder - \u00e5r"
-	    },
-	    "birthname": {
-	        "collections": [
-	            1, 17
-	        ],
-	        "name": "birthname",
-	        "searchable": true,
-	        "sortable": false,
-	        "type": "string",
-	        "view_name": "F\u00f8denavn (pigenavn)"
 	    },
 	    "cemetary": {
 	        "collections": [
@@ -102,27 +191,6 @@
 	        "type": "string",
 	        "view_name": "Kommentar"
 	    },
-	    "dateOfBirth": {
-			"name": "dateOfBirth",
-			"view_name": "F\u00f8dselsdato",
-			"collections": [
-				17
-			],
-			"type": "date",
-			"special_chars": false,
-			"searchable": true,
-			"sortable": true
-		},
-	    "dateOfDeath": {
-	        "collections": [
-	            1
-	        ],
-	        "name": "dateOfDeath",
-	        "searchable": true,
-	        "sortable": true,
-	        "type": "date",
-	        "view_name": "D\u00f8dsdato"
-	    },
 	    "deathcauses": {
 	        "collections": [
 	            1
@@ -136,36 +204,6 @@
 	        "sortable": false,
 	        "type": "typeahead",
 	        "view_name": "D\u00f8ds\u00e5rsag"
-	    },
-	    "firstnames": {
-	        "collections": [
-	            1, 17, 18
-	        ],
-	        "name": "firstnames",
-	        "searchable": true,
-	        "sortable": true,
-	        "type": "string",
-	        "view_name": "Fornavne"
-	    },
-		"streets": {
-			"collections": [
-				1, 17
-			],
-			"name": "streets",
-			"searchable": false,
-			"sortable": false,
-			"type": "string",
-			"view_name": "Vejnavn"
-		},
-	    "freetext_store": {
-	        "collections": [
-	            1, 17, 18
-	        ],
-	        "name": "freetext_store",
-	        "searchable": true,
-	        "sortable": false,
-	        "type": "string",
-	        "view_name": "Fritekst"
 	    },
 	    "institution": {
 	        "collections": [
@@ -181,16 +219,6 @@
 	        "type": "typeahead",
 	        "view_name": "Institution/sted"
 	    },
-	    "lastname": {
-	        "collections": [
-	            1, 17, 18
-	        ],
-	        "name": "lastname",
-	        "searchable": true,
-	        "sortable": true,
-	        "type": "string",
-	        "view_name": "Efternavn"
-	    },
 	    "parish": {
 	        "collections": [
 	            1
@@ -204,20 +232,6 @@
 	        "sortable": true,
 	        "type": "typeahead",
 	        "view_name": "Sogn"
-	    },
-	    "positions": {
-	        "collections": [
-	            1, 17
-	        ],
-	        "datasource": {
-	            "field": "position",
-	            "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/1?q="
-	        },
-	        "name": "positions",
-	        "searchable": true,
-	        "sortable": false,
-	        "type": "typeahead",
-	        "view_name": "Erhverv"
 	    },
 	    "record_number": {
 	        "collections": [
@@ -243,20 +257,6 @@
 					],
 	        "type": "typeahead",
 	        "view_name": "K\u00f8n"
-	    },
-	    "streets": {
-	        "collections": [
-	            1, 17
-	        ],
-	        "datasource": {
-	            "field": "streetAndHood",
-	            "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/3?q="
-	        },
-	        "name": "streets",
-	        "searchable": true,
-	        "sortable": false,
-	        "type": "typeahead",
-	        "view_name": "Gade"
 	    },
 	    "workplace": {
 	        "collections": [
