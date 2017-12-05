@@ -111,6 +111,8 @@
   <field name="erindring_handwritten_typed" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_description" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_transcribed" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+
   <field name="erindring_written_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
