@@ -337,10 +337,11 @@ class IndexDataController extends MainController {
 				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
 				['user_id' => $userId, 'user_name' => $userName],
-				['jsonObj' => json_encode(array_merge(['id' => $solrId], $context, $jsonData['persons']))] //TODO: Hardcoded name of main entity
+				['jsonObj' => json_encode(array_merge($context, $jsonData['persons'],['id' => $solrId]))] //TODO: Hardcoded name of main entity
 			);
 
 			$solrDataToSave['id'] = $solrId;
+			//$solrDataToSave['jsonObj']['id'] = $solrId;
 
 			$concreteEntry->SaveInSolr($this->getDI()->get('solrConfig'), $solrDataToSave, $solrData['id']);
 
