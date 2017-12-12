@@ -1,0 +1,35 @@
+#! python3
+# -*- coding: utf-8 -*-
+
+Config = {
+    "cumulus" : {
+        "url": "https://neaonline.dk",
+        "port": 8443,
+        "user": "CIP-erindringsbilleder",
+        "password": "***REMOVED***",
+        "catalog": "CIP-erindringsbilleder",
+        "layout": "erindringskatalog"
+    },
+    "kbhbilleder_db" : {
+        "host": "kbhbilleder-stats-cluster.cluster-cf2nstf005qs.eu-west-1.rds.amazonaws.com",
+        "port": 3306,
+        "user": "kbhbilleder-stat",
+        "password": "Ggc4Zpjm",
+        "database": "kbhbilleder-stats"
+    },
+    "apacs_db" : {
+        "host": "148.251.122.164",
+        "port": 3306,
+        "user":"kbharkiv",
+        "password":"***REMOVED***",
+        "database": "kbharkiv"
+    },
+    "aws_sns" : {
+        "access_key_id": "***REMOVED***",
+        "secret_access_key": "***REMOVED***"
+    },
+    "solr": {
+        "url":"http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core"
+        #"url": "http://solr:8983/solr/apacs_core"
+    }
+}
