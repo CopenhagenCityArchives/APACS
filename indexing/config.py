@@ -17,6 +17,13 @@ Config = {
         "password": "Ggc4Zpjm",
         "database": "kbhbilleder-stats"
     },
+    'polle_db' : {
+        "host": "138.201.87.24",
+        "port": 3306,
+        "user": "politietsregiste",
+        "password": "***REMOVED***",
+        "database": "politietsregisterblade"
+    },
     "apacs_db" : {
         "host": "148.251.122.164",
         "port": 3306,

@@ -156,16 +156,17 @@ if __name__ == "__main__":
 
 	try:
 		writeflush("Connecting to MySQL... ")
-		mysql = pymysql.connect(host=Config.DB_HOST, user=Config.DB_USER, password=Config.DB_PASSWORD, db='politietsregisterblade', charset='utf8')
+		mysql = pymysql.connect(host=Config['polle_db']['host'], user=Config['polle_db']['user'], password=Config['polle_db']['password'], db=Config['polle_db']['database'], charset='utf8')
 		writeflush("OK.\n")
 	except Exception as e:
 		writeflush("Failed.\n")
+		writeflush(repr(e))
 		SNS_Notifier.error(repr(e))
 		sys.exit(1)
 
 	try:
 		writeflush("Connecting to Solr... ")
-		solr = pysolr.Solr(Config.SOLR_URL, timeout=300)
+		solr = pysolr.Solr(Config['solr']['url'], timeout=300)
 		writeflush("OK.\n")
 	except Exception as e:
 		writeflush("Failed.\nError: %s\n" % repr(e))
@@ -304,7 +305,7 @@ if __name__ == "__main__":
 					"file_back": person["file_back"],
 					"collection_id": COLLECTION_ID,
 					"collection_info": 'Politiets registerblade',
-					'last_changed': person['last_changed']
+					'last_changed': str(person['last_changed'])
 				}
 				if person["person_type"] == 3 and card['main'] is not None:
 					data['parent'] = {
