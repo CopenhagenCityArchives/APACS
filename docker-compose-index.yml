@@ -1,7 +1,7 @@
 version: '2'
 services:
-  indexing_scripts:
-    container_name: apacs_stats_indexing_scripts
+  indexer:
+    container_name: indexer
     build:
         context: ./
         dockerfile: ./infrastructure/indexing/Dockerfile

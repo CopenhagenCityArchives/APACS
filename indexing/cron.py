@@ -26,7 +26,7 @@ schedule.every().day.at("01:00").do(erindringer)
 schedule.every().day.at("01:15").do(begravelser)
 schedule.every().day.at("02:45").do(polle)
 
-schedule.every(1).minutes.do(job)
+schedule.every(60).minutes.do(job)
 
 print("Job scheduling done...")
 
