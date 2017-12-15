@@ -274,7 +274,7 @@ class IndexDataController extends MainController {
 		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
 
 		//If the post already have an entry, get the id of the entry, so the existing entry will be updated, instead of a new one created
-		if (is_null($entryId)) {
+		if (!is_null($entryId)) {
 			$existingEntry = Entries::findFirst(['conditions' => 'posts_id = :postId:', 'bind' => ['postId' => $jsonData['post_id']]]);
 			if ($existingEntry) {
 				$entryId = $existingEntry->id;
@@ -337,10 +337,11 @@ class IndexDataController extends MainController {
 				$solrData,
 				$concreteEntry->GetSolrData($entities, $jsonData),
 				['user_id' => $userId, 'user_name' => $userName],
-				['jsonObj' => json_encode(array_merge(['id' => $solrId], $context, $jsonData['persons']))] //TODO: Hardcoded name of main entity
+				['jsonObj' => json_encode(array_merge($context, $jsonData['persons'],['id' => $solrId]))] //TODO: Hardcoded name of main entity
 			);
 
 			$solrDataToSave['id'] = $solrId;
+			//$solrDataToSave['jsonObj']['id'] = $solrId;
 
 			$concreteEntry->SaveInSolr($this->getDI()->get('solrConfig'), $solrDataToSave, $solrData['id']);
 

@@ -1,0 +1,17 @@
+version: '2'
+services:
+  indexer:
+    container_name: indexer
+    build:
+        context: ./
+        dockerfile: ./infrastructure/indexing/Dockerfile_dev
+    volumes:
+      - ./indexing:/usr/src/app/
+  solr:
+    container_name: apacs_stats_solr
+    build:
+      context: ./infrastructure/solr/
+    ports:
+      - "8989:8983"
+    volumes:
+        - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
