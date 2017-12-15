@@ -147,16 +147,6 @@
 	        "type": "string",
 	        "view_name": "Fornavne"
 	    },
-		"streets": {
-			"collections": [
-				1, 17
-			],
-			"name": "streets",
-			"searchable": false,
-			"sortable": false,
-			"type": "string",
-			"view_name": "Vejnavn"
-		},
 	    "freetext_store": {
 	        "collections": [
 	            1, 17, 18
@@ -191,6 +181,16 @@
 	        "type": "string",
 	        "view_name": "Efternavn"
 	    },
+		"birthplace": {
+			"collections": [
+				17
+			],
+			"name": "birthplace",
+			"searchable": true,
+			"sortable": true,
+			"type": "string",
+			"view_name": "F\u00f8dested"
+		},
 	    "parish": {
 	        "collections": [
 	            1
@@ -236,11 +236,11 @@
 	        "name": "sex",
 	        "searchable": true,
 	        "sortable": true,
-					"enum": [
-							{ "label": "Kvinde", "value": "Kvinde" },
-							{ "label": "Mand", "value": "Mand" },
-							{ "label": "Ukendt", "value": "Ukendt" }
-					],
+				"enum": [
+					{ "label": "Kvinde", "value": "Kvinde" },
+					{ "label": "Mand", "value": "Mand" },
+					{ "label": "Ukendt", "value": "Ukendt" }
+				],
 	        "type": "typeahead",
 	        "view_name": "K\u00f8n"
 	    },
@@ -305,8 +305,8 @@
 				"sortable": false,
 				"type": "typeahead",
 				"enum": [
-						{ "label": "Håndskrevet", "value": "Håndskrevet" },
-						{ "label": "Maskinskrevet", "value": "Maskinskrevet" }
+					{ "label": "Håndskrevet", "value": "Håndskrevet" },
+					{ "label": "Maskinskrevet", "value": "Maskinskrevet" }
 				],
 				"view_name": "Håndskrevet/maskinskrevet"
 			},
@@ -353,22 +353,26 @@
 		"firstnames": {
 			"field": "firstnames",
 			"type": "terms",
-			"mincount": 1
+			"mincount": 1,
+			"limit": 30
 		},
 		"lastname": {
 			"field": "lastname",
 			"type": "terms",
-			"mincount": 1
+			"mincount": 1,
+			"limit": 30
 		},
 		"streets": {
 			"field": "streets",
 			"type": "terms",
-			"mincount": 1
+			"mincount": 1,
+			"limit": 30
 		},
 		"positions": {
 			"field" : "positions",
 			"type" : "terms",
-			"mincount": 1
+			"mincount": 1,
+			"limit": 30
 		}
 	}
 }
