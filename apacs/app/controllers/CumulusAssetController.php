@@ -14,7 +14,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		$auth = base64_encode(sprintf("%s:%s",
 			$this->getDI()->get('cipConfig')['user'],
 			$this->getDI()->get('cipConfig')['pass']
-		)));
+		));
 
 		// use key 'http' even if you send the request to https://...
 		$options = array(
