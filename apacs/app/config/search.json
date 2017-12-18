@@ -91,16 +91,16 @@
             "type": "typeahead",
             "view_name": "Erhverv"
         },
-		"birthplace": {
-			"collections": [
-				17
-			],
-			"name": "birthplace",
-			"searchable": true,
-			"sortable": true,
-			"type": "string",
-			"view_name": "F\u00f8dested"
-		},
+        "birthplace": {
+            "collections": [
+                17
+            ],
+            "name": "birthplace",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Fødested"
+        },
         "dateOfBirth": {
             "name": "dateOfBirth",
             "view_name": "Fødselsdato",
@@ -483,13 +483,13 @@
             "field": "firstnames",
             "type": "terms",
             "mincount": 1,
-			"limit": 30
+            "limit": 30
         },
         "lastname": {
             "field": "lastname",
             "type": "terms",
             "mincount": 1,
-			"limit": 30
+            "limit": 30
         },
         "yearOfBirth": {
             "field": "yearOfBirth",
@@ -499,23 +499,23 @@
             "gap": 10,
             "mincount": 1
         },
-		"collection_info": {
+        "collection_info": {
             "field": "collection_info",
             "type": "terms",
             "mincount": 1,
-			"limit": 30
+            "limit": 30
         },
         "streets": {
             "field": "streets",
             "type": "terms",
             "mincount": 1,
-			"limit": 30
+            "limit": 30
         },
         "positions": {
             "field": "positions",
             "type": "terms",
             "mincount": 1,
-			"limit": 30
+            "limit": 30
         }
     }
 }
