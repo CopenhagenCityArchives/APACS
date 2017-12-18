@@ -8,7 +8,7 @@ services:
     links:
       - "solr"
   solr:
-    container_name: apacs_stats_solr
+    container_name: solr
     build:
       context: ./infrastructure/solr/
     ports:
