@@ -19,13 +19,12 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		// use key 'http' even if you send the request to https://...
 		$options = array(
 		    'http' => array(
-		        'header'  => array(
-							sprintf("Authorization: Basic %s", auth),
+		        'header'  => array(sprintf("Authorization: Basic %s", auth)),
 		        'method'  => 'GET'
 		    ),
-				'ssl' => array(
-					'verify_peer' => false
-				)
+			'ssl' => array(
+				'verify_peer' => false
+			)
 		);
 		$context  = stream_context_create($options);
 		$result = @file_get_contents($url, false, $context);
