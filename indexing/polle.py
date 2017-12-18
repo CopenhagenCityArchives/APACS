@@ -143,10 +143,10 @@ def get_formatted_date_or_default(year, month, day, default = None):
 
 def person_type_text(x):
     return {
-        'Hovedperson': 1,
-        'Ægtefælle': 2,
-		'Barn': 3
-    }.get(x)
+        1: 'Hovedperson',
+        2: 'Ægtefælle',
+		3: 'Barn'
+    }[x]
 
 if __name__ == "__main__":
 	solr = None
