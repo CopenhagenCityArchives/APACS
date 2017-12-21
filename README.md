@@ -1,69 +1,50 @@
 ## APACS (Archival Presentation And Crowdsourcing System)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
-The system runs on Ubuntu using PHP and MySQL.
+The system consists of four separate services:
+* A webserver running Apache and PHP (using the Phalcon framework) exposing a RESTful API
+* A MySQL database having all metadata and data for collections and indexed informations
+* A SOLR database that exposes all indexed persons locally or through a proxy in the API service
+* An indexer that feeds data to SOLR running Python
 
-##Deploy to AWS EBS
+##Starting services using docker-composer
+All services can be started using docker-compose.
+There are two docker-compose entities:
+The docker-compose.yml and docker-compose.override.yml is used to start and run the webserver, the MySQL database and the Solr server.
 
-Run the following command using eb cli:
+The docker-compose-index.yml and docker-compose-index.override.yml are used to start and run the Solr server and the indexer scripts.
 
-```
-eb deploy
-```
+Notice that the Solr service is included in both files, as the service is used by both the API and the indexer scripts.
 
-Setup cli:
+The two .override.yml files are used when in development mode. When using docker-compose with these files the code directories are mapped to the instances so changes made in the code appears immediately.
 
-eb init
+The two other docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
-If not provided, add IAM credentials.
+Notice that the docker compose files can be used to run individual services. If there is a need to test the indexer service, it can be initiated using ``docker-compose -f docker-compose-index.override up -d indexer`` command.
 
+It is also possible to run a local debugable instance of a PHP server.
 
-## Operating the server
 ### Running webserver (Apache) and database (MySQL)
 
-Start services
-```
+Start services:
+``
 docker-compose up -d
-```
-
-Stop services
-```
-docker-compose stop
-```
-
-Remove all services
-```
-docker-compose rm --all
-```
-
-Access bash in the webserver
-```
-docker exec -i -t webserver /bin/bash
-```
+``
 
 ### Running webserver (nginx) and remote database
-```
+Build Docker image:
+``
 docker build -t apacs_dev .
-```
-
-```
+``
+And start it making the webserver accessible at port 8005:
+``
 docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 --name apacs_test apacs_dev
-```
+``
 
-### Stats to solr
-Stats from the system are feed to Solr using Solrs DataImportHandler.
+## PHP dependencies
+Are installed when using the docker-compose.yml file. The docker-compose.override.yml does not install PHP dependencies, so here you have to use this command on the webserver service:
 
-Stats consists of data from image requests (the source is not included in this code), and system exceptions.
-
-The datatimport is run using these cron commands:
-```0,2 * * * * /usr/bin/wget http://localhost:8983/solr/apacs_stats/dataimport?command=full-import&wt=json&clean=false&entity=system_exceptions```
-
-```0,10 * * * * /usr/bin/wget http://localhost:8983/solr/apacs_stats/dataimport?command=full-import&wt=json&clean=false&entity=image_requests```
-
-## Dependencies
-Install PHP dependencies by running:
-
-php composer.phar install
+``php composer.phar install``
 
 ## Tests
 
@@ -87,7 +68,7 @@ jasmine-node /tests
 
 ### Code coverage
 
-Go to /vagrant/www/tests/
+Go to /apacs/tests
 
 Run:
 ```
