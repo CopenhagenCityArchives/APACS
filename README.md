@@ -7,7 +7,7 @@ The system consists of four separate services:
 * A SOLR database that exposes all indexed persons locally or through a proxy in the API service
 * An indexer that feeds data to SOLR running Python
 
-##Starting services using docker-composer
+## Starting services using docker-composer
 All services can be started using docker-compose.
 There are two docker-compose entities:
 The docker-compose.yml and docker-compose.override.yml is used to start and run the webserver, the MySQL database and the Solr server.
