@@ -2,7 +2,6 @@ pysolr==3.6.0
 pymysql
 datetime
 urllib3
-logging
 requests
 boto3
 schedule
