@@ -34,6 +34,11 @@ if __name__ == "__main__":
 		SNS_Notifier.error(repr(e))
 		sys.exit(1)
 
+	transcribed = {}
+
+	for erindring in cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' *"):
+		transcribed[erindring['Erindringsnummer']] = erindring
+
 	try:
 		writeflush("Connecting to Solr... ")
 		solr = pysolr.Solr(Config['solr']['url'], timeout=300)
@@ -51,6 +56,7 @@ if __name__ == "__main__":
 		writeflush("Failed.\nError: %s\n" % repr(e))
 		SNS_Notifier.error(repr(e))
 		sys.exit(1)
+
 
 	writeflush("Creating Solr documents... ")
 	for i, erindring in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !*", chunk=50)):
@@ -94,6 +100,8 @@ if __name__ == "__main__":
 			jsonObj['keywords'] = erindring['Keywords'].split(",")
 		if "Køn" in erindring:
 			jsonObj['sex'] = erindring['Køn']
+		if erindring["Erindringsnummer"] in transcribed:
+			jsonObj['transcribed_id'] = transcribed[erindring["Erindringsnummer"]]['ID']
 		jsonObj['containsPhotos'] = 'Foto' in erindring and erindring['Foto']
 
 		documents.append({
