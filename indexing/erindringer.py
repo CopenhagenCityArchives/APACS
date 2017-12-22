@@ -62,8 +62,14 @@ if __name__ == "__main__":
 	for i, erindring in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !*", chunk=50)):
 		writeflush("\rCreating Solr documents... %d" % (i+1))
 
+		# if(erindring['Transkriberet'] == 1):
+		# 	query = 'ID == %s' % erindring['Related Sub Assets']
+		# 	print(cip.search(catalog="erindringskatalog", querystring=query))
+		# 	sys.exit(1)
+
 		jsonObj = {}
 		jsonObj['id'] = "erindring-%d" % erindring['ID']
+		jsonObj['org_id'] = "%d" % erindring['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		if "Fornavne" in erindring:
 			jsonObj['firstnames'] = erindring['Fornavne']

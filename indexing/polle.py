@@ -43,7 +43,7 @@ SELECT
     r.filnavn2 as file_back,
     p.koen as sex,
     p.gift as married,
-	date(p.last_changed) as last_changed
+	IF(date(p.last_changed) = '000-00-00', "", date(p.last_changed)) as last_changed
 FROM
 	PRB_person p
     LEFT JOIN PRB_registerblad r ON r.registerblad_id = p.registerblad_id
@@ -142,11 +142,8 @@ def get_formatted_date_or_default(year, month, day, default = None):
 		return default;
 
 def person_type_text(x):
-    return {
-        1: 'Hovedperson',
-        2: 'Ægtefælle',
-		3: 'Barn'
-    }[x]
+	types = ['Ukendt','Hovedperson','Ægtefælle','Barn']
+	return types[x]
 
 if __name__ == "__main__":
 	solr = None
@@ -305,7 +302,7 @@ if __name__ == "__main__":
 					"file_back": person["file_back"],
 					"collection_id": COLLECTION_ID,
 					"collection_info": 'Politiets registerblade',
-					'last_changed': str(person['last_changed'])
+					'last_changed': person['last_changed']
 				}
 				if person["person_type"] == 3 and card['main'] is not None:
 					data['parent'] = {

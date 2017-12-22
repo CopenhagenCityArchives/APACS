@@ -19,7 +19,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		// use key 'http' even if you send the request to https://...
 		$options = array(
 		    'http' => array(
-		        'header'  => array(sprintf("Authorization: Basic %s", auth)),
+		        'header'  => array(sprintf("Authorization: Basic %s", $auth)),
 		        'method'  => 'GET'
 		    ),
 			'ssl' => array(
