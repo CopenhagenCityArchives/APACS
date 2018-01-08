@@ -5,8 +5,6 @@ services:
       context: ./
       dockerfile: ./infrastructure/docker_webserver/Dockerfile_dev
     container_name: webserver
-    links:
-      - db
     ports:
       - "8000:80"
     volumes:

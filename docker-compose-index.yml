@@ -5,8 +5,6 @@ services:
     build:
         context: ./
         dockerfile: ./infrastructure/indexing/Dockerfile
-    links:
-      - "solr"
   solr:
     container_name: solr
     build:
