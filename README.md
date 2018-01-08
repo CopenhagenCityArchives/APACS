@@ -41,6 +41,16 @@ And start it making the webserver accessible at port 8005:
 docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 --name apacs_test apacs_dev
 ``
 
+## Deployment
+### Index service
+The index service is deployed to AWS using this command:
+``docker-compose -f docker-compose-index.yml up -d indexer``
+
+Use the following docker-machine (running at AWS): ``docker-machine-host-prod``
+
+### Webserver
+The webserver is currently running on a shared host, and as so must be deployed using FTP.
+
 ## PHP dependencies
 Are installed when using the docker-compose.yml file. The docker-compose.override.yml does not install PHP dependencies, so here you have to use this command on the webserver service:
 
