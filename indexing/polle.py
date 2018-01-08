@@ -74,8 +74,7 @@ SELECT *, CONCAT(
 FROM
 (SELECT
 	a.registerblad_id as card_id,
-    IF(v.vej_id NOT IN ('2636','3003','2772','2637'), TRIM(v.navn), NULL) as street,
-    IF(v.vej_id NOT IN ('2636','3003','2772','2637'), TRIM(v.navn), NULL) as streetAndHood,
+    IF(v.vej_id NOT IN ('2636','3003','2772','2637'), TRIM(v.burial_streets_streetAndHood), NULL) as street,
     IF(a.vejnummer <> "", a.vejnummer, null) as number,
     IF(a.vejnummerbogstav <> "", a.vejnummerbogstav, null) as letter,
     IF(a.etage <> "", a.etage, null) as floor,
