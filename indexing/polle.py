@@ -75,6 +75,7 @@ FROM
 (SELECT
 	a.registerblad_id as card_id,
     IF(v.vej_id NOT IN ('2636','3003','2772','2637'), TRIM(v.burial_streets_streetAndHood), NULL) as street,
+	IF(v.burial_institutions_id IS NOT NULL, v.burial_institutions_institution, NULL) as institution,
     IF(a.vejnummer <> "", a.vejnummer, null) as number,
     IF(a.vejnummerbogstav <> "", a.vejnummerbogstav, null) as letter,
     IF(a.etage <> "", a.etage, null) as floor,
@@ -383,6 +384,7 @@ if __name__ == "__main__":
 				'childNames': list(map(lambda child: "%s %s" % (child['firstnames'], child['lastname']), card['children'])) if person['person_type'] == 1 else [],
 				'addresses': list(map(lambda address: address['full_address'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'streets': list(map(lambda address: address['street'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
+				'institutions': list(map(lambda address: address['institution'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'locations': list(map(lambda address: address['location'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'spousePositions': list(reduce(lambda positions, spouse: positions + (spouse['positions'] if 'positions' in spouse else []), card['spouses'], [])) if person['person_type'] == 1 else [],
 				'comment': "" if person['person_comment'] is None else person['person_comment'],
