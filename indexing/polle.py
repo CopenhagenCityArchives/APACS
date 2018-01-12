@@ -384,7 +384,7 @@ if __name__ == "__main__":
 				'childNames': list(map(lambda child: "%s %s" % (child['firstnames'], child['lastname']), card['children'])) if person['person_type'] == 1 else [],
 				'addresses': list(map(lambda address: address['full_address'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'streets': list(map(lambda address: address['street'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
-				'institutions': list(map(lambda address: address['institution'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
+				#'institutions': list(map(lambda address: address['institution'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'locations': list(map(lambda address: address['location'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'spousePositions': list(reduce(lambda positions, spouse: positions + (spouse['positions'] if 'positions' in spouse else []), card['spouses'], [])) if person['person_type'] == 1 else [],
 				'comment': "" if person['person_comment'] is None else person['person_comment'],
