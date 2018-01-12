@@ -22,9 +22,9 @@ def polle():
     print 'polle'
     os.system("python polle.py")
 
-schedule.every().day.at("01:00").do(erindringer)
-schedule.every().day.at("01:15").do(begravelser)
-schedule.every().day.at("02:45").do(polle)
+schedule.every().day.at("23:00").do(erindringer)
+schedule.every().day.at("23:15").do(begravelser)
+schedule.every().day.at("00:30").do(polle)
 
 schedule.every(60).minutes.do(job)
 
