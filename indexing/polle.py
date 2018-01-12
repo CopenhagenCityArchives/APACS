@@ -191,7 +191,7 @@ if __name__ == "__main__":
 
 	documents = []
 	totalDocuments = 0
-	for (at, loaded_persons) in chunk_query(mysql, person_query, chunksize=2500):
+	for (at, loaded_persons) in chunk_query(mysql, person_query, chunksize=10000):
 		cards = {}
 		persons = {}
 		errors = 0
@@ -426,7 +426,7 @@ if __name__ == "__main__":
 		try:
 			count = count + len(documents)
 			totalDocuments = count + totalDocuments
-			if(count > 7500):
+			if(count > 5000):
 				writeflush("%7d/%7d (%5f docs/sec) - Committing SOLR documents                     \r" % (totalDocuments, person_count, docspsec))
 				solr.add(documents, commit=False)
 				documents = []
