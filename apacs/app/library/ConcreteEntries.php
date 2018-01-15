@@ -490,7 +490,7 @@ class ConcreteEntries {
 		//$solrData['last_update'] = $entryCon['last_update'];
 		$solrData['last_update'] = date('Y-m-d\TH:i:s.u\Z', strtotime($entryCon['last_update']));
 
-		$solrData['collection_info'] = $entryCon['collection_name'] . ' ' . $entryCon['unit_description'];
+		$solrData['collection_info'] = $entryCon['collection_name'];
 
 		return $solrData;
 	}
