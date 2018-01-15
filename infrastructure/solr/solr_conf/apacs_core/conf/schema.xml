@@ -68,7 +68,6 @@
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-  <field name="street" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
   <!-- Singlevalue fields -->
