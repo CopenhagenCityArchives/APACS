@@ -38,6 +38,17 @@
             "type": "string",
             "view_name": "Efternavn"
         },
+        "yearOfBirth": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "yearOfBirth",
+            "searchable": true,
+            "sortable": false,
+            "type": "number",
+            "view_name": "Fødselsår"
+        },
         "birthname": {
             "collections": [
                 1,
@@ -49,6 +60,31 @@
             "type": "string",
             "view_name": "Fødenavn (pigenavn)"
         },
+        "sex": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "sex",
+            "searchable": true,
+            "sortable": true,
+            "enum": [
+                {
+                    "label": "Kvinde",
+                    "value": "Kvinde"
+                },
+                {
+                    "label": "Mand",
+                    "value": "Mand"
+                },
+                {
+                    "label": "Ukendt",
+                    "value": "Ukendt"
+                }
+            ],
+            "type": "typeahead",
+            "view_name": "Køn"
+        },
         "freetext_store": {
             "collections": [
                 1,
@@ -58,7 +94,7 @@
             "name": "freetext_store",
             "searchable": true,
             "sortable": false,
-            "type": "string",
+            "type": "string_multivalued",
             "view_name": "Fritekst"
         },
         "streets": {
@@ -277,31 +313,6 @@
             "type": "number",
             "view_name": "Løbenummer"
         },
-        "sex": {
-            "collections": [
-                1,
-                17
-            ],
-            "name": "sex",
-            "searchable": true,
-            "sortable": true,
-            "enum": [
-                {
-                    "label": "Kvinde",
-                    "value": "Kvinde"
-                },
-                {
-                    "label": "Mand",
-                    "value": "Mand"
-                },
-                {
-                    "label": "Ukendt",
-                    "value": "Ukendt"
-                }
-            ],
-            "type": "typeahead",
-            "view_name": "Køn"
-        },
         "workplace": {
             "collections": [
                 1
@@ -315,17 +326,6 @@
             "sortable": false,
             "type": "typeahead",
             "view_name": "Arbejdssted"
-        },
-        "yearOfBirth": {
-            "collections": [
-                1,
-                17
-            ],
-            "name": "yearOfBirth",
-            "searchable": true,
-            "sortable": false,
-            "type": "string",
-            "view_name": "Fødselsår"
         },
         "user_name": {
             "collections": [
@@ -413,12 +413,17 @@
     "types": {
         "string": {
             "operators": [
+                "in",
+                "nin",
                 "eq",
                 "neq",
                 "starts",
-                "ends",
-                "in",
-                "nin"
+                "ends"
+            ]
+        },
+        "string_multivalued": {
+            "operators": [
+                "in_multivalued"
             ]
         },
         "typeahead": {
@@ -445,6 +450,18 @@
         }
     },
     "operators": {
+        "in": {
+            "op": "in",
+            "label": "indeholder"
+        },
+        "in_multivalued": {
+            "op": "in_multivalued",
+            "label": "indeholder"
+        },
+        "nin": {
+            "op": "nin",
+            "label": "indeholder ikke"
+        },
         "eq": {
             "op": "eq",
             "label": "lig med"
@@ -468,14 +485,6 @@
         "lt": {
             "op": "lt",
             "label": "mindre end"
-        },
-        "in": {
-            "op": "in",
-            "label": "indeholder"
-        },
-        "nin": {
-            "op": "nin",
-            "label": "indeholder ikke"
         }
     },
     "facets": {
