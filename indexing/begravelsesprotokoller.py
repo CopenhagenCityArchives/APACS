@@ -323,7 +323,7 @@ if __name__ == "__main__":
 					'institution': "" if person['burial_institutions.institution'] is None else person['burial_institutions.institution'],
 
 					#Address
-					'address': { "street": person['burial_streets.street'], "hood": person['burial_hoods.hood'], "streetAndHood": person['burial_streets.streetAndHood'], "number": person['burial_addresses.number'], "letter": person['burial_addresses.letter'], "floor": person['burial_floors.floor'], "addressOutsideCph": person['burial_persons.adressOutsideCph'], "institution": person['burial_institutions.institution'] }  if "address" in person else {},
+					'addresses': { "street": person['burial_streets.street'], "hood": person['burial_hoods.hood'], "streetAndHood": person['burial_streets.streetAndHood'], "number": person['burial_addresses.number'], "letter": person['burial_addresses.letter'], "floor": person['burial_floors.floor'], "addressOutsideCph": person['burial_persons.adressOutsideCph'], "institution": person['burial_institutions.institution'] }  if "address" in person else {},
 
 					#Deathcauses
 					"deathcauses": list(map(lambda deathcause: {'deathcause': deathcause['burial_deathcauses.deathcause'] }, person["deathcauses"] )) if "deathcauses" in person else [],
