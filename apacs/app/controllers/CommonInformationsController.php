@@ -421,6 +421,7 @@ class CommonInformationsController extends MainController {
 		$entryData['post'] = Posts::findFirst(['conditions' => 'id = :id:', 'columns' => 'id,x,y,width,height, pages_id as page_id', 'bind' => ['id' => $entry->posts_id]]);
 		$entryData['task_id'] = $entry->tasks_id;
 		$entryData['page_id'] = $entryData['post']['page_id'];
+		$entryData['concrete_entries_id'] = $entry->concrete_entries_id;
 
 		$this->response->setJsonContent($entryData, JSON_NUMERIC_CHECK);
 	}
