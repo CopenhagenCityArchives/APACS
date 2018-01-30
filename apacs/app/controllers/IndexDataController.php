@@ -376,18 +376,34 @@ class IndexDataController extends MainController {
 				$concreteEntry->rollbackTransaction();
 			} catch (Exception $ex) {
 				//Could not roll back
+				$exception = new SystemExceptions();
+				$exception->save([
+					'type' => 'could_not_roll_back_save_entry',
+					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
+				]);
 			}
 
 			//Logging any exceptions with raw body data
 			//file_put_contents('/var/www/kbharkiv.dk/public_html/1508/stable/app/exceptions.log', json_encode(['time' => date('Y-m-d H:i:s'), 'exception' => $e->getMessage()]) . $this->request->getRawBody(), FILE_APPEND);
 
-			$exception = new SystemExceptions();
-			$exception->save([
-				'type' => 'event_save',
-				'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
-			]);
+			//Input error
+			if(get_class($e) == 'InvalidArgumentException'){
+				$exception = new SystemExceptions();
+				$exception->save([
+					'type' => 'event_save_invalid_input',
+					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
+				]);
+				$this->response->setStatusCode(400, 'Save error');
+			}else{
+				//Not just input error. This is a real one!
+				$exception = new SystemExceptions();
+				$exception->save([
+					'type' => 'event_save_other',
+					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
+				]);
+				$this->response->setStatusCode(500, 'Save error');
+			}
 
-			$this->response->setStatusCode(403, 'Save error');
 			$this->response->setJsonContent(['message' => 'Could not save entry', 'userMessage' => $e->getMessage()]);
 			return;
 		}
