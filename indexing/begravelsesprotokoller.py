@@ -390,6 +390,8 @@ if __name__ == "__main__":
 				#Positions
 				'positions': list(map(lambda position: position['position'], person["positions"]))  if "positions" in person else [],
 				'workplace': list(map(lambda position: position['workplace'], person["positions"]))  if "positions" in person else [],
+				#'last_update': person['last_update'],
+				'last_update': person['last_update']#.strftime("%Y-%m-%dTHH:mm:SSZ") if person['last_update'] is not None else None
 			})
 
 		writeflush("%7d/%7d (%5f docs/sec) - Adding SOLR documents                     \r" % (at, person_count, docspsec))
