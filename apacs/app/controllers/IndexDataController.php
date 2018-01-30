@@ -373,13 +373,14 @@ class IndexDataController extends MainController {
 		} catch (Exception $e) {
 			try {
 				$this->db->rollback();
-				$concreteEntry->rollbackTransaction();
+				//Not necessary as the line above roll back the given connection
+				//$concreteEntry->rollbackTransaction();
 			} catch (Exception $ex) {
 				//Could not roll back
 				$exception = new SystemExceptions();
 				$exception->save([
 					'type' => 'could_not_roll_back_save_entry',
-					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
+					'details' => json_encode(['exception' => $ex->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
 				]);
 			}
 
@@ -398,7 +399,7 @@ class IndexDataController extends MainController {
 				//Not just input error. This is a real one!
 				$exception = new SystemExceptions();
 				$exception->save([
-					'type' => 'event_save_other',
+					'type' => 'event_save_system',
 					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
 				]);
 				$this->response->setStatusCode(500, 'Save error');
