@@ -20,7 +20,7 @@ The two .override.yml files are used when in development mode. When using docker
 
 The two other docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
-Notice that the docker compose files can be used to run individual services. If there is a need to test the indexer service, it can be initiated using ``docker-compose -f docker-compose-index.override.yml up -d indexer`` command.
+Notice that the docker compose files can be used to run individual services. If there is a need to test the indexer service, it can be initiated using ``docker-compose -f docker-compose-index.dev.yml up -d indexer`` command.
 
 It is also possible to run a local debugable instance of a PHP server.
 
@@ -44,7 +44,7 @@ docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 
 ## Deployment
 ### Index service
 The index service is deployed to AWS using this command:
-``docker-compose -f docker-compose-index.yml up -d indexer``
+``docker-compose -f docker-compose-index.prod.yml up -d indexer``
 
 Use the following docker-machine (running at AWS): ``docker-machine-host-prod``
 
