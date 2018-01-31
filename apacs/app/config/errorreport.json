@@ -41,7 +41,7 @@
                 "entity": "positions"
             },
             {
-                "label": "Om begravelsen (fra, sogn, kirkegård)",
+                "label": "Om begravelsen (dødsårsag, fra, sogn, kirkegård)",
                 "entity": "burials"
             }
         ]
@@ -52,7 +52,7 @@
         "add_metadata": false,
         "error_reports" : [
             {
-                "label": "Person",
+                "label": "Person (navn, fødselsdato, fødested)",
                 "entity": "person"
             },
             {
