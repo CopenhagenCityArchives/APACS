@@ -499,7 +499,7 @@ class ConcreteEntries {
 		$config = [
 			'endpoint' =>
 			['localhost' =>
-				['host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path']],
+				['host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
 			],
 		];
 
