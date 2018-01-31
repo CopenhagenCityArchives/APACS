@@ -343,7 +343,16 @@ class IndexDataController extends MainController {
 			$solrDataToSave['id'] = $solrId;
 			//$solrDataToSave['jsonObj']['id'] = $solrId;
 
-			$concreteEntry->SaveInSolr($this->getDI()->get('solrConfig'), $solrDataToSave, $solrData['id']);
+			try{
+				$concreteEntry->SaveInSolr($this->getDI()->get('solrConfig'), $solrDataToSave, $solrData['id']);
+			}
+			catch(Exception $e){
+				$exception = new SystemExceptions();
+				$exception->save([
+					'type' => 'event_save_solr_error',
+					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
+				]);
+			}
 
 			$entry->complete = 1;
 			$entry->save();
