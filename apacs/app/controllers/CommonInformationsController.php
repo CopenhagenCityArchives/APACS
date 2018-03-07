@@ -591,13 +591,18 @@ class CommonInformationsController extends MainController {
 		$hours = $this->request->getQuery('hours', 'int', null);
 		$type = $this->request->getQuery('type', 'string', null);
 
-		if (is_null($hours) || is_null($type)) {
-			throw new Exception('Type and hours are required');
+		if (is_null($hours)) {
+			throw new Exception('Hours are required');
 		}
 
-		$exceptions = new SystemExceptions();
-		$results = $exceptions->getLastExceptionsByTypeAndHours($type, $hours);
-
+		if(!is_null($type)){
+			$exceptions = new SystemExceptions();
+			$results = $exceptions->getLastExceptionsByTypeAndHours($type, $hours);
+		}
+		else{
+			$exceptions = new SystemExceptions();
+			$results = $exceptions->getLastExceptionsByHours($hours);
+		}
 		$this->response->setJsonContent($results);
 	}
 
