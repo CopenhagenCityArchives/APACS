@@ -87,9 +87,13 @@ FROM
     a.adresse_dag as day,
     a.adresse_maaned as month,
     a.adresse_aar as year,
-    CONCAT(k.latitude, ",", k.longitude) as location
+	a.fra_note as from_note,
+	a.til_note as to_note,
+    CONCAT(k.latitude, ",", k.longitude) as location,
+	ko.kommentar as adr_comment
 FROM PRB_adresse a
 JOIN PRB_vej v ON v.vej_id = a.vej_id
+LEFT JOIN PRB_kommentar ko ON ko.adresse_id = a.adresse_id
 LEFT JOIN PRB_koordinat k ON k.koordinat_id = a.koordinat_id
 WHERE a.registerblad_id IN (%s)) sub
 """
@@ -296,6 +300,8 @@ if __name__ == "__main__":
 					'dateOfCompletion': get_formatted_date_or_default(person['completion_year'], person['completion_month'], person['completion_day'], None),
 					'civilstand': "Gift" if person['married'] == 1 and person['person_type'] == 1 else "",
 					'specialComment': None if person['special_comments'] is None else person['special_comments'],
+					'person_comment': None if person['person_comment'] is None else person['person_comment'],
+					'registerblad_comment': None if person['registerblad_comment'] is None else person['registerblad_comment'],
 					'person_type_text': person['person_type_text'],
 					"person_id": person_id,
 					"station": person["station"],

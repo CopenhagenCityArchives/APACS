@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 Config = {
-    "debug" : True,
+    "debug" : False,
     "cumulus" : {
         "url": "https://neaonline.dk",
         #"url": "https://cumulus",
