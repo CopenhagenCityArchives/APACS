@@ -197,10 +197,11 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	try:
-		writeflush("Deleting all burial documents in Solr... ")
+		if(Config["debug"] == False):
+			writeflush("Deleting all burial documents in Solr... ")
 
-		solr.delete(q="collection_id:%s" % COLLECTION_ID)
-		writeflush("OK.\n")
+			solr.delete(q="collection_id:%s" % COLLECTION_ID)
+			writeflush("OK.\n")
 	except Exception as e:
 		writeflush("Failed.\nError: %s\n" % repr(e))
 		SNS_Notifier.error(repr(e))
