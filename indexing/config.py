@@ -4,6 +4,7 @@
 Config = {
     "cumulus" : {
         "url": "https://neaonline.dk",
+        #"url": "https://cumulus",
         "port": 8443,
         "user": "CIP-erindringsbilleder",
         "password": "***REMOVED***",
@@ -36,8 +37,9 @@ Config = {
         "secret_access_key": "***REMOVED***"
     },
     "solr": {
+        "url":"https://aws.kbhkilder.dk/solr/apacs_core"
         #"url":"http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core"
-        "url":"http://ec2-54-194-89-54.eu-west-1.compute.amazonaws.com/solr/apacs_core"
+        #"url":"http://ec2-54-194-89-54.eu-west-1.compute.amazonaws.com/solr/apacs_core"
         #"url": "http://solr:8983/solr/apacs_core"
     }
 }
