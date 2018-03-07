@@ -171,9 +171,10 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	try:
-		writeflush("Deleting all Police documents in Solr... ")
-		solr.delete(q="collection_id:%s" % COLLECTION_ID)
-		writeflush("OK.\n")
+		if Config["debug"] == False:
+			writeflush("Deleting all Police documents in Solr... ")
+			solr.delete(q="collection_id:%s" % COLLECTION_ID)
+			writeflush("OK.\n")
 	except Exception as e:
 		writeflush("Failed.\nError: %s\n" % repr(e))
 		SNS_Notifier.error(repr(e))
@@ -437,6 +438,13 @@ if __name__ == "__main__":
 			writeflush("\nFailed.\nError %s\n" % repr(e))
 			SNS_Notifier.error(repr(e))
 			sys.exit(1)
+
+	if len(documents) > 0:
+		writeflush("%7d/%7d (%5f docs/sec) - Committing SOLR documents                     \r" % (totalDocuments, person_count, docspsec))
+		solr.add(documents, commit=False)
+		documents = []
+		solr.commit()
+		count = 0;
 
 	#print("Committing!")
 	solr.commit()
