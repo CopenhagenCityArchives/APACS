@@ -498,13 +498,15 @@ class ConcreteEntries {
 	public static function SaveInSolr($config, $solrData, $id = null) {
 		$config = [
 			'endpoint' =>
-			['localhost' =>
-				['host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
+			['aws' =>
+				['scheme' => $config['scheme'], 'host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
 			],
 		];
 
 		// create a client instance
 		$client = new Solarium\Client($config);
+
+		$client->setDefaultEndPoint('aws');
 
 		$update = $client->createUpdate();
 
@@ -548,7 +550,7 @@ class ConcreteEntries {
 			die();
 		}
 
-		$url = $config['dns'] . $config['path'] . '/select?' . $queryStr;
+		$url = $config['host'] . $config['path'] . '/select?' . $queryStr;
 
 		$content = @file_get_contents($url);
 
