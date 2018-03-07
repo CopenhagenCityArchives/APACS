@@ -205,7 +205,7 @@ if __name__ == "__main__":
 
 			person['person_type_text'] = person_type_text(person['person_type'])
 
-
+			#If the registerblad already exists in the loaded cards, append the person to the index
 			if card_id in cards:
 				card = cards[card_id]
 				if person_type == 1:
@@ -215,6 +215,7 @@ if __name__ == "__main__":
 				elif person_type == 3:
 					card['children'].append(person)
 			else:
+				#Else add the card with the person type
 				if person_type == 1:
 					cards[card_id] = { 'main': person, 'spouses': [], 'children': [] }
 				elif person_type == 2:
@@ -222,6 +223,7 @@ if __name__ == "__main__":
 				elif person_type == 3:
 					cards[card_id] = { 'main': None, 'spouses': [], 'children': [person] }
 			persons[person['person_id']] = person
+
 		# Load and add addresses
 		card_ids = ",".join(map(lambda p: str(p['registerblad_id']), loaded_persons))
 		person_ids = ",".join(map(lambda p: str(p['person_id']), loaded_persons))
@@ -275,7 +277,7 @@ if __name__ == "__main__":
 			valid_birthdate = valid_date(person["year_of_birth"], person['month_of_birth'], person['day_of_birth'])
 			valid_deathdate = valid_date(person["year_of_death"], person['month_of_death'], person['day_of_death'])
 			valid_completion_date = valid_date(person['completion_year'], person['completion_month'], person['completion_day'])
-
+			data = {}
 			# json object
 			try:
 				data = {
@@ -347,6 +349,7 @@ if __name__ == "__main__":
 						'deathdate': get_formatted_date_or_default(child['year_of_death'], child['month_of_death'], child['day_of_death'], None),
 						'post_id': "police-%d" % child['person_id'],
 						'positions': [] }, card['children']))
+
 			except TypeError as error:
 				print("error: %s" % repr(error))
 				print("person:")
@@ -373,7 +376,7 @@ if __name__ == "__main__":
 				'birthname': person['birthname'],
 				'positions': person['positions'] if 'positions' in person else [],
 				'sex': "Mand" if person['sex'] == 1 else "Kvinde" if person['sex'] == 2 else "Ukendt",
-				'civilstatus': if person['married'] == 1 and person['person_type'] == 1 else "",
+				'civilstatus': "Gift" if person['married'] == 1 and person['person_type'] == 1 else "",
 				'person_id': person_id,
 				'personType': person['person_type'],
 				'card_id': person["registerblad_id"],
