@@ -317,10 +317,12 @@ if __name__ == "__main__":
 					'deathplace' : person['burial_deathplaces.deathplace'],
 
 					#Burial
-					'record_number': person['burial_burials.number'],
-					'chapel': person['burial_chapels.chapel'],
-					'parish': person['burial_parishes.parish'],
-					'cemetary': person['burial_cemetaries.cemetary'],
+					'burials' : {
+						'record_number': person['burial_burials.number'],
+						'chapel': person['burial_chapels.chapel'],
+						'parish': person['burial_parishes.parish'],
+						'cemetary': person['burial_cemetaries.cemetary'],
+					 },
 					'institution': "" if person['burial_institutions.institution'] is None else person['burial_institutions.institution'],
 
 					#Address
@@ -384,6 +386,7 @@ if __name__ == "__main__":
 				'addresses': [person['address']]  if "address" in person else [],
 				'streets': person['burial_streets.street'],
 				'hood': person['burial_hoods.hood'],
+				"adressOutsideCph": person['burial_persons.adressOutsideCph'] if "burial_persons.adressOutsideCph" in person else "",
 
 				#Deathcauses
 				"deathcauses": list(map(lambda deathcause: deathcause['burial_deathcauses.deathcause'], person["deathcauses"] )) if "deathcauses" in person else [],
