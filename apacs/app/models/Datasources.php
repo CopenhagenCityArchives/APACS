@@ -32,6 +32,13 @@ class Datasources extends \Phalcon\Mvc\Model {
 		return $result->fetchAll();
 	}
 
+	public function GetAllRows(){
+		$query = "select * from " . $this->dbTableName . " WHERE 1";
+		$result = $this->getDI()->get('db')->query($query);
+		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
+		return $result->fetchAll();
+	}
+
 	public function CreateValue($value){
 		if($this->isPublicEditable == 0){
 			throw new Exception('Could not create new value for datasource ' . $this->name . '. It is not public editable');

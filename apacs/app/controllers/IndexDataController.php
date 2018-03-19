@@ -85,15 +85,21 @@ class IndexDataController extends MainController {
 
 	public function GetDataFromDatasouce($dataSourceId) {
 		$query = $this->request->getQuery('q', null, null);
+		$getAll = $this->request->getQuery('all', null, false);
 
-		if(is_null($dataSourceId) || is_null($query)){
+		if(!$getAll && (is_null($dataSourceId) || is_null($query))){
 			$this->response->setJsonContent([]);
 			return;
 		}
 
 		$datasource = Datasources::findFirst(['conditions' => 'id = ' . $dataSourceId]);
 
-		$this->response->setJsonContent($datasource->GetData($query), JSON_NUMERIC_CHECK);
+		if($getAll){
+			$this->response->setJsonContent($datasource->GetAllRows(), JSON_NUMERIC_CHECK);
+		}
+		else{
+			$this->response->setJsonContent($datasource->GetData($query), JSON_NUMERIC_CHECK);
+		}
 	}
 
 	public function SolrProxy() {
