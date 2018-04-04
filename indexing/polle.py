@@ -399,7 +399,9 @@ if __name__ == "__main__":
 				'spousePositions': list(reduce(lambda positions, spouse: positions + (spouse['positions'] if 'positions' in spouse else []), card['spouses'], [])) if person['person_type'] == 1 else [],
 				'comment': "" if person['person_comment'] is None else person['person_comment'],
 				'cardComment':  "" if person['registerblad_comment'] is None else person['registerblad_comment'],
-				'specialComment': "" if person['special_comments'] is None else person['special_comments']
+				'specialComment': "" if person['special_comments'] is None else person['special_comments'],
+				'adr_to_note': list(map(lambda address: address['to_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
+				'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 			})
 
 # Ægtefælles fødested
