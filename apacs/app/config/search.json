@@ -114,8 +114,7 @@
         },
         "positions": {
             "collections": [
-                1,
-                17
+                1
             ],
             "datasource": {
                 "field": "position",
@@ -126,6 +125,36 @@
             "sortable": false,
             "type": "typeahead",
             "view_name": "Erhverv"
+        },
+        "positions_polle": {
+            "collections": [
+                17
+            ],
+            "name": "positions",
+            "searchable": true,
+            "sortable": false,
+            "type": "string",
+            "view_name": "Erhverv"
+        },
+        "adr_to_note": {
+            "collections": [
+                17
+            ],
+            "name": "adr_to_note",
+            "searchable": true,
+            "sortable": false,
+            "type": "string",
+            "view_name": "Til note"
+        },
+        "adr_from_note": {
+            "collections": [
+                17
+            ],
+            "name": "adr_from_note",
+            "searchable": true,
+            "sortable": false,
+            "type": "string",
+            "view_name": "Fra note"
         },
         "birthplace": {
             "collections": [
