@@ -8,8 +8,8 @@ services:
     volumes:
       - ./indexing:/usr/src/app/
   solr:
-    image: library/solr:6.6
-    container_name: solr
+    container_name: solr    
+    image: library/solr:6.6.3
     ports:
       - "8989:8983"
     entrypoint:

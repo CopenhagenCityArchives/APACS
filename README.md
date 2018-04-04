@@ -24,11 +24,14 @@ Notice that the docker compose files can be used to run individual services. If 
 
 It is also possible to run a local debugable instance of a PHP server.
 
-### Running webserver (Apache) and database (MySQL)
-
-Start services:
+### Development
+#### Webserver, database and Solr
 ``
-docker-compose up -d
+docker-compose -f docker-compose.dev.yml up -d [indexer|solr]
+``
+#### Indexing script and Solr
+``
+docker-compose -f docker-compose-index.dev.yml up -d [phalcon|db|solr]
 ``
 
 ### Running webserver (nginx) and remote database
@@ -43,10 +46,14 @@ docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 
 
 ## Deployment
 ### Index service
+Use the following docker-machine (running at AWS): ``apacs-persons``
+
+Get machine env:
+``docker-machine env apacs-persons``
+``& "C:\Program Files\Docker\Docker\Resources\bin\docker-machine.exe" env apacs-persons | Invoke-Expression``
+
 The index service is deployed to AWS using this command:
 ``docker-compose -f docker-compose-index.prod.yml up -d indexer``
-
-Use the following docker-machine (running at AWS): ``docker-machine-host-prod``
 
 ### Webserver
 The webserver is currently running on a shared host, and as so must be deployed using FTP.
