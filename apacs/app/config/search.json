@@ -187,16 +187,6 @@
             "type": "date",
             "view_name": "Dødsdato"
         },
-        "deathplace": {
-            "collections": [
-                1
-            ],
-            "name": "deathplace",
-            "searchable": true,
-            "sortable": false,
-            "type": "string",
-            "view_name": "Dødssted"
-        },        
         "adressOutsideCph": {
             "collections": [
                 1
