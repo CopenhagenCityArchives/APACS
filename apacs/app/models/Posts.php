@@ -81,7 +81,7 @@ class Posts extends \Phalcon\Mvc\Model {
 
 		//No posts found. Return a post based on theoretical layout
 		if (count($posts) == 0) {
-			return array_merge(['x' => 0, 'y' => 0], $this->GetTheoreticalSize($columns, $rows));
+			return array_merge(['x' => 0.1, 'y' => 0.02], $this->GetTheoreticalSize($columns, $rows));
 		}
 
 		//All posts set, return false
@@ -99,8 +99,9 @@ class Posts extends \Phalcon\Mvc\Model {
 			$distancesY = [];
 			$heights = [];
 			$widths = [];
+			//var_dump($corners);
 			foreach ($posts as $post) {
-				$this->UnsetNearestCorner($post, $corners);
+				$corners = $this->UnsetNearestCorner($post, $corners);
 				$dist = [];
 				$distancesX[] = $this->GetDistancesToNearestCorner($post, $corners, 'x')[0];
 				$distancesY[] = $this->GetDistancesToNearestCorner($post, $corners, 'y')[0];
@@ -109,6 +110,8 @@ class Posts extends \Phalcon\Mvc\Model {
 				$widths[] = $post['width'];
 			}
 
+			//var_dump($corners);
+
 			//Now we only have corners with no matching posts
 			//Return the one nearest the global corner (0,0)
 			//based on the average height, width and x and y offsets
@@ -116,7 +119,15 @@ class Posts extends \Phalcon\Mvc\Model {
 			$bestGuessNotSetPost['x'] = $corners[0]['x'] + (array_sum($distancesX) / count($distancesX));
 			$bestGuessNotSetPost['y'] = $corners[0]['y'] + (array_sum($distancesY) / count($distancesY));
 			$bestGuessNotSetPost['height'] = array_sum($heights) / count($heights);
-			$bestGuessNotSetPost['width'] = array_sum($widths) / count($widths);
+			$bestGuessNotSetPost['width'] = (array_sum($widths) / count($widths));
+
+			if ($bestGuessNotSetPost['x'] + $bestGuessNotSetPost['width'] > 1) {
+				$bestGuessNotSetPost['width'] = 0.97 - $bestGuessNotSetPost['x'];
+			}
+			if ($bestGuessNotSetPost['y'] + $bestGuessNotSetPost['height'] > 1) {
+				$bestGuessNotSetPost['height'] = 0.97 - $bestGuessNotSetPost['y'];
+			}
+
 			return $bestGuessNotSetPost;
 		}
 	}
@@ -134,9 +145,10 @@ class Posts extends \Phalcon\Mvc\Model {
 		return $distances;
 	}
 
-	private function UnsetNearestCorner($post, &$corners) {
+	private function UnsetNearestCorner($post, $corners) {
 		//Sortering corners by distance to post
-		uasort($corners, function ($a, $b) use ($post) {
+		$clone = $corners;
+		uasort($clone, function ($a, $b) use ($post) {
 			$distanceToA = sqrt(($post['x'] * $post['x']) + ($a['x'] * $a['x']) + ($post['y'] * $post['y']) + ($a['y'] * $a['y']));
 			$distanceToB = sqrt(($post['x'] * $post['x']) + ($b['x'] * $b['x']) + ($post['y'] * $post['y']) + ($b['y'] * $b['y']));
 			if ($distanceToA == $distanceToB) {
@@ -147,8 +159,18 @@ class Posts extends \Phalcon\Mvc\Model {
 		});
 
 		//Unsetting the nearest
-		unset($corners[0]);
+		$unsetIndex = false;
+		for ($i = 0; $i < count($corners); $i++) {
+			if ($corners[$i]['x'] == $clone[0]['x'] && $corners[$i]['y'] == $clone[0]['y']) {
+				$unsetIndex = $i;
+			}
+		}
+
+		if ($unsetIndex !== false) {
+			unset($corners[$unsetIndex]);
+		}
 		$corners = array_values($corners);
+		return $corners;
 	}
 
 	private function GetTheoreticalCorners($columns, $rows) {
@@ -156,7 +178,8 @@ class Posts extends \Phalcon\Mvc\Model {
 
 		$xs = range(0, 1, 1 / $columns);
 		$ys = range(0, 1, 1 / $rows);
-
+		//var_dump($xs);
+		//var_dump($ys);
 		$corners = [];
 
 		for ($i = 0; $i < count($xs); $i++) {
@@ -170,7 +193,7 @@ class Posts extends \Phalcon\Mvc\Model {
 
 	private function GetTheoreticalSize($columns, $rows) {
 		$size = [];
-		$size['width'] = 1 / $columns;
+		$size['width'] = (1 / $columns) - 0.075;
 		$size['height'] = 1 / $rows;
 
 		return $size;

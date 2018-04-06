@@ -1,0 +1,21 @@
+version: '2'
+services:
+  indexer:
+    container_name: indexer
+    build:
+        context: ./
+        dockerfile: ./infrastructure/indexing/Dockerfile_dev
+    volumes:
+      - ./indexing:/usr/src/app/
+  solr:
+    container_name: solr    
+    image: library/solr:6.6.3
+    ports:
+      - "8989:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_core
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+    volumes:
+      - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf

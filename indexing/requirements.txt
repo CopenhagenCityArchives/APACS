@@ -1,0 +1,7 @@
+pysolr==3.6.0
+pymysql
+datetime
+urllib3
+requests
+boto3
+schedule

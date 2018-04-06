@@ -1,0 +1,87 @@
+{
+    "1" : {
+        "task_id": 1,
+        "collection_id": 1,
+        "add_metadata": true,
+        "error_reports" : [
+            {
+                "label": "Fornavne",
+                "entity": "persons.firstnames"
+            },
+            {
+                "label": "Efternavn",
+                "entity": "persons.lastname"
+            },
+            {
+                "label": "Alder",
+                "entity": "persons.age"
+            },
+            {
+                "label": "Dødsdato",
+                "entity": "persons.dateOfDeath"
+            },
+            {
+                "label": "Civilstand",
+                "entity": "persons.civilstatus"
+            },
+            {
+                "label": "Køn",
+                "entity": "persons.sex"
+            },
+            {
+                "label": "Fødested",
+                "entity": "persons.birthplace"
+            },
+            {
+                "label": "Adresse (vej, gadenr.,etage osv.)",
+                "entity": "addresses"
+            },
+            {
+                "label": "Erhverv (inkl. relation og arbejdssted)",
+                "entity": "positions"
+            },
+            {
+                "label": "Om begravelsen (dødsårsag, fra, sogn, kirkegård)",
+                "entity": "burials"
+            }
+        ]
+    },
+    "17": {
+        "task_id": 2,
+        "collection_id" : 17,
+        "add_metadata": false,
+        "error_reports" : [
+            {
+                "label": "Person (navn, fødselsdato, fødested)",
+                "entity": "person"
+            },
+            {
+                "label": "Biperson",
+                "entity": "relative"
+            },
+            {
+                "label": "Adresser",
+                "entity": "address"
+            },
+            {
+                "label": "Stillinger",
+                "entity": "position"
+            }
+        ]
+    },
+    "18": {
+        "task_id": 3,
+        "collection_id": 18,
+        "add_metadata": false,
+        "error_reports" : [
+            {
+                "label": "Transkription",
+                "entity": "transcription"
+            },
+            {
+                "label": "Andre oplysninger",
+                "entity": "other_informations"
+            }
+        ]
+    }
+}

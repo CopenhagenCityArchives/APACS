@@ -98,34 +98,18 @@ class CommonInformationsController extends MainController {
 		$this->response->setJsonContent($task->GetTaskSchema($taskId));
 	}
 
-	public function GetSearchConfig() {
-		$request = $this->request;
-		$collectionId = $request->getQuery('collection_id', 'int', null);
+	public function GetErrorReportConfig()
+	{
+		//$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
+		$this->response->setContent(ErrorReports::GetConfig());
+	}
 
-		$conditions = '';
-		if (!is_null($collectionId)) {
-			$conditions = 'id = ' . $collectionId;
-		}
-
-		$collections = Collections::find($conditions);
-		$result = [];
-		$collections->rewind();
-		while ($collections->valid()) {
-			$resRow = $collections->current()->toArray();
-			$resRow['fields'] = $collections->current()->GetSearchConfig();
-
-			for ($i = 0; $i < count($resRow['fields']); $i++) {
-				$resRow['fields'][$i]['operators'] = Fields::GetFieldSearchOperators($resRow['fields'][$i]);
-				$resRow['fields'][$i] = Fields::SetDatasourceOrEnum($resRow['fields'][$i]);
-				$resRow['fields'][$i]['facets'] = Fields::SetFieldSearchFacets($resRow['fields'][$i]);
-			}
-
-			$result[] = $resRow;
-			$collections->next();
-		}
-
-		$this->response->setHeader("Cache-Control", "max-age=600");
-		$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
+	public function GetSearchConfig()
+	{
+		//$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
+		$this->response->setContent(file_get_contents('../../app/config/search.json'));
 	}
 
 	public function GetTasksUnits() {
@@ -437,6 +421,7 @@ class CommonInformationsController extends MainController {
 		$entryData['post'] = Posts::findFirst(['conditions' => 'id = :id:', 'columns' => 'id,x,y,width,height, pages_id as page_id', 'bind' => ['id' => $entry->posts_id]]);
 		$entryData['task_id'] = $entry->tasks_id;
 		$entryData['page_id'] = $entryData['post']['page_id'];
+		$entryData['concrete_entries_id'] = $entry->concrete_entries_id;
 
 		$this->response->setJsonContent($entryData, JSON_NUMERIC_CHECK);
 	}
@@ -504,19 +489,45 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetErrorReports() {
+
+		//Assume special errors if collection id is used
+		if(	!is_null($this->request->getQuery('collection_id', 'int', null)) &&
+			!is_null($this->request->getQuery('id', 'string', null)) &&
+			is_null($this->request->getQuery('task_id', 'int', null))){
+
+			/*$taskId = 0;
+			switch($this->request->getQuery('collection_id', 'int', null)){
+				case '17':
+					$taskId = 2;
+				break;
+				case '18':
+					$taskId = 3;
+				break;
+			}*/
+
+			$result = SpecialErrors::find(['conditions' => 'collection_id = ' . $this->request->getQuery('collection_id') . ' AND source_id = \'' . $this->request->getQuery('id') . '\''])->toArray();
+
+			$result = SpecialErrors::setLabels($result, $this->request->getQuery('collection_id'));
+
+			$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
+			return;
+		}
+
+		//Normal cases: Task id and post id is set
 		$taskId = $this->request->getQuery('task_id', 'int', null);
 		$postId = $this->request->getQuery('post_id', 'int', null);
 		$userId = $this->request->getQuery('relevant_user_id', 'int', null);
 		$errors = [];
 
 		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
-			$this->error('task_id and post_id or task_id and relevant_user_id are required');
+			$this->error('collection_id and id are required for special errors. task_id and post_id or task_id and relevant_user_id are required for normal errors');
 			return;
 		}
 
 		if (!is_null($taskId) && !is_null($postId)) {
 			$conditions = 'tasks_id = ' . $taskId . ' AND posts_id = ' . $postId;
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
+			$errors = ErrorReports::setLabels($errors, $taskId);
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 
@@ -537,6 +548,7 @@ class CommonInformationsController extends MainController {
 				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
 				//return;
 			}
+			$errors = ErrorReports::setLabels($errors, $taskId);
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 	}
@@ -579,13 +591,18 @@ class CommonInformationsController extends MainController {
 		$hours = $this->request->getQuery('hours', 'int', null);
 		$type = $this->request->getQuery('type', 'string', null);
 
-		if (is_null($hours) || is_null($type)) {
-			throw new Exception('Type and hours are required');
+		if (is_null($hours)) {
+			throw new Exception('Hours are required');
 		}
 
-		$exceptions = new SystemExceptions();
-		$results = $exceptions->getLastExceptionsByTypeAndHours($type, $hours);
-
+		if(!is_null($type)){
+			$exceptions = new SystemExceptions();
+			$results = $exceptions->getLastExceptionsByTypeAndHours($type, $hours);
+		}
+		else{
+			$exceptions = new SystemExceptions();
+			$results = $exceptions->getLastExceptionsByHours($hours);
+		}
 		$this->response->setJsonContent($results);
 	}
 

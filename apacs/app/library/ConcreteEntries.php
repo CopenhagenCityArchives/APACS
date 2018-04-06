@@ -490,21 +490,23 @@ class ConcreteEntries {
 		//$solrData['last_update'] = $entryCon['last_update'];
 		$solrData['last_update'] = date('Y-m-d\TH:i:s.u\Z', strtotime($entryCon['last_update']));
 
-		$solrData['collection_info'] = $entryCon['collection_name'] . ' ' . $entryCon['unit_description'];
+		$solrData['collection_info'] = $entryCon['collection_name'];
 
 		return $solrData;
 	}
 
-	public static function SaveInSolr($solrData, $id = null) {
+	public static function SaveInSolr($config, $solrData, $id = null) {
 		$config = [
 			'endpoint' =>
-			['localhost' =>
-				['host' => '54.194.89.54', 'hostname' => '54.194.89.54', 'port' => 80, 'login' => '', 'path' => '/solr/apacs_core'],
+			['aws' =>
+				['scheme' => $config['scheme'], 'host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
 			],
 		];
 
 		// create a client instance
 		$client = new Solarium\Client($config);
+
+		$client->setDefaultEndPoint('aws');
 
 		$update = $client->createUpdate();
 
@@ -533,7 +535,7 @@ class ConcreteEntries {
 		return $result->getStatus();
 	}
 
-	public static function ProxySolrRequest() {
+	public static function ProxySolrRequest($config) {
 		header("Access-Control-Allow-Origin: *");
 		header('Content-type: application/json; charset=UTF-8');
 		header('Cache-Control: max-age=60');
@@ -548,15 +550,15 @@ class ConcreteEntries {
 			die();
 		}
 
-		$url = 'http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr;
+		$url = $config['host'] . $config['path'] . '/select?' . $queryStr;
 
 		$content = @file_get_contents($url);
 
 		if($content)
 			print $content;
 		else{
-			print json_encode(['url' => 'http://ec2-34-240-1-32.eu-west-1.compute.amazonaws.com/solr/apacs_core/select?' . $queryStr]);
-			
+			print json_encode(['url' => $url]);
+
 		}
 		exit();
 	}

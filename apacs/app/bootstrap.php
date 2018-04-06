@@ -90,6 +90,7 @@ try {
 
 	$info->get('/taskschema', 'GetTaskFieldsSchema');
 	$info->get('/searchconfig', 'GetSearchConfig');
+	$info->get('/errorreportconfig', 'GetErrorReportConfig');
 
 	$info->get('/tasks', 'GetTasks');
 	$info->get('/tasks/{taskId:[0-9]+}', 'GetTask');
@@ -146,6 +147,12 @@ try {
 	$indexing->get('/test', 'authCheck');
 
 	$app->mount($indexing);
+
+	// Cumulus asset SolrProxy
+	$cumulus = new MicroCollection();
+	$cumulus->setHandler(new CumulusAssetController());
+	$cumulus->get('/asset/{assetId:[0-9]+}', 'AssetDownload');
+	$app->mount($cumulus);
 
 	//Catch all for preflight checks (always performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {

@@ -5,14 +5,12 @@ services:
       context: ./
       dockerfile: ./infrastructure/docker_webserver/Dockerfile_dev
     container_name: webserver
-    links:
-      - db
     ports:
       - "8000:80"
     volumes:
       - ./apacs:/var/www/
     environment:
-      - PROD_DEV=DEV
+      - PHP_ENV=DEV
   solr:
     image: library/solr:6.6
     container_name: solr

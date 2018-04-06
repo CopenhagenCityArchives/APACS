@@ -21,7 +21,7 @@ CREATE TABLE `apacs_collections` (
 
 
 
-CREATE TABLE IF NOT EXISTS TABLE `apacs_datasources` (
+CREATE TABLE IF NOT EXISTS `apacs_datasources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(25) COLLATE utf8_danish_ci DEFAULT NULL,
   `sql` char(255) COLLATE utf8_danish_ci DEFAULT NULL,
@@ -60,24 +60,32 @@ CREATE TABLE IF NOT EXISTS `apacs_entries` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE IF NOT EXISTS `apacs_errorreports` (
+CREATE TABLE `apacs_errorreports` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `tasks_id` int(11) NOT NULL,
+  `tasks_id` int(11) DEFAULT NULL,
   `posts_id` int(11) NOT NULL,
-  `pages_id` int(11) NOT NULL,
-  `entity_name` char(250) COLLATE utf8_danish_ci NOT NULL,
-  `field_name` char(250) COLLATE utf8_danish_ci NOT NULL,
-  `users_id` int(11) NOT NULL,
+  `pages_id` int(11) DEFAULT NULL,
+  `entities_id` int(11) DEFAULT NULL,
+  `entity_name` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `field_name` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `entity_position` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `users_id` int(11) DEFAULT NULL,
   `reporting_users_id` int(11) DEFAULT NULL,
-  `comment` char(250) COLLATE utf8_danish_ci NOT NULL,
+  `comment` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `concrete_entries_id` int(11) DEFAULT NULL,
   `original_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `toSuperUser` tinyint(1) DEFAULT '0',
-  `superUserTime` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `apacs_errorreportscol` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `superUserTime` timestamp NULL,
+  `field_id` int(11) DEFAULT NULL,
+  `entry_created_by` char(150) COLLATE utf8_danish_ci DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted_reason` char(50) COLLATE utf8_danish_ci DEFAULT NULL,
+  `entries_id` int(11) DEFAULT NULL,
+  `collection_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23135 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 
 CREATE TABLE IF NOT EXISTS `apacs_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
