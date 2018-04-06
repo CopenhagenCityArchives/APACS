@@ -89,6 +89,7 @@ FROM
     a.adresse_aar as year,
 	a.fra_note as from_note,
 	a.til_note as to_note,
+	a.frameldt as frameldt,
     CONCAT(k.latitude, ",", k.longitude) as location,
 	ko.kommentar as adr_comment
 FROM PRB_adresse a
