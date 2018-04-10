@@ -282,7 +282,7 @@ if __name__ == "__main__":
 			# json object
 			try:
 				data = {
-					'id': "burial-%d" % person_id,
+					'id': "%d-%d" % (COLLECTION_ID, person_id),
 					'task_id': person['task_id'],
 					'post_id': person['post_id'],
 					'entry_id': person['entries_id'],
@@ -345,7 +345,7 @@ if __name__ == "__main__":
 			documents.append({
 				#
 				#Metadata
-				'id': "burial-%d" % person_id,
+				'id': "%d-%d" % (COLLECTION_ID, person_id),
 				'task_id': person['task_id'],
 				'post_id': person['post_id'],
 				'entry_id': person['entries_id'],

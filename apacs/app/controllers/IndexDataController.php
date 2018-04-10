@@ -337,7 +337,7 @@ class IndexDataController extends MainController {
 
 			$context = $entry->GetContext();
 			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context);
-			$solrId = 'burial-' . $entry->concrete_entries_id;//TODO: Hardcoded id generation for Solr
+			$solrId = $solrData['collection_id'] . '-' . $entry->concrete_entries_id;
 
 			$solrDataToSave = array_merge(
 				$solrData,

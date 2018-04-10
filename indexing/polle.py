@@ -287,7 +287,7 @@ if __name__ == "__main__":
 			# json object
 			try:
 				data = {
-					'id': "police-%d" % person_id,
+					'id': "%d-%d" % (COLLECTION_ID, person_id),
 					'registerblad_id': person['registerblad_id'],
 					'firstnames': person['firstnames'],
 					'lastname': person['lastname'],
@@ -324,7 +324,7 @@ if __name__ == "__main__":
 					'birthdate': get_formatted_date_or_default(card['main']['year_of_birth'], card['main']['month_of_birth'], card['main']['day_of_birth'], None),
 					'deathdate': get_formatted_date_or_default(card['main']['year_of_death'], card['main']['month_of_death'], card['main']['day_of_death'], None),
 					'specialComment': None if card['main']['special_comments'] is None else person['special_comments'],
-					'post_id': "police-%d" % card['main']['person_id'],
+					'post_id': "%d-%d" % (COLLECTION_ID, card['main']['person_id']),
 					'positions': list(map(lambda position: { 'position': position }, card['main']['positions'])) if 'positions' in card['main'] else [] }
 				elif person["person_type"] == 2 and card['main'] is not None:
 					data['spouses'] = [{
@@ -334,7 +334,7 @@ if __name__ == "__main__":
 						'birthplace': card['main']['birthplace'],
 						'birthdate': get_formatted_date_or_default(card['main']['year_of_birth'], card['main']['month_of_birth'], card['main']['day_of_birth'], None),
 						'deathdate': get_formatted_date_or_default(card['main']['year_of_death'], card['main']['month_of_death'], card['main']['day_of_death'], None),
-						'post_id': "police-%d" % card['main']['person_id'],
+						'post_id': "%d-%d" % (COLLECTION_ID, card['main']['person_id']),
 						'positions': list(map(lambda position: { 'position': position },card['main']['positions'])) if 'positions' in card['main'] else []
 					}]
 				elif person["person_type"] == 1:
@@ -346,7 +346,7 @@ if __name__ == "__main__":
 						'birthplace': spouse['birthplace'],
 						'birthdate': get_formatted_date_or_default(spouse['year_of_birth'], spouse['month_of_birth'], spouse['day_of_birth'], None),
 						'deathdate': get_formatted_date_or_default(spouse['year_of_death'], spouse['month_of_death'], spouse['day_of_death'], None),
-						'post_id': "police-%d" % spouse['person_id'],
+						'post_id': "%d-%d" % (COLLECTION_ID, spouse['person_id']),
 						'positions': [] }, card['spouses']))
 					data['children'] = list(map(lambda child: {
 						'person_id': child['person_id'],
@@ -355,7 +355,7 @@ if __name__ == "__main__":
 						'birthplace': child['birthplace'],
 						'birthdate': get_formatted_date_or_default(child['year_of_birth'], child['month_of_birth'], child['day_of_birth'], None),
 						'deathdate': get_formatted_date_or_default(child['year_of_death'], child['month_of_death'], child['day_of_death'], None),
-						'post_id': "police-%d" % child['person_id'],
+						'post_id': "%d-%d" % (COLLECTION_ID, child['person_id']),
 						'positions': [] }, card['children']))
 
 			except TypeError as error:
@@ -368,7 +368,7 @@ if __name__ == "__main__":
 				sys.exit(1)
 
 			documents.append({
-				'id': "police-%d" % person_id,
+				'id': "%d-%d" % (COLLECTION_ID, person_id),
 				'task_id': -1,
 				'post_id': -1,
 				'entry_id': -1,

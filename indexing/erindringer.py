@@ -68,7 +68,7 @@ if __name__ == "__main__":
 		# 	sys.exit(1)
 
 		jsonObj = {}
-		jsonObj['id'] = "erindring-%d" % erindring['ID']
+		jsonObj['id'] = "%d-%d" % (COLLECTION_ID, erindring['ID'])
 		jsonObj['org_id'] = "%d" % erindring['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		if "Fornavne" in erindring:
