@@ -106,7 +106,7 @@ if __name__ == "__main__":
 			jsonObj['keywords'] = erindring['Keywords'].split(",")
 		if "Køn" in erindring:
 			jsonObj['sex'] = erindring['Køn']
-		if erindring["Erindringsnummer"] in transcribed:
+		if "Erindringsnummer" in erindring and erindring["Erindringsnummer"] in transcribed:
 			jsonObj['transcribed_id'] = transcribed[erindring["Erindringsnummer"]]['ID']
 		jsonObj['containsPhotos'] = 'Foto' in erindring and erindring['Foto']
 
