@@ -111,7 +111,7 @@ if __name__ == "__main__":
 		jsonObj['containsPhotos'] = 'Foto' in erindring and erindring['Foto']
 
 		documents.append({
-			'id': "erindring-%d" % erindring['ID'],
+			'id': "%d-%d" % (COLLECTION_ID, erindring['ID']),
 			'task_id': -1,
 			'post_id': -1,
 			'entry_id': -1,
