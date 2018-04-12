@@ -186,17 +186,21 @@
             "sortable": true,
             "type": "date",
             "view_name": "Dødsdato"
-        },
+        },   
         "deathplace": {
             "collections": [
                 1
             ],
+            "datasource": {
+                "field": "deathplace",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/8?q="
+            },
             "name": "deathplace",
             "searchable": true,
             "sortable": false,
-            "type": "string",
+            "type": "typeahead",
             "view_name": "Dødssted"
-        },        
+        },
         "adressOutsideCph": {
             "collections": [
                 1
