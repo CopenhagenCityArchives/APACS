@@ -97,7 +97,7 @@ FROM PRB_adresse a
 LEFT JOIN PRB_vej v ON v.vej_id = a.vej_id
 LEFT JOIN PRB_kommentar ko ON ko.adresse_id = a.adresse_id
 LEFT JOIN PRB_koordinat k ON k.koordinat_id = a.koordinat_id
-WHERE a.registerblad_id IN (%s) ORDER BY year asc, month asc, day asc) sub
+WHERE a.registerblad_id IN (%s)) sub ORDER BY year asc, month asc, day asc
 """
 
 position_query = """
