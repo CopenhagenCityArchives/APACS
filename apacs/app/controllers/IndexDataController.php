@@ -168,7 +168,7 @@ class IndexDataController extends MainController {
 			$errors->deleted = 0;
 
 			$errors->beforeSave();
-			if (!$errors->save($jsonData)) {
+			if (!$errors->create()) {
 				throw new Exception('could not save error report: ' . implode($errors->getMessages(), ', '));
 			}
 
@@ -203,7 +203,7 @@ class IndexDataController extends MainController {
 			$error->comment = $jsonData['comment'];
 			$error->entity = $jsonData['entity'];
 			$error->field = isset($jsonData['field']) ? $jsonData['field'] : null;
-			if (!$error->save($jsonData)) {
+			if (!$error->create()) {
 				throw new Exception('could not save special error report: ' . implode($error->getMessages(), ', '));
 			}
 		}
