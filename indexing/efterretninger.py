@@ -64,7 +64,6 @@ if __name__ == "__main__":
 
 		jsonObj = {}
 		jsonObj['id'] = "efterretning-%d" % efterretning['ID']
-		jsonObj['']
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		jsonObj['number'] = efterretning.get("Indsamlingsår")
@@ -82,7 +81,7 @@ if __name__ == "__main__":
 			'jsonObj': json.dumps(jsonObj),
 			'collection_id': COLLECTION_ID,
 			'collection_info': 'Politiets Efterretninger',
-			'efterretning_number' = efterretning.get("Indsamlingsår")
+			'efterretning_number' = efterretning.get("Indsamlingsår"),
 			'efterretning_fileName' = efterretning.get("Record Name")
 		})
 
