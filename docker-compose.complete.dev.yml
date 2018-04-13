@@ -1,0 +1,46 @@
+version: '2'
+services:
+  phalcon:
+    build:
+      context: ./
+      dockerfile: ./infrastructure/docker_webserver/Dockerfile_dev
+    container_name: webserver
+    ports:
+      - "8000:80"
+    volumes:
+      - ./apacs:/var/www/
+    environment:
+      - PHP_ENV=DEV
+  db:
+    image: mysql
+    container_name: database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./apacs/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: apacs
+  solr:
+    image: library/solr:6.6.3
+    container_name: solr
+    ports:
+      - "8989:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_core
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+    volumes:
+        - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
+  indexer:
+    container_name: indexer
+    build:
+        context: ./
+        dockerfile: ./infrastructure/indexing/Dockerfile_dev
+    volumes:
+      - ./indexing:/usr/src/app/
+    environment:
+      - PYTHON_ENV=DEV

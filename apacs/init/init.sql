@@ -100,6 +100,15 @@ CREATE TABLE IF NOT EXISTS `apacs_events` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `apacs_exceptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` char(100) COLLATE utf8_danish_ci NOT NULL,
+  `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `details` text COLLATE utf8_danish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `time` (`time`)
+) ENGINE=InnoDB AUTO_INCREMENT=3169 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 CREATE TABLE IF NOT EXISTS `apacs_fields` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `entities_id` int(11) DEFAULT NULL COMMENT 'FK til entities',
@@ -207,6 +216,17 @@ CREATE TABLE IF NOT EXISTS `apacs_tasks_posts` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
+CREATE TABLE `apacs_specialerrors` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `collection_id` int(11) NOT NULL,
+  `comment` char(250) COLLATE utf8_danish_ci NOT NULL,
+  `entity` char(100) COLLATE utf8_danish_ci NOT NULL,
+  `field` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
+  `source_id` char(50) COLLATE utf8_danish_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=23293 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+
 CREATE TABLE IF NOT EXISTS `apacs_tasks_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tasks_id` int(11) NOT NULL,
@@ -243,3 +263,15 @@ CREATE TABLE IF NOT EXISTS `apacs_users` (
   `username` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=608 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+CREATE TABLE `Stats` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `collection` char(25) DEFAULT NULL,
+  `file` char(200) DEFAULT NULL,
+  `loadTime` decimal(5,5) DEFAULT NULL,
+  `time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `fileId` int(11) DEFAULT NULL,
+  `ip` char(15) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `time` (`time`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
