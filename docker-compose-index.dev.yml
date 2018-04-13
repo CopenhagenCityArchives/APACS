@@ -7,8 +7,10 @@ services:
         dockerfile: ./infrastructure/indexing/Dockerfile_dev
     volumes:
       - ./indexing:/usr/src/app/
+    environment:
+      - PYTHON_ENV=DEV      
   solr:
-    container_name: solr    
+    container_name: solr
     image: library/solr:6.6.3
     ports:
       - "8989:8983"

@@ -6,7 +6,10 @@ services:
         context: ./
         dockerfile: ./infrastructure/indexing/Dockerfile
 
-        
+
+    environment:
+      - PYTHON_ENV=PROD
+
   solr:
     container_name: solr
     build:
@@ -21,4 +24,4 @@ services:
     volumes:
       - "mycores:/opt/solr/server/solr/mycores"
 volumes:
-    mycores:  
+    mycores:
