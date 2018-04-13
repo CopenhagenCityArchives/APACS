@@ -338,15 +338,24 @@ class IndexDataController extends MainController {
 			$context = $entry->GetContext();
 			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context);
 			$solrId = $solrData['collection_id'] . '-' . $entry->concrete_entries_id;
+			$conEnData = $concreteEntry->GetSolrData($entities, $jsonData);
+			//var_dump($conEnData['streets']);
+
+			$solrJsonObj = array_merge($context, $jsonData['persons'],['id' => $solrId]);
+			//TODO: Hardcoded! By some unknown reason, streets field is not added when running contreteEntries->GetSolrData. It may be the combination of a field where solrfieldname and decodedfieldname is not the same, and
+			//the entity in which streets belong is included in Solr. It the only field behaving that way, and the only field in which these conditions exist.
+			//This query will find it: SELECT * FROM kbharkiv.apacs_fields join apacs_entities on apacs_fields.entities_id = apacs_entities.id where entities_id < 8 and solrfieldname != decodefield and apacs_entities.includeInSolr = 1
+			$solrJsonObj['addresses']['street'] = $conEnData['streets'];
 
 			$solrDataToSave = array_merge(
 				$solrData,
-				$concreteEntry->GetSolrData($entities, $jsonData),
+				$conEnData,
 				['user_id' => $userId, 'user_name' => $userName],
-				['jsonObj' => json_encode(array_merge($context, $jsonData['persons'],['id' => $solrId]))] //TODO: Hardcoded name of main entity
+				['jsonObj' => json_encode($solrJsonObj)] //TODO: Hardcoded name of main entity
 			);
 
 			$solrDataToSave['id'] = $solrId;
+
 			//$solrDataToSave['jsonObj']['id'] = $solrId;
 
 			try{
