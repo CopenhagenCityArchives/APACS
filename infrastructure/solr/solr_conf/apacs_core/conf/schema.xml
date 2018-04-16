@@ -123,6 +123,12 @@
   <!-- Multivalue fields -->
   <field name="erindring_keywords" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
 
+  <!-- EFTERRETNINGER -->
+  <!-- Singlevalue fields -->
+  <field name="efterretning_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="efterretning_date" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="efterretning_fileName" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
   <copyField source="lastname" dest="freetext_store"/>
