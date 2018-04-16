@@ -71,7 +71,7 @@ if __name__ == "__main__":
 		jsonObj['fileName'] = efterretning.get("Record Name")
 
 		documents.append({
-			'id': "erindring-%d" % efterretning['ID'],
+			'id': "efterretning-%d" % efterretning['ID'],
 			'task_id': -1,
 			'post_id': -1,
 			'entry_id': -1,
