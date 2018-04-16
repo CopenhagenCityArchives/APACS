@@ -22,13 +22,17 @@ def polle():
     print 'polle'
     os.system("python polle.py")
 
-schedule.every().day.at("23:00").do(erindringer)
-schedule.every().day.at("23:15").do(begravelser)
-schedule.every().day.at("00:30").do(polle)
+#Only run scheduling if in PROD mode
+if os.getenv('PYTHON_ENV', 'DEV') != 'DEV':
+    schedule.every().day.at("23:00").do(erindringer)
+    schedule.every().day.at("23:15").do(begravelser)
+    schedule.every().day.at("00:30").do(polle)
 
-schedule.every(60).minutes.do(job)
+    schedule.every(60).minutes.do(job)
 
-print("Job scheduling done...")
+    print("Job scheduling done...")
+else:
+    print("Running in DEV mode. Indexing is NOT scheduled.")
 
 try:
     while True:
