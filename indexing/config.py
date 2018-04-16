@@ -41,8 +41,8 @@ else:
     Config = {
         "debug" : False,
         "cumulus" : {
-            "url": "https://neaonline.dk",
-            "port": 443,
+            "url": "https://cumulus.kbhbilleder.dk",
+            "port": 8443,
             "user": "CIP-erindringsbilleder",
             "password": "***REMOVED***",
             "catalog": "CIP-erindringsbilleder",
