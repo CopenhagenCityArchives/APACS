@@ -52,7 +52,6 @@ if __name__ == "__main__":
 		SNS_Notifier.error(repr(e))
 		sys.exit(1)
 
-
 	writeflush("Creating Solr documents... ")
 	for i, efterretning in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Samlingsnavn == 'Politiets Efterretninger' && Offentlig == true", chunk=50)):
 		writeflush("\rCreating Solr documents... %d" % (i+1))
@@ -67,7 +66,7 @@ if __name__ == "__main__":
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		jsonObj['number'] = efterretning.get("Nummer")
-		jsonObj['date'] = efterretning.get("Indsamlingsår")
+		jsonObj['date'] = efterretning.get(u"Indsamlingsår")
 		jsonObj['fileName'] = efterretning.get("Record Name")
 
 		documents.append({
@@ -82,7 +81,8 @@ if __name__ == "__main__":
 			'jsonObj': json.dumps(jsonObj),
 			'collection_id': COLLECTION_ID,
 			'collection_info': 'Politiets Efterretninger',
-			'efterretning_number': efterretning.get("Indsamlingsår"),
+			'efterretning_number': efterretning.get("Nummer"),
+			'efterretning_date': efterretning.get(u"Indsamlingsår"),
 			'efterretning_fileName': efterretning.get("Record Name"),
 			'erindring_document_text': efterretning.get('Document Text')
 		})
