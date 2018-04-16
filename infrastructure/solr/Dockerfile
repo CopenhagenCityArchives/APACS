@@ -7,7 +7,4 @@ COPY web.xml /opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
 #Set Java HEAP memory
 RUN echo "SOLR_JAVA_MEM=\"-Xms2048m -Xmx2048m\"" >> /opt/solr/bin/solr.in.sh
 
-##Create banana-int core for saving and loading Banana dashboards
-RUN /opt/solr/bin/solr start && \
-    /opt/solr/bin/solr create_core -c banana-int && \
-    /opt/solr/bin/solr stop
+RUN /opt/solr/bin/solr start && /opt/solr/bin/solr stop
