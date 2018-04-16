@@ -44,3 +44,11 @@ services:
       - ./indexing:/usr/src/app/
     environment:
       - PYTHON_ENV=DEV
+  composer:
+    container_name: composer
+    restart: 'no'
+    image: composer/composer:php7
+    command: update
+    working_dir: /apacs
+    volumes:
+      - ./apacs:/apacs
