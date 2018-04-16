@@ -66,7 +66,8 @@ if __name__ == "__main__":
 		jsonObj['id'] = "efterretning-%d" % efterretning['ID']
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
-		jsonObj['number'] = efterretning.get("Indsamlingsår")
+		jsonObj['number'] = efterretning.get("Nummer")
+		jsonObj['date'] = efterretning.get("Indsamlingsår")
 		jsonObj['fileName'] = efterretning.get("Record Name")
 
 		documents.append({
@@ -82,7 +83,8 @@ if __name__ == "__main__":
 			'collection_id': COLLECTION_ID,
 			'collection_info': 'Politiets Efterretninger',
 			'efterretning_number': efterretning.get("Indsamlingsår"),
-			'efterretning_fileName': efterretning.get("Record Name")
+			'efterretning_fileName': efterretning.get("Record Name"),
+			'erindring_document_text': efterretning.get('Document Text')
 		})
 
 	print()

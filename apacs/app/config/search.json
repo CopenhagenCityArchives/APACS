@@ -11,6 +11,10 @@
         "18": {
             "name": "Erindringer",
             "id": 18
+        },
+        "19": {
+            "name": "Politiets Efterretninger",
+            "id": 19
         }
     },
     "fields": {
@@ -89,7 +93,8 @@
             "collections": [
                 1,
                 17,
-                18
+                18,
+                19
             ],
             "name": "freetext_store",
             "searchable": true,
@@ -186,7 +191,7 @@
             "sortable": true,
             "type": "date",
             "view_name": "Dødsdato"
-        },   
+        },
         "deathplace": {
             "collections": [
                 1
@@ -439,6 +444,26 @@
                 }
             ],
             "view_name": "Transkriberet"
+        },
+        "efterretning_number": {
+          "collections": [
+            19
+          ],
+          "name": "efterretning_number",
+          "searchable": true,
+          "sortable": true,
+          "type": "number",
+          "view_name": "Efterretningsnummer"
+        },
+        "efterretning_date": {
+          "collections": [
+            19
+          ],
+          "name": "efterretning_date",
+          "searchable": true,
+          "sortable": true,
+          "type": "string",
+          "view_name": "Efterretningsdato"
         },
         "collection_info": {
             "collections": [
