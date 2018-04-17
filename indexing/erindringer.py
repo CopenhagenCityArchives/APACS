@@ -80,22 +80,24 @@ if __name__ == "__main__":
 			jsonObj['lastname'] = erindring['Navn'].split(',')[0].strip()
 		if "Stilling hovedperson" in erindring:
 			jsonObj['position'] = erindring['Stilling hovedperson']
-		if "Stilling forældre" in erindring:
-			jsonObj['position_parent'] = erindring['Stilling forældre']
-		if "Stilling ægtefælle" in erindring:
-			jsonObj['position_spouse'] = erindring['Stilling ægtefælle']
-		if "Fødselsår" in erindring:
-			jsonObj['yearOfBirth'] = erindring['Fødselsår']
+		if u"Stilling forældre" in erindring:
+			jsonObj['position_parent'] = erindring[u'Stilling forældre']
+		if u"Stilling ægtefælle" in erindring:
+			jsonObj['position_spouse'] = erindring[u'Stilling ægtefælle']
+		if "Periode" in erindring:
+			jsonObj['period'] = erindring['Periode']
+		if u"Fødselsår" in erindring:
+			jsonObj['yearOfBirth'] = erindring[u'Fødselsår']
 		if "Description" in erindring:
 			jsonObj['description'] = erindring['Description']
 		if "Erindringsnummer" in erindring:
 			jsonObj['erindring_number'] = erindring['Erindringsnummer']
-		if "Skrevet år" in erindring:
-			jsonObj['writtenYear'] = erindring['Skrevet år']
+		if u"Indsamlingsår" in erindring:
+			jsonObj['collectedYear'] = erindring[u'Indsamlingsår']
 		if "Omfang" in erindring:
 			jsonObj['extent'] = erindring['Omfang']
-		if "Håndskrevne/maskinskreven" in erindring:
-			jsonObj['writeMethod'] = erindring['Håndskrevne/maskinskreven']
+		if u"Håndskrevne/maskinskreven" in erindring:
+			jsonObj['writeMethod'] = erindring[u'Håndskrevne/maskinskreven']
 		if "Document Name" in erindring:
 			jsonObj['filename'] = erindring['Document Name']
 		if "Transkriberet" in erindring:
@@ -105,8 +107,8 @@ if __name__ == "__main__":
 			jsonObj['civilstatus'] = erindring['Civilstand']
 		if "Keywords" in erindring:
 			jsonObj['keywords'] = erindring['Keywords'].split(",")
-		if "Køn" in erindring:
-			jsonObj['sex'] = erindring['Køn']
+		if u"Køn" in erindring:
+			jsonObj['sex'] = erindring[u'Køn']
 		if "Erindringsnummer" in erindring and erindring["Erindringsnummer"] in transcribed:
 			jsonObj['transcribed_id'] = transcribed[erindring["Erindringsnummer"]]['ID']
 		jsonObj['containsPhotos'] = 'Foto' in erindring and erindring['Foto']
@@ -129,12 +131,13 @@ if __name__ == "__main__":
 			'civilstatus': erindring.get('Civilstatus'),
 			'yearOfBirth': erindring.get('Fødselsår'),
 			"erindring_position": erindring.get('Stilling hovedperson'),
-			"erindring_parent_position": erindring.get('Stilling forældre'),
-			"erindring_spouse_position": erindring.get('Stilling ægtefælle'),
-			"erindring_handwritten_typed": erindring.get('Håndskrevne/maskinskreven'),
+			"erindring_parent_position": erindring.get(u'Stilling forældre'),
+			"erindring_spouse_position": erindring.get(u'Stilling ægtefælle'),
+			"erindring_handwritten_typed": erindring.get(u'Håndskrevne/maskinskreven'),
 			"erindring_description": erindring.get('Description'),
 			"erindring_number": erindring.get('Erindringsnummer'),
-			"erindring_written_year": erindring.get('Skrevet år'),
+			"erindring_period": erindring.get('Periode'),
+			"erindring_collected_year": erindring.get(u"Indsamlingsår"),
 			"erindring_extent": erindring.get('Omfang'),
 			"erindring_photos": 'Foto' in erindring and erindring['Foto'],
 			"erindring_keywords": erindring['Keywords'].split(',') if 'Keywords' in erindring and erindring['Keywords'] is not None else None,
