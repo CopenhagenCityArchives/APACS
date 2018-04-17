@@ -109,6 +109,7 @@
   <!-- Singlevalue fields -->
   <field name="erindring_position" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_parent_position" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="erindring_spouse_position" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_handwritten_typed" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_description" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
@@ -144,6 +145,7 @@
   <copyField source="institution" dest="freetext_store"/>
   <copyField source="erindring_position" dest="freetext_store"/>
   <copyField source="erindring_parent_position" dest="freetext_store"/>
+  <copyField source="erindring_spouse_position" dest="freetext_store"/>
   <copyField source="erindring_keywords" dest="freetext_store"/>
   <copyField source="erindring_document_text" dest="freetext_store"/>
 

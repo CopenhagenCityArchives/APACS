@@ -57,7 +57,6 @@ if __name__ == "__main__":
 		SNS_Notifier.error(repr(e))
 		sys.exit(1)
 
-
 	writeflush("Creating Solr documents... ")
 	for i, erindring in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !*", chunk=50)):
 		writeflush("\rCreating Solr documents... %d" % (i+1))
@@ -83,6 +82,8 @@ if __name__ == "__main__":
 			jsonObj['position'] = erindring['Stilling hovedperson']
 		if "Stilling forældre" in erindring:
 			jsonObj['position_parent'] = erindring['Stilling forældre']
+		if "Stilling ægtefælle" in erindring:
+			jsonObj['position_spouse'] = erindring['Stilling ægtefælle']
 		if "Fødselsår" in erindring:
 			jsonObj['yearOfBirth'] = erindring['Fødselsår']
 		if "Description" in erindring:
@@ -124,19 +125,20 @@ if __name__ == "__main__":
 			'collection_info': 'Erindringer',
 			'firstnames': erindring['Fornavne'] if 'Fornavne' in erindring else (erindring['Navn'].split(',')[1].strip() if 'Navn' in erindring and len(erindring['Navn'].split(',')) > 1 else None),
 			'lastname': erindring['Efternavn'] if 'Efternavn' in erindring else (erindring['Navn'].split(',')[0].strip() if 'Navn' in erindring and len(erindring['Navn'].split(',')) > 0 else None),
-			'sex': erindring['Køn'] if 'Køn' in erindring else None,
-			'civilstatus': erindring['Civilstatus'] if 'Civilstatus' in erindring else None,
-			'yearOfBirth': erindring['Fødselsår'] if 'Fødselsår' in erindring else None,
-			"erindring_position": erindring['Stilling hovedperson'] if 'Stilling hovedperson' in erindring else None,
-			"erindring_parent_position": erindring['Stilling forældre'] if 'Stilling forældre' in erindring else None,
-			"erindring_handwritten_typed": erindring['Håndskrevne/maskinskreven'] if 'Håndskrevne/maskinskreven' in erindring else None,
-			"erindring_description": erindring['Description'] if 'Description' in erindring else None,
-			"erindring_number": erindring['Erindringsnummer'] if 'Erindringsnummer' in erindring else None,
-			"erindring_written_year": erindring['Skrevet år'] if 'Skrevet år' in erindring else None,
-			"erindring_extent": erindring['Omfang'] if 'Omfang' in erindring else None,
+			'sex': erindring.get('Køn'),
+			'civilstatus': erindring.get('Civilstatus'),
+			'yearOfBirth': erindring.get('Fødselsår'),
+			"erindring_position": erindring.get('Stilling hovedperson'),
+			"erindring_parent_position": erindring.get('Stilling forældre'),
+			"erindring_spouse_position": erindring.get('Stilling ægtefælle'),
+			"erindring_handwritten_typed": erindring.get('Håndskrevne/maskinskreven'),
+			"erindring_description": erindring.get('Description'),
+			"erindring_number": erindring.get('Erindringsnummer'),
+			"erindring_written_year": erindring.get('Skrevet år'),
+			"erindring_extent": erindring.get('Omfang'),
 			"erindring_photos": 'Foto' in erindring and erindring['Foto'],
 			"erindring_keywords": erindring['Keywords'].split(',') if 'Keywords' in erindring and erindring['Keywords'] is not None else None,
-			"erindring_document_text": erindring['Document Text'] if 'Document Text' in erindring else None,
+			"erindring_document_text": erindring.get('Document Text'),
 			"erindring_transcribed": "Transkriberet" in erindring and erindring['Transkriberet']
 		})
 
