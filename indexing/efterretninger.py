@@ -55,7 +55,6 @@ if __name__ == "__main__":
 	writeflush("Creating Solr documents... ")
 	for i, efterretning in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Samlingsnavn == 'Politiets Efterretninger' && Offentlig == true", chunk=50)):
 		writeflush("\rCreating Solr documents... %d" % (i+1))
-
 		# if(efterretning['Transkriberet'] == 1):
 		# 	query = 'ID == %s' % efterretning['Related Sub Assets']
 		# 	print(cip.search(catalog="erindringskatalog", querystring=query))
@@ -66,7 +65,7 @@ if __name__ == "__main__":
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		jsonObj['number'] = efterretning.get("Nummer")
-		jsonObj['date'] = efterretning.get(u"Indsamlingsår")
+		jsonObj['date'] = efterretning.get(u"Indsamlingsår").isoformat()
 		jsonObj['fileName'] = efterretning.get("Record Name")
 
 		documents.append({
