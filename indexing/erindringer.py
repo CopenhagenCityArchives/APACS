@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 	transcribed = {}
 
-	for erindring in cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' *"):
+	for erindring in cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' * && Samlingsnavn == 'Erindring'"):
 		transcribed[erindring['Erindringsnummer']] = erindring
 
 	try:
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	writeflush("Creating Solr documents... ")
-	for i, erindring in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !*", chunk=50)):
+	for i, erindring in enumerate(cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !* && Samlingsnavn == 'Erindring'", chunk=50)):
 		writeflush("\rCreating Solr documents... %d" % (i+1))
 
 		# if(erindring['Transkriberet'] == 1):
