@@ -22,9 +22,14 @@ def polle():
     print 'polle'
     os.system("python polle.py")
 
+def efterretninger():
+    print 'efterretninger'
+    os.system("python efterretninger.py")
+
 #Only run scheduling if in PROD mode
 if os.getenv('PYTHON_ENV', 'DEV') != 'DEV':
     schedule.every().day.at("23:00").do(erindringer)
+    schedule.every().day.at("23:10").do(efterretninger)
     schedule.every().day.at("23:15").do(begravelser)
     schedule.every().day.at("00:30").do(polle)
 
