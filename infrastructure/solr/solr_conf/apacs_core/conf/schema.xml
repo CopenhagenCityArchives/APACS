@@ -137,6 +137,7 @@
   <copyField source="civilstatus" dest="freetext_store"/>
   <copyField source="yearOfBirth" dest="freetext_store"/>
   <copyField source="record_number" dest="freetext_store"/>
+  <copyField source="comment" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
   <copyField source="streets" dest="freetext_store"/>
