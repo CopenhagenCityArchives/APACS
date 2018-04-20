@@ -61,7 +61,7 @@ if __name__ == "__main__":
 		# 	sys.exit(1)
 
 		jsonObj = {}
-		jsonObj['id'] = "efterretning-%d" % efterretning['ID']
+		jsonObj['id'] = "%d-%d" % (COLLECTION_ID, efterretning['ID']),
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		jsonObj['number'] = efterretning.get("Nummer")
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 		jsonObj['fileName'] = efterretning.get("Record Name")
 
 		documents.append({
-			'id': "efterretning-%d" % efterretning['ID'],
+			'id': "%d-%d" % (COLLECTION_ID, efterretning['ID']),
 			'task_id': -1,
 			'post_id': -1,
 			'entry_id': -1,
