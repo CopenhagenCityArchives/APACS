@@ -84,7 +84,7 @@ class CIP(object):
 			elif ftype == "Enum":
 				value = value['displaystring']
 			elif ftype == "Date":
-				value = value['year']
+				value = datetime.datetime(value["year"], value["month"], value["day"])
 			elif ftype == "DataSize":
 				value = value['value'] # bytes?
 		return (name, value)
