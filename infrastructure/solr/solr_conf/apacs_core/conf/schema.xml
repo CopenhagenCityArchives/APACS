@@ -159,7 +159,7 @@
   <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />
 
   <!-- We search in store field as default -->
-  <defaultSearchField>freetext_store</defaultSearchField>
+  <df>freetext_store</df>
 
   <!-- A case insensitive TextField. Used instead of string when case insentivity is needed -->
   <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
