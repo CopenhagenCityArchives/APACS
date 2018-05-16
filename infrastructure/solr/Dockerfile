@@ -8,5 +8,5 @@ COPY web.xml /opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
 RUN echo "SOLR_JAVA_MEM=\"-Xms1400m -Xmx1400m\"" >> /opt/solr/bin/solr.in.sh
 
 RUN /opt/solr/bin/solr start && \
-    /opt/solr/bin/solr create_core -c banana_int && \
+    /opt/solr/bin/solr create_core -c banana-int && \
     /opt/solr/bin/solr stop
