@@ -22,6 +22,6 @@ services:
       - apacs_core
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
-      - "mycores:/opt/solr/server/solr/mycores"
+      - stats_core:/opt/solr/server/solr/banana-int/
 volumes:
-    mycores:
+    stats_core:
