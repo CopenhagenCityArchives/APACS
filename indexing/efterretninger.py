@@ -61,7 +61,7 @@ if __name__ == "__main__":
 		# 	sys.exit(1)
 
 		jsonObj = {}
-		jsonObj['id'] = "%d-%d" % (COLLECTION_ID, efterretning['ID']),
+		jsonObj['id'] = "%d-%d" % (COLLECTION_ID, efterretning['ID'])
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		jsonObj['number'] = efterretning.get("Nummer")
