@@ -63,6 +63,7 @@
   <field name="civilstatus" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="yearOfBirth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="comment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="collected_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
 
   <!-- Multivalue fields used in multiple sources -->
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -114,7 +115,6 @@
   <field name="erindring_description" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_transcribed" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="erindring_collected_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_photos" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="erindring_period" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />

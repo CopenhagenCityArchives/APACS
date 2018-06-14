@@ -80,6 +80,7 @@ if __name__ == "__main__":
 			'jsonObj': json.dumps(jsonObj),
 			'collection_id': COLLECTION_ID,
 			'collection_info': 'Politiets Efterretninger',
+			'collected_year': efterretning.get(u"Indsamlingsår").year if u"Indsamlingsår" in efterretning else None,
 			'efterretning_number': efterretning.get("Nummer"),
 			'efterretning_date': efterretning.get(u"Indsamlingsår"),
 			'efterretning_fileName': efterretning.get("Record Name"),

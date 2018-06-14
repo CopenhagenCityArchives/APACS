@@ -137,7 +137,7 @@ if __name__ == "__main__":
 			"erindring_description": erindring.get('Description'),
 			"erindring_number": erindring.get('Erindringsnummer'),
 			"erindring_period": erindring.get('Periode'),
-			"erindring_collected_year": erindring.get(u"Indsamlingsår"),
+			"collected_year": erindring.get(u"Indsamlingsår"),
 			"erindring_extent": erindring.get('Omfang'),
 			"erindring_photos": 'Foto' in erindring and erindring['Foto'],
 			"erindring_keywords": erindring['Keywords'].split(',') if 'Keywords' in erindring and erindring['Keywords'] is not None else None,
