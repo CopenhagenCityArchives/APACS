@@ -1,0 +1,35 @@
+version: '2'
+services:
+  phalcon:
+    build:
+      context: ./
+      dockerfile: ./infrastructure/docker_webserver/Dockerfile_dev
+    container_name: webserver
+    ports:
+      - "8000:80"
+    volumes:
+      - ./apacs:/var/www/
+    environment:
+      - PHP_ENV=DEV
+  indexer:
+    container_name: indexer
+    build:
+        context: ./
+        dockerfile: ./infrastructure/indexing/Dockerfile_dev
+    volumes:
+      - ./indexing:/usr/src/app/
+    environment:
+      - PYTHON_ENV=DEV
+  solr:
+    container_name: solr
+    build:
+      context: infrastructure/solr/
+    ports:
+      - "8989:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_core
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+    volumes:
+      - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
