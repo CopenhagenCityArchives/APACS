@@ -55,6 +55,14 @@ Get machine env:
 The index service is deployed to AWS using this command:
 ``docker-compose -f docker-compose-index.prod.yml up -d indexer``
 
+###Update Solr schema
+Connect to docker and run this command:
+``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
+
+This will replace the schema file on the server.
+
+Remember to reload the core in Solr admin.
+
 ### Webserver
 The webserver is currently running on a shared host, and as so must be deployed using FTP.
 
