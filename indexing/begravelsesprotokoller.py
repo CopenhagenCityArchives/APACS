@@ -130,6 +130,7 @@ FROM burial_persons_deathcauses
 LEFT JOIN burial_deathcauses ON burial_deathcauses.id = burial_persons_deathcauses.deathcauses_id
 
 WHERE burial_persons_deathcauses.persons_id IN (%s) AND 'burial_persons_deathcauses.persons_id' is not null
+ORDER BY burial_persons_deathcauses.order, burial_persons_deathcauses.id ASC
 """
 
 positions_query = """
@@ -151,6 +152,7 @@ LEFT JOIN burial_relationtypes ON burial_relationtypes.id = burial_persons_posit
 LEFT JOIN burial_workplaces ON burial_workplaces.id = burial_persons_positions.workplaces_id
 
 WHERE burial_persons_positions.persons_id IN (%s) AND 'burial_persons_positions.persons_id' is not null
+ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 """
 
 def writeflush(str):
