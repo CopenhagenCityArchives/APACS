@@ -465,6 +465,14 @@
           "type": "string",
           "view_name": "Efterretningsdato"
         },
+        "collected_year": {
+          "collections": [18, 19],
+          "name": "collected_year",
+          "searchable": true,
+          "sortable": true,
+          "type": "number",
+          "view_name": "År"
+        },
         "collection_info": {
             "collections": [
                 1,
