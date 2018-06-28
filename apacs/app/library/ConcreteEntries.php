@@ -38,7 +38,7 @@ class ConcreteEntries {
 	public function Load(Entities $entity, $primaryKeyName, $id) {
 		if ($entity->type == 'array') {
 
-			return $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
+			return $this->buildJoins($entity)->where($primaryKeyName, $id)->order_by_asc('order')->find_array();
 		} else {
 			$result = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
 
@@ -312,6 +312,18 @@ class ConcreteEntries {
 			$fields[] = $entityField->toArray();
 		}
 
+		//We are adding an 'order' field for all array entities
+		if($entity->type == 'array'){
+			$orderField = new Fields();
+			$orderField->fieldName = 'order';
+
+			if(!isset($data[$orderField->fieldName])){
+				$data[$orderField->fieldName] = 0;
+			}
+
+			$fields[] = $orderField->toArray();
+		}
+
 		//Let's save the data
 		$id = isset($data['id']) ? $data['id'] : null;
 
@@ -446,10 +458,13 @@ class ConcreteEntries {
 					throw new RuntimeException('Error while saving: ' . $e);
 				}
 			} else {
+				$i = 0;
 				foreach ($data[$primaryEntity->name][$entity->name] as $row) {
 					if ($entity->AllEntityFieldsAreEmpty($entity, $row)) {
 						continue;
 					}
+
+					$i++;
 
 					//Setting the identifier of the primary entity
 					$row[$entity->entityKeyName] = $primaryId;
@@ -458,6 +473,9 @@ class ConcreteEntries {
 						//$dbCon->rollback();
 						throw new InvalidArgumentException('could not save array row of secondary entity ' . $entity->name . ' data. Input error ' . $entity->GetValidationStatus());
 					}
+
+					//TODO: Hardcoded ordering based on the order of the  rows in the array
+					$row['order'] = $i;
 
 					try {
 						$this->Save($entity, $row);
