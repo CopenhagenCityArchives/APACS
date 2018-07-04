@@ -65,7 +65,7 @@ if __name__ == "__main__":
 		jsonObj['org_id'] = "%d" % efterretning['ID']
 		jsonObj['collection_id'] = COLLECTION_ID
 		jsonObj['number'] = efterretning.get("Nummer")
-		jsonObj['date'] = efterretning.get(u"Indsamlingsår").isoformat()
+		jsonObj['date'] = efterretning.get(u"Indsamlingsår").isoformat() if u"Indsamlingsår" in efterretning else None
 		jsonObj['fileName'] = efterretning.get("Record Name")
 
 		documents.append({
