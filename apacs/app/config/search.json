@@ -609,12 +609,6 @@
             "end": 1950,
             "gap": 10,
             "mincount": 1
-        },
-        "efterretning_number": {
-            "field": "efterretning_number",
-            "type": "terms",
-            "mincount": 1,
-            "limit": 10
         }
     }
 }
