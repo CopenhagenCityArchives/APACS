@@ -53,7 +53,7 @@ Get machine env:
 ``& "C:\Program Files\Docker\Docker\Resources\bin\docker-machine.exe" env apacs-persons | Invoke-Expression``
 
 The index service is deployed to AWS using this command:
-``docker-compose -f docker-compose-index.prod.yml up -d indexer``
+``docker-compose -f docker-compose-index.prod.yml up -d --force-recreate --build indexer``
 
 ###Update Solr schema
 Connect to docker and run this command:

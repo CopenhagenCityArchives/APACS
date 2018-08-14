@@ -28,16 +28,16 @@
                     <p>Collection 1 (Begravelsesprotokollerne) er Task-udgaven af en prædefineret collection. Den skal overføres fra Starbas ved lejlighed.</p>
                     <p>Collection 60 (Politiets Registerblade) er en midlertidig overførsel af metadata, som højst sandsynligt skal fjernes igen.</p>
                     <p>&nbsp;</p>
-                    <p><b>Bemærk at der til det totale sideantal skal lægges 1,4 millioner registerblade, 3,7 millioner mandtaller og 150.000 siders begravelsesprotokoller.</b></p>
+                    <p><b>Bemærk at der til det totale sideantal skal lægges 1,4 millioner registerblade, 3,7 millioner mandtaller og 150.000 siders begravelsesprotokoller samt anslået 150.000 siders mindre samlinger (lysninger, borgerlige vielser, separationer og skilsmisser, borgerskaber)</b></p>
                     <div class='span9'>
                         <h4>Protokoller og sider i alt (publiceret/total)</h4>
                     </div>
                     <div class="span9">
                         <p>Protokoller: <b><?php echo number_format($totals['public_units'], 0, ',', '.'); ?> / <?php echo number_format($totals['units'], 0, ',', '.'); ?></b></p>
                         <p>Sider: <b><?php echo number_format($totals['public_pages'], 0, ',', '.'); ?> / <?php echo number_format($totals['pages'], 0, ',', '.'); ?></b></p>
-                        <?php if($totals['units_without_pages'] > 0){ ?>
+                        <?php if ($totals['units_without_pages'] > 0) {?>
                             <p>Der er <?php echo $totals['units_without_pages']; ?> protokoller uden tilknyttede sider</p>
-                        <?php } ?>
+                        <?php }?>
                     </div>
                     <div class="span9">&nbsp;</div>
                     <div class='span9'>
@@ -48,19 +48,19 @@
                     <h3>Indhold</h3>
                     <div class="span9">
                         <ul>
-                        <?php foreach($cols as $obj){ ?>
-                            <?php if(!is_null($obj['stats'])){ ?>
+                        <?php foreach ($cols as $obj) {?>
+                            <?php if (!is_null($obj['stats'])) {?>
                             <li><a href="#collection-<?php echo $obj['id']; ?>"><?php echo $obj['name']; ?></a></li>
-                            <?php } ?>
-                        <?php } ?>
+                            <?php }?>
+                        <?php }?>
                         </ul>
                     </div>
                     <p>&nbsp;</p>
                     <!--<span class="label label-info">Eksempel</span>
                     <a target="_blank" href="https://www.kbhkilder.dk/api/collections">https://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
                 </div>
-                <?php foreach($cols as $obj){ ?>
-                    <?php if(!is_null($obj['stats'])){ ?>
+                <?php foreach ($cols as $obj) {?>
+                    <?php if (!is_null($obj['stats'])) {?>
                     <h3 id="collection-<?php echo $obj['id']; ?>"><?php echo $obj['name']; ?></h3>
                     <p>Collection id <?php echo $obj['id']; ?></p>
                     <span class='span9'>
@@ -69,17 +69,17 @@
                     <div class="span9">
                         <p>Protokoller: <b><?php echo number_format($obj['stats']['public_units'], 0, ',', '.'); ?> / <?php echo number_format($obj['stats']['units'], 0, ',', '.'); ?></b></p>
                         <p>Sider: <b><?php echo number_format($obj['stats']['public_pages'], 0, ',', '.'); ?> / <?php echo number_format($obj['stats']['pages'], 0, ',', '.'); ?></b></p>
-                        <?php if($obj['stats']['units_without_pages'] > 0){ ?>
+                        <?php if ($obj['stats']['units_without_pages'] > 0) {?>
                             <p>Der er <?php echo $obj['stats']['units_without_pages']; ?> protokoller uden tilknyttede sider</p>
-                        <?php } ?>
+                        <?php }?>
                     </div>
                     <p>
                         <span class="label label-success">Info</span> <a href="<?php echo $obj['api_documentation_url']; ?>" target="_blank"><?php echo $obj['api_documentation_url']; ?></a>
                     </p>
                     <div class="span9">&nbsp;</div>
-                    <?php } ?>
+                    <?php }?>
 
-                <?php } ?>
+                <?php }?>
             </div>
         </div>
     </body>
