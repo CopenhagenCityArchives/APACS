@@ -465,6 +465,26 @@
           "type": "date",
           "view_name": "Dato"
         },
+        "efterretning_type": {
+          "collections": [
+            19
+          ],
+          "name": "efterretning_type",
+          "view_name": "Efterretning/Kosterblad",
+          "searchable": true,
+          "sortable": true,
+          "type": "typeahead",
+          "enum": [
+            {
+                "label": "Kosterblad",
+                "value": "Kosterblad"
+            },
+            {
+                "label": "Efterretning",
+                "value": "Efterretning"
+            }
+          ]
+        },
         "collected_year": {
           "collections": [18, 19],
           "name": "collected_year",
