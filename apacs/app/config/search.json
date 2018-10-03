@@ -18,18 +18,6 @@
         }
     },
     "fields": {
-        "firstnames": {
-            "collections": [
-                1,
-                17,
-                18
-            ],
-            "name": "firstnames",
-            "searchable": true,
-            "sortable": true,
-            "type": "string",
-            "view_name": "Fornavne"
-        },
         "lastname": {
             "collections": [
                 1,
@@ -41,6 +29,18 @@
             "sortable": true,
             "type": "string",
             "view_name": "Efternavn"
+        },
+        "firstnames": {
+            "collections": [
+                1,
+                17,
+                18
+            ],
+            "name": "firstnames",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Fornavne"
         },
         "yearOfBirth": {
             "collections": [
@@ -181,6 +181,14 @@
             "special_chars": false,
             "searchable": true,
             "sortable": true
+        },
+        "collected_year": {
+          "collections": [18, 19],
+          "name": "collected_year",
+          "searchable": true,
+          "sortable": true,
+          "type": "number",
+          "view_name": "År"
         },
         "dateOfDeath": {
             "collections": [
@@ -492,14 +500,6 @@
                 "value": "Efterretning"
             }
           ]
-        },
-        "collected_year": {
-          "collections": [18, 19],
-          "name": "collected_year",
-          "searchable": true,
-          "sortable": true,
-          "type": "number",
-          "view_name": "År"
         },
         "collection_info": {
             "collections": [
