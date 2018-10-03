@@ -288,12 +288,20 @@
                     "value": "Ugift"
                 },
                 {
+                    "label": "Forældreløs",
+                    "value": "Forældreløs"
+                },
+                {
                     "label": "Uægte barn",
                     "value": "Uægte barn"
                 },
                 {
                     "label": "Ægtefødt barn",
                     "value": "Ægtefødt barn"
+                },
+                {
+                    "label": "Vides ikke",
+                    "value": "Vides ikke"
                 }
             ],
             "type": "typeahead",
