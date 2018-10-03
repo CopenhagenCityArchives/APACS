@@ -128,6 +128,7 @@
   <field name="efterretning_number" type="int" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="efterretning_date" type="tdate" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="efterretning_fileName" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="efterretning_type" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
 
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
