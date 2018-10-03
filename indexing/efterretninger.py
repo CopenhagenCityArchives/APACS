@@ -68,6 +68,7 @@ if __name__ == "__main__":
 			jsonObj['number'] = efterretning.get("Nummer")
 			jsonObj['date'] = efterretning.get(u"Indsamlingsår").isoformat() if u"Indsamlingsår" in efterretning else None
 			jsonObj['fileName'] = efterretning.get("Record Name")
+			jsonObj['efterretning_type'] = efterretning.get(u"Description")
 			
 			documents.append({
 				'id': "%d-%d" % (COLLECTION_ID, efterretning['ID']),
@@ -85,6 +86,7 @@ if __name__ == "__main__":
 				'efterretning_number': efterretning.get("Nummer"),
 				'efterretning_date': efterretning.get(u"Indsamlingsår"),
 				'efterretning_fileName': efterretning.get("Record Name"),
+				'efterretning_type': efterretning.get(u"Description"),
 				'erindring_document_text': efterretning.get('Document Text')
 			})
 		except Exception as e:
