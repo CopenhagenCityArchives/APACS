@@ -300,8 +300,8 @@
                     "value": "Ægtefødt barn"
                 },
                 {
-                    "label": "Vides ikke",
-                    "value": "Vides ikke"
+                    "label": "Vides ikke (ukendt)",
+                    "value": "Vides ikke (ukendt)"
                 }
             ],
             "type": "typeahead",
