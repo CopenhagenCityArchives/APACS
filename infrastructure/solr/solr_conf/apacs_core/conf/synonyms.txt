@@ -31,3 +31,4 @@ pixima => pixma
 kbh,københavn,kjbh,kjb
 christian,kristian
 arbejdsmand,arb
+sverig,sverige
