@@ -6,7 +6,8 @@ services:
         context: ./
         dockerfile: ./infrastructure/indexing/Dockerfile
 
-
+    networks:
+      - default
     environment:
       - PYTHON_ENV=PROD
 
@@ -23,5 +24,11 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
       - stats_core:/opt/solr/server/solr/banana-int/
+      ##- apacs_core:/opt/solr/server/solr/mycores/apacs_core/
+    networks:
+      - default
 volumes:
     stats_core:
+    apacs_core:
+networks:
+  default:

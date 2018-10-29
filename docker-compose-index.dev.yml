@@ -7,8 +7,10 @@ services:
         dockerfile: ./infrastructure/indexing/Dockerfile_dev
     volumes:
       - ./indexing:/usr/src/app/
+    networks:
+      - default      
     environment:
-      - PYTHON_ENV=DEV      
+      - PYTHON_ENV=DEV
   solr:
     container_name: solr
     image: library/solr:6.6.3
@@ -21,3 +23,8 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
       - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
+    networks:
+      - default
+networks:
+    default:
+      name: indexing_network

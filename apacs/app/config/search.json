@@ -18,18 +18,6 @@
         }
     },
     "fields": {
-        "firstnames": {
-            "collections": [
-                1,
-                17,
-                18
-            ],
-            "name": "firstnames",
-            "searchable": true,
-            "sortable": true,
-            "type": "string",
-            "view_name": "Fornavne"
-        },
         "lastname": {
             "collections": [
                 1,
@@ -41,6 +29,18 @@
             "sortable": true,
             "type": "string",
             "view_name": "Efternavn"
+        },
+        "firstnames": {
+            "collections": [
+                1,
+                17,
+                18
+            ],
+            "name": "firstnames",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Fornavne"
         },
         "yearOfBirth": {
             "collections": [
@@ -182,6 +182,14 @@
             "searchable": true,
             "sortable": true
         },
+        "collected_year": {
+          "collections": [18, 19],
+          "name": "collected_year",
+          "searchable": true,
+          "sortable": true,
+          "type": "number",
+          "view_name": "År"
+        },
         "dateOfDeath": {
             "collections": [
                 1
@@ -288,12 +296,20 @@
                     "value": "Ugift"
                 },
                 {
+                    "label": "Forældreløs",
+                    "value": "Forældreløs"
+                },
+                {
                     "label": "Uægte barn",
                     "value": "Uægte barn"
                 },
                 {
                     "label": "Ægtefødt barn",
                     "value": "Ægtefødt barn"
+                },
+                {
+                    "label": "Vides ikke",
+                    "value": "Vides ikke"
                 }
             ],
             "type": "typeahead",
@@ -490,8 +506,17 @@
           "name": "collected_year",
           "searchable": true,
           "sortable": true,
-          "type": "number",
-          "view_name": "År"
+          "type": "typeahead",
+          "enum": [
+            {
+                "label": "Kosterblad",
+                "value": "Kosterblad"
+            },
+            {
+                "label": "Efterretning",
+                "value": "Efterretning"
+            }
+          ]
         },
         "collection_info": {
             "collections": [
