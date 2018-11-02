@@ -33,7 +33,7 @@ class TasksPages extends \Phalcon\Mvc\Model {
 	}
 
 	public static function GetRandomAvailablePage($taskId, $unitId, $curPageNumber) {
-		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND is_done = 0 ORDER BY Pages.page_number';
+		$query = 'SELECT * FROM apacs_tasks_pages as TasksPages LEFT JOIN apacs_pages as Pages ON TasksPages.pages_id = Pages.id WHERE tasks_id = :task_id AND unit_id = :unit_id AND last_activity < DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND is_done = 0 ORDER BY Pages.page_number';
 
 		$taskPage = new TasksPages();
 		$result = new Resultset(null, $taskPage,
