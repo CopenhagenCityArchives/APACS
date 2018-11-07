@@ -183,16 +183,20 @@
             "sortable": true
         },
         "collected_year": {
-          "collections": [18, 19],
-          "name": "collected_year",
-          "searchable": true,
-          "sortable": true,
-          "type": "number",
-          "view_name": "År"
+            "collections": [
+                18,
+                19
+            ],
+            "name": "collected_year",
+            "searchable": true,
+            "sortable": true,
+            "type": "number",
+            "view_name": "År"
         },
         "dateOfDeath": {
             "collections": [
-                1
+                1,
+                19
             ],
             "name": "dateOfDeath",
             "searchable": true,
@@ -462,44 +466,44 @@
             "view_name": "Transkriberet"
         },
         "efterretning_number": {
-          "collections": [
-            19
-          ],
-          "name": "efterretning_number",
-          "searchable": true,
-          "sortable": true,
-          "type": "number",
-          "view_name": "Nummer"
+            "collections": [
+                19
+            ],
+            "name": "efterretning_number",
+            "searchable": true,
+            "sortable": true,
+            "type": "number",
+            "view_name": "Nummer"
         },
         "efterretning_date": {
-          "collections": [
-            19
-          ],
-          "name": "efterretning_date",
-          "searchable": true,
-          "sortable": true,
-          "type": "date",
-          "view_name": "Dato"
+            "collections": [
+                19
+            ],
+            "name": "efterretning_date",
+            "searchable": true,
+            "sortable": true,
+            "type": "date",
+            "view_name": "Dato"
         },
         "efterretning_type": {
-          "collections": [
-            19
-          ],
-          "name": "efterretning_type",
-          "view_name": "Efterretning/Kosterblad",
-          "searchable": true,
-          "sortable": true,
-          "type": "typeahead",
-          "enum": [
-            {
-                "label": "Kosterblad",
-                "value": "Kosterblad"
-            },
-            {
-                "label": "Efterretning",
-                "value": "Efterretning"
-            }
-          ]
+            "collections": [
+                19
+            ],
+            "name": "efterretning_type",
+            "view_name": "Efterretning/Kosterblad",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "enum": [
+                {
+                    "label": "Kosterblad",
+                    "value": "Kosterblad"
+                },
+                {
+                    "label": "Efterretning",
+                    "value": "Efterretning"
+                }
+            ]
         },
         "collection_info": {
             "collections": [
