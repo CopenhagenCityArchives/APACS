@@ -169,10 +169,12 @@
 
   <!-- A case insensitive TextField. Used instead of string when case insentivity is needed -->
   <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
-    <analyzer type="query">
-      <tokenizer class="solr.KeywordTokenizerFactory"/>
-      <filter class="solr.LowerCaseFilterFactory" />
-    </analyzer>
+        <analyzer>
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
+            <filter class="solr.LowerCaseFilterFactory" />
+            <filter class="solr.ScandinavianNormalizationFilterFactory" />
+        </analyzer>
   </fieldType>
 
   <!-- Timestamp field -->
@@ -456,22 +458,25 @@
 	 removes stop words from case-insensitive "stopwords.txt"
 	 (empty by default), and down cases.  At query time only, it
 	 also applies synonyms. -->
-  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
-    <analyzer type="index">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
-      <!-- in this example, we will only use synonyms at query time
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="solr.StandardTokenizerFactory"/>
+        <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />-->
+        <!-- in this example, we will only use synonyms at query time
         <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
         -->
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.StandardTokenizerFactory"/>
-      <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
-      <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
-      <filter class="solr.LowerCaseFilterFactory"/>
-    </analyzer>
-  </fieldType>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.ScandinavianNormalizationFilterFactory" />
+      </analyzer>
+      <analyzer type="query">
+        <!--<charFilter class="solr.MappingCharFilterFactory" mapping="charMappings.txt"/>-->
+        <tokenizer class="solr.StandardTokenizerFactory" />
+        <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />-->
+        <filter class="solr.LowerCaseFilterFactory" />
+        <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
+        <filter class="solr.ScandinavianNormalizationFilterFactory" />
+      </analyzer>
+    </fieldType>
 
   <!-- A text field with defaults appropriate for English: it
          tokenizes with StandardTokenizer, removes English stop words

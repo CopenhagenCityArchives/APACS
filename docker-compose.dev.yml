@@ -35,3 +35,5 @@ services:
       MYSQL_USER: dev
       MYSQL_PASSWORD: 123456
       MYSQL_DATABASE: apacs
+networks:
+    default:

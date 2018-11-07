@@ -33,3 +33,5 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
       - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
+networks:
+    default:

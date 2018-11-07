@@ -54,3 +54,5 @@ services:
     working_dir: /apacs
     volumes:
       - ./apacs:/apacs
+networks:
+    default:

@@ -7,7 +7,7 @@ if os.getenv('PYTHON_ENV', 'DEV') == 'DEV':
         "debug" : True,
         "cumulus" : {
             #"url": "https://neaonline.dk",
-            "url": "https://cumulus",
+            "url": "https://cumulus.DAF.local",
             "port": 8443,
             "user": "CIP-erindringsbilleder",
             "password": "***REMOVED***",
