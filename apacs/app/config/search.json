@@ -537,6 +537,16 @@
             "sortable": false,
             "type": "number",
             "view_name": "Dødsår"
+        },
+        "relativeNames": {
+            "collections": [
+                17
+            ],
+            "name": "relativeNames",
+            "searchable": true,
+            "sortable": false,
+            "type": "string",
+            "view_name": "Relaterede personers navne"
         }
     },
     "types": {

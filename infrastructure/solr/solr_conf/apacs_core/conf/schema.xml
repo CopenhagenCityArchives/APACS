@@ -57,11 +57,14 @@
   <!-- Singlevalue fields used in multiple sources -->
   <field name="firstnames" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="lastname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="fullname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="sex" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="birthname" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="birthplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="civilstatus" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="yearOfBirth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="dateOfDeath" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="yearOfDeath" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="comment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="collected_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
 
@@ -75,8 +78,6 @@
   <field name="adressOutsideCph" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageYears" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="ageMonth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="dateOfDeath" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="yearOfDeath" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="record_number" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="chapel" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
@@ -106,6 +107,9 @@
   <field name="locations" type="location_rpt" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="adr_to_note" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="adr_from_note" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <copyField source="spouseNames" dest="relativeNames"/>
+  <copyField source="childNames" dest="relativeNames"/>
+  <field name="relativeNames" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- ERINDRINGER -->
   <!-- Singlevalue fields -->

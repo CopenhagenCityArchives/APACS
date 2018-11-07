@@ -186,12 +186,13 @@ if __name__ == "__main__":
 		SNS_Notifier.error(repr(e))
 		sys.exit(1)
 
+	writeflush("Counting persons in database... ")
 	person_count = None
 	with mysql.cursor(pymysql.cursors.DictCursor) as cursor:
 		cursor.execute(count_query)
 		result = cursor.fetchone()
 		person_count = int(result['count'])
-
+	writeflush("%s\n" % (person_count))
 	start = time()
 
 	# Everything is based on the chunked loading of persons
@@ -381,6 +382,7 @@ if __name__ == "__main__":
 				'collection_info': 'Politiets registerblade',
 				'firstnames': person['firstnames'],
 				'lastname': person['lastname'],
+				'fullname': u"{0} {1}".format(person['firstnames'], person['lastname']),
 				'birthname': person['birthname'],
 				'positions': person['positions'] if 'positions' in person else [],
 				'sex': "Mand" if person['sex'] == 1 else "Kvinde" if person['sex'] == 2 else "Ukendt",
@@ -404,9 +406,8 @@ if __name__ == "__main__":
 				'cardComment':  "" if person['registerblad_comment'] is None else person['registerblad_comment'],
 				'specialComment': "" if person['special_comments'] is None else person['special_comments'],
 				'adr_to_note': list(map(lambda address: address['to_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
-				'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
+				'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else []
 			})
-
 		writeflush("%7d/%7d (%5f docs/sec) - Adding SOLR documents                     \r" % (totalDocuments, person_count, docspsec))
 
 		try:
