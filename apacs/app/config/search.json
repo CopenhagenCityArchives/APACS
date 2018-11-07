@@ -117,6 +117,17 @@
             "type": "typeahead",
             "view_name": "Gade"
         },
+        "addresses": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "addresses",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Addresse"
+        },
         "positions": {
             "collections": [
                 1
