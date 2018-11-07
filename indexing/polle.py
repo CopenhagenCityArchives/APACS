@@ -391,6 +391,7 @@ if __name__ == "__main__":
 				'dateOfBirth': get_formatted_date_or_default(person['year_of_birth'], person['month_of_birth'], person['day_of_birth'], ""),
 				'dateOfDeath': get_formatted_date_or_default(person['year_of_death'], person['month_of_death'], person['day_of_death'], ""),
 				'yearOfBirth': person['year_of_birth'] if 'year_of_birth' in person else '',
+				'yearOfDeath': person['year_of_death'] if 'year_of_death' in person else '',
 				'birthplace': person['birthplace'],
 				'spouseNames': list(map(lambda spouse: "%s %s" % (spouse['firstnames'], spouse['lastname']), card['spouses'])) if person['person_type'] == 1 else ["%s %s" % (card['main']['firstnames'], card['main']['lastname'])] if card['main'] is not None and person['person_type'] == 2 else "",
 				'childNames': list(map(lambda child: "%s %s" % (child['firstnames'], child['lastname']), card['children'])) if person['person_type'] == 1 else [],
@@ -406,35 +407,6 @@ if __name__ == "__main__":
 				'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 			})
 
-# Ægtefælles fødested
-# Fødested
-# Hovedpersons fødested
-# Stilling
-# Ægtefælles stilling
-# Hovedpersons stilling
-# Fødselsdato (dd-mm-åååå)
-# Fødselsår (åååå)
-# Fødselsmåned (mm)
-# Fødelsdag (dd)
-# Dødsdato (dd-mm-åååå)
-# Dødsår (åååå)
-# Dødsmåned (mm)
-# Dødsdag (dd)
-# Hovedpersons fornavne
-# Hovedpersons efternavn
-# Ægtefælles fornavne
-# Ægtefælles efternavn
-# Barns fornavne
-# Barns efternavn
-# Vejnavn
-# Vejnummer
-# Vejnummerbogstav
-# Etage
-# Sideangivelse
-# Indgang
-# I tjeneste/logerende hos
-# Sted
-
 		writeflush("%7d/%7d (%5f docs/sec) - Adding SOLR documents                     \r" % (totalDocuments, person_count, docspsec))
 
 		try:
@@ -445,7 +417,7 @@ if __name__ == "__main__":
 				solr.add(documents, commit=False)
 				documents = []
 				solr.commit()
-				count = 0;
+				count = 0
 			#sys.exit(1)
 		except Exception as e:
 			writeflush("\nFailed.\nError %s\n" % repr(e))
@@ -457,7 +429,7 @@ if __name__ == "__main__":
 		solr.add(documents, commit=False)
 		documents = []
 		solr.commit()
-		count = 0;
+		count = 0
 
 	#print("Committing!")
 	solr.commit()

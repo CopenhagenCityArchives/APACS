@@ -278,7 +278,9 @@ if __name__ == "__main__":
 			if(person['burial_persons.dateOfDeath'] is not None):
 				strDateOfDeath = str(person['burial_persons.dateOfDeath']).split('-');
 				dateOfDeath = "%04d-%02d-%02dT00:00:00Z" % (int(strDateOfDeath[0]), int(strDateOfDeath[1]), int(strDateOfDeath[2]))
+				yearOfDeath = int(strDateOfDeath[0])
 			else:
+				yearOfDeath = None
 				dateOfDeath = None
 
 			# json object
@@ -313,6 +315,7 @@ if __name__ == "__main__":
 					'ageHours': str(person['burial_persons.ageHours']) if(person['burial_persons.ageHours']) is not None else None,
 					'yearOfBirth': person['burial_persons.yearOfBirth'] if 'burial_persons.yearOfBirth' in person else None,
 					'dateOfBirth': person['burial_persons.dateOfBirth'] if 'burial_persons.dateOfBirth' in person else None,
+					'yearOfDeath': yearOfDeath,
 				#	'dateOfDeath': person['burial_persons.dateOfDeath'].strftime("%Y-%m-%dT00:00:00Z") if person['burial_persons.dateOfDeath'] is not None else None,
 					'dateOfDeath': dateOfDeath,
 					'birthplace': person['burial_birthplaces.name'],
@@ -373,6 +376,7 @@ if __name__ == "__main__":
 				#'ageHours': person['burial_persons.ageHours'],
 				'yearOfBirth': person['burial_persons.yearOfBirth'] if 'burial_persons.yearOfBirth' in person else '',
 				'dateOfBirth': person['burial_persons.dateOfBirth'] if 'burial_persons.dateOfBirth' in person else '',
+				'yearOfDeath': yearOfDeath,
 				'dateOfDeath': dateOfDeath,
 				'birthplace': person['burial_birthplaces.name'],
 				'deathplace' : person['burial_deathplaces.deathplace'],

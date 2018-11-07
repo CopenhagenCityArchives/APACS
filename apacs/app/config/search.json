@@ -526,6 +526,17 @@
             "sortable": true,
             "type": "number",
             "view_name": "Registerbladsid"
+        },
+        "yearOfDeath": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "yearOfDeath",
+            "searchable": true,
+            "sortable": false,
+            "type": "number",
+            "view_name": "Dødsår"
         }
     },
     "types": {
@@ -620,6 +631,14 @@
         },
         "yearOfBirth": {
             "field": "yearOfBirth",
+            "type": "range",
+            "start": 1780,
+            "end": 1960,
+            "gap": 10,
+            "mincount": 1
+        },
+        "yearOfDeath": {
+            "field": "yearOfDeath",
             "type": "range",
             "start": 1780,
             "end": 1960,
