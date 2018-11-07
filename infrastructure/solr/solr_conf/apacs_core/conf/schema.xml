@@ -159,6 +159,7 @@
   <copyField source="erindring_spouse_position" dest="freetext_store"/>
   <copyField source="erindring_keywords" dest="freetext_store"/>
   <copyField source="erindring_document_text" dest="freetext_store"/>
+  <copyField source="specialRemarks" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />
