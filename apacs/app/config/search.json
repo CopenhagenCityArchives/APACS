@@ -196,7 +196,7 @@
         "dateOfDeath": {
             "collections": [
                 1,
-                19
+                17
             ],
             "name": "dateOfDeath",
             "searchable": true,
@@ -516,6 +516,16 @@
             "sortable": false,
             "type": "string",
             "view_name": "Kilde"
+        },
+        "card_id": {
+            "collections": [
+                17
+            ],
+            "name": "card_id",
+            "searchable": true,
+            "sortable": true,
+            "type": "number",
+            "view_name": "Registerbladsid"
         }
     },
     "types": {
