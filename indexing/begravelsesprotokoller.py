@@ -366,7 +366,7 @@ if __name__ == "__main__":
 				'firstnames': "" if person['burial_persons.firstnames'] is None else person['burial_persons.firstnames'],
 				'lastname': "" if person['burial_persons.lastname'] is None else person['burial_persons.lastname'],
 				'fullname': "" if person['burial_persons.firstnames'] is None or person['burial_persons.lastname'] is None else u"{0} {1}".format(person['burial_persons.firstnames'], person['burial_persons.lastname']),
-				'comment': "" if person['burial_persons.comment'] is None else person['burial_persons.comment'],
+				'comments': [] if person['burial_persons.comment'] is None else [person['burial_persons.comment']],
 				'birthname': "" if person['burial_persons.birthname'] is None else person['burial_persons.birthname'],
 				'sex': person['burial_persons_sex.sex'],
 				'civilstatus': person['burial_civilstatuses.civilstatus'],

@@ -125,7 +125,7 @@
             "name": "addresses",
             "searchable": true,
             "sortable": true,
-            "type": "string",
+            "type": "string_multivalued",
             "view_name": "Addresse"
         },
         "positions": {
@@ -330,14 +330,15 @@
             "type": "typeahead",
             "view_name": "Civilstand"
         },
-        "comment": {
+        "comments": {
             "collections": [
-                1
+                1,
+                17
             ],
             "name": "comment",
             "searchable": true,
             "sortable": false,
-            "type": "string",
+            "type": "string_multivalued",
             "view_name": "Kommentar"
         },
         "deathcauses": {
@@ -652,14 +653,6 @@
         },
         "yearOfBirth": {
             "field": "yearOfBirth",
-            "type": "range",
-            "start": 1780,
-            "end": 1960,
-            "gap": 10,
-            "mincount": 1
-        },
-        "yearOfDeath": {
-            "field": "yearOfDeath",
             "type": "range",
             "start": 1780,
             "end": 1960,

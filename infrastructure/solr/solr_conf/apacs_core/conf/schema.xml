@@ -65,13 +65,14 @@
   <field name="yearOfBirth" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="dateOfDeath" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="yearOfDeath" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="comment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="collected_year" type="int" indexed="true" stored="true" required="false" multiValued="false" />
 
   <!-- Multivalue fields used in multiple sources -->
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+´
+  <field name="comments" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
   <!-- Singlevalue fields -->
@@ -96,8 +97,7 @@
   <field name="card_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="personType" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="dateOfBirth" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="cardComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="specialComment" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="specialRemarks" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields -->
   <field name="spousePositions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -143,7 +143,6 @@
   <copyField source="civilstatus" dest="freetext_store"/>
   <copyField source="yearOfBirth" dest="freetext_store"/>
   <copyField source="record_number" dest="freetext_store"/>
-  <copyField source="comment" dest="freetext_store"/>
   <copyField source="chapel" dest="freetext_store"/>
   <copyField source="cemetary" dest="freetext_store"/>
   <copyField source="streets" dest="freetext_store"/>

@@ -32,7 +32,7 @@ SELECT
     p.gift as married,
     pc.kommentar as person_comment,
     rc.kommentar as registerblad_comment,
-    r.saerlige_bemaerkninger as special_comments,
+    r.saerlige_bemaerkninger as special_remarks,
     r.udfyldelse_dag as completion_day,
     r.udfyldelse_maaned as completion_month,
     r.udfyldelse_aar as completion_year,
@@ -302,7 +302,7 @@ if __name__ == "__main__":
 					'dateOfDeath': get_formatted_date_or_default(person['year_of_death'], person['month_of_death'], person['day_of_death'], None),
 					'dateOfCompletion': get_formatted_date_or_default(person['completion_year'], person['completion_month'], person['completion_day'], None),
 					#'civilstand': "Gift" if person['married'] == 1 and person['person_type'] == 1 else "",
-					'specialComment': None if person['special_comments'] is None else person['special_comments'],
+					'specialRemarks': None if person['special_remarks'] is None else person['special_remarks'],
 					'person_comment': None if person['person_comment'] is None else person['person_comment'],
 					'registerblad_comment': None if person['registerblad_comment'] is None else person['registerblad_comment'],
 					'person_type_text': person['person_type_text'],
@@ -324,7 +324,7 @@ if __name__ == "__main__":
 					'birthplace': card['main']['birthplace'],
 					'birthdate': get_formatted_date_or_default(card['main']['year_of_birth'], card['main']['month_of_birth'], card['main']['day_of_birth'], None),
 					'deathdate': get_formatted_date_or_default(card['main']['year_of_death'], card['main']['month_of_death'], card['main']['day_of_death'], None),
-					'specialComment': None if card['main']['special_comments'] is None else person['special_comments'],
+					' ': None if card['main']['special_remarks'] is None else person['special_remarks'],
 					'post_id': "%d-%d" % (COLLECTION_ID, card['main']['person_id']),
 					'positions': list(map(lambda position: { 'position': position }, card['main']['positions'])) if 'positions' in card['main'] else [] }
 				elif person["person_type"] == 2 and card['main'] is not None:
@@ -402,9 +402,8 @@ if __name__ == "__main__":
 				#'institutions': list(map(lambda address: address['institution'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'locations': list(map(lambda address: address['location'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'spousePositions': list(reduce(lambda positions, spouse: positions + (spouse['positions'] if 'positions' in spouse else []), card['spouses'], [])) if person['person_type'] == 1 else [],
-				'comment': "" if person['person_comment'] is None else person['person_comment'],
-				'cardComment':  "" if person['registerblad_comment'] is None else person['registerblad_comment'],
-				'specialComment': "" if person['special_comments'] is None else person['special_comments'],
+				'comments': ([person['person_comment']] if 'person_comment' in person else []) + (filter(lambda n: n is not None, map(lambda address: address.get('adr_comment'), card.get('addresses') or []))) + ([person['registerblad_comment']] if 'registerblad_comment' in person else []),
+				'specialRemarks': "" if person['special_remarks'] is None else person['special_remarks'],
 				'adr_to_note': list(map(lambda address: address['to_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else []
 			})
