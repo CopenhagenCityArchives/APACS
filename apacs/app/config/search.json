@@ -659,6 +659,14 @@
             "gap": 10,
             "mincount": 1
         },
+        "yearOfDeath": {
+            "field": "yearOfDeath",
+            "type": "range",
+            "start": 1780,
+            "end": 1960,
+            "gap": 10,
+            "mincount": 1
+        },
         "collection_info": {
             "field": "collection_info",
             "type": "terms",
