@@ -276,7 +276,7 @@ if __name__ == "__main__":
 			person = persons[person_id]
 
 			if(person['burial_persons.dateOfDeath'] is not None):
-				strDateOfDeath = str(person['burial_persons.dateOfDeath']).split('-');
+				strDateOfDeath = str(person['burial_persons.dateOfDeath']).split('-')
 				dateOfDeath = "%04d-%02d-%02dT00:00:00Z" % (int(strDateOfDeath[0]), int(strDateOfDeath[1]), int(strDateOfDeath[2]))
 				yearOfDeath = int(strDateOfDeath[0])
 			else:
