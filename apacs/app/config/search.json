@@ -335,7 +335,7 @@
                 1,
                 17
             ],
-            "name": "comment",
+            "name": "comments",
             "searchable": true,
             "sortable": false,
             "type": "string_multivalued",
