@@ -557,7 +557,7 @@
             "name": "relativeNames",
             "searchable": true,
             "sortable": false,
-            "type": "string",
+            "type": "string_multivalued",
             "view_name": "Relaterede personers navne"
         }
     },
