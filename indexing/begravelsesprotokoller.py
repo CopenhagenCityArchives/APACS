@@ -387,7 +387,7 @@ if __name__ == "__main__":
 				'chapel': person['burial_chapels.chapel'],
 				'parish': person['burial_parishes.parish'],
 				'cemetary': person['burial_cemetaries.cemetary'],
-				'institution': "" if person['burial_institutions.institution'] is None else person['burial_institutions.institution'],
+				'institutions': [] if person['burial_institutions.institution'] is None else [person['burial_institutions.institution']],
 
 				#Address
 				'addresses': [person['address']]  if "address" in person else [],

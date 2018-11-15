@@ -355,9 +355,20 @@
             "type": "typeahead",
             "view_name": "Dødsårsag"
         },
-        "institution": {
+        "places": {
+            "name": "places",
             "collections": [
-                1
+                17
+            ],
+            "type": "string_multivalued",
+            "searchable": true,
+            "sortable": false,
+            "view_name": "Sted"
+        },
+        "institutions": {
+            "collections": [
+                1,
+                17
             ],
             "datasource": {
                 "field": "institution",

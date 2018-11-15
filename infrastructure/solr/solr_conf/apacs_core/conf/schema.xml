@@ -71,7 +71,8 @@
   <field name="addresses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="positions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="streets" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
-´
+  <field name="places" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="institutions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="comments" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
 
   <!-- BURIAL RECORDS -->
@@ -84,7 +85,6 @@
   <field name="parish" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="cemetary" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="hood" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="institution" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="deathplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields -->
@@ -153,7 +153,8 @@
   <copyField source="adr_to_note" dest="freetext_store"/>
   <copyField source="adr_from_note" dest="freetext_store"/>
   <copyField source="positions" dest="freetext_store"/>
-  <copyField source="institution" dest="freetext_store"/>
+  <copyField source="places" dest="freetext_store"/>
+  <copyField source="institutions" dest="freetext_store"/>
   <copyField source="erindring_position" dest="freetext_store"/>
   <copyField source="erindring_parent_position" dest="freetext_store"/>
   <copyField source="erindring_spouse_position" dest="freetext_store"/>
@@ -169,12 +170,12 @@
 
   <!-- A case insensitive TextField. Used instead of string when case insentivity is needed -->
   <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
-        <analyzer>
-            <tokenizer class="solr.KeywordTokenizerFactory" />
-            <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
-            <filter class="solr.LowerCaseFilterFactory" />
-            <filter class="solr.ScandinavianNormalizationFilterFactory" />
-        </analyzer>
+    <analyzer>
+      <tokenizer class="solr.KeywordTokenizerFactory" />
+      <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
+      <filter class="solr.LowerCaseFilterFactory" />
+      <filter class="solr.ScandinavianNormalizationFilterFactory" />
+    </analyzer>
   </fieldType>
 
   <!-- Timestamp field -->
@@ -458,25 +459,25 @@
 	 removes stop words from case-insensitive "stopwords.txt"
 	 (empty by default), and down cases.  At query time only, it
 	 also applies synonyms. -->
-    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
-      <analyzer type="index">
-        <tokenizer class="solr.StandardTokenizerFactory"/>
-        <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />-->
-        <!-- in this example, we will only use synonyms at query time
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />-->
+      <!-- in this example, we will only use synonyms at query time
         <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
         -->
-        <filter class="solr.LowerCaseFilterFactory"/>
-        <filter class="solr.ScandinavianNormalizationFilterFactory" />
-      </analyzer>
-      <analyzer type="query">
-        <!--<charFilter class="solr.MappingCharFilterFactory" mapping="charMappings.txt"/>-->
-        <tokenizer class="solr.StandardTokenizerFactory" />
-        <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />-->
-        <filter class="solr.LowerCaseFilterFactory" />
-        <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
-        <filter class="solr.ScandinavianNormalizationFilterFactory" />
-      </analyzer>
-    </fieldType>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.ScandinavianNormalizationFilterFactory" />
+    </analyzer>
+    <analyzer type="query">
+      <!--<charFilter class="solr.MappingCharFilterFactory" mapping="charMappings.txt"/>-->
+      <tokenizer class="solr.StandardTokenizerFactory" />
+      <!--<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />-->
+      <filter class="solr.LowerCaseFilterFactory" />
+      <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
+      <filter class="solr.ScandinavianNormalizationFilterFactory" />
+    </analyzer>
+  </fieldType>
 
   <!-- A text field with defaults appropriate for English: it
          tokenizes with StandardTokenizer, removes English stop words
