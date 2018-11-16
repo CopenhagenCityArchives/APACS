@@ -374,7 +374,7 @@
                 "field": "institution",
                 "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/13?q="
             },
-            "name": "institution",
+            "name": "institutions",
             "searchable": true,
             "sortable": true,
             "type": "typeahead",
