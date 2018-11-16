@@ -378,7 +378,7 @@
             "searchable": true,
             "sortable": true,
             "type": "typeahead",
-            "view_name": "Institution/sted"
+            "view_name": "Institution"
         },
         "parish": {
             "collections": [
