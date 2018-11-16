@@ -53,7 +53,7 @@ FROM
     LEFT JOIN PRB_station st ON st.station_id = r.station_id
     LEFT JOIN PRB_filmrulle fr ON fr.filmrulle_id = r.filmrulle_id
     LEFT JOIN PRB_registerblad_nummerering rn ON rn.registerblad_id = r.registerblad_id
-	ORDER BY r.registerblad_id
+	ORDER BY p.registerblad_id
 	LIMIT %d, %d
 """
 

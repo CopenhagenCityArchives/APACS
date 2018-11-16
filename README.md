@@ -56,7 +56,7 @@ The index service is deployed to AWS using this command:
 ``docker-compose -f docker-compose-index.prod.yml up -d --force-recreate --build indexer``
 
 ###Update Solr schema
-Connect to docker and run this command:
+Connect to docker machine and run this command:
 ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
 
 This will replace the schema file on the server.
