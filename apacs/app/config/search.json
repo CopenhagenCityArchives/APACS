@@ -188,7 +188,7 @@
             ],
             "name": "addresses",
             "searchable": true,
-            "sortable": true,
+            "sortable": false,
             "type": "string_multivalued",
             "view_name": "Gadenavn og -nummer"
         },
