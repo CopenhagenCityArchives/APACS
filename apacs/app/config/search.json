@@ -42,16 +42,15 @@
             "type": "string",
             "view_name": "Fornavne"
         },
-        "yearOfBirth": {
+        "relativeNames": {
             "collections": [
-                1,
                 17
             ],
-            "name": "yearOfBirth",
+            "name": "relativeNames",
             "searchable": true,
             "sortable": false,
-            "type": "number",
-            "view_name": "Fødselsår"
+            "type": "string_multivalued",
+            "view_name": "Bipersoners navne"
         },
         "birthname": {
             "collections": [
@@ -89,18 +88,83 @@
             "type": "typeahead",
             "view_name": "Køn"
         },
-        "freetext_store": {
+        "dateOfBirth": {
+            "name": "dateOfBirth",
+            "view_name": "Fødselsdato",
+            "collections": [
+                17
+            ],
+            "type": "date",
+            "special_chars": false,
+            "searchable": true,
+            "sortable": true
+        },
+        "yearOfBirth": {
             "collections": [
                 1,
-                17,
-                18,
-                19
+                17
             ],
-            "name": "freetext_store",
+            "name": "yearOfBirth",
             "searchable": true,
             "sortable": false,
-            "type": "string_multivalued",
-            "view_name": "Fritekst"
+            "type": "number",
+            "view_name": "Fødselsår"
+        },
+        "birthplace": {
+            "collections": [
+                17
+            ],
+            "name": "birthplace",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Fødested"
+        },
+        "dateOfDeath": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "dateOfDeath",
+            "searchable": true,
+            "sortable": true,
+            "type": "date",
+            "view_name": "Dødsdato"
+        },
+        "yearOfDeath": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "yearOfDeath",
+            "searchable": true,
+            "sortable": false,
+            "type": "number",
+            "view_name": "Dødsår"
+        },
+        "deathplace": {
+            "collections": [
+                1
+            ],
+            "datasource": {
+                "field": "deathplace",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/8?q="
+            },
+            "name": "deathplace",
+            "searchable": true,
+            "sortable": false,
+            "type": "typeahead",
+            "view_name": "Dødssted"
+        },
+        "ageYears": {
+            "collections": [
+                1
+            ],
+            "name": "ageYears",
+            "searchable": true,
+            "sortable": true,
+            "type": "number",
+            "view_name": "Alder - år"
         },
         "streets": {
             "collections": [
@@ -128,29 +192,30 @@
             "type": "string_multivalued",
             "view_name": "Gadenavn og -nummer"
         },
-        "positions": {
+        "institutions": {
             "collections": [
-                1
+                1,
+                17
             ],
             "datasource": {
-                "field": "position",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/1?q="
+                "field": "institution",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/13?q="
             },
-            "name": "positions",
+            "name": "institutions",
             "searchable": true,
-            "sortable": false,
+            "sortable": true,
             "type": "typeahead",
-            "view_name": "Erhverv"
+            "view_name": "Institution"
         },
-        "positions_polle": {
+        "places": {
+            "name": "places",
             "collections": [
                 17
             ],
-            "name": "positions",
+            "type": "string_multivalued",
             "searchable": true,
             "sortable": false,
-            "type": "string",
-            "view_name": "Erhverv"
+            "view_name": "Sted"
         },
         "adr_to_note": {
             "collections": [
@@ -172,63 +237,6 @@
             "type": "string",
             "view_name": "Fra note"
         },
-        "birthplace": {
-            "collections": [
-                17
-            ],
-            "name": "birthplace",
-            "searchable": true,
-            "sortable": true,
-            "type": "string",
-            "view_name": "Fødested"
-        },
-        "dateOfBirth": {
-            "name": "dateOfBirth",
-            "view_name": "Fødselsdato",
-            "collections": [
-                17
-            ],
-            "type": "date",
-            "special_chars": false,
-            "searchable": true,
-            "sortable": true
-        },
-        "collected_year": {
-            "collections": [
-                18,
-                19
-            ],
-            "name": "collected_year",
-            "searchable": true,
-            "sortable": true,
-            "type": "number",
-            "view_name": "År"
-        },
-        "dateOfDeath": {
-            "collections": [
-                1,
-                17
-            ],
-            "name": "dateOfDeath",
-            "searchable": true,
-            "sortable": true,
-            "type": "date",
-            "view_name": "Dødsdato"
-        },
-        "deathplace": {
-            "collections": [
-                1
-            ],
-            "datasource": {
-                "field": "deathplace",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/8?q="
-            },
-            "name": "deathplace",
-            "searchable": true,
-            "sortable": false,
-            "type": "typeahead",
-            "view_name": "Dødssted"
-        },
         "adressOutsideCph": {
             "collections": [
                 1
@@ -239,15 +247,19 @@
             "type": "string",
             "view_name": "Resten af Danmark/verden"
         },
-        "ageYears": {
+        "deathcauses": {
             "collections": [
                 1
             ],
-            "name": "ageYears",
+            "datasource": {
+                "field": "deathcause",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/2?q="
+            },
+            "name": "deathcauses",
             "searchable": true,
-            "sortable": true,
-            "type": "number",
-            "view_name": "Alder - år"
+            "sortable": false,
+            "type": "typeahead",
+            "view_name": "Dødsårsag"
         },
         "cemetary": {
             "collections": [
@@ -276,6 +288,58 @@
             "sortable": false,
             "type": "typeahead",
             "view_name": "Fra (kapel)"
+        },
+        "parish": {
+            "collections": [
+                1
+            ],
+            "datasource": {
+                "field": "parish",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/10?q="
+            },
+            "name": "parish",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "view_name": "Sogn"
+        },
+        "positions": {
+            "collections": [
+                1
+            ],
+            "datasource": {
+                "field": "position",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/1?q="
+            },
+            "name": "positions",
+            "searchable": true,
+            "sortable": false,
+            "type": "typeahead",
+            "view_name": "Erhverv"
+        },
+        "positions_polle": {
+            "collections": [
+                17
+            ],
+            "name": "positions",
+            "searchable": true,
+            "sortable": false,
+            "type": "string",
+            "view_name": "Erhverv"
+        },
+        "workplace": {
+            "collections": [
+                1
+            ],
+            "datasource": {
+                "field": "workplace",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/14?q="
+            },
+            "name": "workplace",
+            "searchable": true,
+            "sortable": false,
+            "type": "typeahead",
+            "view_name": "Arbejdssted"
         },
         "civilstatus": {
             "collections": [
@@ -341,92 +405,16 @@
             "type": "string_multivalued",
             "view_name": "Kommentar"
         },
-        "deathcauses": {
+        "collected_year": {
             "collections": [
-                1
+                18,
+                19
             ],
-            "datasource": {
-                "field": "deathcause",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/2?q="
-            },
-            "name": "deathcauses",
-            "searchable": true,
-            "sortable": false,
-            "type": "typeahead",
-            "view_name": "Dødsårsag"
-        },
-        "places": {
-            "name": "places",
-            "collections": [
-                17
-            ],
-            "type": "string_multivalued",
-            "searchable": true,
-            "sortable": false,
-            "view_name": "Sted"
-        },
-        "institutions": {
-            "collections": [
-                1,
-                17
-            ],
-            "datasource": {
-                "field": "institution",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/13?q="
-            },
-            "name": "institutions",
-            "searchable": true,
-            "sortable": true,
-            "type": "typeahead",
-            "view_name": "Institution"
-        },
-        "parish": {
-            "collections": [
-                1
-            ],
-            "datasource": {
-                "field": "parish",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/10?q="
-            },
-            "name": "parish",
-            "searchable": true,
-            "sortable": true,
-            "type": "typeahead",
-            "view_name": "Sogn"
-        },
-        "record_number": {
-            "collections": [
-                1
-            ],
-            "name": "record_number",
+            "name": "collected_year",
             "searchable": true,
             "sortable": true,
             "type": "number",
-            "view_name": "Løbenummer"
-        },
-        "workplace": {
-            "collections": [
-                1
-            ],
-            "datasource": {
-                "field": "workplace",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/14?q="
-            },
-            "name": "workplace",
-            "searchable": true,
-            "sortable": false,
-            "type": "typeahead",
-            "view_name": "Arbejdssted"
-        },
-        "user_name": {
-            "collections": [
-                1
-            ],
-            "name": "user_name",
-            "searchable": true,
-            "sortable": false,
-            "type": "string",
-            "view_name": "Indtasters brugernavn"
+            "view_name": "År"
         },
         "erindring_photos": {
             "collections": [
@@ -540,6 +528,39 @@
             "type": "string",
             "view_name": "Kilde"
         },
+        "freetext_store": {
+            "collections": [
+                1,
+                17,
+                18,
+                19
+            ],
+            "name": "freetext_store",
+            "searchable": true,
+            "sortable": false,
+            "type": "string_multivalued",
+            "view_name": "Fritekst"
+        },
+        "record_number": {
+            "collections": [
+                1
+            ],
+            "name": "record_number",
+            "searchable": true,
+            "sortable": true,
+            "type": "number",
+            "view_name": "Løbenummer"
+        },
+        "user_name": {
+            "collections": [
+                1
+            ],
+            "name": "user_name",
+            "searchable": true,
+            "sortable": false,
+            "type": "string",
+            "view_name": "Indtasters brugernavn"
+        },
         "card_id": {
             "collections": [
                 17
@@ -549,27 +570,6 @@
             "sortable": true,
             "type": "number",
             "view_name": "Registerbladsid"
-        },
-        "yearOfDeath": {
-            "collections": [
-                1,
-                17
-            ],
-            "name": "yearOfDeath",
-            "searchable": true,
-            "sortable": false,
-            "type": "number",
-            "view_name": "Dødsår"
-        },
-        "relativeNames": {
-            "collections": [
-                17
-            ],
-            "name": "relativeNames",
-            "searchable": true,
-            "sortable": false,
-            "type": "string_multivalued",
-            "view_name": "Bipersoners navne"
         }
     },
     "types": {
