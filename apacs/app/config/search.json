@@ -126,7 +126,7 @@
             "searchable": true,
             "sortable": true,
             "type": "string_multivalued",
-            "view_name": "Addresse"
+            "view_name": "Gadenavn og -nummer"
         },
         "positions": {
             "collections": [
@@ -569,7 +569,7 @@
             "searchable": true,
             "sortable": false,
             "type": "string_multivalued",
-            "view_name": "Relaterede personers navne"
+            "view_name": "Bipersoners navne"
         }
     },
     "types": {
