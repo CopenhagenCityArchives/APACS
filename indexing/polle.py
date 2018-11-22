@@ -70,7 +70,9 @@ SELECT *, CONCAT(
 	IF(side IS NULL, "", side),
 	IF((street IS NOT NULL or number IS NOT NULL or letter IS NOT NULL or floor IS NOT NULL or side IS NOT NULL) and place IS NOT NULL,", ", ""),
 	IF(place IS NULL, "", place),
-	IF((street IS NOT NULL or number IS NOT NULL or letter IS NOT NULL or floor IS NOT NULL or side IS NOT NULL or place IS NOT NULL) and servant_staying_at IS NOT NULL,", hos ", ""),
+	IF((street IS NOT NULL or number IS NOT NULL or letter IS NOT NULL or floor IS NOT NULL or side IS NOT NULL or place IS NOT NULL) and entrance IS NOT NULL,", ", ""),
+	IF(entrance IS NULL, "", entrance),
+	IF((street IS NOT NULL or number IS NOT NULL or letter IS NOT NULL or floor IS NOT NULL or side IS NOT NULL or place IS NOT NULL or entrance IS NOT NULL) and servant_staying_at IS NOT NULL,", hos ", ""),
 	IF(servant_staying_at IS NULL, "", servant_staying_at)) as full_address
 FROM
 (SELECT
@@ -82,6 +84,7 @@ FROM
     IF(a.etage <> "", a.etage, null) as floor,
     IF(a.sideangivelse <> "", a.sideangivelse, null) as side,
     IF(a.sted <> "", a.sted, null) as place,
+	IF(a.opgang <> "", a.opgang, null) as entrance,
     IF(a.tjenesteLogerendeHos <> "", a.tjenesteLogerendeHos, null) as servant_staying_at,
     CAST(k.latitude as CHAR) as latitude,
     CAST(k.longitude as CHAR) as longitude,
@@ -301,7 +304,6 @@ if __name__ == "__main__":
 					'dateOfBirth': get_formatted_date_or_default(person['year_of_birth'], person['month_of_birth'], person['day_of_birth'], None),
 					'dateOfDeath': get_formatted_date_or_default(person['year_of_death'], person['month_of_death'], person['day_of_death'], None),
 					'dateOfCompletion': get_formatted_date_or_default(person['completion_year'], person['completion_month'], person['completion_day'], None),
-					#'civilstand': "Gift" if person['married'] == 1 and person['person_type'] == 1 else "",
 					'specialRemarks': None if person['special_remarks'] is None else person['special_remarks'],
 					'person_comment': None if person['person_comment'] is None else person['person_comment'],
 					'registerblad_comment': None if person['registerblad_comment'] is None else person['registerblad_comment'],
@@ -386,7 +388,6 @@ if __name__ == "__main__":
 				'birthname': person['birthname'],
 				'positions': person['positions'] if 'positions' in person else [],
 				'sex': "Mand" if person['sex'] == 1 else "Kvinde" if person['sex'] == 2 else "Ukendt",
-				#'civilstatus': "Gift" if person['married'] == 1 and person['person_type'] == 1 else "",
 				'person_id': person_id,
 				'personType': person['person_type'],
 				'card_id': person["registerblad_id"],
@@ -400,11 +401,11 @@ if __name__ == "__main__":
 				'addresses': list(map(lambda address: address['full_address'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'streets': list(map(lambda address: address['street'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'places': list(map(lambda address: address['place'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
+				'entrances': list(map(lambda address: address['entrance'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'institutions': list(map(lambda address: address['institution'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'locations': list(map(lambda address: address['location'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'spousePositions': list(reduce(lambda positions, spouse: positions + (spouse['positions'] if 'positions' in spouse else []), card['spouses'], [])) if person['person_type'] == 1 else [],
-				'comments': ([person['person_comment']] if 'person_comment' in person else []) + (filter(lambda n: n is not None, map(lambda address: address.get('adr_comment'), card.get('addresses') or []))) + ([person['registerblad_comment']] if 'registerblad_comment' in person else []),
-				'specialRemarks': "" if person['special_remarks'] is None else person['special_remarks'],
+				'comments': ([person['person_comment']] if 'person_comment' in person else []) + (filter(lambda n: n is not None, map(lambda address: address.get('adr_comment'), card.get('addresses') or []))) + ([person['registerblad_comment']] if 'registerblad_comment' in person else []) + ([] if person['special_remarks'] is None else [person['special_remarks']]),
 				'adr_to_note': list(map(lambda address: address['to_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
 				'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else []
 			})

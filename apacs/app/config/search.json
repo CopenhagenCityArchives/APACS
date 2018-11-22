@@ -217,6 +217,16 @@
             "sortable": false,
             "view_name": "Sted"
         },
+        "entrances": {
+            "name": "entrances",
+            "collections": [
+                17
+            ],
+            "type": "string_multivalued",
+            "searchable": true,
+            "sortable": false,
+            "view_name": "Indgang"
+        },
         "adr_to_note": {
             "collections": [
                 17

@@ -97,13 +97,13 @@
   <field name="card_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="personType" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="dateOfBirth" type="tdate" indexed="true" stored="true" required="false" multiValued="false"/>
-  <field name="specialRemarks" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields -->
   <field name="spousePositions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="spouseNames" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="childNames" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="livingAt" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
+  <field name="entrances" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="locations" type="location_rpt" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="adr_to_note" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
   <field name="adr_from_note" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -160,7 +160,7 @@
   <copyField source="erindring_spouse_position" dest="freetext_store"/>
   <copyField source="erindring_keywords" dest="freetext_store"/>
   <copyField source="erindring_document_text" dest="freetext_store"/>
-  <copyField source="specialRemarks" dest="freetext_store"/>
+  <copyField source="comments" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />
