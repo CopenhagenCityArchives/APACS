@@ -262,22 +262,23 @@ class CommonInformationsController extends MainController {
 		}
 	}
 
+	//TODO: Task 1 is implicit expected. Task id should be given as input
 	public function GetPage($pageId, $page = null) {
 		if (is_null($page)) {
 			$page = Pages::findFirstById($pageId);
 		}
 
 		$result = $page->toArray();
+
 		$result['task_page'] = TasksPages::find(['conditions' => 'pages_id = :pageId:', 'bind' => ['pageId' => $pageId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
 
-		$taskUnit = TasksUnits::find(['conditions' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $result['task_page'][0]['tasks_id']]]);
-
+		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $result['task_page'][0]['tasks_id']]]);
 		if ($taskUnit == false) {
 			throw new Exception('TaskUnit not found for page id ' . $pageId);
 		}
 
 		$post = new Posts();
-		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit[0]->columns, $taskUnit[0]->rows);
+		$result['next_post'] = $post->GetNextPossiblePostForPage($pageId, $taskUnit->columns, $taskUnit->rows);
 		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId . ' AND complete = 1', 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
 
 		$result['posts'] = [];
