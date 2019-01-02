@@ -12,6 +12,7 @@ class Datasources extends \Phalcon\Mvc\Model {
 
 	public function GetData($searchString) {
 		$query = str_replace(':query', $searchString, $this->sql);
+		$query = $this->getDI()->get('db')->escapeString($query);
 		$result = $this->getDI()->get('db')->query($query);
 		$result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
 		return $result->fetchAll();
