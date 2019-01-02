@@ -209,9 +209,18 @@ try {
 } catch (Exception $e) {
 	//Saving system exception
 	$exception = new SystemExceptions();
+
+	$mainCtrl = new MainController();
+
+	$postData = $mainCtrl->GetAndValidateJsonPostData();
+
+	if($postData == false){
+		$postData = null;
+	}
+
 	$exception->save([
 		'type' => 'global_exception',
-		'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString()]),
+		'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' =>  $postData]),
 	]);
 
 	$di->get('response')->setStatusCode(500, "Server error");
