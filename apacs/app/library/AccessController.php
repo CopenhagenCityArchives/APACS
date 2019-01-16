@@ -26,7 +26,7 @@ class AccessController implements IAccessController {
 			$response = $this->getWebPage($url);
 
 			if ($response == false) {
-				$this->message = 'Could not get response from auth server';
+				$this->message = 'Could not get response from auth server:' . $this->message;
 				return false;
 			}
 
@@ -58,20 +58,21 @@ class AccessController implements IAccessController {
 			CURLOPT_AUTOREFERER => true, // set referrer on redirect
 			CURLOPT_CONNECTTIMEOUT => 10, // time-out on connect
 			CURLOPT_TIMEOUT => 10, // time-out on response
+			
 		);
 
 		$ch = curl_init($url);
 		curl_setopt_array($ch, $options);
-
+		
 		$content = curl_exec($ch);
-
-		if (curl_error($ch)) {
-			$this->message = 'Could not concat auth server';
+		$err = curl_error($ch);
+		if ($err) {
+			$this->message = 'Could not contact auth server: ' . $err;
 			return false;
 		}
 
 		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == '401') {
-			$this->message = 'Invalid token';
+			$this->message = 'Invalid token (401 from auth server)';
 			return false;
 		}
 
