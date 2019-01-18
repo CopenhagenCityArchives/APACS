@@ -1075,7 +1075,7 @@ $collectionsSettings = array(
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
-                        WHERE volumetype_id = 11 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 11 AND is_public = 1 AND :query ORDER BY page_number',
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
