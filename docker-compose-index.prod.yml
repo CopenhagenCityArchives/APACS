@@ -4,7 +4,7 @@ services:
     container_name: indexer
     build:
         context: ./
-        dockerfile: ./infrastructure/indexing/Dockerfile
+        dockerfile: ./infrastructure/indexing/Dockerfile_prod
 
     networks:
       - default

@@ -1,4 +1,4 @@
-version: '2'
+version: '3.6'
 services:
   phalcon2:
     build:
@@ -26,7 +26,7 @@ services:
       command: update
       working_dir: /code
       volumes:
-        - ./apacs:/code   
+        - ./apacs:/code
   db:
     image: mysql
     container_name: database
@@ -38,11 +38,9 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: dev
       MYSQL_PASSWORD: 123456
-      MYSQL_DATABASE: apacs
+      MYSQL_DATABASE: apacs      
   solr:
-    build:
-      context: ./infrastructure/solr/
-      dockerfile: ./infrastructure/solr/Dockerfile
+    image: library/solr:6.6.3
     container_name: solr
     ports:
       - "8989:8983"
@@ -52,15 +50,6 @@ services:
       - apacs_core
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
-        - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
-  indexer:
-    container_name: indexer
-    build:
-        context: ./
-        dockerfile: ./infrastructure/indexing/Dockerfile_dev
-    volumes:
-      - ./indexing:/usr/src/app/
-    environment:
-      - PYTHON_ENV=DEV
+        - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf    
 networks:
     default:
