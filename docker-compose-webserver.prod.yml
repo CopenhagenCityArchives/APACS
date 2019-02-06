@@ -1,0 +1,53 @@
+version: '3.6'
+services:
+  phalcon2:
+    build:
+      context: .
+      dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
+    container_name: phalcon2
+    depends_on:
+      - composer
+    environment:
+      - PHP_ENV=PROD
+      - FTP_HOST=ftp://phhw-140602.cust.powerhosting.dk
+      - FTP_USER=kbharkiv
+      - FTP_PASSWORD=***REMOVED***
+  nginx2:
+      image: nginx:alpine
+      container_name: nginx2
+      ports:
+       - "80:80"
+  composer:
+      container_name: composer
+      restart: 'no'
+      image: composer/composer:php7
+      command: update --no-dev
+      working_dir: /code
+      volumes:
+        - ./apacs:/code
+  db:
+    image: mysql
+    container_name: database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./apacs/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: dev
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: apacs
+  solr:
+    container_name: solr
+    build:
+      context: infrastructure/solr/
+      dockerfile: infrastructure/solr/Dockerfile
+    ports:
+      - "8983:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_core
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_core      
+networks:
+    default:
