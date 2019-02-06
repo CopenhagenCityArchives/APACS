@@ -15,7 +15,7 @@ All services are designed to be started with docker-compose.
 
 There are several groups of docker-compose-files:
 * docker-compose-index.dev.yml and docker-compose-index.prod.yml: These files are used for development and deployment of the Solr server as well as the indexation scripts
-* docker-compose.dev.yml and docker-compose.prod.yml: These files are used for development of the webserver and the database.
+* docker-compose.webserver.dev.yml and docker-compose.webserver.prod.yml: These files are used for development of the webserver and the database.
 * docker-compose.complete.dev.yml: A development infrastructure used when all services are needed.
 
 Notice that the Solr service is included in both files, as the service is used by both the API and the indexer scripts.
@@ -81,10 +81,10 @@ Run the test in the docker container:
 * To watch for changes use phpunit-watcher: ``vendor/bin/phpunit-watcher watch -c test_phpunit.xml --testdox``
 
 Run the test from outside the container using docker-compose:
-* ``docker-compose -f docker-compose-nginx-phalcon.yml up -d --force-recreate``
+* ``docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate``
 * To run a single test run: ``docker-compose -f docker-compose-nginx-phalcon.yml exec -w /code phalcon2 vendor/
 bin/phpunit -c test_phpunit.xml --testdox``
-* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-nginx-phalcon.yml exec -w /code phalcon2 vendor/bin/phpunit-watcher watch -c test_phpunit.xml --testdox``
+* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon2 vendor/bin/phpunit-watcher watch -c test_phpunit.xml --testdox``
 
 
 ## Code coverage (propably unsupported currently)
