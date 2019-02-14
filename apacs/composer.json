@@ -1,7 +1,8 @@
 {
     "autoload": {
         "classmap": [
-            "app/"
+            "app/",
+            "tests/"
         ]
     },
     "require-dev": {
@@ -12,6 +13,7 @@
     },
     "require": {
         "solarium/solarium": "v3.5.1",
-        "j4mie/idiorm": "^1.5"
+        "j4mie/idiorm": "^1.5",
+        "arjunkomath/crud": "dev-master"
     }
 }
