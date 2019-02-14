@@ -1,6 +1,5 @@
 <?php
 
-include '../app/library/DataReceiver.php';
 
 class DataReceiverTest extends \UnitTestCase {
 

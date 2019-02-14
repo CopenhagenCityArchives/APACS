@@ -5,8 +5,8 @@ class ConcreteEntriesTest extends \UnitTestCase {
 	private $entitiesMock;
 	private $entriesMock;
 
-	public function setUp() {
-		parent::setUp();
+	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+		parent::setUp($di, $config);
 		
 		$this->di->set('config', function () {
 			return [

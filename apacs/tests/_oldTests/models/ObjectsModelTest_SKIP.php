@@ -5,10 +5,10 @@ class ObjectsModelTest extends \UnitTestCase {
 	private $_model;
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		$di = new \Phalcon\Di\FactoryDefault;
+		parent::setUp($di, $config);
 
 		//Test specific database, Phalcon
-		$di->set('database', function () {
+		$this->di->set('database', function () {
 			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
 				"host" => "localhost",
 				"username" => "root",
@@ -69,12 +69,12 @@ class ObjectsModelTest extends \UnitTestCase {
 			array(
 				'id' => 341,
 				'metadata' => array('station' => 1, 'roll' => '23'),
-				'images' => array('http://www.kbhkilder.dk/test/0002.jpg'),
+				'images' => array('https://www.kbhkilder.dk/test/0002.jpg'),
 			),
 			array(
 				'id' => 2,
 				'metadata' => array('station' => 3, 'roll' => '24'),
-				'images' => array('http://www.kbhkilder.dk/test/0004.jpg'),
+				'images' => array('https://www.kbhkilder.dk/test/0004.jpg'),
 			),
 		);
 
@@ -94,7 +94,7 @@ class ObjectsModelTest extends \UnitTestCase {
 			[
 				'id' => 1,
 				'metadata' => ['station' => 1, 'roll' => 2, 'width' => '1024', 'height' => '960'],
-				'images' => ['http://www.kbhkilder.dk/url'],
+				'images' => ['https://www.kbhkilder.dk/url'],
 			],
 		];
 

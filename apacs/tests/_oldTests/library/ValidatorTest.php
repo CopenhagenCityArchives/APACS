@@ -1,8 +1,5 @@
 <?php
 
-include '../app/library/ValidationRuleSet.php';
-include '../app/library/Validator.php';
-
 class ValidationRuleSetTest extends \UnitTestCase {
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
@@ -19,7 +16,7 @@ class ValidationRuleSetTest extends \UnitTestCase {
 
 		$this->assertEquals(true, $Validator->IsValid('sd'), 'Should return true when data is valid');
 
-		$this->assertEquals(false, $Validator->IsValid(''), 'Should return false when data is invalid');
+		$this->assertEquals(true, $Validator->IsValid(''), 'Should return true when data is empty');
 	}
 
 	public function testSupportForFalseRegularExpression() {
