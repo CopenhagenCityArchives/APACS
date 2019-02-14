@@ -11,8 +11,12 @@
          stopOnFailure="false"
          syntaxCheck="true">
     <testsuites>
-        <testsuite name="all">
-          <directory suffix="Test.php">./tests</directory>
+        <testsuite name="unit">
+          <directory suffix="Test.php">./tests/ConcreteEntries</directory>
+          <directory suffix="Test.php">./tests/TaskConfigLoader</directory>
+        </testsuite>
+        <testsuite name="functional">
+          <directory suffix="Test.php">./tests/FunctionalTests</directory>
         </testsuite>
     </testsuites>
     <!-- Database connection settings -->
