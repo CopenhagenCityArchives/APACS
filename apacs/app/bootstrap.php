@@ -20,6 +20,16 @@ try {
 
 	require '../../app/config/config.php';
 
+	//TODO: Test if this works as well (better to use one autoloader than two) :
+	/**
+ * Register Files, composer autoloader
+ */
+// $loader->registerFiles(
+//     [
+//         APP_PATH . '/vendor/autoload.php'
+//     ]
+// );
+
 	//Setup the configuration service
 	$di->setShared('configuration', function () use ($di) {
 		//Loading the almighty configuration array
