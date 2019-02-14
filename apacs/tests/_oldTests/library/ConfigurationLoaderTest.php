@@ -1,15 +1,14 @@
 <?php
 
-include '../app/library/ConfigurationLoader.php';
-
 class ConfigurationLoaderTest extends \UnitTestCase {
 
 	private $_model;
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
 		parent::setUp($di, $config);
-		$this->_model = new CollectionsConfiguration("inputtest");
-		$this->_model->loadConfig(include "./Mocks/MockCollectionsConfiguration.php");
+		$mockCol = new Mocks\MockedCollectionsSettings();
+
+		$this->_model = new ConfigurationLoader($mockCol->getCollection());
 	}
 
 	public function tearDown() {
@@ -18,11 +17,11 @@ class ConfigurationLoaderTest extends \UnitTestCase {
 	}
 
 	public function testInitialization() {
-		$this->assertInstanceOf('CollectionsConfigurationModel', $this->_model);
+		$this->assertInstanceOf('ConfigurationLoader', $this->_model);
 
 		//Should throw exception when running loadConfig without input
 		$this->setExpectedException('Exception');
-		$testModel = new CollectionsConfiguration();
+		$testModel = new ConfigurationLoader("/doesnt/exist.txt");
 		$testModel->loadConfig();
 	}
 

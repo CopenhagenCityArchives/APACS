@@ -3,9 +3,9 @@
 class PagesModelsTest extends \UnitTestCase {
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		$di = new \Phalcon\Di\FactoryDefault;
+		parent::setUp($di, $config);
 
-		$di->set('database', function () {
+		$this->di->set('database', function () {
 			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
 				"host" => "localhost",
 				"username" => "root",

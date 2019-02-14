@@ -5,8 +5,8 @@ class EntitiesValidatorTest extends \UnitTestCase {
 	private $entityMock;
 	private $entityValidator;
 
-	public function setUp() {
-		parent::setUp();
+	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+		parent::setUp($di, $config);
 
 		$this->entitiesFieldsMockConf = new \Mocks\EntitiesMock($this->di);
 

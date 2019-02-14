@@ -41,4 +41,8 @@ class EntitiesMock {
 
 		return $entity;
 	}
+
+	public function insertEntity() {}
+
+	public function createTables(){}
 }	

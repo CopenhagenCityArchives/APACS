@@ -6,15 +6,15 @@ class IndexDataControllerTest extends \UnitTestCase {
 	private $entriesMock;
 
 	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		$di = new \Phalcon\Di\FactoryDefault;
+		parent::setUp($di, $config);
 
-		$di->set('configuration', function () {
-			$conf = new ConfigurationLoader('./Mocks/MockCollectionsConfiguration.php');
+		$this->di->set('configuration', function () {
+			$conf = new TaskConfigurationLoader('./Mocks/MockCollectionsConfiguration.php');
 			return $conf;
 		});
 
 		//Test specific database, Phalcon
-		$di->setShared('db', function () {
+		$this->di->setShared('db', function () {
 			return new \Phalcon\Db\Adapter\Pdo\Mysql(array(
 				"host" => "localhost",
 				"username" => "root",
