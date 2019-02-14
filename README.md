@@ -77,14 +77,14 @@ PHPUnit and phpunit-watcher are installed with Composer during docker-compose up
 
 Run the test in the docker container:
 * ``docker exec -it -w /code phalcon2 /bin/bash``
-* To run a single test run: ``vendor/bin/phpunit -c test_phpunit.xml --testdox``
-* To watch for changes use phpunit-watcher: ``vendor/bin/phpunit-watcher watch -c test_phpunit.xml --testdox``
+* To run a single test run: ``vendor/bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``vendor/bin/phpunit-watcher watch --testdox``
 
 Run the test from outside the container using docker-compose:
 * ``docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate``
 * To run a single test run: ``docker-compose -f docker-compose-nginx-phalcon.yml exec -w /code phalcon2 vendor/
-bin/phpunit -c test_phpunit.xml --testdox``
-* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon2 vendor/bin/phpunit-watcher watch -c test_phpunit.xml --testdox``
+bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon2 vendor/bin/phpunit-watcher watch --testdox``
 
 
 ## Code coverage (propably unsupported currently)
