@@ -2,7 +2,7 @@ version: '3.6'
 services:
   phalcon2:
     build:
-      context: ./infrastructure/php-fpm-phalcon
+      context: ./
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
     container_name: phalcon2
     depends_on:
@@ -28,12 +28,13 @@ services:
       volumes:
         - ./apacs:/code
   db:
-    image: mysql
+    image: mysql:5.7
     container_name: database
     ports:
       - "3306:3306"
     volumes:
-      - ./infrastructure/db/init:/docker-entrypoint-initdb.d
+      - ./apacs/tests/FunctionalTests/db-init:/docker-entrypoint-initdb.d
+      - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: dev

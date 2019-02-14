@@ -2,7 +2,7 @@ version: '3.6'
 services:
   phalcon2:
     build:
-      context: .
+      context: ./
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
     container_name: phalcon2
     depends_on:

@@ -12,6 +12,8 @@ RUN \
     apk del git autoconf make m4 perl g++ gcc \
     musl-dev libc-dev check-dev cyrus-sasl-dev libsodium-dev libssh2-dev yaml-dev openssl-dev imagemagick-dev zlib-dev
 
+RUN docker-php-ext-install pdo pdo_mysql
+
 # copy source code
 COPY /apacs /code
 WORKDIR /code
