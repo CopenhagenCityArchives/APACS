@@ -1,0 +1,35 @@
+{
+    "parentTask": 1,
+    "keyName": "persons1",
+    "testKey": "test",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "persons": {
+                "id": "1",
+                "task_id": "1",
+                "name": "persons",
+                "isPrimaryEntity": "1",
+                "entityKeyName": "id",
+                "type": "object",
+                "required": [
+                    "firstnames",
+                    "lastname"
+                ],
+                "countPerEntry": "1",
+                "guiName": "Person",
+                "primaryTableName": "burial_persons",
+                "includeInSOLR": "0",
+                "viewOrder": "1",
+                "parent_id": null,
+                "dbTableName": null,
+                "fieldRelatingToParent": null,
+                "allowNewValues": "1",
+                "typeOfRelationToParent": "connection",
+                "saveOrderAccordingToParent": "after",
+                "title": "Begravelser",
+                "description": "Indtastning af begravelsesprotokoller2"
+            }
+        }
+    }
+}
