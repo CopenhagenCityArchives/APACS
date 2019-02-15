@@ -50,7 +50,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                 null
             );
 
-        $entry = new ConcreteEntries($this->di, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->save($entity, $dataToSave);
     }
     
@@ -78,7 +78,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                 $dataToSaveWithId['id']
             );
 
-        $entry = new ConcreteEntries($this->di, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->save($entity, $dataToSaveWithId);
     }
 
@@ -107,7 +107,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
         $crudMock->method('save')
             ->willReturn(1);
 
-        $entry = new ConcreteEntries($this->di, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->save($entity, $dataToSave);
     }
 
@@ -144,7 +144,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                 1
             ));
 
-        $entry = new ConcreteEntries($this->di, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->save($entity, $inputData);
     }
 
@@ -166,7 +166,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
          )
          ->willReturn(1);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->save($entity, $inputData);
     }
 }
