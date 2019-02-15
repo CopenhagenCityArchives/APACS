@@ -14,6 +14,7 @@
         <testsuite name="unit">
           <directory suffix="Test.php">./tests/ConcreteEntries</directory>
           <directory suffix="Test.php">./tests/TaskConfigLoader</directory>
+          <directory suffix="Test.php">./tests/TaskConfigurationEntitiesMapper</directory>
         </testsuite>
         <testsuite name="functional">
           <directory suffix="Test.php">./tests/FunctionalTests</directory>
