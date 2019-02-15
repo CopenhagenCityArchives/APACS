@@ -70,7 +70,7 @@ if __name__ == "__main__":
 			# </urlset> 
 			
 			url = ET.SubElement(root, "url")
-			ET.SubElement(url, "loc").text = "https://kbharkiv.dk/permalink/post/" + d['id']
+			ET.SubElement(url, "loc").text = "https://www.kbharkiv.dk/permalink/post/" + d['id']
 			ET.SubElement(url, "lastmod").text = d['last_update'][0:10]
 			ET.SubElement(url, "changefreq").text = 'monthly'
 			ET.SubElement(url, "priority").text = '0.8'
@@ -139,7 +139,7 @@ if __name__ == "__main__":
 
 	#Notify Google of new sitemap
 	writeflush("notifying Google")
-	contents = urllib.request.urlopen("http://google.com/ping?sitemap=https://kbharkiv.dk/posts_meta_sitemap.xml").read()
+	contents = urllib.request.urlopen("http://google.com/ping?sitemap=https://kbharkiv.dk/metasitemap_persons.xml").read()
 	print(contents)
 	# on error:
 	#SNS_Notifier.error(repr(e))
