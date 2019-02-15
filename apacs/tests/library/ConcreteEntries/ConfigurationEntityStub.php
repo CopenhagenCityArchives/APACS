@@ -1,19 +1,7 @@
 <?php
 namespace Mocks;
 
-class EntitiesMock implements \IEntitiesInfo {
-	public $primaryTableName;
-	public $fieldsList;
-	public $fields;
-	public $isPrimaryEntity;
-	public $entityKeyName;
-	public $name;
-	public $guiName;
-	public $task_id;
-	public $type;
-
-	//array representation of Entity
-	private $array;
+class ConfigurationEntityStub extends \ConfigurationEntity {
 
 	//Public variables used to indicate method returns
 	public $valid;
@@ -21,7 +9,6 @@ class EntitiesMock implements \IEntitiesInfo {
 	public $isDataValid;
 	public $next;
 	public $AllEntityFieldsAreEmpty;
-
 
 	public function __construct(Array $entity) {
 		$this->primaryTableName = $entity['primaryTableName'];
@@ -43,27 +30,6 @@ class EntitiesMock implements \IEntitiesInfo {
 		
 	}
 
-	public function GetPrimaryEntity(Array $entities){
-		throw new Exception("not implemented");
-	}
-
-	public function GetSecondaryEntities(Array $entities){
-		throw new Exception("not implemented");
-	}
-
-	public function toArray(){
-		return $this->array;
-	}
-
-	//Return a list of FieldMock objects
-	public function getFields(){
-		return $this->fields->getFieldsAsObjects();
-	}
-
-	public function setFields($fields){
-		$this->fieldsList = $fields;
-		$this->fields = new FieldsMock($fields);
-	}
 	public function rewind(){
 	}
 	public function valid(){
