@@ -14,7 +14,7 @@ class ConcreteEntriesLoadTest_skip extends \UnitTestCase {
 	public function test_Load_ObjectEntity_ShouldCallCrudLoad_WithId() {
         $this->markTestIncomplete();
         //Set entity mock and data
-        $entity = EntitiesDataMock::getSimpleEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
         $id = 46;
         
         // Create a stub for the CrudMock class.
