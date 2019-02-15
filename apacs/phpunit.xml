@@ -12,9 +12,9 @@
          syntaxCheck="true">
     <testsuites>
         <testsuite name="unit">
-          <directory suffix="Test.php">./tests/ConcreteEntries</directory>
-          <directory suffix="Test.php">./tests/TaskConfigLoader</directory>
-          <directory suffix="Test.php">./tests/TaskConfigurationEntitiesMapper</directory>
+          <directory suffix="Test.php">./tests/library/ConcreteEntries</directory>
+          <directory suffix="Test.php">./tests/library/Configuration/TaskConfigLoader</directory>
+          <directory suffix="Test.php">./tests/library/Configuration/TaskConfigurationEntitiesMapper</directory>
         </testsuite>
         <testsuite name="functional">
           <directory suffix="Test.php">./tests/FunctionalTests</directory>
