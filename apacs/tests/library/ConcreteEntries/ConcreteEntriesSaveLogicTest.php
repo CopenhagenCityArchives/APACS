@@ -16,7 +16,7 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
 	public function test_SaveEntries_SimpleEntity_CallCrudSave() {
 
         //Set entity mock and data
-        $entity = EntitiesDataMock::getSimpleEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
         $inputData = [ $entity->name => ['field1' => 'value1']];
         $saveData = ['field1' => 'value1']; 
         
@@ -44,8 +44,8 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
     public function test_SaveEntries_WithSecondaryEntry_CallCrudSaveTwice(){
         //Set entity mock and data
         $entities = [];
-        $entities[] = EntitiesDataMock::getSimpleEntity();
-        $entities[] = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entities[] = EntitiesTestData::getSimpleEntity();
+        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
 
         $inputData = [ 
             $entities[0]->name => [
@@ -93,9 +93,9 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
      //Delete secondary empty object entries on save
      public function test_SaveSecondaryObjectEntity_WithNoDataButId_RemoveEntity(){
         $entities = [];
-        $entities[] = EntitiesDataMock::getSimpleEntity();
+        $entities[] = EntitiesTestData::getSimpleEntity();
         
-        $entities[] = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
         //Return true to test empty data
         $entities[1]->AllEntityFieldsAreEmpty = true;
 
@@ -131,9 +131,9 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
     //Dont delete or save secondary empty array entries on save
     public function test_SaveSecondaryArrayEntity_WithNoDataButId_SkipEntity(){
         $entities = [];
-        $entities[] = EntitiesDataMock::getSimpleEntity();
+        $entities[] = EntitiesTestData::getSimpleEntity();
         
-        $entities[] = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
         //Return true to test empty data
         $entities[1]->AllEntityFieldsAreEmpty = true;
         $entities[1]->type = 'array';

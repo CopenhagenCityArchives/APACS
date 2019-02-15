@@ -29,7 +29,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
 	public function test_SaveEntityObject_ShouldCallCrudSaveInputData() {
 
         //Set entity mock and data
-        $entity = EntitiesDataMock::getSimpleEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
         $entity->dataIsValid = true;
         $dataToSave = ['field1' => 'value1'];
         
@@ -57,7 +57,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
     // Update
     public function test_SaveWithIdInData_ShouldCallCrudWithId() {
        //Set entity mock and data
-       $entity = EntitiesDataMock::getSimpleEntity();
+       $entity = EntitiesTestData::getSimpleEntity();
        $dataToSaveWithId = ['id' => 1, 'field1' => 'value1'];
        
        // Create a stub for the CrudMock class.
@@ -84,7 +84,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
 
     // Decode
     public function test_SaveWithDecodeField_ShouldCallCrudLoadWithDecoding() {
-        $entity = EntitiesDataMock::getDecodeEntity();
+        $entity = EntitiesTestData::getDecodeEntity();
         $dataToSave = ['field1'=>'value1', 'decodeField1' => 'encodedValue'];
         $decodedValue = 'decodedValue';
 
@@ -113,7 +113,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
 
     // Decode, new value
     public function test_SaveWithDecodeFieldNewValue_ShouldCallCrudSaveWithNewValue() {
-        $entity = EntitiesDataMock::getDecodeEntityNewValuesAllowed();
+        $entity = EntitiesTestData::getDecodeEntityNewValuesAllowed();
         
         $codeId = 'codeId';
         $codeValue = 'codeValue';
@@ -150,7 +150,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
 
     //ordering
     public function test_SaveArrayEntity_AddOrderingField(){
-        $entity = EntitiesDataMock::getSimpleArrayEntity();
+        $entity = EntitiesTestData::getSimpleArrayEntity();
         
         $inputData = ['field1'=>'value1'];
         $dataToSave = ['field1' => 'value1', 'order'=>0];

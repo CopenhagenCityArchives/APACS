@@ -12,7 +12,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
     // secondary entities, throw exception on missing reference to parent
     public function test_SaveSecondaryEntity_WithNoReferenceToPrimaryEntity_ThrowException(){
-        $entity = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entity = EntitiesTestData::getSimpleSecondaryEntity();
         
         $inputData = [
             'field2'=>'value2', 
@@ -30,7 +30,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
     
     //No data for primary entity
     public function test_SavePrimaryEntity_WithNoData_ThrowException(){
-        $entity = EntitiesDataMock::getSimpleEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
         
         $inputData = [];
 
@@ -44,7 +44,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
     
     public function test_SavePrimaryEntity_WithInvalidData_ThrowException(){
 
-        $entity = EntitiesDataMock::getSimpleEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
         $entity->isDataValid = false;
         
         $inputData = [
@@ -66,8 +66,8 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
     //Invalid data for primary entity 
     public function test_SaveSecondaryObjectEntity_WithInvalidData_ThrowException(){
         $entities = [];
-        $entities[] = EntitiesDataMock::getSimpleEntity();
-        $entities[] = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entities[] = EntitiesTestData::getSimpleEntity();
+        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
         
         $entities[1]->isDataValid = false;
         
@@ -93,8 +93,8 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
     public function test_SaveSecondaryEntityArray_WithInvalidData_ThrowException(){
         $entities = [];
-        $entities[] = EntitiesDataMock::getSimpleEntity();
-        $entities[] = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entities[] = EntitiesTestData::getSimpleEntity();
+        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
         
         $entities[1]->isDataValid = false;
         $entities[1]->type = 'array';
@@ -126,8 +126,8 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
     public function test_SaveSecondaryEntityArray_WithNoData_Ignore(){
         $entities = [];
-        $entities[] = EntitiesDataMock::getSimpleEntity();
-        $entities[] = EntitiesDataMock::getSimpleSecondaryEntity();
+        $entities[] = EntitiesTestData::getSimpleEntity();
+        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
         
         $entities[1]->isDataValid = true;
         $entities[1]->type = 'array';

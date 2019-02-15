@@ -1,5 +1,5 @@
 <?php
-class EntitiesDataMock{
+class EntitiesTestData{
     public static function getSimpleEntity(){
         $field = new stdClass();
         $field->fieldName = 'field1';
