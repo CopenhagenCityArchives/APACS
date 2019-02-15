@@ -3,10 +3,9 @@
 class ConcreteEntries {
 
 	private $id;
-	private $di;
 	private $crud;
 
-	public function __construct(Phalcon\DiInterface $di = null, $crud = null) {
+	public function __construct(Phalcon\DiInterface $di, $crud = null) {
 		
 		$this->di = $di;
 
@@ -29,7 +28,7 @@ class ConcreteEntries {
 			catch(Exception $e){
 
 			}
-			ORM::configure('logging', true);
+			//ORM::configure('logging', true);
 			//echo ORM::get_last_query();
 			$this->crud = new CRUD\CRUD();
 		}
