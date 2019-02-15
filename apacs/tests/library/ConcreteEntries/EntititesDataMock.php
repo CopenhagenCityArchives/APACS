@@ -16,7 +16,7 @@ class EntitiesDataMock{
             'fieldsList' => [$field]
         ];
 
-        $entity = new Mocks\EntitiesMock($entityInfo);
+        $entity = new Mocks\ConfigurationEntityStub($entityInfo);
         
         return $entity;
     }
@@ -38,7 +38,7 @@ class EntitiesDataMock{
             'fieldsList' => [$field]
         ];
 
-        $entity = new Mocks\EntitiesMock($entityInfo);
+        $entity = new Mocks\ConfigurationEntityStub($entityInfo);
         
         return $entity;    
     }
@@ -60,7 +60,7 @@ class EntitiesDataMock{
             'fieldsList' => [$field]
         ];
 
-        $entity = new Mocks\EntitiesMock($entityInfo);
+        $entity = new Mocks\ConfigurationEntityStub($entityInfo);
         
         return $entity; 
     }
