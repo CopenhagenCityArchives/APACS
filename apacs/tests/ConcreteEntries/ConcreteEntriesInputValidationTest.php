@@ -23,7 +23,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
         $this->expectException(InvalidArgumentException::class);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->save($entity, $inputData);
     }
 
@@ -38,7 +38,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
         $this->expectException(InvalidArgumentException::class);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask([$entity], $inputData);
     }
     
@@ -59,7 +59,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
         $this->expectException(InvalidArgumentException::class);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask([$entity], $inputData);
     }
 
@@ -87,7 +87,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
         $this->expectException(InvalidArgumentException::class);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask($entities, $inputData);
     }
 
@@ -120,7 +120,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
         $this->expectException(InvalidArgumentException::class);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask($entities, $inputData);
     }
 
@@ -146,14 +146,14 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
             ->method('save')
             ->willReturn(1);
 
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask($entities, $inputData);
     }
 
     public function test_SaveWithNoEntities_ThrowException(){
         $this->expectException(InvalidArgumentException::class);
         $crudMock = $this->createMock(Mocks\CrudMock::class);
-        $entry = new ConcreteEntries(null, $crudMock);
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask([], null);
     }
 
