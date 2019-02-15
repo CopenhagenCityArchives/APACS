@@ -135,6 +135,9 @@
   <field name="efterretning_fileName" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="efterretning_type" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
 
+  <!-- SKOLEPROTOKOLLER -->
+  <field name="schoolName" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
   <copyField source="lastname" dest="freetext_store"/>
@@ -161,6 +164,7 @@
   <copyField source="erindring_keywords" dest="freetext_store"/>
   <copyField source="erindring_document_text" dest="freetext_store"/>
   <copyField source="comments" dest="freetext_store"/>
+  <copyField source="schoolName" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />

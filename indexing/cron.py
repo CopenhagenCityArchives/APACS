@@ -11,19 +11,19 @@ def job():
     print("Still alive")
 
 def erindringer():
-    print 'erindringer'
+    print('erindringer')
     os.system("python erindringer.py")
 
 def begravelser():
-    print 'begravelser'
+    print('begravelser')
     os.system("python begravelsesprotokoller.py")
 
 def polle():
-    print 'polle'
+    print('polle')
     os.system("python polle.py")
 
 def efterretninger():
-    print 'efterretninger'
+    print('efterretninger')
     os.system("python efterretninger.py")
 
 #Only run scheduling if in PROD mode

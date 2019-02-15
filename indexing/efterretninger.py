@@ -22,7 +22,7 @@ if __name__ == "__main__":
 	solr = None
 	cip = None
 
-	COLLECTION_ID = 19
+	COLLECTION_ID = 100
 
 	try:
 		writeflush("Connecting to CIP... ")
