@@ -7,35 +7,39 @@ class ConcreteEntries {
 	private $crud;
 
 	public function __construct(Phalcon\DiInterface $di = null, $crud = null) {
+		
 		$this->di = $di;
-		if ($this->di == null) {
-			$this->di = new Phalcon\DI\FactoryDefault();
-		}
 
+		//Set crud
 		$this->crud = $crud;
+		
+		
+		//If no crud given use default and setup
 		if ($this->crud == null) {
+			//Settings for ORM db access
+			ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname'] . ';charset=utf8;');
+			ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+			ORM::configure('username', $this->getDI()->get('config')['username']);
+			ORM::configure('password', $this->getDI()->get('config')['password']);
+			ORM::configure('id_column', 'id');
+			//This is necessary for PDO for PHP earlier than 5.3.some, as the charset=utf8 option above is ignored
+			try{
+				ORM::get_db()->exec("set names utf8");
+			}
+			catch(Exception $e){
+
+			}
+			ORM::configure('logging', true);
+			//echo ORM::get_last_query();
 			$this->crud = new CRUD\CRUD();
 		}
-
-		//Settings for ORM db access
-		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname'] . ';charset=utf8;');
-		ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
-		ORM::configure('username', $this->getDI()->get('config')['username']);
-		ORM::configure('password', $this->getDI()->get('config')['password']);
-		ORM::configure('id_column', 'id');
-		//This is necessary for PDO for PHP earlier than 5.3.some, as the charset=utf8 option above is ignored
-		ORM::get_db()->exec("set names utf8");
-		//ORM::configure('logging', true);
-		//echo ORM::get_last_query();
-
-		$this->crud = new CRUD\CRUD();
 	}
 
 	private function GetDI() {
 		return $this->di;
 	}
 
-	public function Load(Entities $entity, $primaryKeyName, $id) {
+	public function Load($entity, $primaryKeyName, $id) {
 		if ($entity->type == 'array') {
 
 			return $this->buildJoins($entity)->where($primaryKeyName, $id)->order_by_asc('order')->find_array();
@@ -192,11 +196,13 @@ class ConcreteEntries {
 	public function convertDataFromHierarchy($entities, $data) {
 		$results = [];
 
-		$primaryEntity = Entities::GetPrimaryEntity($entities);
+		$primaryEntity = $this->getPrimaryEntity($entities);//$entities->GetPrimaryEntity($entities);
 
 		$results[$primaryEntity->name] = $data[$primaryEntity->name];
 
-		foreach (Entities::GetSecondaryEntities($entities) as $entity) {
+		//foreach ($entities->GetSecondaryEntities($entities) as $entity) {
+		$secondaryEntities = $this->getSecondaryEntities($entities);
+		foreach ($secondaryEntities as $entity) {
 			$results[$entity->name] = $data[$primaryEntity->name][$entity->name];
 			unset($results[$primaryEntity->name][$entity->name]);
 		}
@@ -258,22 +264,21 @@ class ConcreteEntries {
 	 * @param Entities $entity The data structure defining entity
 	 * @param Array $data The data to save. Only single rows are supported!
 	 */
-	public function Save(Entities $entity, Array $data) {
-
+	public function Save($entity, Array $data) {
 		//Decoding and saving code values
 		foreach ($entity->getFields() as $field) {
+
 			if ($field->hasDecode == 0 || !isset($data[$field->decodeField])) {
 				continue;
 			}
-
 			//This is a field that needs decoding
 			//Lets get the data from the decode table
 			//Creating an entry consisting of the decode table and a field in the table identified by decodeField
 			$fakeField = $field->toArray();
 			$fakeField['fieldName'] = $field->decodeField;
+			//var_dump('her',$field->decodeTable, $field->decodeField,$data[$field->decodeField]);
 
 			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
-
 			//Value not given
 			if (!isset($fieldValues[0]['id'])) {
 
@@ -284,49 +289,72 @@ class ConcreteEntries {
 
 				//Let's create the new value
 				if (count($fieldValues) == 0) {
-
+					
 					$saveData = [$fakeField['fieldName'] => $data[$fakeField['fieldName']]];
 
 					//$fieldValues = $ge->Save($saveData);
 					$id = $this->crud->save($field->decodeTable, $saveData);
 					//Let's use the id of the decode value
 					$data[$field->fieldName] = $id;
+
 				}
 			} else {
 				$data[$field->fieldName] = $fieldValues[0]['id'];
 			}
 		}
-
 		$fields = $entity->fields->toArray();
 
 		//The data is now decoded
 		//We're adding another fake field: The EntityKey. This referes to the main entity of the task
 		if ($entity->isPrimaryEntity != 1) {
-			$entityField = new Fields();
-			$entityField->fieldName = $entity->entityKeyName;
+			//Implementation using Fields model:
 
-			if (!isset($data[$entityField->fieldName])) {
-				throw new InvalidArgumentException('the entity cannot be saved, as there is no value for the entity key field: ' . $entityField->fieldName);
+			// $entityField = new Fields();
+			// $entityField->fieldName = $entity->entityKeyName;
+
+			// if (!isset($data[$entityField->fieldName])) {
+			// 	throw new InvalidArgumentException('the entity cannot be saved, as there is no value for the entity key field: ' . $entityField->fieldName);
+			// }
+
+			// $fields[] = $entityField->toArray();
+
+			//Implementation using array
+			$entityField = [];
+			$entityField['fieldName'] = $entity->entityKeyName;
+
+			if (!isset($data[$entityField['fieldName']])) {
+				throw new InvalidArgumentException('the entity cannot be saved, as there is no value for the entity key field: ' . $entityField['fieldName']);
 			}
 
-			$fields[] = $entityField->toArray();
+			$fields[] = $entityField;
 		}
 
 		//We are adding an 'order' field for all array entities
 		if($entity->type == 'array'){
-			$orderField = new Fields();
-			$orderField->fieldName = 'order';
+			//Implementation using Fields model:
 
-			if(!isset($data[$orderField->fieldName])){
-				$data[$orderField->fieldName] = 0;
+			//$orderField = new Fields();
+			//$orderField->fieldName = 'order';
+
+			//if(!isset($data[$orderField->fieldName])){
+			//	$data[$orderField->fieldName] = 0;
+			//}
+
+			//$fields[] = $orderField->toArray();
+
+			//Implementation using array
+			$orderField = [];
+			$orderField['fieldName'] = 'order';
+
+			if(!isset($data[$orderField['fieldName']])){
+				$data[$orderField['fieldName']] = 0;
 			}
 
-			$fields[] = $orderField->toArray();
+			$fields[] = $orderField;
 		}
 
 		//Let's save the data
 		$id = isset($data['id']) ? $data['id'] : null;
-
 		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data), $id);
 		if (!$newId) {
 			throw new RuntimeException('could not save the entry ' . $entity->name);
@@ -381,14 +409,45 @@ class ConcreteEntries {
 
 	public function rollbackTransaction() {
 		//Let's start a transaction
-		$dbCon = ORM::get_db();
-		$dbCon->rollBack();
+		try{
+			$dbCon = ORM::get_db();
+			$dbCon->rollBack();
+		}
+		catch(Exception $e){
+			
+		}
 	}
 
 	public function commitTransaction() {
 		//Let's start a transaction
 		$dbCon = ORM::get_db();
 		$dbCon->commit();
+	}
+
+	// Return the primary entity.
+	// Input: Array or Entities model
+	private function getPrimaryEntity($entities){
+		$primaryEntity;
+		foreach($entities as $el){
+			if($el->isPrimaryEntity == '1'){
+				$primaryEntity = $el;
+			}
+		}
+
+		return $primaryEntity;
+	}
+
+	
+	// Return the secondary entities.
+	// Input: Array or Entities model
+	private function getSecondaryEntities($entities){
+		$secondaryEntities = [];
+		foreach($entities as $el){
+			if($el->isPrimaryEntity == '0'){
+				$secondaryEntities[] = $el;
+			}
+		}
+		return $secondaryEntities;
 	}
 
 	/**
@@ -403,29 +462,36 @@ class ConcreteEntries {
 	public function SaveEntriesForTask($entities, $data) {
 		$dbCon = ORM::get_db();
 
+		if(count($entities)==0){
+			throw new InvalidArgumentException("no entities given!");
+		}
+
 		//Save primary entity and get id
-		$primaryEntity = Entities::GetPrimaryEntity($entities);
+		//$primaryEntity = Entities::GetPrimaryEntity($entities);
+		$primaryEntity = $this->getPrimaryEntity($entities);
 
 		//Saving main entity
 		if (!isset($data[$primaryEntity->name])) {
-			$dbCon->rollback();
+			$this->rollbackTransaction();
 			throw new InvalidArgumentException('no data given for ' . $primaryEntity->name);
 		}
 
 		if (!$primaryEntity->isDataValid($data[$primaryEntity->name])) {
-			$dbCon->rollback();
+			$this->rollbackTransaction();
 			throw new InvalidArgumentException('could not save primary entity. Input error ' . $primaryEntity->GetValidationStatus());
 		}
 
 		$primaryId = $this->Save($primaryEntity, $data[$primaryEntity->name]);
 
 		if (is_null($primaryId)) {
-			$dbCon->rollback();
+			$this->rollbackTransaction();
 			throw new RuntimeException('could not get insert id for primary entity');
 		}
 
+		$secondaryEntities = $this->getSecondaryEntities($entities);
 		//foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
-		foreach (Entities::GetSecondaryEntities($entities) as $entity) {
+		//foreach (Entities::GetSecondaryEntities($entities) as $entity) {
+		foreach($secondaryEntities as $entity){
 			if (!isset($data[$primaryEntity->name][$entity->name])) {
 				if ($entity->required == '1') {
 					throw new InvalidArgumentException('entity data not set: ' . $entity->name);
