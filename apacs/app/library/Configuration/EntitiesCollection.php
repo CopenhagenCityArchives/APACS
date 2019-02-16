@@ -1,7 +1,6 @@
 <?php
 
-//TODO: Rename to EntitiesCollection?
-class TaskConfigurationEntitiesMapper{
+class EntitiesCollection{
     
     private $config;
     private $entities;
