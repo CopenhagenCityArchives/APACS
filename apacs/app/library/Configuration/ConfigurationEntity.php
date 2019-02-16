@@ -4,6 +4,7 @@ class ConfigurationEntity implements IEntitiesInfo {
 	public $primaryTableName;
 	public $fieldsList;
 	public $fields;
+	private $entities;
 	public $isPrimaryEntity;
 	public $entityKeyName;
 	public $name;
@@ -23,6 +24,7 @@ class ConfigurationEntity implements IEntitiesInfo {
 		$this->task_id = $entity['task_id'];
 		$this->type = $entity['type'];
 		$this->setFields($entity['fields']);
+		$this->setEntities($entity['entities']);
 
 		$this->array = $entity;		
 	}
@@ -47,5 +49,19 @@ class ConfigurationEntity implements IEntitiesInfo {
 	public function setFields($fields){
 		$this->fieldsList = $fields;
 		$this->fields = new ConfigurationFieldsHolder($fields);
+	}
+
+	public function getEntities(){
+		return $this->entities;
+	}
+
+	private function setEntities($entities){
+		$this->entities = [];
+		if(!is_array($entities) || count($entities)==0){
+			return;
+		}
+		foreach($entities as $ent){
+			$this->entities[] = new ConfigurationEntity($ent);
+		}
 	}
 }	
