@@ -1,6 +1,6 @@
 <?php
 
-class TaskConfigurationEntitiesMapperTest extends \UnitTestCase {
+class EntitiesCollectionTest extends \UnitTestCase {
 
 	private $mapper;
 	private $configArray;
@@ -9,7 +9,7 @@ class TaskConfigurationEntitiesMapperTest extends \UnitTestCase {
 		parent::setUp();
 
 		$configArray = json_decode(file_get_contents(__DIR__ . '/task1_config.json'),true);
-		$this->mapper = new TaskConfigurationEntitiesMapper($configArray);
+		$this->mapper = new EntitiesCollection($configArray);
 	}
 
 	public function tearDown() {
