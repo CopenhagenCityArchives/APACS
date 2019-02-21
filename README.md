@@ -46,6 +46,10 @@ docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 
 
 ## Deployment
 ### Index service
+To deploy and interact with the deployed machines Docker needs access to the docker-machines.
+The information required for this is to be placed in your user folder (ie. c:\users\your_name\.docker\machine).
+The machine infos can be found here: ``\\Repositories\Docker-machines, AWS``
+
 Use the following docker-machine (running at AWS): ``apacs-persons``
 
 Get machine env:
