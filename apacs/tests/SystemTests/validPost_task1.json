@@ -1,0 +1,244 @@
+{
+    "metadata": {
+        "collection_id": 1,
+        "collection_name": "Begravelsesprotokoller",
+        "task_id": 1,
+        "unit_id": 123,
+        "post_id": 10000,
+        "unit_description": "1900-1900 (lb.nr.: 1-4030)",
+        "unit_pages": 678,
+        "page_id": 145054,
+        "page_number": 519,
+        "last_update": "2016-12-31 15:27:26",
+        "user_name": "olechr",
+        "user_id": 653,
+        "kildeviser_url": "https://www.kbharkiv.dk/kildeviser/#!?collection=5&item=145054",
+        "user_can_edit": true
+    },
+    "data": [
+        {
+            "entity_name": "persons",
+            "label": "Person",
+            "entry_id": 9331,
+            "task_id": 1,
+            "concrete_entries_id": 9718,
+            "fields": [
+                {
+                    "field_name": "firstnames",
+                    "label": "Fornavne",
+                    "value": "Bartoline",
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "lastname",
+                    "label": "Efternavn",
+                    "value": "Jensen",
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "adressOutsideCph",
+                    "label": "Resten af Danmark/verden",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "ageYears",
+                    "label": "Alder - år",
+                    "value": 80,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "ageMonth",
+                    "label": "Alder - måneder",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "dateOfDeath",
+                    "label": "Dødsdato",
+                    "value": "15-05-1900",
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "yearOfBirth",
+                    "label": "Udregnet fødselsår",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "civilstatus",
+                    "label": "Civilstand",
+                    "value": "Enkestand",
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "deathplace",
+                    "label": "Dødssted",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "birthname",
+                    "label": "Fødenavn (pigenavn)",
+                    "value": "Svendsen",
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "sex",
+                    "label": "Køn",
+                    "value": "Kvinde",
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "comment",
+                    "label": "Kommentar",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "ageWeeks",
+                    "label": "Alder - uger",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "ageDays",
+                    "label": "Alder - dage",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "ageHours",
+                    "label": "Alder - timer",
+                    "value": null,
+                    "parent_id": 9718
+                },
+                {
+                    "field_name": "freetext_store",
+                    "label": "Fritekst",
+                    "value": null,
+                    "parent_id": 9718
+                }
+            ]
+        },
+        {
+            "entity_name": "deathcauses",
+            "label": "Dødsårsag",
+            "entry_id": 9331,
+            "task_id": 1,
+            "concrete_entries_id": 12663,
+            "fields": [
+                [
+                    {
+                        "field_name": "deathcause",
+                        "label": "Dødsårsag",
+                        "value": "Alderdomssvaghed",
+                        "parent_id": 12663
+                    }
+                ]
+            ]
+        },
+        {
+            "entity_name": "positions",
+            "label": "Erhverv",
+            "entry_id": 9331,
+            "task_id": 1,
+            "concrete_entries_id": 9518,
+            "fields": [
+                [
+                    {
+                        "field_name": "position",
+                        "label": "Erhverv",
+                        "value": "Værtshusholder (Wærtshuusholder)",
+                        "parent_id": 9518
+                    },
+                    {
+                        "field_name": "relationtype",
+                        "label": "Relation til erhverv",
+                        "value": "Ægtefælles erhverv",
+                        "parent_id": 9518
+                    },
+                    {
+                        "field_name": "workplace",
+                        "label": "Arbejdssted",
+                        "value": null,
+                        "parent_id": 9518
+                    }
+                ]
+            ]
+        },
+        {
+            "entity_name": "addresses",
+            "label": "Adresse",
+            "entry_id": 9331,
+            "task_id": 1,
+            "concrete_entries_id": 8544,
+            "fields": [
+                {
+                    "field_name": "streetAndHood",
+                    "label": "Gade",
+                    "value": "Ryesgade",
+                    "parent_id": 8544
+                },
+                {
+                    "field_name": "number",
+                    "label": "Gadenummer",
+                    "value": 58,
+                    "parent_id": 8544
+                },
+                {
+                    "field_name": "letter",
+                    "label": "Gadenummerbogstav",
+                    "value": null,
+                    "parent_id": 8544
+                },
+                {
+                    "field_name": "floor",
+                    "label": "Etage",
+                    "value": null,
+                    "parent_id": 8544
+                },
+                {
+                    "field_name": "institution",
+                    "label": "Institution/sted",
+                    "value": null,
+                    "parent_id": 8544
+                }
+            ]
+        },
+        {
+            "entity_name": "burials",
+            "label": "Begravelse",
+            "entry_id": 9331,
+            "task_id": 1,
+            "concrete_entries_id": 9132,
+            "fields": [
+                {
+                    "field_name": "chapel",
+                    "label": "Fra (kapel)",
+                    "value": "Garnison, Kapel",
+                    "parent_id": 9132
+                },
+                {
+                    "field_name": "parish",
+                    "label": "Sogn",
+                    "value": "Sankt Johannes",
+                    "parent_id": 9132
+                },
+                {
+                    "field_name": "cemetary",
+                    "label": "Til kirkegård",
+                    "value": "Garnisons (Garnisons Kirkegård)",
+                    "parent_id": 9132
+                },
+                {
+                    "field_name": "number",
+                    "label": "Løbenummer",
+                    "value": 3097,
+                    "parent_id": 9132
+                }
+            ]
+        }
+    ],
+    "error_reports": []
+}

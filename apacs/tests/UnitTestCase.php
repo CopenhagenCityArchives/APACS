@@ -47,8 +47,8 @@ abstract class UnitTestCase extends TestCase {
             ];
 		});
 
-		$this->di->setShared('db', function () use ($di) {
-            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
+		$this->di->setShared('db', function () {
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($this->get('config'));
 		});
 
 		// Set DI as default (used in Phalcon Models)
