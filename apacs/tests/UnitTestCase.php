@@ -28,6 +28,7 @@ abstract class UnitTestCase extends TestCase {
 		
 		
 		// Use default DI if non given in concrete tests
+		
 		if(is_null($di)){
 			$this->di = new Di();
 		}

@@ -17,6 +17,42 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `apacs_datasources`
+--
+
+DROP TABLE IF EXISTS `apacs_datasources`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `apacs_datasources` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` char(25) COLLATE utf8_danish_ci DEFAULT NULL,
+  `sql` text COLLATE utf8_danish_ci,
+  `url` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
+  `valueField` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `includeValuesInForm` tinyint(1) NOT NULL DEFAULT '0',
+  `dbTableName` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `isPublicEditable` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `apacs_steps`
+--
+
+DROP TABLE IF EXISTS `apacs_steps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `apacs_steps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` char(50) COLLATE utf8_danish_ci DEFAULT NULL,
+  `description` text COLLATE utf8_danish_ci,
+  `tasks_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `apacs_entities`
 --
 

@@ -1,6 +1,6 @@
 <?php
 
-class ErrorReportingTest extends \UnitTestCase
+class ErrorReportingTest extends \SystemTestCase
 {
     private $http;
     private $errorReportId;
@@ -10,25 +10,14 @@ class ErrorReportingTest extends \UnitTestCase
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx2/']);
-
-        // Create database entries for entities and fields        
-        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
-        $this->testDBManager->createApacsStructure();
     }
 
     public function tearDown() {
         $this->http = null;
-
-        // Clear database
-        $this->testDBManager->cleanUpApacsStructure();
 		parent::tearDown();
     }
 
     public function test_ReportError_RemoveError_ErrorReportCountCorrect(){
-        
-        $this->testDBManager->createEntitiesAndFieldsForTask1();
-        $this->testDBManager->createApacsMetadataForEntryPost10000Task1();
-        $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         $response = $this->http->request('GET', 'posts/10000');
 

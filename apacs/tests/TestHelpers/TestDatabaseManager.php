@@ -37,4 +37,8 @@ class TestDatabaseManager {
 	public function createBurialDataForEntryPost1000Task1(){
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/burials-structure-and-data-single-person.sql'));
 	}
+
+	public function cleanUpBurialStructure(){
+		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/burials-structure-and-data-cleanup.sql'));
+	}
 }
