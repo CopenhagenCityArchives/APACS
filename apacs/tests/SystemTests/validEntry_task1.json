@@ -1,0 +1,63 @@
+{
+    "persons": {
+        "firstnames": "Bartoline",
+        "lastname": "Jensen",
+        "adressOutsideCph": null,
+        "ageYears": 80,
+        "ageMonth": null,
+        "dateOfDeath": "15-05-1900",
+        "civilstatus": "Enkestand",
+        "deathplace": null,
+        "birthname": "Svendsen",
+        "sex": "Kvinde",
+        "comment": null,
+        "ageWeeks": null,
+        "ageDays": null,
+        "ageHours": null,
+        "id": 9718,
+        "deathcauses": [
+            {
+                "deathcause": "Alderdomssvaghed",
+                "id": 12663,
+                "persons_id": 9718
+            }
+        ],
+        "positions": [
+            {
+                "position": "Værtshusholder (Wærtshuusholder)",
+                "relationtype": "Ægtefælles erhverv",
+                "workplace": null,
+                "id": 9518,
+                "persons_id": 9718
+            }
+        ],
+        "addresses": {
+            "streetAndHood": "Ryesgade",
+            "number": 58,
+            "letter": null,
+            "floor": null,
+            "institution": null,
+            "id": 8544,
+            "persons_id": 9718
+        },
+        "burials": {
+            "chapel": "Garnison, Kapel",
+            "parish": "Sankt Johannes",
+            "cemetary": "Garnisons (Garnisons Kirkegård)",
+            "number": 3097,
+            "id": 9132,
+            "persons_id": 9718
+        }
+    },
+    "post": {
+        "id": 10000,
+        "x": 0.48222748815166,
+        "y": 0.66534914361001,
+        "width": 0.42417061611374,
+        "height": 0.31752305665349,
+        "page_id": 145054
+    },
+    "task_id": 1,
+    "page_id": 145054,
+    "concrete_entries_id": 9718
+}

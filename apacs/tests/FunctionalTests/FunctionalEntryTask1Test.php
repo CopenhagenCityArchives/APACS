@@ -38,6 +38,8 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Create task 1 config data
         $this->testDBManager->createEntitiesAndFieldsForTask1();
+        
+//        $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         // Get entities from database
 		$entities = Entities::find(['conditions' => 'task_id = 1']);
