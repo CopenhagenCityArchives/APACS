@@ -251,7 +251,7 @@ class IndexDataController extends MainController {
 			throw new InvalidArgumentException('The user cannot change the error report with id ' . $errorReportId);
 		}
 
-		$er->toSuperUser = isset($row['toSuperUser']) ? $row['toSuperUser'] : $er->to_super_user;
+		$er->toSuperUser = isset($row['toSuperUser']) ? $row['toSuperUser'] : $er->toSuperUser;
 		$er->deleted = isset($row['deleted']) ? $row['deleted'] : $er->deleted;
 		$er->deleted_reason = isset($row['deleted_reason']) ? $row['deleted_reason'] : $er->deleted_reason;
 
