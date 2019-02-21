@@ -31,6 +31,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Clear database
         $this->testDBManager->cleanUpApacsStructure();
+        $this->testDBManager->cleanUpBurialStructure();
 		parent::tearDown();
     }
     
@@ -39,7 +40,8 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         // Create task 1 config data
         $this->testDBManager->createEntitiesAndFieldsForTask1();
         
-//        $this->testDBManager->createBurialDataForEntryPost1000Task1();
+        // Create burials data
+        $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         // Get entities from database
 		$entities = Entities::find(['conditions' => 'task_id = 1']);
@@ -52,8 +54,12 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
     }
 
     public function test_LoadEntry_ReturnEntry(){
+
         // Create task 1 config data
         $this->testDBManager->createEntitiesAndFieldsForTask1();
+
+        // Create burials data
+        $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         // Get entities from database
 		$entities = Entities::find(['conditions' => 'task_id = 1']);
@@ -84,6 +90,9 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Create task 1 config data
         $this->testDBManager->createEntitiesAndFieldsForTask1();
+
+        // Create burials data
+        $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         // Get entities from database
 		$entities = Entities::find(['conditions' => 'task_id = 1']);

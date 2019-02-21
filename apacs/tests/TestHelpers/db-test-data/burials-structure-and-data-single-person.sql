@@ -246,7 +246,7 @@ CREATE TABLE `burial_deathcauses` (
 
 LOCK TABLES `burial_deathcauses` WRITE;
 /*!40000 ALTER TABLE `burial_deathcauses` DISABLE KEYS */;
-INSERT INTO `burial_deathcauses` (`id`,`deathcause`,`deathcause_danish`,`priority`) VALUES (15,'Alderdomssvaghed','Alderdomssvaghed',2);
+INSERT INTO `burial_deathcauses` (`id`,`deathcause`,`deathcause_danish`,`priority`) VALUES (15,'Alderdomssvaghed','Alderdomssvaghed',2),(16,'Ulykkestilfælde','Ulykkestilfælde',2),(17,'Afkræftelse','Afkræftelse',2),(18,'Absces (Abscessus)','Absces (Abscessus)',2);
 /*!40000 ALTER TABLE `burial_deathcauses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -272,7 +272,7 @@ CREATE TABLE `burial_deathplaces` (
 
 LOCK TABLES `burial_deathplaces` WRITE;
 /*!40000 ALTER TABLE `burial_deathplaces` DISABLE KEYS */;
-INSERT INTO `burial_deathplaces` (`deathplace`) VALUES ('Københavns Amtssygehus Lyngby')
+INSERT INTO `burial_deathplaces` (`deathplace`) VALUES ('Københavns Amtssygehus Lyngby');
 /*!40000 ALTER TABLE `burial_deathplaces` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -499,7 +499,7 @@ CREATE TABLE `burial_positions` (
 
 LOCK TABLES `burial_positions` WRITE;
 /*!40000 ALTER TABLE `burial_positions` DISABLE KEYS */;
-INSERT INTO `burial_positions` (`id`,`position`,`priority`) VALUES (1718,'Værtshusholder (Wærtshuusholder)',2);
+INSERT INTO `burial_positions` (`id`,`position`,`priority`) VALUES (1718,'Værtshusholder (Wærtshuusholder)',2),(1719,'Grosserer',2),(1720,'Handelsagent',2);
 /*!40000 ALTER TABLE `burial_positions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -557,7 +557,7 @@ CREATE TABLE `burial_streets` (
 
 LOCK TABLES `burial_streets` WRITE;
 /*!40000 ALTER TABLE `burial_streets` DISABLE KEYS */;
-INSERT INTO `burial_streets` (`id`,`street`,`code`,`hoods_id`,`hood`,`streetAndHood`,`priority`) VALUES (7782,'Ryesgade','6040',11,'Nørrebro','Ryesgade',2);
+INSERT INTO `burial_streets` (`id`,`street`,`code`,`hoods_id`,`hood`,`streetAndHood`,`priority`) VALUES (7782,'Ryesgade','6040',11,'Nørrebro','Ryesgade',2),(7783,'testgade','6041',11,'Nørrebro','Falkoner Allé',2);
 /*!40000 ALTER TABLE `burial_streets` ENABLE KEYS */;
 UNLOCK TABLES;
 

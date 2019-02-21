@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `apacs_collections`;
 DROP TABLE IF EXISTS `apacs_datasources`;
 DROP TABLE IF EXISTS `apacs_entities`;
@@ -16,3 +17,4 @@ DROP TABLE IF EXISTS `apacs_tasks_posts`;
 DROP TABLE IF EXISTS `apacs_tasks_units`;
 DROP TABLE IF EXISTS `apacs_units`;
 DROP TABLE IF EXISTS `apacs_users`;
+SET FOREIGN_KEY_CHECKS = 1;

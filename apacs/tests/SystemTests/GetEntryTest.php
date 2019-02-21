@@ -1,32 +1,20 @@
 <?php
 
-class GetEntryTest extends \UnitTestCase
+class GetEntryTest extends \SystemTestCase
 {
     private $http;
-    private $testDBManager;
 
     public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx2/']);
-
-        // Create database entries for entities and fields        
-        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
-        $this->testDBManager->createApacsStructure();
     }
 
     public function tearDown() {
         $this->http = null;
-
-        // Clear database
-        $this->testDBManager->cleanUpApacsStructure();
     }
 
     public function test_GetEntry_Task1_ReturnValidEntry(){
-        
-        $this->testDBManager->createEntitiesAndFieldsForTask1();
-        $this->testDBManager->createApacsMetadataForEntryPost10000Task1();
-        $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         $response = $this->http->request('GET', 'entries?task_id=1&post_id=10000');
 

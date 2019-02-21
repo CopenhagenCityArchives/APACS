@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `burial_addresses`;
 DROP TABLE IF EXISTS `burial_birthplaces`;
 DROP TABLE IF EXISTS `burial_burials`;
@@ -18,3 +19,4 @@ DROP TABLE IF EXISTS `burial_positions`;
 DROP TABLE IF EXISTS `burial_relationtypes`;
 DROP TABLE IF EXISTS `burial_streets`;
 DROP TABLE IF EXISTS `burial_workplaces`;
+SET FOREIGN_KEY_CHECKS = 1;
