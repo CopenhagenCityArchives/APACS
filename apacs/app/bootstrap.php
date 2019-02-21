@@ -217,21 +217,27 @@ try {
 	$di->get('response')->send();
 
 } catch (Exception $e) {
-	//Saving system exception
-	$exception = new SystemExceptions();
+	try
+	{
+		//Saving system exception
+		$exception = new SystemExceptions();
 
-	$mainCtrl = new MainController();
+		$mainCtrl = new MainController();
 
-	$postData = $mainCtrl->GetAndValidateJsonPostData();
+		$postData = $mainCtrl->GetAndValidateJsonPostData();
 
-	if($postData == false){
-		$postData = null;
+		if($postData == false){
+			$postData = null;
+		}
+
+		$exception->save([
+			'type' => 'global_exception',
+			'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' =>  $postData]),
+		]);
 	}
+	catch(Exception $exp){
 
-	$exception->save([
-		'type' => 'global_exception',
-		'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' =>  $postData]),
-	]);
+	}
 
 	$di->get('response')->setStatusCode(500, "Server error");
 	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
