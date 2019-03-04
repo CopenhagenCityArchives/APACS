@@ -6,7 +6,7 @@ class TaskConfigurationLoader2 {
 
     public function __construct($configPath = null){
         if(is_null($configPath)){
-            $this->configPath = dirname(__DIR__) . '/config';
+            $this->configPath = dirname(__DIR__,2) . '/config';
         }
         else{
             $this->configPath = $configPath;
