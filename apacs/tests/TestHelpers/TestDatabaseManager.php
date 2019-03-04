@@ -8,6 +8,10 @@ class TestDatabaseManager {
 
 	public function __construct($di) {
 		$this->di = $di;
+
+		if($this->di->get('config')['host'] !== 'database'){
+			throw new Exception("trying to connect to a database other than the test database. This will cause data loss in the database. Aborting.");
+		}
 	}
 
 	public function createApacsStructure(){
