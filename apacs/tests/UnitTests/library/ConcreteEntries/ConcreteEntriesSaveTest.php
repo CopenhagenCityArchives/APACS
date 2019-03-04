@@ -28,10 +28,16 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
     // Save
 	public function test_SaveEntityObject_ShouldCallCrudSaveInputData() {
 
-        //Set entity mock and data
+        // Set entity mock and data
         $entity = EntitiesTestData::getSimpleEntity();
-        $entity->dataIsValid = true;
+        $entity['dataIsValid'] = true;
+        
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+
         $dataToSave = ['field1' => 'value1'];
+
         
         // Create a stub for the CrudMock class.
         $crudMock = $this->createMock(Mocks\CrudMock::class);
@@ -45,19 +51,26 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
         $crudMock->expects($this->once())
             ->method('save')
             ->with(
-                $this->equalTo($entity->primaryTableName), 
+                $this->equalTo($entity['primaryTableName']), 
                 $this->equalTo($dataToSave),
                 null
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $dataToSave);
+        $entry->save($entitiesCollection->GetPrimaryEntity(), $dataToSave);
     }
     
     // Update
     public function test_SaveWithIdInData_ShouldCallCrudWithId() {
-       //Set entity mock and data
-       $entity = EntitiesTestData::getSimpleEntity();
+        
+        // Set entity mock and data
+        $entity = EntitiesTestData::getSimpleEntity();
+        $entity['dataIsValid'] = true;
+
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+
        $dataToSaveWithId = ['id' => 1, 'field1' => 'value1'];
        
        // Create a stub for the CrudMock class.
@@ -73,18 +86,27 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
         $crudMock->expects($this->once())
             ->method('save')
             ->with(
-                $this->equalTo($entity->primaryTableName), 
+                $this->equalTo($entity['primaryTableName']), 
                 $this->equalTo(['field1' => 'value1']),
                 $dataToSaveWithId['id']
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $dataToSaveWithId);
+        $entry->save($entitiesCollection->getPrimaryEntity(), $dataToSaveWithId);
     }
 
     // Decode
     public function test_SaveWithDecodeField_ShouldCallCrudLoadWithDecoding() {
-        $entity = EntitiesTestData::getDecodeEntity();
+        
+        // Set entity mock and data
+        $entity = EntitiesTestData::getDecodeEntityNewValuesAllowed();
+        $entity['dataIsValid'] = true;
+
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+
+
         $dataToSave = ['field1'=>'value1', 'decodeField1' => 'encodedValue'];
         $decodedValue = 'decodedValue';
 
@@ -97,8 +119,8 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
         $crudMock->expects($this->once())
             ->method('find')
             ->with(
-                 $this->equalTo($entity->fieldsList[1]->decodeTable), 
-                 $this->equalTo($entity->fieldsList[1]->decodeField),
+                 $this->equalTo($entity['fields'][1]['decodeTable']), 
+                 $this->equalTo($entity['fields'][1]['decodeField']),
                  $this->equalTo('encodedValue')
              );
 
@@ -108,13 +130,20 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $dataToSave);
+        $entry->save($entitiesCollection->getPrimaryEntity(), $dataToSave);
     }
 
     // Decode, new value
     public function test_SaveWithDecodeFieldNewValue_ShouldCallCrudSaveWithNewValue() {
+
+        // Set entity mock and data
         $entity = EntitiesTestData::getDecodeEntityNewValuesAllowed();
-        
+        $entity['dataIsValid'] = true;
+
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+    
         $codeId = 'codeId';
         $codeValue = 'codeValue';
 
@@ -133,10 +162,10 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
         $crudMock->expects($this->exactly(2))
             ->method('save')
             ->withConsecutive([
-                $this->equalTo($entity->fieldsList[1]->decodeTable), 
-                $this->equalTo([$entity->fieldsList[1]->decodeField => 'codeValue']) 
+                $this->equalTo($entity['fields'][1]['decodeTable']), 
+                $this->equalTo([$entity['fields'][1]['decodeField'] => 'codeValue']) 
             ],[
-                $this->equalTo($entity->primaryTableName), 
+                $this->equalTo($entity['primaryTableName']), 
                 $this->equalTo($dataToSave)
             ])
             ->will($this->onConsecutiveCalls(
@@ -145,12 +174,19 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
             ));
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $inputData);
+        $entry->save($entitiesCollection->GetPrimaryEntity(), $inputData);
     }
 
     //ordering
     public function test_SaveArrayEntity_AddOrderingField(){
+
+        // Set entity mock and data
         $entity = EntitiesTestData::getSimpleArrayEntity();
+        $entity['dataIsValid'] = true;
+
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
         
         $inputData = ['field1'=>'value1'];
         $dataToSave = ['field1' => 'value1', 'order'=>0];
@@ -161,12 +197,12 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
         $crudMock->expects($this->once())
         ->method('save')
         ->with(
-             $this->equalTo($entity->primaryTableName), 
+             $this->equalTo($entity['primaryTableName']), 
              $dataToSave
          )
          ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $inputData);
+        $entry->save($entitiesCollection->GetPrimaryEntity(), $inputData);
     }
 }

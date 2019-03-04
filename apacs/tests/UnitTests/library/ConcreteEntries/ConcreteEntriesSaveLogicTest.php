@@ -17,7 +17,11 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
 
         //Set entity mock and data
         $entity = EntitiesTestData::getSimpleEntity();
-        $inputData = [ $entity->name => ['field1' => 'value1']];
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+
+        $inputData = [ $entity['name'] => ['field1' => 'value1']];
         $saveData = ['field1' => 'value1']; 
         
         // Create a stub for the CrudMock class.
@@ -32,25 +36,29 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
         $crudMock->expects($this->once())
             ->method('save')
             ->with(
-                $this->equalTo($entity->primaryTableName), 
+                $this->equalTo($entity['primaryTableName']), 
                 $this->equalTo($saveData),
                 null
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask([$entity], $inputData);
+        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
     }
 
     public function test_SaveEntries_WithSecondaryEntry_CallCrudSaveTwice(){
         //Set entity mock and data
-        $entities = [];
-        $entities[] = EntitiesTestData::getSimpleEntity();
-        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
+        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        
 
         $inputData = [ 
-            $entities[0]->name => [
+            $entity['name'] => [
                 'field1' => 'value1',
-                $entities[1]->name => [
+                $entity['entities'][0]['name'] => [
                     'field2' => 'value2',
                     'parentEntityReferenceField' => 'sd'
                 ]
@@ -77,34 +85,36 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
         $crudMock->expects($this->exactly(2))
             ->method('save')
             ->withConsecutive([
-                $this->equalTo($entities[0]->primaryTableName), 
+                $this->equalTo($entity['primaryTableName']), 
                 $this->equalTo($saveData[0]),
                 null
             ],[
-                $this->equalTo($entities[1]->primaryTableName), 
+                $this->equalTo($entity['entities'][0]['primaryTableName']), 
                 $this->equalTo($saveData[1]),
                 null
         ]);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entities, $inputData);   
+        $entry->SaveEntriesForTask($entitiesCollection, $inputData);   
     }
 
      //Delete secondary empty object entries on save
      public function test_SaveSecondaryObjectEntity_WithNoDataButId_RemoveEntity(){
-        $entities = [];
-        $entities[] = EntitiesTestData::getSimpleEntity();
-        
-        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
-        //Return true to test empty data
-        $entities[1]->AllEntityFieldsAreEmpty = true;
+        $entity = EntitiesTestData::getSimpleEntity();
+        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entity['entities'][0]['AllEntityFieldsAreEmpty'] = true;
 
+        //Return true to test empty data
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+   
         $idToDelete = 45;
 
         $inputData = [
-            $entities[0]->name => [
+            $entity['name'] => [
                 'field1' => 'value1',
-                $entities[1]->name => [
+                $entity['entities'][0]['name'] => [
                     'id' => $idToDelete
                 ]
             ]
@@ -116,7 +126,7 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
         $crudMock->expects($this->once())
             ->method('delete')
             ->with(
-                $this->equalTo($entities[1]->primaryTableName), 
+                $this->equalTo($entity['primaryTableName']), 
                 $idToDelete
             );
 
@@ -125,23 +135,27 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entities, $inputData);
+        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
     }
 
     //Dont delete or save secondary empty array entries on save
     public function test_SaveSecondaryArrayEntity_WithNoDataButId_SkipEntity(){
-        $entities = [];
-        $entities[] = EntitiesTestData::getSimpleEntity();
+        $entity = EntitiesTestData::getSimpleEntity();
+        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
         
-        $entities[] = EntitiesTestData::getSimpleSecondaryEntity();
         //Return true to test empty data
-        $entities[1]->AllEntityFieldsAreEmpty = true;
-        $entities[1]->type = 'array';
+        $entity['entities'][0]['AllEntityFieldsAreEmpty'] = true;
+        $entity['entities'][0]['type'] = 'array';
+
+        $taskConfig = [];
+        $taskConfig['entity'] = $entity;
+        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+       
 
         $inputData = [
-            $entities[0]->name => [
+            $entity['name'] => [
                 'field1' => 'value1',
-                $entities[1]->name => []
+                $entity['entities'][0]['name'] => []
             ]
         ];
         
@@ -156,6 +170,6 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entities, $inputData);
+        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
     }
 }

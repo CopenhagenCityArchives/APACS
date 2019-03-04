@@ -414,10 +414,13 @@ class CommonInformationsController extends MainController {
 			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
 		}
 
-		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+		//$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
+		$entitiesCollection = new EntitiesCollection($taskConf);
 
 		$concreteEntry = new ConcreteEntries($this->getDI());
-		$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
+		$entryData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id, true);
 
 		$entryData['post'] = Posts::findFirst(['conditions' => 'id = :id:', 'columns' => 'id,x,y,width,height, pages_id as page_id', 'bind' => ['id' => $entry->posts_id]]);
 		$entryData['task_id'] = $entry->tasks_id;
@@ -457,34 +460,45 @@ class CommonInformationsController extends MainController {
 				return;
 			}
 		*/
-		$entries = Entries::find('posts_id = ' . $id);
+		try{
+			$entries = Entries::find('posts_id = ' . $id);
 
-		if (count($entries) == 0) {
-			$this->error('no entries found for post ' . $id);
-			return;
+			if (count($entries) == 0) {
+				$this->error('no entries found for post ' . $id);
+				return;
+			}
+
+			$postData = [];
+			foreach ($entries as $entry) {
+				//Loading entities for entry
+				//$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+				$taskconfigLoader = new TaskConfigurationLoader2();
+				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
+				$entitiesCollection = new EntitiesCollection($taskConf);
+
+				//Loading concrete entry
+				$concreteEntry = new ConcreteEntries($this->getDI());
+				$entryData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
+				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entryData, $entry->id));
+			}
+
+			$metadata = $entries[0]->GetContext();
+
+			$auth = $this->getDI()->get('AccessController');
+
+			$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
+			unset($metadata['entry_id']);
+			$response['metadata'] = $metadata;
+			$response['data'] = $postData;
+			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
+			$response['error_reports'] = $errorReports;
 		}
-
-		$postData = [];
-		foreach ($entries as $entry) {
-			//Loading entities for entry
-			$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
-
-			//Loading concrete entry
-			$concreteEntry = new ConcreteEntries($this->getDI());
-			$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
-			$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entities, $entryData, $entry->id));
+		catch(Exception $e){
+			throw new Exception('could not load entry: ' . $e->getMessage());
 		}
-
-		$metadata = $entries[0]->GetContext();
-
-		$auth = $this->getDI()->get('AccessController');
-
-		$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
-		unset($metadata['entry_id']);
-		$response['metadata'] = $metadata;
-		$response['data'] = $postData;
-		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
-		$response['error_reports'] = $errorReports;
+		catch(TypeError $e){
+			throw new Exception('could not load entry (typerror): ' . $e->getMessage());
+		}
 
 		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
 	}
