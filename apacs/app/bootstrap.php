@@ -238,8 +238,9 @@ try {
 	catch(Exception $exp){
 
 	}
-
-	$di->get('response')->setStatusCode(500, "Server error");
-	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
-	$di->get('response')->send();
+	finally{
+		$di->get('response')->setStatusCode(500, "Server error");
+		$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
+		$di->get('response')->send();
+	}	
 }
