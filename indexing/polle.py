@@ -148,7 +148,7 @@ def get_formatted_date_or_default(year, month, day, default = None):
 	if(valid_date(year, month, day)):
 		return "%04d-%02d-%02dT00:00:00Z" % (year, month, day)
 	else:
-		return default;
+		return default
 
 def person_type_text(x):
 	types = ['Ukendt','Hovedperson','Ægtefælle','Barn']
@@ -245,7 +245,7 @@ if __name__ == "__main__":
 				cursor.execute(address_query % card_ids)
 				for address in cursor.fetchall():
 					card_id = address['card_id']
-					address['address_date'] = get_formatted_date_or_default(address['year'], address['month'], address['day'], None);
+					address['address_date'] = get_formatted_date_or_default(address['year'], address['month'], address['day'], None)
 					if card_id in cards:
 						if 'addresses' in cards[card_id]:
 							cards[card_id]['addresses'].append(address)
