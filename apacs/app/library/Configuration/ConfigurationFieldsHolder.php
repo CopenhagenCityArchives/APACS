@@ -1,6 +1,7 @@
 <?php
 
 class ConfigurationFieldsHolder{
+    private $fields;
     public function __construct(Array $fields) {
         $this->fields = $fields;
     }
@@ -14,7 +15,7 @@ class ConfigurationFieldsHolder{
     private function getFieldsAsArrays(){
         $fieldsArr = [];
         foreach($this->fields as $row){
-            $fieldsArr[] = get_object_vars($row);
+            $fieldsArr[] = (Array)$row;
         }
         return $fieldsArr;
     }
