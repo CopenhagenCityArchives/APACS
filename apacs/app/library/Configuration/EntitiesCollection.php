@@ -1,19 +1,32 @@
 <?php
 
-class EntitiesCollection{
+class EntitiesCollection implements IEntitiesCollection {
     
     private $config;
-    private $entities;
-    private $entitiesSet;
+    protected $entities;
+    protected $entitiesSet;
 
     public function __construct(Array $config){
         $this->config = $config;
         $this->entitiesSet = false;
-        $this->setEntities();
+        $this->setEntities($this->config['entity']);
     }
 
     public function getEntities(){
         return $this->entities;
+    }
+
+    public function getEntitiesAsFlatArray($entity = null, $entArray = []){
+        if(is_null($entity)){
+            $entity = $this->entities;
+        }
+        $entArray[] = $entity;
+        foreach($entity->getEntities() as $ent){
+            $entArray[] = $ent;
+            $this->getEntitiesAsFlatArray($ent, $entArray);
+        }        
+
+        return $entArray;
     }
 
     public function getEntityByName($name, $entity = null){
@@ -36,9 +49,19 @@ class EntitiesCollection{
         return null;
     }
 
-    private function setEntities(){
+    public function GetPrimaryEntity(){
+		return $this->entities;
+	}
+
+	public function GetSecondaryEntities(){
+        $entities = $this->getEntitiesAsFlatArray();
+        array_shift($entities);
+        return $entities;
+	}
+
+    protected function setEntities($entity){
         if(!$this->entitiesSet){
-            $this->entities = new ConfigurationEntity($this->config['entity']);
+            $this->entities = new ConfigurationEntity($entity);
             $this->entitiesSet = true;        
         }
     }
