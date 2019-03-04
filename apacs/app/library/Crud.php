@@ -35,6 +35,9 @@ class ApacsCRUD {
 	public function delete($tableName, $id){
 		$this->crud->delete($tableName, $id);
 	}
+	public function getTable($tableName){
+		return ORM::for_table($tableName);
+	}
 
 	public function startTransaction(){
 		$dbCon = ORM::get_db();
