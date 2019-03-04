@@ -2,12 +2,12 @@
 use \Phalcon\Di;
 
 
-class SystemTestCase extends \UnitTestCase
+class SystemTest extends \UnitTestCase
 {
     private $testDBManager;
+    private $http;
 
     public static function setUpBeforeClass(){
-        echo 'SETUP';
         // Set config and db in DI
         $di = new Di();
 		$di->setShared('config', function () {
@@ -58,9 +58,11 @@ class SystemTestCase extends \UnitTestCase
     public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
     {
         parent::setUp();
+        $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx2/']);
     }
 
     public function tearDown() {
+        $this->http = null;
         parent::tearDown();
     }
 
@@ -76,15 +78,25 @@ class SystemTestCase extends \UnitTestCase
     }
 
     public function test_GetPost_Task1_ReturnValidData(){
-
-        $response = $this->http->request('GET', 'posts/10000');
+        try{
+            $response = $this->http->request('GET', 'posts/10000');
+        }
+        catch(Exception $e){
+            $response = $e->getResponse();
+            $responseBodyAsString = $response->getBody()->getContents();
+            var_dump($responseBodyAsString);
+        }
 
         $this->assertEquals(200, $response->getStatusCode());
 
         $validPost = json_decode(file_get_contents(__DIR__ . '/validPost_task1.json'),true);
 
         // Note that only data is tested, NOT metadata
-        $this->assertEquals($validPost['data'], json_decode((string) $response->getBody(), true)['data']);
+        $responseData = json_decode((string) $response->getBody(), true);
+
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertTrue(isset($responseData['data']));
+        $this->assertEquals($validPost['data'], $responseData['data']);
     }
 
     public function test_GetEntry_Task1_ReturnValidEntry(){
@@ -94,8 +106,12 @@ class SystemTestCase extends \UnitTestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $validResponse = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'),true);
+        
+        $responseData = json_decode((string) $response->getBody(), true);
 
-        $this->assertEquals($validResponse, json_decode((string) $response->getBody(), true));
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertFalse(is_null($responseData));
+        $this->assertEquals($validResponse, $responseData);
     }
 
     public function test_ReportError_RemoveError_ErrorReportCountCorrect(){
@@ -106,6 +122,8 @@ class SystemTestCase extends \UnitTestCase
 
         // Get number of errors before reporting
         $post = json_decode((string) $response->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+
         $originalErrorReportCount = count($post['error_reports']);
 
         //Report error
@@ -130,6 +148,7 @@ class SystemTestCase extends \UnitTestCase
         // Get post with updated error reports
         $updatedResponse = $this->http->request('GET', 'posts/10000');
         $updatedPost = json_decode((string) $updatedResponse->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
 
         // Assert that the number of errors has increased with 1
         $this->assertEquals(count($updatedPost['error_reports']), $originalErrorReportCount+1);
