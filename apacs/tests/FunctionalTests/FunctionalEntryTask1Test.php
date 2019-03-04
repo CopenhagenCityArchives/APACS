@@ -44,13 +44,16 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         // Get entities from database
-		$entities = Entities::find(['conditions' => 'task_id = 1']);
+        //$entities = Entities::find(['conditions' => 'task_id = 1']);
+        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__);
+		$taskConf = $taskconfigLoader->getConfig(1);
+		$entitiesCollection = new EntitiesCollection($taskConf);
 
         // Input data
         $inputData = json_decode(file_get_contents(__DIR__ . '/entry_save.json'), true);
 
         // Setup and save  
-        $this->assertTrue($this->concreteEntry->SaveEntriesForTask($entities, $inputData)>0);
+        $this->assertTrue($this->concreteEntry->SaveEntriesForTask($entitiesCollection, $inputData)>0);
     }
 
     public function test_LoadEntry_ReturnEntry(){
@@ -59,21 +62,27 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $this->testDBManager->createEntitiesAndFieldsForTask1();
 
         // Create burials data
+        $this->testDBManager->createApacsMetadataForEntryPost10000Task1();
         $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
+
         // Get entities from database
-		$entities = Entities::find(['conditions' => 'task_id = 1']);
+        //$entities = Entities::find(['conditions' => 'task_id = 1']);
+        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__);
+		$taskConf = $taskconfigLoader->getConfig(1);
+        $entitiesCollection = new EntitiesCollection($taskConf);
 
         // Input data
         $inputData = json_decode(file_get_contents(__DIR__ . '/entry_save.json'), true);
 
         // Save concrete entry
-        $savedId = $this->concreteEntry->SaveEntriesForTask($entities, $inputData);
+        $savedId = $this->concreteEntry->SaveEntriesForTask($entitiesCollection, $inputData);
 
         // Load  
-        $loadedEntry = $this->concreteEntry->LoadEntry($entities, $savedId, true); 
-        
+        $loadedEntry = $this->concreteEntry->LoadEntry($entitiesCollection, $savedId, true); 
+
         // Is the person saved?
+        $this->assertFalse(is_null($loadedEntry['persons']['firstnames']));
         $this->assertEquals($inputData['persons']['firstnames'], $loadedEntry['persons']['firstnames']);
         
         // Is the values saved for child entities?
@@ -95,27 +104,31 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $this->testDBManager->createBurialDataForEntryPost1000Task1();
 
         // Get entities from database
-		$entities = Entities::find(['conditions' => 'task_id = 1']);
-
+		//$entities = Entities::find(['conditions' => 'task_id = 1']);
+        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__);
+		$taskConf = $taskconfigLoader->getConfig(1);
+		$entitiesCollection = new EntitiesCollection($taskConf);
+        
         // Input data
         $inputData = json_decode(file_get_contents(__DIR__ . '/entry_save.json'), true);
-
         // Save  
-        $savedId = $this->concreteEntry->SaveEntriesForTask($entities, $inputData);
+        $savedId = $this->concreteEntry->SaveEntriesForTask($entitiesCollection, $inputData);
 
         // Load and modify entry
-        $loadedEntry = $this->concreteEntry->LoadEntry($entities, $savedId, true); 
+        $loadedEntry = $this->concreteEntry->LoadEntry($entitiesCollection, $savedId, true); 
         $modifiedEntry = $loadedEntry;
+        //Modifing date format, as this is done in frontend
+        $modifiedEntry['persons']['dateOfDeath'] = date('d-m-Y', strtotime($modifiedEntry['persons']['dateOfDeath']));
         $modifiedEntry['persons']['deathcauses'][0]['deathcause'] = 'Absces (Abscessus)';
 
         //  Update entry
-        $updatedId = $this->concreteEntry->SaveEntriesForTask($entities, $modifiedEntry);
+        $updatedId = $this->concreteEntry->SaveEntriesForTask($entitiesCollection, $modifiedEntry);
 
         //  Should keep id
         $this->assertEquals($savedId, $updatedId);
         
         //  Load updated entry
-        $updatedEntry = $this->concreteEntry->LoadEntry($entities, $savedId, true);
+        $updatedEntry = $this->concreteEntry->LoadEntry($entitiesCollection, $savedId, true);
 
         // Should have update firstnames
         $this->assertEquals($modifiedEntry['persons']['deathcauses'][0]['deathcause'] , $updatedEntry['persons']['deathcauses'][0]['deathcause'] );
