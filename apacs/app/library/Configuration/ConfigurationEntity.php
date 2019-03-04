@@ -1,16 +1,18 @@
 <?php
 
-class ConfigurationEntity implements IEntitiesInfo {
+class ConfigurationEntity implements IEntity {
 	public $primaryTableName;
 	public $fieldsList;
 	public $fields;
-	private $entities;
+	protected $entities;
 	public $isPrimaryEntity;
 	public $entityKeyName;
 	public $name;
 	public $guiName;
 	public $task_id;
 	public $type;
+
+	private $validationMessages;
 
 	//array representation of Entity
 	private $array;
@@ -27,14 +29,8 @@ class ConfigurationEntity implements IEntitiesInfo {
 		$this->setEntities($entity['entities']);
 
 		$this->array = $entity;		
-	}
 
-	public function GetPrimaryEntity(Array $entities){
-		throw new Exception("not implemented");
-	}
-
-	public function GetSecondaryEntities(Array $entities){
-		throw new Exception("not implemented");
+		$this->validationMessages = [];
 	}
 
 	public function toArray(){
@@ -46,7 +42,41 @@ class ConfigurationEntity implements IEntitiesInfo {
 		return $this->fields->getFieldsAsObjects();
 	}
 
+	public function isDataValid(array $entityData){
+		$isValid = true;
+		if ($this->required == '1' && $entityData == null) {
+			$this->validationMessages[] = 'No data given for entity ' . $this->name;
+			return false;
+		}
+		foreach ($this->getFields() as $field) {
+			
+			$validator = new Validator(new ValidationRuleSet($field->validationRegularExpression, $field->isRequired, $field->validationErrorMessage));
+			
+			if (!$validator->IsValid($entityData, $field->GetRealFieldName())) {
+				$this->validationMessages[] = $field->GetRealFieldName() . ': ' . $validator->GetErrorMessage();
+				$isValid = false;
+			}
+		}
+
+		return $isValid;
+	}
+
+	public function AllEntityFieldsAreEmpty(array $entityData){
+		foreach ($this->getFields() as $field) {
+			if (isset($entityData[$field->getRealFieldName()]) && !is_null($entityData[$field->getRealFieldName()])) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	public function setFields($fields){
+		if(is_null($fields)){
+			$this->fields = [];
+			$this->fieldsList = [];
+			return;
+		}
 		$this->fieldsList = $fields;
 		$this->fields = new ConfigurationFieldsHolder($fields);
 	}
@@ -63,5 +93,9 @@ class ConfigurationEntity implements IEntitiesInfo {
 		foreach($entities as $ent){
 			$this->entities[] = new ConfigurationEntity($ent);
 		}
+	}
+
+	public function GetValidationStatus(){
+		return implode(' ',$this->validationMessages);
 	}
 }	
