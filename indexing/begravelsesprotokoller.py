@@ -391,7 +391,7 @@ if __name__ == "__main__":
 
 				#Address
 				'addresses': [person['address']]  if "address" in person else [],
-				'streets': person['burial_streets.street'],
+				'streets': person['burial_street.streetAndHood'],
 				'hood': person['burial_hoods.hood'],
 				"adressOutsideCph": person['burial_persons.adressOutsideCph'] if "burial_persons.adressOutsideCph" in person else "",
 
