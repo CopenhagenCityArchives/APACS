@@ -20,13 +20,29 @@ class AccessController implements IAccessController {
 				$this->message = 'access denied: No token given';
 				return false;
 			}
+			
+			$encrypted_token =  crypt($accessToken, 'lkj34kvpndd943f');
+
+			// Validate token in db
+			$dbToken = Tokens::findFirst(['conditions' => 'expires > ' . time() . ' AND token = \'' . $encrypted_token . '\'']);
+
+			if($dbToken){
+				$this->authResponse['access_token'] = $dbToken->token;
+				$this->authResponse['expires'] = $dbToken->expires;
+				$this->authResponse['profile'] = [];
+				$this->authResponse['profile']['id'] = $dbToken->user_id;
+				$this->authResponse['profile']['username'] = $dbToken->user_name;
+				return true;
+			}
+
+			// If token not in db, get from url
 
 			$url = 'https://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
 
 			$response = $this->getWebPage($url);
 
 			if ($response == false) {
-				$this->message = 'Could not get response from auth server';
+				$this->message = 'Token not authorized on auth server';
 				return false;
 			}
 
@@ -34,11 +50,21 @@ class AccessController implements IAccessController {
 
 			if (json_last_error() !== JSON_ERROR_NONE) {
 				$this->message = 'could not decode response from auth server';
+				$this->authResponse = null;
 				return false;
 			}
-		}
 
-		$this->SyncronizeUser();
+			// Set token in db
+			$token = new Tokens();
+			$token->token = crypt($this->authResponse['access_token'], 'lkj34kvpndd943f');;
+			$token->expires = $this->authResponse['expires'];
+			$token->user_id = $this->authResponse['profile']['id'];
+			$token->user_name = $this->authResponse['profile']['username'];
+			$token->save();
+
+			// When loaded from url, syncronize user data in db
+			$this->SyncronizeUser();
+		}
 
 		return true;
 	}

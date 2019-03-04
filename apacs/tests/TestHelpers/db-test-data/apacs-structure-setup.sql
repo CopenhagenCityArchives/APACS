@@ -278,5 +278,14 @@ CREATE TABLE `apacs_superusers` (
   KEY `tasks_id` (`tasks_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-
+CREATE TABLE `apacs_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `token` char(60) COLLATE utf8_danish_ci DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `user_name` char(150) COLLATE utf8_danish_ci DEFAULT NULL,
+  `expires` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `token` (`token`),
+  KEY `expires` (`expires`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
