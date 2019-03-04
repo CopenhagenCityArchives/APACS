@@ -39,6 +39,9 @@ class ConcreteEntries {
 	}
 
 	public function Load($entity, $primaryKeyName, $id) {
+		if(!isset($primaryKeyName)){
+			throw new InvalidArgumentException("Primary key name not given in ConcreteEntries::Load for entity " . $entity->name);
+		}
 		if ($entity->type == 'array') {
 
 			return $this->buildJoins($entity)->where($primaryKeyName, $id)->order_by_asc('order')->find_array();
@@ -46,7 +49,7 @@ class ConcreteEntries {
 			$result = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
 
 			if (isset($result[0])) {
-				foreach ($entity->fields as $field) {
+				foreach ($entity->getFields() as $field) {
 					if ($field->formFieldType == 'date' && isset($result[0][$field->fieldName])) {
 						$result[0][$field->fieldName] = date('d-m-Y', strtotime($result[0][$field->fieldName]));
 					}
@@ -66,11 +69,11 @@ class ConcreteEntries {
 		}
 	}
 
-	private function buildJoins($entity) {
+	private function buildJoins(IEntity $entity) {
 		$joins = ORM::for_table($entity->primaryTableName);
-
+		
 		//Select fields and decoded fields (if they are visible)
-		foreach ($entity->fields as $field) {
+		foreach ($entity->getFields() as $field) {
 			if ($field->includeInForm == '1') {
 				if ($field->hasDecode == '1') {
 					$joins = $joins->select($field->decodeTable . '.' . $field->decodeField);
@@ -84,26 +87,26 @@ class ConcreteEntries {
 		$joins = $joins->select($entity->primaryTableName . '.id');
 
 		//We also want the foreign key to the primary entity for secondary entities
-		if ($entity->isPrimaryEntity !== '1') {
+		if ($entity->isPrimaryEntity != '1') {
 			$joins = $joins->select($entity->entityKeyName);
 		}
 
 		//Adding joins
-		foreach ($entity->fields as $field) {
+		foreach ($entity->getFields() as $field) {
 			if ($field->hasDecode == '1') {
 				$joins = $joins->left_outer_join($field->decodeTable, [$entity->primaryTableName . '.' . $field->fieldName, '=', $field->decodeTable . '.id']);
 			}
 		}
-
 		return $joins;
 	}
 
-	public function ConcatEntitiesAndData($entities, $entityData, $entry_id) {
+	public function ConcatEntitiesAndData(IEntitiesCollection $entitiesCollection, $entityData, $entry_id) {
 
 		$results = [];
 
-		foreach ($entities as $entity) {
+		foreach ($entitiesCollection->getEntitiesAsFlatArray() as $entity) {
 			//if( isset($entityData[$entity->name][0]) ){
+
 			$data = $entityData[$entity->name];
 
 			if ($entity->type == 'object') {
@@ -126,7 +129,7 @@ class ConcreteEntries {
 			foreach ($data as $row) {
 				$fieldValueRow = [];
 				//Set field name and value for each field
-				foreach ($entity->fields as $field) {
+				foreach ($entity->getFields() as $field) {
 					//if (isset($row[$field->GetRealFieldName()])) {
 					$fieldValueRow['field_name'] = $field->GetRealFieldName();
 					$fieldValueRow['label'] = $field->formName;
@@ -156,7 +159,7 @@ class ConcreteEntries {
 	 * @param [type]  $id               The id of the concrete entry to load
 	 * @param boolean $loadhierarchical Indication of wheter or not to load the data in a hierarchical form. Defaults to false.
 	 */
-	public function LoadEntry($entities, $id, $loadhierarchical = false) {
+	public function LoadEntry(IEntitiesCollection $entitiesCollection, $id, $loadhierarchical = false) {
 		$results = [];
 
 		/*usort($entities, function ($a, $b) {
@@ -166,15 +169,14 @@ class ConcreteEntries {
 
 			return ($a->viewOrder < $b->viewOrder) ? -1 : 1;
 		});*/
-
 		//Load in hierarchical form
 		if ($loadhierarchical) {
-			$primaryEntity = Entities::GetPrimaryEntity($entities);
+			$primaryEntity = $entitiesCollection->GetPrimaryEntity();
 
 			//Load primary entity
 			$results[$primaryEntity->name] = $this->Load($primaryEntity, 'id', $id);
 
-			$secondaryEntities = Entities::GetSecondaryEntities($entities);
+			$secondaryEntities = $entitiesCollection->GetSecondaryEntities();
 
 			//Load secondary entities
 			foreach ($secondaryEntities as $entity) {
@@ -185,7 +187,7 @@ class ConcreteEntries {
 		}
 
 		//Load in flat form
-		foreach ($entities as $entity) {
+		foreach ($entitiesCollection->getEntitiesAsFlatArray() as $entity) {
 			$results[$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
 		}
 
@@ -263,7 +265,7 @@ class ConcreteEntries {
 	 * @param Entities $entity The data structure defining entity
 	 * @param Array $data The data to save. Only single rows are supported!
 	 */
-	public function Save($entity, Array $data) {
+	public function Save(IEntity $entity, Array $data) {
 		//Decoding and saving code values
 		foreach ($entity->getFields() as $field) {
 
@@ -364,6 +366,9 @@ class ConcreteEntries {
 	private function GetFieldsValuesArray($fields, $data) {
 		$fieldsAndData = [];
 		foreach ($fields as $field) {
+			if(!isset($field['fieldName'])){
+				throw new Exception("fieldName not set in field.");
+			}
 			if (isset($data[$field['fieldName']])) {
 
 				if (trim($data[$field['fieldName']]) == '') {
@@ -458,22 +463,23 @@ class ConcreteEntries {
 	 * @throws InvalidArgumentException if data is not set, or is not valid
 	 * @throws RuntimeException if data could not be saved to the database
 	 */
-	public function SaveEntriesForTask($entities, $data) {
+	public function SaveEntriesForTask(IEntitiesCollection $entitiesCollection, $data) {
 		$dbCon = ORM::get_db();
 
-		if(count($entities)==0){
+		if(count($entitiesCollection->getEntities())==0){
 			throw new InvalidArgumentException("no entities given!");
 		}
 
 		//Save primary entity and get id
 		//$primaryEntity = Entities::GetPrimaryEntity($entities);
-		$primaryEntity = $this->getPrimaryEntity($entities);
+		$primaryEntity = $entitiesCollection->getPrimaryEntity();
 
 		//Saving main entity
 		if (!isset($data[$primaryEntity->name])) {
 			$this->rollbackTransaction();
 			throw new InvalidArgumentException('no data given for ' . $primaryEntity->name);
 		}
+	//	var_dump('validating in concrete', $primaryEntity->name,$data);
 
 		if (!$primaryEntity->isDataValid($data[$primaryEntity->name])) {
 			$this->rollbackTransaction();
@@ -487,7 +493,7 @@ class ConcreteEntries {
 			throw new RuntimeException('could not get insert id for primary entity');
 		}
 
-		$secondaryEntities = $this->getSecondaryEntities($entities);
+		$secondaryEntities = $entitiesCollection->getSecondaryEntities();
 		//foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
 		//foreach (Entities::GetSecondaryEntities($entities) as $entity) {
 		foreach($secondaryEntities as $entity){
@@ -498,15 +504,19 @@ class ConcreteEntries {
 				continue;
 			}
 
-			if ($entity->type == 'object') {
-				if ($entity->AllEntityFieldsAreEmpty($entity, $data[$primaryEntity->name][$entity->name])) {
+			
+			if ($entity->type == 'object') {			
+				if ($entity->AllEntityFieldsAreEmpty($data[$primaryEntity->name][$entity->name])) {
 					//Delete entity id empty but id is set
 					if(isset($data[$primaryEntity->name][$entity->name]['id'])){
 						$this->DeleteConcreteEntry($entity->primaryTableName, $data[$primaryEntity->name][$entity->name]['id']);
 					}
+				//var_dump('saving',$data[$primaryEntity->name][$entity->name]);
+
 					//var_dump('entiteten havde intet data:', $data[$primaryEntity->name][$entity->name]);
 					continue;
 				}
+				
 
 				//Setting the identifier of the primary entity
 				$data[$primaryEntity->name][$entity->name][$entity->entityKeyName] = $primaryId;
@@ -525,7 +535,7 @@ class ConcreteEntries {
 			} else {
 				$i = 0;
 				foreach ($data[$primaryEntity->name][$entity->name] as $row) {
-					if ($entity->AllEntityFieldsAreEmpty($entity, $row)) {
+					if ($entity->AllEntityFieldsAreEmpty($row)) {
 						continue;
 					}
 
