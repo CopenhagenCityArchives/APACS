@@ -97,4 +97,23 @@ class Datasources extends \Phalcon\Mvc\Model {
 
 		return false;
 	}
+
+	public static function SetDatasourceOrEnum($field) {
+		if (!is_null($field['datasources_id'])) {
+			$datasource = Datasources::findFirst(['conditions' => 'id = ' . $field['datasources_id']]);
+
+			if (isset($datasource) && $datasource !== false) {
+				$values = $datasource->GetValuesAsArray();
+				if (!$values) {
+					$field['datasource'] = 'https://www.kbhkilder.dk/1508/stable/api/datasource/' . $datasource->id . '?q=';
+					$field['datasourceValueField'] = $datasource->valueField;
+				} else {
+					$field['enum'] = $values;
+					$field['type'] = 'string';
+				}
+			}
+		}
+
+		return $field;
+	}
 }
