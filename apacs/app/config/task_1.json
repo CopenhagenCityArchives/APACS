@@ -1,7 +1,9 @@
 {
-    "name": "Begravelsesprotokoller",
+    "name": "Begravelser",
+    "description": "Indtastning af begravelsesprotokoller",
     "id": 1,
     "parentTask": null,
+
     "entity": {
         "id": 1,
         "task_id": 1,
@@ -900,5 +902,126 @@
                 "entities": null
             }
         ]
-    }
+    },
+    "steps": [
+        {
+            "id": "1",
+            "name": "Markering af indtastningsområde",
+            "description": "Her skal du markere det område i protokollen, der handler om den person/begravelse, som du vil indtaste.",
+            "tasks_id": "1",
+            "fields": []
+        },
+        {
+            "id": "2",
+            "name": "Løbenummer, Navn, Køn, og Alder",
+            "description": "",
+            "tasks_id": "1",
+            "fields": [
+                {
+                    "key": "persons.burials.number"
+                },
+                {
+                    "key": "persons.firstnames"
+                },
+                {
+                    "key": "persons.freetext_store"
+                },
+                {
+                    "key": "persons.lastname"
+                },
+                {
+                    "key": "persons.birthname"
+                },
+                {
+                    "key": "persons.sex"
+                },
+                {
+                    "key": "persons.ageYears"
+                },
+                {
+                    "key": "persons.ageMonth"
+                },
+                {
+                    "key": "persons.ageWeeks"
+                },
+                {
+                    "key": "persons.ageDays"
+                },
+                {
+                    "key": "persons.ageHours"
+                }
+            ]
+        },
+        {
+            "id": "3",
+            "name": "Bopæl",
+            "description": "",
+            "tasks_id": "1",
+            "fields": [
+                {
+                    "key": "persons.addresses.streetAndHood"
+                },
+                {
+                    "key": "persons.addresses.number"
+                },
+                {
+                    "key": "persons.addresses.letter"
+                },
+                {
+                    "key": "persons.addresses.floor"
+                },
+                {
+                    "key": "persons.addresses.institution"
+                },
+                {
+                    "key": "persons.adressOutsideCph"
+                }
+            ]
+        },
+        {
+            "id": "4",
+            "name": "Erhverv, Civilstand og Dødsdato",
+            "description": "",
+            "tasks_id": "1",
+            "fields": [
+                {
+                    "key": "persons.positions",
+                    "add": "Tilføj"
+                },
+                {
+                    "key": "persons.civilstatus"
+                },
+                {
+                    "key": "persons.dateOfDeath"
+                }
+            ]
+        },
+        {
+            "id": "5",
+            "name": "Dødsårsag, Dødssted, Fra, Sogn og Kirkegård",
+            "description": "",
+            "tasks_id": "1",
+            "fields": [
+                {
+                    "key": "persons.deathcauses",
+                    "add": "Tilføj"
+                },
+                {
+                    "key": "persons.deathplace"
+                },
+                {
+                    "key": "persons.burials.chapel"
+                },
+                {
+                    "key": "persons.burials.parish"
+                },
+                {
+                    "key": "persons.burials.cemetary"
+                },
+                {
+                    "key": "persons.comment"
+                }
+            ]
+        }
+    ]
 }
