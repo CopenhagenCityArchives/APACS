@@ -147,7 +147,12 @@ class IndexDataController extends MainController {
 				throw new Exception("Could not find post with id " . $jsonData['post_id']);
 			}
 
-			$entity = Entities::findFirst(['conditions' => 'name = :entityName: AND task_id = :taskId:', 'bind'  => ['entityName' => explode('.', $jsonData['entity'])[0], 'taskId' => $jsonData['task_id']]]);
+
+			$taskconfigLoader = new TaskConfigurationLoader2();
+			$taskConf = $taskconfigLoader->getConfig($jsonData['task_id']);
+			$entitiesCollection = new EntitiesCollection($taskConf);
+
+			$entity = $entitiesCollection->getEntityByName(explode('.', $jsonData['entity'])[0]);
 
 			if(!$entity){
 				throw new Exception("Could not find entity with name " . explode('.', $jsonData['entity'])[0]);
@@ -281,7 +286,11 @@ class IndexDataController extends MainController {
 
 		$this->db = $this->getDI()->get('db');
 
-		$entities = Entities::find(['conditions' => 'task_id = ' . $jsonData['task_id']]);
+
+		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskConf = $taskconfigLoader->getConfig($jsonData['task_id']);
+		$entitiesCollection = new EntitiesCollection($taskConf);
+
 
 		//If the post already have an entry, get the id of the entry, so the existing entry will be updated, instead of a new one created
 		if (!is_null($entryId)) {
@@ -313,7 +322,7 @@ class IndexDataController extends MainController {
 					return;
 				}
 
-				$oldData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
+				$oldData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id, true);
 				$newData = $jsonData;
 
 				$concreteEntry->removeAdditionalDataFromNewData($oldData, $newData);
@@ -326,7 +335,7 @@ class IndexDataController extends MainController {
 			}
 
 			//Saving the concrete entry
-			$concreteId = $concreteEntry->SaveEntriesForTask($entities, $jsonData);
+			$concreteId = $concreteEntry->SaveEntriesForTask($entitiesCollection, $jsonData);
 
 			//Saving the meta entry, holding information about the concrete entry
 			$entry->tasks_id = $jsonData['task_id'];
@@ -340,16 +349,18 @@ class IndexDataController extends MainController {
 			}
 
 			$context = $entry->GetContext();
-			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context);
+
+			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context, $jsonData['task_id']);
 			$solrId = $solrData['collection_id'] . '-' . $entry->concrete_entries_id;
-			$conEnData = $concreteEntry->GetSolrData($entities, $jsonData);
-			//var_dump($conEnData['streets']);
+			$conEnData = $concreteEntry->GetSolrData($entitiesCollection, $jsonData);
 
 			$solrJsonObj = array_merge($context, $jsonData['persons'],['id' => $solrId]);
 			//TODO: Hardcoded! By some unknown reason, streets field is not added when running contreteEntries->GetSolrData. It may be the combination of a field where solrfieldname and decodedfieldname is not the same, and
 			//the entity in which streets belong is included in Solr. It the only field behaving that way, and the only field in which these conditions exist.
 			//This query will find it: SELECT * FROM kbharkiv.apacs_fields join apacs_entities on apacs_fields.entities_id = apacs_entities.id where entities_id < 8 and solrfieldname != decodefield and apacs_entities.includeInSolr = 1
-			$solrJsonObj['addresses']['street'] = $conEnData['streets'];
+			if(isset($conEnData['streets'])){
+				$solrJsonObj['addresses']['street'] = $conEnData['streets'];
+			}
 
 			$solrDataToSave = array_merge(
 				$solrData,
