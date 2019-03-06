@@ -143,8 +143,7 @@ CREATE TABLE `apacs_posts` (
   `image` blob,
   `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `FK_posts.pages_id_to_pages.id_idx` (`pages_id`),
-  CONSTRAINT `FK_posts.pages_id_to_pages.id` FOREIGN KEY (`pages_id`) REFERENCES `apacs_pages_old` (`id`) ON UPDATE CASCADE
+  KEY `FK_posts.pages_id_to_pages.id_idx` (`pages_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=237867 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 DROP TABLE IF EXISTS `apacs_pages`;
@@ -288,4 +287,28 @@ CREATE TABLE `apacs_tokens` (
   KEY `token` (`token`),
   KEY `expires` (`expires`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+CREATE TABLE `apacs_exceptions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` char(100) COLLATE utf8_danish_ci NOT NULL,
+  `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `details` text COLLATE utf8_danish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `time` (`time`)
+) ENGINE=InnoDB AUTO_INCREMENT=4601 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+CREATE TABLE `apacs_events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `users_id` int(11) NOT NULL,
+  `collections_id` int(11) NOT NULL,
+  `tasks_id` int(11) NOT NULL,
+  `units_id` int(11) NOT NULL,
+  `pages_id` int(11) NOT NULL,
+  `posts_id` int(11) NOT NULL,
+  `event_type` char(45) NOT NULL,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `tmestamp` (`timestamp`),
+  KEY `apacs_pages_idx` (`pages_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=509682 DEFAULT CHARSET=utf8;
 

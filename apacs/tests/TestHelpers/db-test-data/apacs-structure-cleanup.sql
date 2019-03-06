@@ -18,4 +18,8 @@ DROP TABLE IF EXISTS `apacs_tasks_units`;
 DROP TABLE IF EXISTS `apacs_units`;
 DROP TABLE IF EXISTS `apacs_users`;
 DROP TABLE IF EXISTS `apacs_tokens`;
+DROP TABLE IF EXISTS `apacs_exceptions`;
+
+
+
 SET FOREIGN_KEY_CHECKS = 1;
