@@ -1,0 +1,583 @@
+{
+    "definitions": {},
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://example.com/root.json",
+    "type": "object",
+    "required": [
+      "name",
+      "description",
+      "id",
+      "parentTask",
+      "entity",
+      "steps"
+    ],
+    "properties": {
+      "name": {
+        "$id": "#/properties/name",
+        "type": "string",
+        "pattern": "^(.*)$"
+      },
+      "description": {
+        "$id": "#/properties/description",
+        "type": "string",
+        "pattern": "^(.*)$"
+      },
+      "id": {
+        "$id": "#/properties/id",
+        "type": "integer"
+      },
+      "parentTask": {
+        "$id": "#/properties/parentTask",
+        "type": "null"
+      },
+      "entity": {
+        "$id": "#/properties/entity",
+        "type": "object",
+        "required": [
+          "id",
+          "task_id",
+          "name",
+          "isPrimaryEntity",
+          "entityKeyName",
+          "type",
+          "required",
+          "countPerEntry",
+          "guiName",
+          "primaryTableName",
+          "includeInSOLR",
+          "viewOrder",
+          "parent_id",
+          "fieldRelatingToParent",
+          "allowNewValues",
+          "typeOfRelationToParent",
+          "saveOrderAccordingToParent",
+          "fields",
+          "entities"
+        ],
+        "properties": {
+          "id": {
+            "$id": "#/properties/entity/properties/id",
+            "type": "integer"
+          },
+          "task_id": {
+            "$id": "#/properties/entity/properties/task_id",
+            "type": "integer"
+          },
+          "name": {
+            "$id": "#/properties/entity/properties/name",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "isPrimaryEntity": {
+            "$id": "#/properties/entity/properties/isPrimaryEntity",
+            "type": "integer"
+          },
+          "entityKeyName": {
+            "$id": "#/properties/entity/properties/entityKeyName",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "type": {
+            "$id": "#/properties/entity/properties/type",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "required": {
+            "$id": "#/properties/entity/properties/required",
+            "type": "integer"
+          },
+          "countPerEntry": {
+            "$id": "#/properties/entity/properties/countPerEntry",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "guiName": {
+            "$id": "#/properties/entity/properties/guiName",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "primaryTableName": {
+            "$id": "#/properties/entity/properties/primaryTableName",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "includeInSOLR": {
+            "$id": "#/properties/entity/properties/includeInSOLR",
+            "type": "integer"
+          },
+          "viewOrder": {
+            "$id": "#/properties/entity/properties/viewOrder",
+            "type": "integer"
+          },
+          "parent_id": {
+            "$id": "#/properties/entity/properties/parent_id",
+            "type": "null"
+          },
+          "fieldRelatingToParent": {
+            "$id": "#/properties/entity/properties/fieldRelatingToParent",
+            "type": "null"
+          },
+          "allowNewValues": {
+            "$id": "#/properties/entity/properties/allowNewValues",
+            "type": "integer"
+          },
+          "typeOfRelationToParent": {
+            "$id": "#/properties/entity/properties/typeOfRelationToParent",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "saveOrderAccordingToParent": {
+            "$id": "#/properties/entity/properties/saveOrderAccordingToParent",
+            "type": "string",
+            "pattern": "^(.*)$"
+          },
+          "fields": {
+            "$id": "#/properties/entity/properties/fields",
+            "type": "array",
+            "items": {
+              "$id": "#/properties/entity/properties/fields/items",
+              "type": "object",
+              "required": [
+                "id",
+                "entities_id",
+                "steps_id",
+                "datasources_id",
+                "tableName",
+                "fieldName",
+                "hasDecode",
+                "decodeTable",
+                "decodeField",
+                "codeAllowNewValue",
+                "includeInForm",
+                "formName",
+                "formFieldType",
+                "formFieldOrder",
+                "defaultValue",
+                "helpText",
+                "placeholder",
+                "isRequired",
+                "validationRegularExpression",
+                "validationErrorMessage",
+                "includeInSOLR",
+                "SOLRFieldName",
+                "SOLRFacet",
+                "SOLRResult",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/id",
+                  "type": "integer"
+                },
+                "entities_id": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/entities_id",
+                  "type": "integer"
+                },
+                "steps_id": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/steps_id",
+                  "type": "integer"
+                },
+                "datasources_id": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/datasources_id",
+                  "type": "null"
+                },
+                "tableName": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/tableName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "fieldName": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/fieldName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "hasDecode": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/hasDecode",
+                  "type": "integer"
+                },
+                "decodeTable": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/decodeTable",
+                  "type": "null"
+                },
+                "decodeField": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/decodeField",
+                  "type": "null"
+                },
+                "codeAllowNewValue": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/codeAllowNewValue",
+                  "type": "integer"
+                },
+                "includeInForm": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/includeInForm",
+                  "type": "integer"
+                },
+                "formName": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/formName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "formFieldType": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/formFieldType",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "formFieldOrder": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/formFieldOrder",
+                  "type": "integer"
+                },
+                "defaultValue": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/defaultValue",
+                  "type": "null"
+                },
+                "helpText": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/helpText",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "placeholder": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/placeholder",
+                  "type": "null"
+                },
+                "isRequired": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/isRequired",
+                  "type": "integer"
+                },
+                "validationRegularExpression": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/validationRegularExpression",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "validationErrorMessage": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/validationErrorMessage",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "includeInSOLR": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/includeInSOLR",
+                  "type": "integer"
+                },
+                "SOLRFieldName": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/SOLRFieldName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "SOLRFacet": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/SOLRFacet",
+                  "type": "integer"
+                },
+                "SOLRResult": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/SOLRResult",
+                  "type": "integer"
+                },
+                "name": {
+                  "$id": "#/properties/entity/properties/fields/items/properties/name",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                }
+              }
+            }
+          },
+          "entities": {
+            "$id": "#/properties/entity/properties/entities",
+            "type": "array",
+            "items": {
+              "$id": "#/properties/entity/properties/entities/items",
+              "type": "object",
+              "required": [
+                "id",
+                "task_id",
+                "name",
+                "isPrimaryEntity",
+                "entityKeyName",
+                "type",
+                "required",
+                "countPerEntry",
+                "guiName",
+                "primaryTableName",
+                "includeInSOLR",
+                "viewOrder",
+                "parent_id",
+                "fieldRelatingToParent",
+                "allowNewValues",
+                "typeOfRelationToParent",
+                "saveOrderAccordingToParent",
+                "fields",
+                "entities"
+              ],
+              "properties": {
+                "id": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/id",
+                  "type": "integer"
+                },
+                "task_id": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/task_id",
+                  "type": "integer"
+                },
+                "name": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/name",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "isPrimaryEntity": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/isPrimaryEntity",
+                  "type": "integer"
+                },
+                "entityKeyName": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/entityKeyName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "type": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/type",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "required": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/required",
+                  "type": "integer"
+                },
+                "countPerEntry": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/countPerEntry",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "guiName": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/guiName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "primaryTableName": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/primaryTableName",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "includeInSOLR": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/includeInSOLR",
+                  "type": "integer"
+                },
+                "viewOrder": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/viewOrder",
+                  "type": "integer"
+                },
+                "parent_id": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/parent_id",
+                  "type": "null"
+                },
+                "fieldRelatingToParent": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/fieldRelatingToParent",
+                  "type": "null"
+                },
+                "allowNewValues": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/allowNewValues",
+                  "type": "integer"
+                },
+                "typeOfRelationToParent": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/typeOfRelationToParent",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "saveOrderAccordingToParent": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/saveOrderAccordingToParent",
+                  "type": "string",
+                  "pattern": "^(.*)$"
+                },
+                "fields": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/fields",
+                  "type": "array",
+                  "items": {
+                    "$id": "#/properties/entity/properties/entities/items/properties/fields/items",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "entities_id",
+                      "steps_id",
+                      "datasources_id",
+                      "tableName",
+                      "fieldName",
+                      "hasDecode",
+                      "decodeTable",
+                      "decodeField",
+                      "codeAllowNewValue",
+                      "includeInForm",
+                      "formName",
+                      "formFieldType",
+                      "formFieldOrder",
+                      "defaultValue",
+                      "helpText",
+                      "placeholder",
+                      "isRequired",
+                      "validationRegularExpression",
+                      "validationErrorMessage",
+                      "includeInSOLR",
+                      "SOLRFieldName",
+                      "SOLRFacet",
+                      "SOLRResult",
+                      "name"
+                    ],
+                    "properties": {
+                      "id": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/id",
+                        "type": "integer"
+                      },
+                      "entities_id": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/entities_id",
+                        "type": "integer"
+                      },
+                      "steps_id": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/steps_id",
+                        "type": "integer"
+                      },
+                      "datasources_id": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/datasources_id",
+                        "type": "integer"
+                      },
+                      "tableName": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/tableName",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "fieldName": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/fieldName",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "hasDecode": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/hasDecode",
+                        "type": "integer"
+                      },
+                      "decodeTable": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/decodeTable",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "decodeField": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/decodeField",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "codeAllowNewValue": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/codeAllowNewValue",
+                        "type": "integer"
+                      },
+                      "includeInForm": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/includeInForm",
+                        "type": "integer"
+                      },
+                      "formName": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/formName",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "formFieldType": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/formFieldType",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "formFieldOrder": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/formFieldOrder",
+                        "type": "integer"
+                      },
+                      "defaultValue": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/defaultValue",
+                        "type": "null"
+                      },
+                      "helpText": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/helpText",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "placeholder": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/placeholder",
+                        "type": "null"
+                      },
+                      "isRequired": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/isRequired",
+                        "type": "integer"
+                      },
+                      "validationRegularExpression": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/validationRegularExpression",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "validationErrorMessage": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/validationErrorMessage",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "includeInSOLR": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/includeInSOLR",
+                        "type": "integer"
+                      },
+                      "SOLRFieldName": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/SOLRFieldName",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      },
+                      "SOLRFacet": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/SOLRFacet",
+                        "type": "integer"
+                      },
+                      "SOLRResult": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/SOLRResult",
+                        "type": "integer"
+                      },
+                      "name": {
+                        "$id": "#/properties/entity/properties/entities/items/properties/fields/items/properties/name",
+                        "type": "string",
+                        "pattern": "^(.*)$"
+                      }
+                    }
+                  }
+                },
+                "entities": {
+                  "$id": "#/properties/entity/properties/entities/items/properties/entities",
+                  "type": "null"
+                }
+              }
+            }
+          }
+        }
+      },
+      "steps": {
+        "$id": "#/properties/steps",
+        "type": "array",
+        "items": {
+          "$id": "#/properties/steps/items",
+          "type": "object",
+          "required": [
+            "id",
+            "name",
+            "description",
+            "tasks_id",
+            "fields"
+          ],
+          "properties": {
+            "id": {
+              "$id": "#/properties/steps/items/properties/id",
+              "type": "string",
+              "pattern": "^(.*)$"
+            },
+            "name": {
+              "$id": "#/properties/steps/items/properties/name",
+              "type": "string",
+              "pattern": "^(.*)$"
+            },
+            "description": {
+              "$id": "#/properties/steps/items/properties/description",
+              "type": "string",
+              "pattern": "^(.*)$"
+            },
+            "tasks_id": {
+              "$id": "#/properties/steps/items/properties/tasks_id",
+              "type": "string",
+              "pattern": "^(.*)$"
+            },
+            "fields": {
+              "$id": "#/properties/steps/items/properties/fields",
+              "type": "array"
+            }
+          }
+        }
+      }
+    }
+  }
