@@ -396,15 +396,16 @@ class IndexDataController extends MainController {
 			$event->tasks_id = $solrData['task_id'];
 			$event->event_type = is_null($entryId) ? Events::TypeCreate : Events::TypeEdit;
 
-			if (!$event->save()) {
-				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()) . '. The entry is saved.');
-			}
-
 			$post = Posts::findFirstById($jsonData['post_id']);
 			$post->complete = 1;
+			//TODO: The entry is not saved (transaction is rolled back later?)
 			if (!$post->save()) {
 				throw new RuntimeException('could not set post to complete: ' . implode(',', $post->getMessages()) . ' The entry is saved.');
 			}
+			//TODO: The entry is not saved (transaction is rolled back later?)
+			if (!$event->save()) {
+				throw new RuntimeException('could not save event data: ' . implode(',', $event->getMessages()) . '. The entry is saved.');
+			}			
 
 			$concreteEntry->commitTransaction();
 			$this->db->commit();
