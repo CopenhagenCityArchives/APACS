@@ -131,7 +131,7 @@ if __name__ == "__main__":
 
     try:
         print("Connecting to Solr... ", end='', flush=True)
-        solr = pysolr.Solr(Config['solr']['url'], timeout=300)
+        solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
         print("OK.")
     except Exception as e:
         print("Failed.\nError: %s" % repr(e))

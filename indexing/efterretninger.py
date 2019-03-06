@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 	try:
 		writeflush("Connecting to Solr... ")
-		solr = pysolr.Solr(Config['solr']['url'], timeout=300)
+		solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
 		writeflush("OK.\n")
 	except Exception as e:
 		writeflush("Failed.\nError: %s\n" % repr(e))

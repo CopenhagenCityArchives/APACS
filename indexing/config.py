@@ -33,7 +33,9 @@ if os.getenv('PYTHON_ENV', 'DEV') == 'DEV':
             "secret_access_key": "***REMOVED***"
         },
         "solr": {
-            "url": "http://solr:8983/solr/apacs_core"
+            "url": "http://solr:8983/solr/apacs_core",
+            "user": "kbharkiv",
+            "password": "6nXSaEJB7"
         },
         "ftp_kbharkiv": {
             "url": "phhw-160601.cust.powerhosting.dk",
@@ -72,7 +74,9 @@ else:
             "secret_access_key": "***REMOVED***"
         },
         "solr": {
-            "url": "http://solr:8983/solr/apacs_core"
+            "url": "http://solr:8983/solr/apacs_core",
+            "user": "kbharkiv",
+            "password": "6nXSaEJB7"
         },
         "ftp_kbharkiv": {
             "url": "ftp:kbharkiv.dk",
