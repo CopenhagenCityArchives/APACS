@@ -10,4 +10,4 @@ RUN /opt/solr/bin/solr start && \
     /opt/solr/bin/solr create_core -c banana-int && \
     /opt/solr/bin/solr stop
 
-COPY security.json /opt/solr/server/solr/security.json
+COPY --chown=solr:solr security.json /opt/solr/server/solr/security.json
