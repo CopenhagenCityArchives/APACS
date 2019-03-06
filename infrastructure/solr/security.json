@@ -3,10 +3,7 @@
         "class": "solr.BasicAuthPlugin",
         "blockUnknown": false,
         "credentials": {
-            "solr": "IV0EHq1OnNrj6gvRCwvFwTrZ1+z1oBbnQdiVC3otuq0= Ndd7LKvVBAaZIF0QAVi1ekCfAJXr1GGfLtRUXhgrF8c="
-        },
-        "": {
-            "v": 0
+            "kbharkiv": "nIAz4Ut6rGxKAYfyAQzzBEbPG56gWer9ilADrmuos8Q= 3ULxnsv9w7x4XjIO7vtXKRDhE2Nh8HZVxM6IFLHDeD8="
         }
     },
     "authorization": {
@@ -58,7 +55,7 @@
             }
         ],
         "user-role": {
-            "solr": "admin"
+            "kbharkiv": "admin"
         }
     }
 }
