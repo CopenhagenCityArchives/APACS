@@ -20,6 +20,10 @@
         <testsuite name="system">
             <directory suffix="Test.php">./tests/SystemTests</directory>
         </testsuite>
+        <!--<testsuite name="old">
+            <directory suffix="Test.php">./tests/oldTests</directory>
+        </testsuite>-->
+        
     </testsuites>
     <!-- Database connection settings -->
     <!--<php>
