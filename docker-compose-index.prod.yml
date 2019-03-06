@@ -24,12 +24,12 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
       - -Ddisable.configEdit=true
     volumes:
-      - stats_core:/opt/solr/server/solr/banana-int/
-      ##- apacs_core:/opt/solr/server/solr/mycores/apacs_core/
+      - banana_core:/opt/solr/server/solr/banana-int/
+      - mycores:/opt/solr/server/solr/mycores
     networks:
       - default
 volumes:
-    stats_core:
-    apacs_core:
+    banana_core:
+    mycores:
 networks:
   default:
