@@ -173,4 +173,20 @@ class SystemTest extends \UnitTestCase
         $removedErrorReportCount = count($postWithErrorRemoved['error_reports']);
         $this->assertEquals($originalErrorReportCount, $removedErrorReportCount);
     }
+
+    public function test_SaveEntry_ReturnValidEntry(){
+        $entryRequest = file_get_contents(__DIR__ . '/validEntry_task1.json');
+        $request = json_decode($entryRequest,true);
+
+        // Send entry data
+        $response = $this->http->request('POST', 'entries', [
+            'json' => $request
+        ]);
+
+        $responseData = json_decode((string) $response->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(10000, $responseData['post_id']);
+    }
 }
