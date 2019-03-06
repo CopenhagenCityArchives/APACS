@@ -254,7 +254,7 @@ class ConcreteEntries {
 	 * @param integer $id       the id of the concrete entry
 	 */
 	/*public function Delete($entities, $id) {
-		$primaryEntity = Entities::GetPrimaryEntity($entities);
+		//$primaryEntity = Entities::GetPrimaryEntity($entities);
 		$this->crud->delete($primaryEntity->primaryTableName, $id);
 	}*/
 
@@ -322,6 +322,7 @@ class ConcreteEntries {
 			//Implementation using array
 			$entityField = [];
 			$entityField['fieldName'] = $entity->entityKeyName;
+			$entityField['formFieldType'] = 'string';
 
 			if (!isset($data[$entityField['fieldName']])) {
 				throw new InvalidArgumentException('the entity cannot be saved, as there is no value for the entity key field: ' . $entityField['fieldName']);
@@ -346,6 +347,7 @@ class ConcreteEntries {
 			//Implementation using array
 			$orderField = [];
 			$orderField['fieldName'] = 'order';
+			$orderField['formFieldType'] = 'integer';
 
 			if(!isset($data[$orderField['fieldName']])){
 				$data[$orderField['fieldName']] = 0;
@@ -566,14 +568,14 @@ class ConcreteEntries {
 		return $primaryId;
 	}
 
-	public static function GetSolrDataFromEntryContext($entryCon) {
+	public static function GetSolrDataFromEntryContext($entryCon, $taskId) {
 		$solrData = [];
 
 		//Entry id is used as id in Solr
 		$solrData['id'] = $entryCon['entry_id'];
 
 		$solrData['collection_id'] = $entryCon['collection_id'];
-		$solrData['task_id'] = $entryCon['task_id'];
+		$solrData['task_id'] = $taskId;
 		$solrData['unit_id'] = $entryCon['unit_id'];
 		$solrData['page_id'] = $entryCon['page_id'];
 		$solrData['post_id'] = $entryCon['post_id'];
@@ -659,17 +661,17 @@ class ConcreteEntries {
 	/**
 	 * Method for converting data to SOLR format
 	 * For entities of type object and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
-	 * SOLR in a 1:1 form, using SOLRFieldName as name. The entity itself is concated an sent to SOLR.
+	 * SOLR in a 1:1 form, using SOLRFieldName as name. The entity itself is concated and sent to SOLR.
 	 * For entities of type array and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
 	 * SOLR in a concated form, one row pr. entity, and all values are put in arrays according to the field
 	 * they belong to
 	 * @param Array $entities The entities to save
 	 * @param Array $data     The data to convert
 	 */
-	public function GetSolrData($entities, $data) {
+	public function GetSolrData(IEntitiesCollection $entities, $data) {
 		$solrData = [];
 
-		$primaryEntity = Entities::GetPrimaryEntity($entities);
+		$primaryEntity = $entities->GetPrimaryEntity();
 		//array_filter($entities, function ($el) {return $el->isPrimaryEntity;})[0];
 
 		foreach ($entities as $entity) {

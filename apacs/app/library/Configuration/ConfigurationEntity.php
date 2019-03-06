@@ -11,6 +11,7 @@ class ConfigurationEntity implements IEntity {
 	public $guiName;
 	public $task_id;
 	public $type;
+	public $required;
 
 	private $validationMessages;
 
@@ -25,6 +26,7 @@ class ConfigurationEntity implements IEntity {
 		$this->guiName = $entity['guiName'];
 		$this->task_id = $entity['task_id'];
 		$this->type = $entity['type'];
+		$this->required = $entity['required'];
 		$this->setFields($entity['fields']);
 		$this->setEntities($entity['entities']);
 
@@ -69,6 +71,80 @@ class ConfigurationEntity implements IEntity {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Returns a concatted string on an array of concatted strings based on the input data
+	 * @param Array $data The data to concat
+	 */
+	public function ConcatDataByEntity($data) {
+		$concat = '';
+		if ($this->type == 'array') {
+			$concat = [];
+			$concatStr = '';
+			foreach ($data as $row) {
+				foreach (array_filter($this->getFields(), function ($el) {return $el->includeInSOLR == '1';}) as $field) {
+					$fieldName = $field->GetRealFieldName();
+
+					$concatStr .= $row[$fieldName] . ' ';
+				}
+				$concat[] = trim($concatStr);
+				$concatStr = '';
+			}
+			return $concat;
+		} else {
+			$concatStr = '';
+			foreach (array_filter($this->getFields(), function ($el) { return $el->includeInSOLR == '1';}) as $field) {
+				
+				if (isset($data[$field->GetRealFieldName()])) {
+					$concatStr .= $data[$field->GetRealFieldName()] . ' ';
+				}
+
+			}
+			return trim($concatStr);
+		}
+	}
+
+	/**
+	 * Returns an array of concatted field data ordered by field type
+	 * @param Array $data The data to concat
+	 */
+	public function ConcatDataByField($data) {
+		$concat = [];
+
+		if ($this->type == 'array') {
+			foreach (array_filter($this->getFields(), function ($el) {return $el->includeInSOLR == '1';}) as $field) {
+				foreach ($data as $row) {
+					$concat[$field->SOLRFieldName][] = $this->getFieldData($field, $row);
+				}
+			}
+			return $concat;
+		} else {
+			foreach (array_filter($this->getFields(), function ($el) {return $el->includeInSOLR == '1';}) as $field) {
+				$concat[$field->SOLRFieldName] = $this->getFieldData($field, $data);
+			}
+			return $concat;
+		}
+	}
+
+	private function getFieldData($field, $data) {
+		if (isset($data[$field->GetRealFieldName()])) {
+			if ($field->formFieldType == 'date') {
+				return date('Y-m-d\TH:i:s.000\Z', strtotime($data[$field->GetRealFieldName()]));
+				//return date('d-m-Y', strtotime($data[//Fields::GetRealFieldNameFromField($field)]));
+			}
+
+			if($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours' || $field->fieldName == 'ageMonth' || $field->fieldName == 'ageYears'){
+				return str_replace(',', '.', $data[$field->GetRealFieldName()]);
+			}
+
+			if (trim($data[$field->GetRealFieldName()]) == '') {
+				$data[$field->fieldName] = null;
+			}
+			return $data[$field->GetRealFieldName()];
+		}
+
+		return null;
 	}
 
 	public function setFields($fields){

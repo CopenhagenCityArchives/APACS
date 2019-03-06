@@ -20,8 +20,6 @@ class EntitiesTestData{
             'fields' => [$field],
             'entities' => []
         ];
-
-        //$entity = new Mocks\ConfigurationEntityStub($entityInfo);
         
         return $entity;
     }
@@ -45,8 +43,6 @@ class EntitiesTestData{
             'entities' => []
         ];
 
-        //$entity = new Mocks\ConfigurationEntityStub($entityInfo);
-        
         return $entity;    
     }
 
@@ -69,8 +65,37 @@ class EntitiesTestData{
             'entities' => []
         ];
 
-        //$entity = new Mocks\ConfigurationEntityStub($entityInfo);
-        
+        return $entity; 
+    }
+
+    public static function getObjectEntityWithTwoFields(){
+        $field1 = [];
+        $field1['fieldName'] = 'field1';
+        $field1['decodeField'] = null;
+        $field1['hasDecode'] = null;
+        $field1['decodeTable'] = null;
+        $field1['codeAllowNewValue'] = false;
+        $field1['includeInSOLR'] = 1;
+
+        $field2 = [];
+        $field2['fieldName'] = 'field2';
+        $field2['decodeField'] = null;
+        $field2['hasDecode'] = null;
+        $field2['decodeTable'] = null;
+        $field2['codeAllowNewValue'] = false;
+        $field2['includeInSOLR'] = 1;
+
+        $entity = [
+            'name' => 'simpleObjectEntityWithTwoFields',
+            'primaryTableName' => 'primaryTableName',
+            'isPrimaryEntity' => 1,
+            'entityKeyName'=> 'parentEntityReferenceField',
+            'type' => 'array',
+            'fieldObjects' => [],
+            'fields' => [$field1, $field2],
+            'entities' => []
+        ];
+
         return $entity; 
     }
 

@@ -71,10 +71,10 @@ class SystemTest extends \UnitTestCase
         $response = $this->http->request('GET', 'taskschema?task_id=1');
 
         $this->assertEquals(200, $response->getStatusCode());
-
+//var_dump((string) $response->getBody());
         $validTaskSchema = json_decode(file_get_contents(__DIR__ . '/validTaskSchema_task1.json'),true);
 
-        $this->assertEquals($validTaskSchema, json_decode((string) $response->getBody(), true));
+        $this->assertEquals($validTaskSchema, json_decode((string) $response->getBody(), true,JSON_NUMERIC_CHECK));
     }
 
     public function test_GetPost_Task1_ReturnValidData(){
