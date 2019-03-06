@@ -15,6 +15,9 @@ class ConfigurationField{
     public $validationErrorMessage;
 
     public $isRequired;
+
+    public $includeInSOLR;
+    public $SOLRFieldName;
     
     public function __construct(Array $field){
 
@@ -26,6 +29,7 @@ class ConfigurationField{
         $this->hasDecode = $field['hasDecode'];
         $this->codeAllowNewValue = $field['codeAllowNewValue'];
 
+        $this->includeInForm = isset($field['includeInForm']) ? $field['includeInForm'] : 1;
         $this->formName = $field['formName'];
         $this->formFieldType = $field['formFieldType'];
 
@@ -34,7 +38,8 @@ class ConfigurationField{
 
         $this->isRequired = $field['isRequired'];
 
-        $this->includeInForm = isset($field['includeInForm']) ? $field['includeInForm'] : 1;
+        $this->includeInSOLR = isset($field['includeInSOLR']) ? $field['includeInSOLR'] : 0;
+        $this->SOLRFieldName = isset($field['SOLRFieldName']) ? $field['SOLRFieldName'] : "solrFieldNameNotGiven";
     }
 
     public function toArray(){
@@ -46,13 +51,17 @@ class ConfigurationField{
             'hasDecode' => $this->hasDecode,
             'codeAllowNewValue' => $this->codeAllowNewValue,
 
+            'includeInForm' => $this->includeInForm,
             'formName' => $this->formName,
             'formFieldType' => $this->formFieldType,
 
             'validationRegularExpression' => $this->validationRegularExpression,
             'validationErrorMessage' => $this->validationErrorMessage,
 
-            'isRequired' => $this->isRequred
+            'isRequired' => $this->isRequired,
+
+            'includeInSOLR' => $this->includeInSOLR,
+            'SOLRFieldName' => $this->SOLRFieldName
         ];
     }
 
@@ -66,5 +75,13 @@ class ConfigurationField{
 		}
 
 		return $this->fieldName;
+    }
+    
+    public static function GetRealFieldNameFromField($field) {
+        if(is_array($field)){
+            return !is_null($field['decodeField']) ? $field['decodeField'] : $field['fieldName'];
+        }
+
+        throw new Exception("GetRealFieldNameFromField can only be called on array representations of ConfigurationField");
 	}
 }

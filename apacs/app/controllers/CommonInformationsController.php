@@ -92,10 +92,20 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
-		$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
+		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskConf = $taskconfigLoader->getConfig($taskId);
+		$entitiesCollection = new EntitiesCollection($taskConf);
+
+		$mapper = new EntitiesCollectionToTaskSchemaMapper($entitiesCollection);
+		$schema = $mapper->getSchema($taskConf['name'],$taskConf['description'], $taskConf['steps']);
 
 		$this->response->setHeader("Cache-Control", "max-age=600");
-		$this->response->setJsonContent($task->GetTaskSchema($taskId));
+		$this->response->setJsonContent($schema);
+
+		/*$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
+
+		$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setJsonContent($task->GetTaskSchema($taskId));*/
 	}
 
 	public function GetErrorReportConfig()
@@ -414,7 +424,6 @@ class CommonInformationsController extends MainController {
 			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
 		}
 
-		//$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
 		$taskconfigLoader = new TaskConfigurationLoader2();
 		$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
 		$entitiesCollection = new EntitiesCollection($taskConf);
@@ -425,6 +434,7 @@ class CommonInformationsController extends MainController {
 		$entryData['post'] = Posts::findFirst(['conditions' => 'id = :id:', 'columns' => 'id,x,y,width,height, pages_id as page_id', 'bind' => ['id' => $entry->posts_id]]);
 		$entryData['task_id'] = $entry->tasks_id;
 		$entryData['page_id'] = $entryData['post']['page_id'];
+		$entryData['post_id'] = $entry->posts_id;
 		$entryData['concrete_entries_id'] = $entry->concrete_entries_id;
 
 		$this->response->setJsonContent($entryData, JSON_NUMERIC_CHECK);
@@ -471,7 +481,6 @@ class CommonInformationsController extends MainController {
 			$postData = [];
 			foreach ($entries as $entry) {
 				//Loading entities for entry
-				//$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
 				$taskconfigLoader = new TaskConfigurationLoader2();
 				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
 				$entitiesCollection = new EntitiesCollection($taskConf);
