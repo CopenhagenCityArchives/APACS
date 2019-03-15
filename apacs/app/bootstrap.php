@@ -22,13 +22,13 @@ try {
 
 	//TODO: Test if this works as well (better to use one autoloader than two) :
 	/**
- * Register Files, composer autoloader
- */
+	 * Register Files, composer autoloader
+	 */
 // $loader->registerFiles(
-//     [
-//         APP_PATH . '/vendor/autoload.php'
-//     ]
-// );
+	//     [
+	//         APP_PATH . '/vendor/autoload.php'
+	//     ]
+	// );
 
 	//Setup the configuration service
 	$di->setShared('configuration', function () use ($di) {
@@ -187,11 +187,9 @@ try {
 		$origin = '*';
 		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
 
-
-		if($di->get('request')->getQuery('callback')){
+		if ($di->get('request')->getQuery('callback')) {
 			$di->get('response')->setHeader('Content-Type', 'application/javascript; charset=utf-8');
-		}
-		else{
+		} else {
 			//Default return is JSON in utf-8
 			$di->get('response')->setHeader('Content-Type', 'application/json; charset=utf-8');
 		}
@@ -226,21 +224,18 @@ try {
 
 		$postData = $mainCtrl->GetAndValidateJsonPostData();
 
-		if($postData == false){
+		if ($postData == false) {
 			$postData = null;
 		}
 
 		$exception->save([
 			'type' => 'global_exception',
-			'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' =>  $postData]),
+			'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' => $postData]),
 		]);
-	}
-	catch(Exception $exp){
+	} catch (Exception $exp) {
 
-	}
-	finally{
-		$di->get('response')->setStatusCode(500, "Server error");
-		$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
-		$di->get('response')->send();
-	}	
+	} 
+	$di->get('response')->setStatusCode(500, "Server error");
+	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
+	$di->get('response')->send();
 }
