@@ -142,7 +142,7 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         $taskConfig['entity'] = $entity;
         $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
 
-        // Input is an array of data related to the entity
+        // Input is an array of data related to en entity
         $inputData = [
             $entity['name'] => [
                 [
@@ -158,13 +158,17 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
             ]
         ];
 
-        $entry = new ConcreteEntries($this->getDI(), null);
-        $concattedData = $entry->GetSolrData($entitiesCollection, $inputData);
-
         // We expect the output to be an array of concatted values as well as an array for each
         // field to be included
-        $this->assertEquals(2, count($concattedData[$entity['name']]));
-        $this->assertEquals(2, count($concattedData['SolrFieldName1']));
-        $this->assertEquals(2, count($concattedData['SolrFieldName2']));
+        $expectedData = [
+            'SolrFieldName1' => ['value1.1', 'value2.1'],
+            'SolrFieldName2' => ['value1.2', 'value2.2'],
+            $entity['name'] => ['value1.1 value1.2', 'value2.1 value2.2']     
+        ];
+
+        $entry = new ConcreteEntries($this->getDI(), null);
+        $concattedData = $entry->GetSolrData($entitiesCollection, $inputData);
+        
+        $this->assertEquals($expectedData, $concattedData);
     }
 }
