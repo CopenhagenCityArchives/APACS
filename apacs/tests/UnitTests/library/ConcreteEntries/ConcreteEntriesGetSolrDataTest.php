@@ -163,8 +163,8 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
 
         // We expect the output to be an array of concatted values as well as an array for each
         // field to be included
-        $this->assertTrue(count($concattedData[$entity->name]) == 2);
-        $this->assertTrue(count($concattedData['field1']) == 2);
-        $this->assertTrue(count($concattedData['field2']) == 2);
+        $this->assertEquals(2, count($concattedData[$entity['name']]));
+        $this->assertEquals(2, count($concattedData['SolrFieldName1']));
+        $this->assertEquals(2, count($concattedData['SolrFieldName2']));
     }
 }
