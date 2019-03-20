@@ -12,6 +12,7 @@ class ConfigurationEntity implements IEntity {
 	public $task_id;
 	public $type;
 	public $required;
+	public $includeInSOLR;
 
 	private $validationMessages;
 
@@ -27,6 +28,7 @@ class ConfigurationEntity implements IEntity {
 		$this->task_id = $entity['task_id'];
 		$this->type = $entity['type'];
 		$this->required = $entity['required'];
+		$this->includeInSOLR = isset($entity['includeInSOLR']) ? $entity['includeInSOLR'] : 0;
 		$this->setFields($entity['fields']);
 		$this->setEntities($entity['entities']);
 
@@ -74,11 +76,12 @@ class ConfigurationEntity implements IEntity {
 	}
 
 	/**
-	 * Returns a concatted string on an array of concatted strings based on the input data
+	 * Returns a concatted string or an array of of all field values for fields where includeInSOLR = 1 (return type depending on entity type)
 	 * @param Array $data The data to concat
 	 */
 	public function ConcatDataByEntity($data) {
 		$concat = '';
+
 		if ($this->type == 'array') {
 			$concat = [];
 			$concatStr = '';
@@ -94,8 +97,8 @@ class ConfigurationEntity implements IEntity {
 			return $concat;
 		} else {
 			$concatStr = '';
+
 			foreach (array_filter($this->getFields(), function ($el) { return $el->includeInSOLR == '1';}) as $field) {
-				
 				if (isset($data[$field->GetRealFieldName()])) {
 					$concatStr .= $data[$field->GetRealFieldName()] . ' ';
 				}
@@ -120,11 +123,23 @@ class ConfigurationEntity implements IEntity {
 			}
 			return $concat;
 		} else {
-			foreach (array_filter($this->getFields(), function ($el) {return $el->includeInSOLR == '1';}) as $field) {
+			foreach (array_filter($this->getFields(), function ($el) { return $el->includeInSOLR == '1';}) as $field) {
 				$concat[$field->SOLRFieldName] = $this->getFieldData($field, $data);
 			}
 			return $concat;
 		}
+	}
+
+	public function getDenormalizedData($data){
+		$denormalizedData = [];
+
+		if ($this->includeInSOLR == 1) {
+			$denormalizedData[$this->name] = $this->ConcatDataByEntity($data);
+		}
+
+		$denormalizedData = array_merge($denormalizedData, $this->ConcatDataByField($data));
+
+		return $denormalizedData;
 	}
 
 	private function getFieldData($field, $data) {

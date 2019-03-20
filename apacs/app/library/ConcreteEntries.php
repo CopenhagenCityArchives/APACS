@@ -672,26 +672,14 @@ class ConcreteEntries {
 		$solrData = [];
 
 		$primaryEntity = $entities->GetPrimaryEntity();
-		//array_filter($entities, function ($el) {return $el->isPrimaryEntity;})[0];
 
-		foreach ($entities as $entity) {
-			$row = null;
-			if ($entity->isPrimaryEntity == '1') {
-				$row = $data[$entity->name];
-			} else {
-				if (isset($data[$primaryEntity->name][$entity->name])) {
-					$row = $data[$primaryEntity->name][$entity->name];
-				} else {
-					$row = [];
-				}
+		$solrData = $primaryEntity->getDenormalizedData($data[$primaryEntity->name]);
+
+		foreach ($entities->getSecondaryEntities() as $entity) {
+			if(isset($data[$primaryEntity->name][$entity->name]) && count($data[$primaryEntity->name][$entity->name])>0){
+				$solrData = array_merge($solrData, $entity->getDenormalizedData($data[$primaryEntity->name][$entity->name]));
 			}
 
-			if (count($row) > 0) {
-				if ($entity->includeInSOLR == '1') {
-					$solrData[$entity->name] = $entity->ConcatDataByEntity($row);
-				}
-				$solrData = array_merge($solrData, $entity->ConcatDataByField($row));
-			}
 		}
 
 		return $solrData;
