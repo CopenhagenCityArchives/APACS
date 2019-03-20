@@ -594,7 +594,7 @@ class ConcreteEntries {
 		$config = [
 			'endpoint' =>
 			['aws' =>
-				['scheme' => $config['scheme'], 'host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
+				['scheme' => $config['scheme'], 'host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'username' => $config['username'], 'password' => $config['password'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
 			],
 		];
 
