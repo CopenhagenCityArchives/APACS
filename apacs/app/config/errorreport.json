@@ -1,9 +1,9 @@
 {
-    "1" : {
+    "1": {
         "task_id": 1,
         "collection_id": 1,
         "add_metadata": true,
-        "error_reports" : [
+        "error_reports": [
             {
                 "label": "Fornavne",
                 "entity": "persons.firstnames"
@@ -48,9 +48,9 @@
     },
     "17": {
         "task_id": 2,
-        "collection_id" : 17,
+        "collection_id": 17,
         "add_metadata": false,
-        "error_reports" : [
+        "error_reports": [
             {
                 "label": "Person (navn, fødselsdato, fødested)",
                 "entity": "person"
@@ -73,7 +73,7 @@
         "task_id": 3,
         "collection_id": 18,
         "add_metadata": false,
-        "error_reports" : [
+        "error_reports": [
             {
                 "label": "Transkription",
                 "entity": "transcription"
@@ -81,6 +81,29 @@
             {
                 "label": "Andre oplysninger",
                 "entity": "other_informations"
+            }
+        ]
+    },
+    "100": {
+        "task_id": 4,
+        "collection_id": 100,
+        "add_metadata": false,
+        "error_reports": [
+            {
+                "label": "Fornavne",
+                "entity": "firstnames"
+            },
+            {
+                "label": "Efternavn",
+                "entity": "lastname"
+            },
+            {
+                "label": "Alder eller fødselsdato",
+                "entity": "age_or_birthdate"
+            },
+            {
+                "label": "Indskrivningsdato",
+                "entity": "entrydate"
             }
         ]
     }
