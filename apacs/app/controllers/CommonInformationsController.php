@@ -423,6 +423,8 @@ class CommonInformationsController extends MainController {
 		$entryData['task_id'] = $entry->tasks_id;
 		$entryData['page_id'] = $entryData['post']['page_id'];
 		$entryData['concrete_entries_id'] = $entry->concrete_entries_id;
+		//TODO: Hardcoded usage of collection id
+		$entryData['solr_id'] = '1-' . $entry->concrete_entries_id;
 
 		$this->response->setJsonContent($entryData, JSON_NUMERIC_CHECK);
 	}
