@@ -37,7 +37,7 @@ class AccessController implements IAccessController {
 
 			// If token not in db, get from url
 
-			$url = 'https://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
+			$url = 'https://www.kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
 
 			$response = $this->getWebPage($url);
 
