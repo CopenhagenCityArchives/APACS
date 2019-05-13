@@ -1,62 +1,107 @@
 <?php
 
-//Used to create tasks units and tasks pages based on a task id and a collection id
+use Phalcon\Db\Adapter\Pdo\Mysql;
+
+
+//Used to create tasks units and tasks pages based on a task id and a unit range
 //Should be also support deletion
-//TODO: validate if tasks units and tasks pages exists for a given combination of task and collection
 class TaskMetadataCreator{
 
     private $db;
-    private $collectionId;
+	private $startUnitId;
+	private $endUnitId;
     private $taskId;
 
 
-    public function __constructor($db, $collectionId, $taskId){
-        //new Mysql($this->getDI()->get('config'));
-        $this->db = $db;
-        $this->collectionId = $collectionId;
-        $this->taskId = $taskId;
-    }
+    public function __construct($db, $taskId, $startUnitId, $endUnitId){
+		$this->db = $db;
 
-    // Create task units based on a task and a collection
+		$this->taskId = $taskId;
+		
+		$this->startUnitId = $startUnitId;
+		$this->endUnitId = $endUnitId;
+	}
+	
+	private function taskPagesExist(){
+		return count(TasksPages::find([
+			'tasks_id = ' . $this->taskId,
+			'unit_id >= ' . $this->startUnitId,
+			'unit_id <= ' . $this->endUnitId
+		]))>0;
+	}
+
+	private function taskUnitsExist(){
+		return count(TasksUnits::find([
+			'tasks_id = ' . $this->taskId,
+			'unit_id >= ' . $this->startUnitId,
+			'unit_id <= ' . $this->endUnitId
+		]))>0;
+	}
+
+	private function taskExists(){
+		return count(Tasks::find('id = ' . $this->taskId))>0;
+	}
+
+    // Create task units based on a task and a unit range (start unit id and end unit id)
 	public function createTaskUnits($layout_columns, $layout_rows){
+		
+		if(!$this->taskExists()){
+			throw new Exception("Task with id " . $this->taskId . " does not exist. Please create it first");
+		}
 
+		if($this->taskUnitsExist()){
+			throw new Exception("Units for task already exist. Please remove before creating new ones");
+		}
+
+        echo 'connecting' . PHP_EOL;
 		$this->db->begin();
 
 		try{
-			echo 'connecting' . PHP_EOL;
 
-			echo 'inserting task units based on task_id ' . $this->taskId . ' and collection_id ' . $this->collectionId . PHP_EOL;
+			echo 'inserting task units based on task_id ' . $this->taskId . ' and startUnitId, endUnitId ' . $this->startUnitId . ', ' . $this->endUnitId . PHP_EOL;
 
 			$this->db->execute(
 				"
 					INSERT INTO apacs_tasks_units (tasks_id, units_id, pages_done, columns, rows, index_active)
 					select ? as tasks_id, apacs_units.id as units_id, 0 as pages_done, ? as columns, ? as rows, 0 as index_active
 					from apacs_units
-					where apacs_units.collections_id = ?
+					where apacs_units.id >= ? and apacs_units.id <= ?
 				",
 				[
 					$this->taskId,
 					$layout_columns,
 					$layout_rows,
-					$this->collectionId
+					$this->startUnitId,
+					$this->endUnitId
 				]
 			);
 			
+			$this->db->commit();
+
 			echo $this->db->affectedRows(), " task units were created";
 		}
 		catch(Exception $e){
-			echo 'something went wrong, commit cancelled. ' . $e->getMessage() . PHP_EOL;
 			$this->db->rollback();
+			echo 'something went wrong, commit cancelled. ' . $e->getMessage() . PHP_EOL;			
+            return;
 		}
 	
-		$this->db->commit();
 	}	
 
 	public function createTaskPages(){
+		
+		if(!$this->taskExists()){
+			throw new Exception("Task with id " . $this->taskId . " does not exist. Please create it first");
+		}
+
+		if($this->taskPagesExist()){
+			throw new Exception("Pages for task already exist. Please remove before creating new ones");
+		}
+
 		$this->db->begin();
 
 		try{
-			echo 'inserting task pages based on task_id ' . $this->taskId . ' and collection_id ' . $this->collectionId . PHP_EOL;
+			echo 'inserting task pages based on task_id ' . $this->taskId . ' and startUnitId, endUnitId ' . $this->startUnitId . ', ' . $this->endUnitId . PHP_EOL;
 
 			$this->db->execute(
 				"
@@ -65,21 +110,22 @@ class TaskMetadataCreator{
 					from apacs_units 
 					join apacs_pages on apacs_units.id = apacs_pages.unit_id
 					
-					WHERE apacs_units.collections_id = ?
+					where apacs_units.id >= ? and apacs_units.id <= ?
 				",
 				[
 					$this->taskId,
-					$this->collectionId
+					$this->startUnitId,
+					$this->endUnitId
 				]
 			);
 			
-			echo $this->db->affectedRows(), " task pages were created";
+			$this->db->commit();
+
+			echo $this->db->affectedRows() . " task pages were created";
 		}
 		catch(Exception $e){
-			echo 'something went wrong, commit cancelled. ' . $e->getMessage() . PHP_EOL;
 			$this->db->rollback();
+			echo 'something went wrong, commit cancelled. ' . $e->getMessage() . PHP_EOL;
 		}
-
-		$this->db->commit();
 	}
 }
