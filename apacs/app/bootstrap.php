@@ -164,6 +164,13 @@ try {
 	$cumulus->get('/asset/{assetId:[0-9]+}', 'AssetDownload');
 	$app->mount($cumulus);
 
+	// Administration Controller
+	$admin = new MicroCollection();
+	$admin->setHandler(new AdministrationController());
+	$admin->post('/admin/taskunits', 'createTasksUnits');
+	$admin->post('/admin/taskpages', 'createTasksPages');
+	$app->mount($admin);
+
 	//Catch all for preflight checks (always performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
 		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
