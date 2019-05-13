@@ -33,7 +33,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./apacs/tests/FunctionalTests/db-init:/docker-entrypoint-initdb.d
+      - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
       - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
     environment:
       MYSQL_ROOT_PASSWORD: 123456
