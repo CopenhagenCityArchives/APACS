@@ -20,11 +20,10 @@ class TaskConfigurationLoader2 {
         }
         
         $configFile = $this->configPath . '/task_' . $id . '.json' ;
-
+        
         if(!file_exists($configFile)){
             throw new Exception("config file not found! Looked here: " . $configFile);
         }
-
         $config = json_decode(file_get_contents($configFile), true);
         
         
@@ -44,6 +43,35 @@ class TaskConfigurationLoader2 {
 
     //Returns a recursive merged array of config and parent config
     private function override($config){
-        return array_replace_recursive($this->getConfig($config['parentTask']),$config);
+        return $this->fillConfig($this->getConfig($config['parentTask']),$config);
+    }
+
+    private function fillConfig( $default, $specific )
+    {
+        foreach( $specific as $key=> $val )
+        {
+            if( isset( $default[$key] ) && $key != 'steps' )
+            {
+                if( ! is_array( $default[$key] ) )
+                {
+                    $default[$key] = $val;
+                }
+                elseif( array_keys($default[$key]) === range(0, count($default[$key]) - 1) )
+                {
+                    $default[$key] = array_unique( array_merge( $default[$key], $val ) );
+                }
+                else
+                {
+                    $default[$key] = $this->fillConfig( $default[$key], $val );
+                }
+            }
+            else
+            {
+                // This happens when a specific key doesn't exists in default configuration.
+
+                $default[$key] = $val;
+            }
+        }
+        return $default;
     }
 }
