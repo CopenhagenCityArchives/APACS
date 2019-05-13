@@ -14,27 +14,27 @@ The system consists of several services:
 All services are designed to be started with docker-compose.
 
 There are several groups of docker-compose-files:
-* docker-compose-index.dev.yml and docker-compose-index.prod.yml: These files are used for development and deployment of the Solr server as well as the indexation scripts
-* docker-compose.webserver.dev.yml and docker-compose.webserver.prod.yml: These files are used for development of the webserver and the database.
-* docker-compose.complete.dev.yml: A development infrastructure used when all services are needed.
+* ``docker-compose-index.dev.yml`` and ``docker-compose-index.prod.yml``: These files are used for development and deployment of the Solr server as well as the indexation scripts
+* ``docker-compose.webserver.dev.yml`` and ``docker-compose.webserver.prod.yml``: These files are used for development of the webserver and the database.
+* ``docker-compose.complete.dev.yml``: A development infrastructure used when all services are needed.
 
 Notice that the Solr service is included in both files, as the service is used by both the API and the indexer scripts.
 
-The two other docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
+The two *.prod* docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
 # Development
 ## Webserver, database and Solr
-All dependencies are installed with Composer, which is run during docker-compose up.
+All PHP dependencies are installed with Composer, which is run during docker-compose up.
 The services are declared in *docker-compose.dev.yml*
 
 * ``
-docker-compose -f docker-compose.dev.yml up -d [indexer|solr]
+docker-compose -f docker-compose.dev.yml up -d
 ``
 ## Indexing script and Solr
 The services are declared in *docker-compose-index.dev.yml*
 
 * ``
-docker-compose -f docker-compose-index.dev.yml up -d [phalcon|db|solr]
+docker-compose -f docker-compose-index.dev.yml up -d [indexer|solr]
 ``
 
 # Deployment
@@ -98,7 +98,7 @@ sudo phpunit --coverage-html ./coverage
 
 Note that test coverage requires XDEBUG to be installed, and to be set up in not only in php5/apache2/php.ini but ALSO in /php5/cli/php.ini
 
-## API endpoint tests (propably outdated)
+## API endpoint tests (probably outdated)
 Go to /apacs/tests_api
 ```
 jasmine-node /tests
