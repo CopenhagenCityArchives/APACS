@@ -20,7 +20,6 @@
             "entity_name": "persons",
             "label": "Person",
             "entry_id": 9331,
-            "task_id": 1,
             "concrete_entries_id": 9718,
             "fields": [
                 {
@@ -125,7 +124,6 @@
             "entity_name": "deathcauses",
             "label": "Dødsårsag",
             "entry_id": 9331,
-            "task_id": 1,
             "concrete_entries_id": 12663,
             "fields": [
                 [
@@ -142,7 +140,6 @@
             "entity_name": "positions",
             "label": "Erhverv",
             "entry_id": 9331,
-            "task_id": 1,
             "concrete_entries_id": 9518,
             "fields": [
                 [
@@ -171,7 +168,6 @@
             "entity_name": "addresses",
             "label": "Adresse",
             "entry_id": 9331,
-            "task_id": 1,
             "concrete_entries_id": 8544,
             "fields": [
                 {
@@ -210,7 +206,6 @@
             "entity_name": "burials",
             "label": "Begravelse",
             "entry_id": 9331,
-            "task_id": 1,
             "concrete_entries_id": 9132,
             "fields": [
                 {
