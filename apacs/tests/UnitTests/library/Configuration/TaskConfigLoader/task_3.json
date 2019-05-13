@@ -8,13 +8,13 @@
             "description": "Person i posten",
             "dbTableName": "test_persons",
             "type": "array",
-            "fields": [
-                {
+            "fields": {
+                "20": {
                 "name": "firstnames",
                 "required": true,
                 "fieldName": "firstnames",
                 "stepsId": 1
-            }],
+            }},
             "entities": [
                 {
                     "name": "address",
