@@ -272,7 +272,6 @@ class CommonInformationsController extends MainController {
 		}
 	}
 
-	//TODO: Task 1 is implicit expected. Task id should be given as input
 	public function GetPage($pageId, $page = null) {
 		if (is_null($page)) {
 			$page = Pages::findFirstById($pageId);
@@ -329,9 +328,15 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
+		$page = Pages::findFirst($input['page_id']);
+
+		if($page == false){
+			throw InvalidArgumentException("Page " . $input['page_id'] .  " not found");
+		}
+
 		$post = new Posts();
 		$post->id = $id;
-		$post->pages_id = $input['page_id'];
+		$post->pages_id = $page->id;
 		$post->x = $input['x'];
 		$post->y = $input['y'];
 		$post->height = $input['height'];
@@ -352,16 +357,14 @@ class CommonInformationsController extends MainController {
 		//Saving the thumb
 		$post->SaveThumbImage();
 
-		$page = Pages::findFirstById($input['page_id'])->toArray();
-
+		//Create and save event
 		$event = new Events();
 		$event->users_id = $this->auth->GetUserId();
-		$event->units_id = $page['unit_id'];
-		$event->pages_id = $page['id'];
+		$event->units_id = $page->unit_id;
+		$event->pages_id = $page->id;
 		$event->posts_id = $post->id;
-		//TODO: Hardcoded task_id and collection_id
-		$event->tasks_id = 1;
-		$event->collections_id = 1;
+		$event->tasks_id = 0;
+		$event->collections_id = $page->getUnits()->collections_id;
 		$event->event_type = Events::TypeCreateUpdatePost;
 
 		if(!$event->save()){
@@ -371,7 +374,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		//Set last activity on the TaskPage, so it is not received when getting available pages
-		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $input['page_id']]);
+		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $page->id]);
 		if(!is_null($taskPage)){
 			$taskPage->last_activity = time();
 			$taskPage->save();
@@ -580,11 +583,18 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetUser($userId) {
-		$user = Users::findFirst($userId)->toArray();
+		$user = Users::findFirst($userId);
+
+		if(!$user){
+			$this->error("User with id " . $userId . " not found");
+			return;
+		}
+
+		$user = $user->toArray();
 
 		$user['super_user_tasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
 
-		$this->response->setHeader("Cache-Control", "max-age=600");
+		#$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($user, JSON_NUMERIC_CHECK);
 	}
 

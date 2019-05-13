@@ -2,7 +2,7 @@
 
 class Pages extends \Phalcon\Mvc\Model {
 
-	protected $id;
+	public $id;
 	protected $unitsId;
 	protected $collectionId;
 
