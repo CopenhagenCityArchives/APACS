@@ -9,7 +9,6 @@ class ConfigurationEntity implements IEntity {
 	public $entityKeyName;
 	public $name;
 	public $guiName;
-	public $task_id;
 	public $type;
 	public $required;
 	public $includeInSOLR;
@@ -25,7 +24,6 @@ class ConfigurationEntity implements IEntity {
 		$this->entityKeyName = $entity['entityKeyName'];
 		$this->name = $entity['name'];
 		$this->guiName = $entity['guiName'];
-		$this->task_id = $entity['task_id'];
 		$this->type = $entity['type'];
 		$this->required = $entity['required'];
 		$this->includeInSOLR = isset($entity['includeInSOLR']) ? $entity['includeInSOLR'] : 0;

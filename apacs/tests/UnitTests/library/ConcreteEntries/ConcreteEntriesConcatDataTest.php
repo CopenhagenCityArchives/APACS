@@ -32,7 +32,6 @@ class ConcreteEntriesConcatDataTest extends \UnitTestCase {
                 'entity_name' => $entity['name'],
                 'label' => $entity['guiName'],
                 'entry_id' => -1,
-                'task_id' => $taskConfig['id'],
                 'concrete_entries_id' => 10,
                 'fields' => [
                     [

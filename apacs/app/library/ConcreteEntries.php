@@ -121,7 +121,7 @@ class ConcreteEntries {
 			$entityRow['entity_name'] = $entity->name;
 			$entityRow['label'] = $entity->guiName;
 			$entityRow['entry_id'] = $entry_id;
-			$entityRow['task_id'] = $entity->task_id;
+			//$entityRow['task_id'] = $entity->task_id;
 			$entityRow['concrete_entries_id'] = isset($data[0]['id']) ? $data[0]['id'] : null;
 			$entityRow['fields'] = [];
 			$i = 0;
