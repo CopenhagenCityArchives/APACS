@@ -1,33 +1,25 @@
 {
     "name": "Begravelser",
     "description": "Indtastning af begravelsesprotokoller",
-    "id": 1,
     "parentTask": null,
-
     "entity": {
-        "id": 1,
-        "task_id": 1,
         "name": "persons",
         "isPrimaryEntity": 1,
         "entityKeyName": "id",
         "type": "object",
         "required": 1,
-        "countPerEntry": "1",
+        "countPerEntry": 1,
         "guiName": "Person",
         "primaryTableName": "burial_persons",
         "includeInSOLR": 0,
         "viewOrder": 1,
         "parent_id": null,
-        
         "fieldRelatingToParent": null,
         "allowNewValues": 1,
         "typeOfRelationToParent": "connection",
         "saveOrderAccordingToParent": "after",
-        "fields": [
-            {
-                "id": 7,
-                "entities_id": 1,
-                "steps_id": 2,
+        "fields": {
+            "1": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "firstnames",
@@ -48,13 +40,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "firstnames",
                 "SOLRFacet": 0,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 9,
-                "entities_id": 1,
-                "steps_id": 2,
+            "2": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "lastname",
@@ -75,13 +63,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "lastname",
                 "SOLRFacet": 1,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 16,
-                "entities_id": 1,
-                "steps_id": 3,
+            "3": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "adressOutsideCph",
@@ -102,13 +86,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "adressOutsideCph",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 18,
-                "entities_id": 1,
-                "steps_id": 2,
+            "4": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageYears",
@@ -129,13 +109,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "ageYears",
                 "SOLRFacet": 1,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 19,
-                "entities_id": 1,
-                "steps_id": 2,
+            "5": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageMonth",
@@ -147,7 +123,7 @@
                 "formName": "Alder - måneder",
                 "formFieldType": "string",
                 "formFieldOrder": 6,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal måneder. 3/12 tastes som 3",
                 "placeholder": null,
                 "isRequired": 0,
@@ -156,13 +132,9 @@
                 "includeInSOLR": 0,
                 "SOLRFieldName": "ageMonth",
                 "SOLRFacet": 0,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 20,
-                "entities_id": 1,
-                "steps_id": 4,
+            "6": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "dateOfDeath",
@@ -186,10 +158,7 @@
                 "SOLRResult": 1,
                 "name": "dateOfDeath"
             },
-            {
-                "id": 21,
-                "entities_id": 1,
-                "steps_id": -1,
+            "7": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "yearOfBirth",
@@ -210,13 +179,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "yearOfBirth",
                 "SOLRFacet": 1,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 22,
-                "entities_id": 1,
-                "steps_id": 4,
+            "8": {
                 "datasources_id": 5,
                 "tableName": "burial_persons",
                 "fieldName": "civilstatuses_id",
@@ -237,13 +202,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "civilstatus",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 26,
-                "entities_id": 1,
-                "steps_id": 5,
+            "9": {
                 "datasources_id": 8,
                 "tableName": "burial_persons",
                 "fieldName": "deathplaces_id",
@@ -264,13 +225,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "deathplace",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 28,
-                "entities_id": 1,
-                "steps_id": 2,
+            "10": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "birthname",
@@ -291,13 +248,9 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "birthname",
                 "SOLRFacet": 1,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 92,
-                "entities_id": 1,
-                "steps_id": 2,
+            "11": {
                 "datasources_id": 12,
                 "tableName": "burial_persons",
                 "fieldName": "sex_id",
@@ -321,10 +274,7 @@
                 "SOLRResult": 1,
                 "name": "sex"
             },
-            {
-                "id": 100,
-                "entities_id": 1,
-                "steps_id": 5,
+            "12": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "comment",
@@ -348,10 +298,7 @@
                 "SOLRResult": 0,
                 "name": "comment"
             },
-            {
-                "id": 107,
-                "entities_id": 1,
-                "steps_id": 2,
+            "13": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageWeeks",
@@ -363,7 +310,7 @@
                 "formName": "Alder - uger",
                 "formFieldType": "string",
                 "formFieldOrder": 61,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal uger",
                 "placeholder": null,
                 "isRequired": 0,
@@ -375,10 +322,7 @@
                 "SOLRResult": 1,
                 "name": "ageWeeks"
             },
-            {
-                "id": 109,
-                "entities_id": 1,
-                "steps_id": 2,
+            "14": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageDays",
@@ -390,7 +334,7 @@
                 "formName": "Alder - dage",
                 "formFieldType": "string",
                 "formFieldOrder": 62,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal dage",
                 "placeholder": null,
                 "isRequired": 0,
@@ -402,10 +346,7 @@
                 "SOLRResult": 1,
                 "name": "ageDays"
             },
-            {
-                "id": 111,
-                "entities_id": 1,
-                "steps_id": 2,
+            "15": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageHours",
@@ -417,7 +358,7 @@
                 "formName": "Alder - timer",
                 "formFieldType": "string",
                 "formFieldOrder": 63,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal timer",
                 "placeholder": null,
                 "isRequired": 0,
@@ -429,10 +370,7 @@
                 "SOLRResult": 1,
                 "name": "ageHours"
             },
-            {
-                "id": 113,
-                "entities_id": 1,
-                "steps_id": 2,
+            "16": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "freetext_store",
@@ -453,35 +391,28 @@
                 "includeInSOLR": 0,
                 "SOLRFieldName": "freetext_store",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             }
-        ],
+        },
         "entities": [
             {
-                "id": 2,
-                "task_id": 1,
                 "name": "deathcauses",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "persons_id",
                 "type": "array",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Dødsårsag",
                 "primaryTableName": "burial_persons_deathcauses",
                 "includeInSOLR": 0,
                 "viewOrder": 3,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 10,
-                        "entities_id": 2,
-                        "steps_id": 5,
                         "datasources_id": 2,
                         "tableName": "burial_persons_deathcauses",
                         "fieldName": "deathcauses_id",
@@ -502,36 +433,29 @@
                         "includeInSOLR": 1,
                         "SOLRFieldName": "deathcauses",
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     }
                 ],
                 "entities": null
             },
             {
-                "id": 3,
-                "task_id": 1,
                 "name": "positions",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "persons_id",
                 "type": "array",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Erhverv",
                 "primaryTableName": "burial_persons_positions",
                 "includeInSOLR": 0,
                 "viewOrder": 2,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 11,
-                        "entities_id": 3,
-                        "steps_id": 4,
                         "datasources_id": 1,
                         "tableName": "burial_persons_positions",
                         "fieldName": "positions_id",
@@ -552,13 +476,9 @@
                         "includeInSOLR": 1,
                         "SOLRFieldName": "positions",
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 12,
-                        "entities_id": 3,
-                        "steps_id": 4,
                         "datasources_id": 11,
                         "tableName": "burial_persons_positions",
                         "fieldName": "relationtypes_id",
@@ -579,13 +499,9 @@
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 102,
-                        "entities_id": 3,
-                        "steps_id": 4,
                         "datasources_id": 14,
                         "tableName": "burial_persons_positions",
                         "fieldName": "workplaces_id",
@@ -613,29 +529,23 @@
                 "entities": null
             },
             {
-                "id": 4,
-                "task_id": 1,
                 "name": "addresses",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "persons_id",
                 "type": "object",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Adresse",
                 "primaryTableName": "burial_addresses",
                 "includeInSOLR": 1,
                 "viewOrder": 4,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 13,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": 3,
                         "tableName": "burial_addresses",
                         "fieldName": "streets_id",
@@ -656,13 +566,9 @@
                         "includeInSOLR": 1,
                         "SOLRFieldName": "streets",
                         "SOLRFacet": 1,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 14,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": null,
                         "tableName": "burial_addresses",
                         "fieldName": "number",
@@ -683,13 +589,9 @@
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 15,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": null,
                         "tableName": "burial_addresses",
                         "fieldName": "letter",
@@ -710,13 +612,9 @@
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 17,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": 4,
                         "tableName": "burial_addresses",
                         "fieldName": "floors_id",
@@ -737,13 +635,9 @@
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 96,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": 13,
                         "tableName": "burial_addresses",
                         "fieldName": "institutions_id",
@@ -771,29 +665,23 @@
                 "entities": null
             },
             {
-                "id": 5,
-                "task_id": 1,
                 "name": "burials",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "persons_id",
                 "type": "object",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Begravelse",
                 "primaryTableName": "burial_burials",
                 "includeInSOLR": 0,
                 "viewOrder": 5,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 23,
-                        "entities_id": 5,
-                        "steps_id": 5,
                         "datasources_id": 6,
                         "tableName": "burial_burials",
                         "fieldName": "chapels_id",
@@ -814,13 +702,9 @@
                         "includeInSOLR": 1,
                         "SOLRFieldName": "chapel",
                         "SOLRFacet": 0,
-                        "SOLRResult": 1,
-                        "name": "no_given"
+                        "SOLRResult": 1
                     },
                     {
-                        "id": 24,
-                        "entities_id": 5,
-                        "steps_id": 5,
                         "datasources_id": 10,
                         "tableName": "burial_burials",
                         "fieldName": "parishes_id",
@@ -841,13 +725,9 @@
                         "includeInSOLR": 1,
                         "SOLRFieldName": "parish",
                         "SOLRFacet": 0,
-                        "SOLRResult": 1,
-                        "name": "no_given"
+                        "SOLRResult": 1
                     },
                     {
-                        "id": 25,
-                        "entities_id": 5,
-                        "steps_id": 5,
                         "datasources_id": 7,
                         "tableName": "burial_burials",
                         "fieldName": "cemetaries_id",
@@ -868,13 +748,9 @@
                         "includeInSOLR": 1,
                         "SOLRFieldName": "cemetary",
                         "SOLRFacet": 0,
-                        "SOLRResult": 1,
-                        "name": "no_given"
+                        "SOLRResult": 1
                     },
                     {
-                        "id": 94,
-                        "entities_id": 5,
-                        "steps_id": 2,
                         "datasources_id": null,
                         "tableName": "burial_burials",
                         "fieldName": "number",
@@ -905,17 +781,13 @@
     },
     "steps": [
         {
-            "id": "1",
             "name": "Markering af indtastningsområde",
             "description": "Her skal du markere det område i protokollen, der handler om den person/begravelse, som du vil indtaste.",
-            "tasks_id": "1",
             "fields": []
         },
         {
-            "id": "2",
             "name": "Løbenummer, Navn, Køn, og Alder",
             "description": "",
-            "tasks_id": "1",
             "fields": [
                 {
                     "key": "persons.burials.number"
@@ -953,10 +825,8 @@
             ]
         },
         {
-            "id": "3",
             "name": "Bopæl",
             "description": "",
-            "tasks_id": "1",
             "fields": [
                 {
                     "key": "persons.addresses.streetAndHood"
@@ -979,10 +849,8 @@
             ]
         },
         {
-            "id": "4",
             "name": "Erhverv, Civilstand og Dødsdato",
             "description": "",
-            "tasks_id": "1",
             "fields": [
                 {
                     "key": "persons.positions",
@@ -997,10 +865,8 @@
             ]
         },
         {
-            "id": "5",
             "name": "Dødsårsag, Dødssted, Fra, Sogn og Kirkegård",
             "description": "",
-            "tasks_id": "1",
             "fields": [
                 {
                     "key": "persons.deathcauses",

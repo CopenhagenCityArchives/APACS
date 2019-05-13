@@ -41,8 +41,8 @@ class DBConfigurationLoader {
 		return $tasks->toArray();
 	}
 
-	public function GetTask($collectionId) {
-		$task = Tasks::findFirstById($collectionId);
+	public function GetTask($taskId) {
+		$task = Tasks::findFirstById($taskId);
 		return $task->toArray();
 	}
 

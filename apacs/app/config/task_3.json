@@ -1,0 +1,161 @@
+{
+    "name": "Begravelser",
+    "description": "Indtastning af begravelsesprotokoller",
+    "id": 1,
+    "parentTask": 1,
+    "entity": {
+        "id": 1,
+        "task_id": 1,
+        "name": "persons",
+        "isPrimaryEntity": 1,
+        "entityKeyName": "id",
+        "type": "object",
+        "required": 1,
+        "countPerEntry": 1,
+        "guiName": "Person",
+        "primaryTableName": "burial_persons",
+        "includeInSOLR": 0,
+        "viewOrder": 1,
+        "parent_id": null,
+        "fieldRelatingToParent": null,
+        "allowNewValues": 1,
+        "fields":  {
+            "20":
+            {
+                "tableName": "burial_persons",
+                "fieldName": "birthplace_id",
+                "datasources_id": 9,
+                "hasDecode": 1,
+                "decodeTable": "burial_birthplaces",
+                "decodeField": "birthplace",
+                "codeAllowNewValue": 0,
+                "includeInForm": 1,
+                "formName": "Fødested",
+                "formFieldType": "typeahead",
+                "formFieldOrder": 10,
+                "defaultValue": null,
+                "helpText": "Personens fødested",
+                "placeholder": null,
+                "isRequired": 0,
+                "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
+                "validationErrorMessage": "Feltet skal udfyldes.",
+                "includeInSOLR": 1,
+                "SOLRFieldName": "birthplace"
+            }
+        }
+    },
+    "steps": [
+        {
+            "name": "Markering af indtastningsområde",
+            "description": "Her skal du markere det område i protokollen, der handler om den person/begravelse, som du vil indtaste.",
+            "fields": []
+        },
+        {
+            "name": "Løbenummer, Navn, Køn, og Alder",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.burials.number"
+                },
+                {
+                    "key": "persons.firstnames"
+                },
+                {
+                    "key": "persons.freetext_store"
+                },
+                {
+                    "key": "persons.lastname"
+                },
+                {
+                    "key": "persons.birthname"
+                },
+                {
+                    "key": "persons.sex"
+                },
+                {
+                    "key": "persons.birthplace"
+                },
+                {
+                    "key": "persons.ageYears"
+                },
+                {
+                    "key": "persons.ageMonth"
+                },
+                {
+                    "key": "persons.ageWeeks"
+                },
+                {
+                    "key": "persons.ageDays"
+                },
+                {
+                    "key": "persons.ageHours"
+                }
+            ]
+        },
+        {
+            "name": "Bopæl",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.addresses.streetAndHood"
+                },
+                {
+                    "key": "persons.addresses.number"
+                },
+                {
+                    "key": "persons.addresses.letter"
+                },
+                {
+                    "key": "persons.addresses.floor"
+                },
+                {
+                    "key": "persons.addresses.institution"
+                },
+                {
+                    "key": "persons.adressOutsideCph"
+                }
+            ]
+        },
+        {
+            "name": "Erhverv, Civilstand og Dødsdato",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.positions",
+                    "add": "Tilføj"
+                },
+                {
+                    "key": "persons.civilstatus"
+                },
+                {
+                    "key": "persons.dateOfDeath"
+                }
+            ]
+        },
+        {
+            "name": "Dødsårsag, Dødssted, Fra, Sogn og Kirkegård",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.deathcauses",
+                    "add": "Tilføj"
+                },
+                {
+                    "key": "persons.deathplace"
+                },
+                {
+                    "key": "persons.burials.chapel"
+                },
+                {
+                    "key": "persons.burials.parish"
+                },
+                {
+                    "key": "persons.burials.cemetary"
+                },
+                {
+                    "key": "persons.comment"
+                }
+            ]
+        }
+    ]
+}
