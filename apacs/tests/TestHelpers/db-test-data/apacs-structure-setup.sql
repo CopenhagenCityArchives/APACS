@@ -229,9 +229,40 @@ CREATE TABLE `apacs_tasks` (
   `primaryEntity_id` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
   `serializedConf` longblob,
   PRIMARY KEY (`id`),
-  KEY `FK_tasks.collection_id_to_collections.id_idx` (`collection_id`),
-  CONSTRAINT `FK_tasks.collection_id_to_collections.id` FOREIGN KEY (`collection_id`) REFERENCES `apacs_collections` (`id`)
+  KEY `FK_tasks.collection_id_to_collections.id_idx` (`collection_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+DROP TABLE IF EXISTS `apacs_tasks_units`;
+CREATE TABLE `apacs_tasks_units` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tasks_id` int(11) NOT NULL,
+  `units_id` int(11) NOT NULL,
+  `pages_done` int(11) NOT NULL DEFAULT '0',
+  `columns` int(11) NOT NULL DEFAULT '1',
+  `rows` int(11) NOT NULL DEFAULT '1',
+  `index_active` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `FK_tasks_units.task_id_to_tasks.id_idx` (`tasks_id`),
+  KEY `FK_tasks_units.unit_id_idx` (`units_id`),
+  CONSTRAINT `FK_tasks_units.task_id_to_tasks.id` FOREIGN KEY (`tasks_id`) REFERENCES `apacs_tasks` (`id`),
+  CONSTRAINT `FK_tasks_units.unit_id` FOREIGN KEY (`units_id`) REFERENCES `apacs_units` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=416 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+DROP TABLE IF EXISTS `apacs_tasks_pages`;
+CREATE TABLE `apacs_tasks_pages` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tasks_id` int(11) NOT NULL,
+  `pages_id` int(11) NOT NULL,
+  `units_id` int(11) DEFAULT NULL,
+  `is_done` tinyint(1) NOT NULL DEFAULT '0',
+  `last_activity` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_task_pages.task_id_to_task.id_idx` (`tasks_id`),
+  KEY `FK_tasks_pages.pages_id_to_pages.id_idx` (`pages_id`),
+  CONSTRAINT `FK_task_pages.task_id_to_task.id` FOREIGN KEY (`tasks_id`) REFERENCES `apacs_tasks` (`id`),
+  CONSTRAINT `FK_tasks_pages.pages_id_to_pages.id` FOREIGN KEY (`pages_id`) REFERENCES `apacs_pages` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=132076 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 
 DROP TABLE IF EXISTS `apacs_users`;
 CREATE TABLE `apacs_users` (
