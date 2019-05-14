@@ -1,6 +1,9 @@
 <?php
     include dirname(__DIR__) . "/vendor/autoload.php";
     
+    $dotenv = \Dotenv\Dotenv::create('/etc/', '.env');
+    $dotenv->load();
+
     $host = getenv('FTP_HOST');
     $user = getenv('FTP_USER');
     $password = getenv('FTP_PASSWORD');

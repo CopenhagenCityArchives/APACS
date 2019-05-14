@@ -22,6 +22,11 @@ Notice that the Solr service is included in both files, as the service is used b
 
 The two *.prod* docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
+# Config
+All configuration are set using a .env file located in the root directory.
+
+See .env_example for possible settings
+
 # Development
 ## Branches
 This repository consists at the moment of 3 main branches:
@@ -73,7 +78,7 @@ The services (together with Solr) are declared in *docker-compose.prod.yml*.
 
 The webserver is currently running on a shared host, and as so must be deployed using FTP.
 
-To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon2 php ./deployment/deploy.php``
+To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon2 php ./deployment/deploy.php``
 
 See deploy.php for details.
 
@@ -90,8 +95,7 @@ Run the test in the docker container:
 
 Run the test from outside the container using docker-compose:
 * ``docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate``
-* To run a single test run: ``docker-compose -f docker-compose-nginx-phalcon.yml exec -w /code phalcon2 vendor/
-bin/phpunit --testdox``
+* To run a single test run: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon2 vendor/bin/phpunit --testdox``
 * To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon2 vendor/bin/phpunit-watcher watch --testdox``
 
 

@@ -5,6 +5,7 @@ use Phalcon\Mvc\Micro\Collection as MicroCollection;
 $app = new Phalcon\Mvc\Micro();
 
 try {
+
 	//Register an autoloader
 	$loader = new \Phalcon\Loader();
 	$loader->registerDirs(array(
@@ -13,12 +14,15 @@ try {
 		'../../app/library/',
 	))->register();
 
-	include __DIR__ . "/../vendor/autoload.php";
+	include dirname(__DIR__) . "/vendor/autoload.php";
 
 	//Create a DI
 	$di = new Phalcon\DI\FactoryDefault();
 
-	require '../../app/config/config.php';
+	$dotenv = \Dotenv\Dotenv::create('/etc/', '.env');
+	$dotenv->load();
+
+	require __DIR__ . '/config/config.php';
 
 	//TODO: Test if this works as well (better to use one autoloader than two) :
 	/**

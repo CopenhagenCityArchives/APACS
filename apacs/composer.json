@@ -16,6 +16,7 @@
         "solarium/solarium": "v3.5.1",
         "j4mie/idiorm": "^1.5",
         "arjunkomath/crud": "dev-master",
-        "swaggest/json-schema": "^0.12.7"
+        "swaggest/json-schema": "^0.12.7",
+        "vlucas/phpdotenv": "v3.3.3"
     }
 }
