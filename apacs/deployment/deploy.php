@@ -4,10 +4,11 @@
     $host = getenv('FTP_HOST');
     $user = getenv('FTP_USER');
     $password = getenv('FTP_PASSWORD');
+    $ftp_path = getenv('FTP_PATH');
 
     echo 'connecting using ' . $host . PHP_EOL;
 
-    $path = 'public_html/1508/public_beta';
+    $path = $ftp_path;
     $srcPath = dirname(__DIR__);
 
     $ftp = new \FtpClient\FtpClient();
