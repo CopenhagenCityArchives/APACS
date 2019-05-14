@@ -7,8 +7,7 @@ services:
         dockerfile: ./infrastructure/indexing/Dockerfile_dev
     volumes:
       - ./indexing:/usr/src/app/
-    environment:
-      - PYTHON_ENV=DEV
+      - ./.env:/etc/.env
   solr:
     container_name: solr
     image: library/solr:6.6.3
