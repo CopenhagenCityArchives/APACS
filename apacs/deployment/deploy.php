@@ -1,11 +1,11 @@
 <?php
     include dirname(__DIR__) . "/vendor/autoload.php";
-    putenv('FTP_HOST=phhw-140602.cust.powerhosting.dk');
-    putenv('FTP_USER=kbharkiv');
-    putenv('FTP_PASSWORD=***REMOVED***');
+    
     $host = getenv('FTP_HOST');
     $user = getenv('FTP_USER');
     $password = getenv('FTP_PASSWORD');
+
+    echo 'connecting using ' . $host . PHP_EOL;
 
     $path = 'public_html/1508/public_beta';
     $srcPath = dirname(__DIR__);

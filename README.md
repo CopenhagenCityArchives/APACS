@@ -67,7 +67,9 @@ The services (together with Solr) are declared in *docker-compose.prod.yml*.
 
 The webserver is currently running on a shared host, and as so must be deployed using FTP.
 
-See deploy.php for FTP deplyment using PHP.
+To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon2 php ./deployment/deploy.php``
+
+See deploy.php for details.
 
 # Tests
 
