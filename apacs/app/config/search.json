@@ -98,7 +98,8 @@
             "name": "dateOfBirth",
             "view_name": "Fødselsdato",
             "collections": [
-                17
+                17,
+                100
             ],
             "type": "date",
             "special_chars": false,
@@ -108,7 +109,8 @@
         "yearOfBirth": {
             "collections": [
                 1,
-                17
+                17,
+                100
             ],
             "name": "yearOfBirth",
             "searchable": true,
@@ -590,6 +592,20 @@
             "sortable": true,
             "type": "number",
             "view_name": "Registerbladsid"
+        },
+        "schoolName": {
+            "collections": [
+                100
+            ],
+            "datasource": {
+                "field": "schoolName",
+                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/15?q="
+            },
+            "name": "schoolName",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "view_name": "Skolens navn"
         }
     },
     "types": {

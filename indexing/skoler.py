@@ -45,14 +45,20 @@ def create_document(record):
     except:
         print(record)
     
+    # assumption: if the date is defined, and age (or birth date in age field) is defined, the date is entry date
+    # if the age is not defined, it is the birth date
     dateofentry = None
+    dateofbirth = None
+    ageYears = None
+    yearOfBirth = None
+    date = None
     if record[u'Årstal'] is not None and record[u'Måned'] is not None and record['Dag'] is not None:
         try:
-            dateofentry = datetime(int(record[u'Årstal']), int(record[u'Måned']), int(record['Dag']))
+            date = datetime(int(record[u'Årstal']), int(record[u'Måned']), int(record['Dag']))
         except:
             pass
 
-    dateofbirth = None
+    # handle ages that are really dates of birth
     if record['Alder'] is not None and len(str(record['Alder'])) > 2:
         dob = str(record['Alder'])
         if len(dob) == 7:
@@ -61,13 +67,22 @@ def create_document(record):
             dateofbirth = datetime(int(dob[4:8]), int(dob[2:4]), int(dob[0:2]))
         except:
             pass
+
+    if date is not None and record['Alder'] is not None:
+        dateofentry = date
+    elif date is not None and record['Alder'] is None:
+        dateofbirth = date
     
-    ageYears = record['Alder']
+    if dateofbirth is None and record['Alder'] is not None:
+        ageYears = record['Alder']
+    elif dateofbirth is not None and dateofentry is not None:
+        ageYears = dateofentry.year - dateofbirth.year - ((dateofentry.month, dateofentry.day) < (dateofbirth.month, dateofbirth.day))
+    
     if dateofbirth is not None:
-        if dateofentry is not None:
-            ageYears = dateofentry.year - dateofbirth.year - ((dateofentry.month, dateofentry.day) < (dateofbirth.month, dateofbirth.day))
-        elif record[u'Årstal'] is not None:
-            ageYears = record[u'Årstal'] - dateofbirth.year
+        yearOfBirth = dateofbirth.year
+    elif record['Alder'] is None and record[u'Årstal']:
+        yearOfBirth = record[u'Årstal']
+
     data = {
         'id': "%s-%s" % (COLLECTION_ID, record['IndexFieldID']),
         'collection_id': COLLECTION_ID,
@@ -80,13 +95,14 @@ def create_document(record):
         'lastname': " ".join(lastname),
         'comments': " ".join(comment) if comment else None,
         'ageYears': ageYears,
+        'yearOfBirth': yearOfBirth,
         'dateOfBirth': dateofbirth.isoformat() + "Z" if dateofbirth is not None else None,
         'dateOfEntry': dateofentry.isoformat() + "Z" if dateofentry is not None else None,
         'schoolName': record['SkoleNavn'],
         'imageUrl': f"http://kbhkilder.dk/getfile.php?fileId={record['apacs_page_id']}" if record.get('apacs_page_id') is not None else record.get('ImagePath'),
         'page_number': record['OpslagsNr'],
         'unit_description': record['description'],
-        'collected_year': record[u'Årstal'],
+        'collected_year': dateofentry.year if dateofentry is not None else None,
         'kildeviser_url': f"http://kbharkiv.dk/kildeviser/#!?collection=100&item={record['apacs_page_id']}" if record.get('apacs_page_id') is not None else None
     }
     return {
@@ -108,6 +124,7 @@ def create_document(record):
         'lastname': data['lastname'],
         'ageYears': data['ageYears'],
         'dateOfBirth': data['dateOfBirth'],
+        'yearOfBirth': data['yearOfBirth'],
         'collected_year': data['collected_year'],
         'schoolName': data['schoolName'],
         'comments': data['comments']
@@ -152,7 +169,11 @@ if __name__ == "__main__":
 
     print("Creating documents... ", end='', flush=True)
     with mysql.cursor(pymysql.cursors.DictCursor) as cursor:
-        query = f"SELECT * FROM skole_solr ss LEFT JOIN apacs_units au ON ss.starbas = au.id LEFT JOIN apacs_pages ap ON ap.id = ss.apacs_page_id WHERE au.id IS NOT NULL"
+        query = ("SELECT * FROM "
+                 "(SELECT * FROM skole_solr WHERE alder IS NOT NULL AND alder < 100 AND årstal - alder <= 1908"
+                 " UNION SELECT * FROM skole_solr WHERE alder IS NULL AND årstal <= 1908"
+                 " UNION SELECT * FROM skole_solr WHERE alder > 100 AND RIGHT(alder, 4) <= 1908) tmp "
+                 "JOIN apacs_units u ON u.id = tmp.starbas")
         cursor.execute(query)
         documents = list(map(create_document, cursor.fetchall()))
     print("Created %s documents." % len(documents))
