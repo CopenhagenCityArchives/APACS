@@ -5,12 +5,8 @@ services:
     build:
         context: ./
         dockerfile: ./infrastructure/indexing/Dockerfile_prod
-
     networks:
       - default
-    environment:
-      - PYTHON_ENV=PROD
-
   solr:
     container_name: solr
     build:
