@@ -9,12 +9,7 @@ services:
       - composer
     volumes:
       - ./apacs:/code
-    environment:
-      - PHP_ENV=DEV
-      - FTP_HOST=phhw-140602.cust.powerhosting.dk
-      - FTP_USER=kbharkiv
-      - FTP_PASSWORD=***REMOVED***
-      - FTP_PATH=public_html/1508/public_beta
+      - ./.env:/etc/.env
   nginx2:
       image: nginx:alpine
       container_name: nginx2
@@ -40,10 +35,10 @@ services:
       - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
       - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_USER: dev
-      MYSQL_PASSWORD: 123456
-      MYSQL_DATABASE: apacs      
+      MYSQL_ROOT_PASSWORD: 123456   
+      MYSQL_USER: ${MYSQL_USER}   
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}   
+      MYSQL_DATABASE: ${MYSQL_DATABASE}      
   solr:
     image: library/solr:6.6.3
     container_name: solr
