@@ -23,6 +23,12 @@ Notice that the Solr service is included in both files, as the service is used b
 The two *.prod* docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
 # Development
+## Branches
+This repository consists at the moment of 3 main branches:
+* ``master``: Used in production at kbhkilder.dk/api
+* ``development``: Used for internal tests at kbhkilder.dk/1508/experimental/api
+* ``task2``: Used for internal and external tests of new task and config structure at kbhkilder.dk/1508/public_beta/api
+  
 ## Webserver, database and Solr
 All PHP dependencies are installed with Composer, which is run during docker-compose up.
 The services are declared in *docker-compose.dev.yml*
