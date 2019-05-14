@@ -14,6 +14,7 @@ services:
       - FTP_HOST=phhw-140602.cust.powerhosting.dk
       - FTP_USER=kbharkiv
       - FTP_PASSWORD=***REMOVED***
+      - FTP_PATH=public_html/1508/public_beta
   nginx2:
       image: nginx:alpine
       container_name: nginx2
