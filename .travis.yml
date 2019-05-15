@@ -19,10 +19,10 @@ install:
 
 # run tests inside Phalcon container
 script:
-  - docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon vendor/bin/phpunit
+  - docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/apacs/vendor/bin/phpunit
 
 # if on branch task2 deploy via ftp
 deploy:
   on:
     branch: task2
-  script: docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon php ./deployment/deploy.php
+  script: docker-compose -f docker-compose-webserver.dev.yml exec phalcon php /code/apacs/deployment/deploy.php
