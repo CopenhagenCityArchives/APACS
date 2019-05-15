@@ -1,15 +1,15 @@
 version: '3.6'
 services:
-  phalcon2:
+  phalcon:
     build:
       context: ./
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
-    container_name: phalcon2
+    container_name: phalcon
     depends_on:
       - composer
-  nginx2:
+  nginx:
       image: nginx:alpine
-      container_name: nginx2
+      container_name: nginx
       ports:
        - "80:80"
   composer:

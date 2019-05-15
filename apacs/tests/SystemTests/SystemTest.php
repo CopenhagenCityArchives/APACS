@@ -58,7 +58,7 @@ class SystemTest extends \UnitTestCase
     public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
     {
         parent::setUp();
-        $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx2/']);
+        $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
     }
 
     public function tearDown() {
