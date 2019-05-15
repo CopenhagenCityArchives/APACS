@@ -14,4 +14,6 @@ install:
 script:
   - docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon vendor/bin/phpunit
 deploy:
-  - docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon php ./deployment/deploy.php
+  on:
+    branch: task2
+  script: docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon php ./deployment/deploy.php
