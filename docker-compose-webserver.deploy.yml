@@ -11,7 +11,7 @@ services:
       - solr
     volumes:
       - ./apacs:/code
-    enviroment:
+    environment:
       - APACS_ACCESS_CTRL_NAME=${APACS_ACCESS_CTRL_NAME}
 
       - APACS_DB_CHARSET=${APACS_DB_CHARSET}
@@ -30,7 +30,7 @@ services:
       - KBHKILDER_FTP_PASSWORD=${KBHKILDER_FTP_PASSWORD}
       - KBHKILDER_FTP_PATH=${KBHKILDER_FTP_PATH}
       - KBHKILDER_FTP_USER=${KBHKILDER_FTP_USER}
-      
+
       - SOLR_DNS=${SOLR_DNS}
       - SOLR_HOST=${SOLR_HOST}
       - SOLR_INTERNAL_URL=${SOLR_INTERNAL_URL}
