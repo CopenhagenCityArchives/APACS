@@ -10,7 +10,7 @@ services:
   - docker
 
 env:
-  - APACS_ACCESS_CTRL_NAME=FakeAccessController
+  - APACS_ACCESS_CTRL_NAME=${APACS_ACCESS_CTRL_NAME}
 
 #stop travis mysql
 before_install:
@@ -18,15 +18,15 @@ before_install:
 
 # setup infrastructure using docker-compose
 install:
-  - docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate
+  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate
   - sleep 120
 
 # run tests inside Phalcon container
 script:
-  - docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit
+  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
 # if on branch task2 deploy via ftp
 deploy:
   on:
     branch: task2
-  script: docker-compose -f docker-compose-webserver.dev.yml exec phalcon php /code/deployment/deploy.php
+  script: docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php

@@ -1,0 +1,82 @@
+version: '3.3'
+services:
+  phalcon:
+    build:
+      context: ./
+      dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
+    container_name: phalcon
+    depends_on:
+      - composer
+      - db
+      - solr
+    volumes:
+      - ./apacs:/code
+    enviroment:
+      - APACS_DB_CHARSET=${APACS_DB_CHARSET}
+      - APACS_DB_DATABASE=${APACS_DB_DATABASE}
+      - APACS_DB_HOST=${APACS_DB_HOST}
+      - APACS_DB_PASSWORD=${APACS_DB_PASSWORD}
+      - APACS_DB_PORT=${APACS_DB_PORT}
+      - APACS_DB_USER=${APACS_DB_USER}
+      - APACS_IMAGE_PATH=${APACS_IMAGE_PATH}
+      - APACS_IMAGE_PROTOCOL=${APACS_IMAGE_PROTOCOL}
+      - ENVIRONMENT=${ENVIRONMENT}
+      - KBHKILDER_FTP_HOST=${KBHKILDER_FTP_HOST}
+      - KBHKILDER_FTP_PASSWORD=${KBHKILDER_FTP_PASSWORD}
+      - KBHKILDER_FTP_PATH=${KBHKILDER_FTP_PATH}
+      - KBHKILDER_FTP_USER=${KBHKILDER_FTP_USER}
+      - SOLR_DNS=${SOLR_DNS}
+      - SOLR_HOST=${SOLR_HOST}
+      - SOLR_INTERNAL_URL=${SOLR_INTERNAL_URL}
+      - SOLR_PASSWORD=${SOLR_PASSWORD}
+      - SOLR_PATH=${SOLR_PATH}
+      - SOLR_PORT=${SOLR_PORT}
+      - SOLR_SCHEME=${SOLR_SCHEME}
+      - SOLR_TIMEOUT=${SOLR_TIMEOUT}
+      - SOLR_USERNAME=${SOLR_USERNAME}
+    
+  nginx:
+      image: nginx:alpine
+      container_name: nginx
+      depends_on:
+        - phalcon
+      volumes:
+        - ./apacs:/code
+        - ./infrastructure/php-fpm-phalcon/nginx_site.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "8080:80"
+  composer:
+      container_name: composer
+      restart: 'no'
+      image: composer/composer:php7
+      command: update
+      working_dir: /code
+      volumes:
+        - ./apacs:/code
+  db:
+    image: mysql:5.7
+    container_name: database
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
+      - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456   
+      MYSQL_USER: ${APACS_DB_USER}   
+      MYSQL_PASSWORD: ${APACS_DB_PASSWORD}   
+      MYSQL_DATABASE: ${APACS_DB_DATABASE}      
+  solr:
+    image: library/solr:6.6.3
+    container_name: solr
+    ports:
+      - "8989:8983"
+    entrypoint:
+      - docker-entrypoint.sh
+      - solr-precreate
+      - apacs_core
+      - /opt/solr/server/solr/configsets/solr_conf/apacs_core
+    volumes:
+        - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf    
+networks:
+    default:
