@@ -1,10 +1,10 @@
 version: '3.6'
 services:
-  phalcon2:
+  phalcon:
     build:
       context: ./
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
-    container_name: phalcon2
+    container_name: phalcon
     depends_on:
       - composer
       - db
@@ -12,9 +12,9 @@ services:
     volumes:
       - ./apacs:/code
       - ./.env:/etc/.env
-  nginx2:
+  nginx:
       image: nginx:alpine
-      container_name: nginx2
+      container_name: nginx
       volumes:
         - ./apacs:/code
         - ./infrastructure/php-fpm-phalcon/nginx_site.conf:/etc/nginx/conf.d/default.conf
