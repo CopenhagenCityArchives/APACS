@@ -23,7 +23,5 @@ script:
   - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
 # if on branch task2 deploy via ftp
-deploy:
-  on:
-    branch: task2
+after_success:
   script: docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php
