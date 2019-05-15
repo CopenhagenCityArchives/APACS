@@ -1,5 +1,14 @@
 <?php
 
+
+$envLocation = __DIR__ . '/';
+
+if(file_exists($envLocation . '.env')){
+	$dotenv = \Dotenv\Dotenv::create($envLocation, '.env');
+	$dotenv->load();
+	$dotenv->required('ENVIRONMENT');
+}
+
 if(getenv('ENVIRONMENT') == 'DEV'){
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
