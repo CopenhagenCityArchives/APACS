@@ -46,7 +46,7 @@ The services are declared in *docker-compose-index.dev.yml*
 
 * ``
 docker-compose -f docker-compose-index.dev.yml up -d [indexer|solr]
-``
+`` 
 
 # Deployment
 ## Indexing script and Solr
