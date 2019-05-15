@@ -12,6 +12,7 @@ services:
     volumes:
       - ./apacs:/code
     enviroment:
+      - APACS_ACCESS_CTRL_NAME=${APACS_ACCESS_CTRL_NAME}
       - APACS_DB_CHARSET=${APACS_DB_CHARSET}
       - APACS_DB_DATABASE=${APACS_DB_DATABASE}
       - APACS_DB_HOST=${APACS_DB_HOST}

@@ -9,9 +9,6 @@ notifications:
 services:
   - docker
 
-env:
-  - APACS_ACCESS_CTRL_NAME=${APACS_ACCESS_CTRL_NAME}
-
 #stop travis mysql
 before_install:
   - sudo service mysql stop
