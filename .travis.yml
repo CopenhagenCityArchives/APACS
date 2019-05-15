@@ -1,0 +1,17 @@
+language: php
+
+php:
+  - 7.1
+
+notifications:
+  email: false
+
+services:
+  - docker
+
+install:
+  - docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate
+script:
+  - docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon vendor/bin/phpunit
+deploy:
+  - docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon php ./deployment/deploy.php
