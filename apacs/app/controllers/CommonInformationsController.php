@@ -85,7 +85,7 @@ class CommonInformationsController extends MainController {
 	public function GetTaskFieldsSchema() {
 		$request = $this->request;
 
-		$taskId = $request->getQuery('task_id', 'int', null);
+		$taskId = $request->getQuery('task_id', 'int', null, true);
 
 		if (is_null($taskId)) {
 			$this->error('task_id is required');
@@ -123,9 +123,9 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetTasksUnits() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$unitId = $this->request->getQuery('unit_id', 'int', null);
-		$indexActive = $this->request->getQuery('index_active', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
+		$indexActive = $this->request->getQuery('index_active', 'int', null, true);
 
 		if (is_null($taskId)) {
 			throw new InvalidArgumentException('task_id or task_id and unit_id are required');
@@ -138,9 +138,9 @@ class CommonInformationsController extends MainController {
 	public function GetUnits() {
 		$request = $this->request;
 
-		$collectionId = $request->getQuery('collection_id', 'int', null);
-		$taskId = $request->getQuery('task_id', 'int', null);
-		$index_active = $request->getQuery('index_active', 'int', null);
+		$collectionId = $request->getQuery('collection_id', 'int', null, true);
+		$taskId = $request->getQuery('task_id', 'int', null, true);
+		$index_active = $request->getQuery('index_active', 'int', null, true);
 
 		if (is_null($collectionId)) {
 			$this->error('collection_id is required');
@@ -237,9 +237,9 @@ class CommonInformationsController extends MainController {
 
 	public function GetPages() {
 		$request = $this->request;
-		$unitId = $request->getQuery('unit_id', 'int', null);
-		$pageNumber = $request->getQuery('page_number', 'int', null);
-		$pageId = $request->getQuery('page_id', 'int', null);
+		$unitId = $request->getQuery('unit_id', 'int', null, true);
+		$pageNumber = $request->getQuery('page_number', 'int', null, true);
+		$pageId = $request->getQuery('page_id', 'int', null, true);
 
 		$conditions = [];
 
@@ -401,9 +401,9 @@ class CommonInformationsController extends MainController {
 	 * for which there haven't been activity the last 5 minutes, based on the current page number
 	 */
 	public function GetNextAvailablePage() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$unitId = $this->request->getQuery('unit_id', 'int', null);
-		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
+		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0, true);
 
 		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
 			$this->error('task_id, unit_id and current_number are required');
@@ -446,8 +446,8 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetEntries() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$postId = $this->request->getQuery('post_id', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$postId = $this->request->getQuery('post_id', 'int', null, true);
 
 		if (is_null($taskId) || is_null($postId)) {
 			$this->error('task_id and post_id are required');
@@ -520,9 +520,9 @@ class CommonInformationsController extends MainController {
 	public function GetErrorReports() {
 
 		//Assume special errors if collection id is used
-		if(	!is_null($this->request->getQuery('collection_id', 'int', null)) &&
-			!is_null($this->request->getQuery('id', 'string', null)) &&
-			is_null($this->request->getQuery('task_id', 'int', null))){
+		if(	!is_null($this->request->getQuery('collection_id', 'int', null, true)) &&
+			!is_null($this->request->getQuery('id', 'string', null, true)) &&
+			is_null($this->request->getQuery('task_id', 'int', null, true))){
 
 			/*$taskId = 0;
 			switch($this->request->getQuery('collection_id', 'int', null)){
@@ -543,9 +543,9 @@ class CommonInformationsController extends MainController {
 		}
 
 		//Normal cases: Task id and post id is set
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$postId = $this->request->getQuery('post_id', 'int', null);
-		$userId = $this->request->getQuery('relevant_user_id', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$postId = $this->request->getQuery('post_id', 'int', null, true);
+		$userId = $this->request->getQuery('relevant_user_id', 'int', null, true);
 		$errors = [];
 
 		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
@@ -599,8 +599,8 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetActiveUsers() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$unitId = $this->request->getQuery('unit_id', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
 
 		if (is_null($taskId) || is_null($unitId)) {
 			$this->error('task_id and unit_id are required');
@@ -612,7 +612,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetUserActivities() {
-		$userId = $this->request->getQuery('user_id', 'int', null);
+		$userId = $this->request->getQuery('user_id', "int", null, true);
 
 		if (is_null($userId)) {
 			$this->error('user_id is required');
@@ -624,8 +624,8 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetSystemExceptions() {
-		$hours = $this->request->getQuery('hours', 'int', null);
-		$type = $this->request->getQuery('type', 'string', null);
+		$hours = $this->request->getQuery('hours', 'int', null, true);
+		$type = $this->request->getQuery('type', 'string', null, true);
 
 		if (is_null($hours)) {
 			throw new Exception('Hours are required');
