@@ -9,10 +9,19 @@ notifications:
 services:
   - docker
 
+#stop travis mysql
+before_install:
+  - sudo service mysql stop
+
+# setup infrastructure using docker-compose
 install:
   - docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate
+
+# run tests inside Phalcon container
 script:
   - docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon vendor/bin/phpunit
+
+# if on branch task2 deploy via ftp
 deploy:
   on:
     branch: task2
