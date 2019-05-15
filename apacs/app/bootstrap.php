@@ -19,9 +19,6 @@ try {
 	//Create a DI
 	$di = new Phalcon\DI\FactoryDefault();
 
-	$dotenv = \Dotenv\Dotenv::create('/etc/', '.env');
-	$dotenv->load();
-
 	$di->setShared('response', function () {
 		return new \Phalcon\Http\Response();
 	});
