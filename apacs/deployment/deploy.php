@@ -1,13 +1,13 @@
 <?php
     include dirname(__DIR__) . "/vendor/autoload.php";
     
-    $dotenv = \Dotenv\Dotenv::create('/etc/', '.env');
-    $dotenv->load();
+    #$dotenv = \Dotenv\Dotenv::create('/etc/', '.env');
+    #$dotenv->load();
 
-    $host = getenv('FTP_HOST');
-    $user = getenv('FTP_USER');
-    $password = getenv('FTP_PASSWORD');
-    $ftp_path = getenv('FTP_PATH');
+    $host = getenv('KBHKILDER_FTP_HOST');
+    $user = getenv('KBHKILDER_FTP_USER');
+    $password = getenv('KBHKILDER_FTP_PASSWORD');
+    $ftp_path = getenv('KBHKILDER_FTP_PATH');
 
     echo 'connecting using ' . $host . PHP_EOL;
 
