@@ -74,7 +74,13 @@ class SystemTest extends \UnitTestCase
         //var_dump((string) $response->getBody());
         $validTaskSchema = json_decode(file_get_contents(__DIR__ . '/validTaskSchema_task1.json'),true);
 
-        $this->assertEquals($validTaskSchema, json_decode((string) $response->getBody(), true,JSON_NUMERIC_CHECK));
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
+
+        $responseData = json_decode((string) $response->getBody(), true,JSON_NUMERIC_CHECK);
+
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
+
+        $this->assertEquals($validTaskSchema, $responseData);
     }
 
     public function test_GetPost_Task1_ReturnValidData(){
@@ -94,7 +100,7 @@ class SystemTest extends \UnitTestCase
         // Note that only data is tested, NOT metadata
         $responseData = json_decode((string) $response->getBody(), true);
 
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertTrue(isset($responseData['data']));
         $this->assertEquals($validPost['data'], $responseData['data']);
     }
@@ -109,7 +115,7 @@ class SystemTest extends \UnitTestCase
         
         $responseData = json_decode((string) $response->getBody(), true);
 
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertFalse(is_null($responseData));
         $this->assertEquals($validResponse, $responseData);
     }
@@ -122,7 +128,7 @@ class SystemTest extends \UnitTestCase
 
         // Get number of errors before reporting
         $post = json_decode((string) $response->getBody(), true);
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
         $originalErrorReportCount = count($post['error_reports']);
 
@@ -148,7 +154,7 @@ class SystemTest extends \UnitTestCase
         // Get post with updated error reports
         $updatedResponse = $this->http->request('GET', 'posts/10000');
         $updatedPost = json_decode((string) $updatedResponse->getBody(), true);
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
         // Assert that the number of errors has increased with 1
         $this->assertEquals(count($updatedPost['error_reports']), $originalErrorReportCount+1);
@@ -184,7 +190,7 @@ class SystemTest extends \UnitTestCase
         ]);
 
         $responseData = json_decode((string) $response->getBody(), true);
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(10000, $responseData['post_id']);
