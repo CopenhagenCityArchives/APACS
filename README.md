@@ -78,7 +78,7 @@ The services (together with Solr) are declared in *docker-compose.prod.yml*.
 
 The webserver is currently running on a shared host, and as so must be deployed using FTP.
 
-To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon php ./deployment/deploy.php``
+To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon php /code/app/deployment/deploy.php``
 
 See deploy.php for details.
 
@@ -89,14 +89,14 @@ See deploy.php for details.
 PHPUnit and phpunit-watcher are installed with Composer during docker-compose up.
 
 Run the test in the docker container:
-* ``docker exec -it -w /code phalcon /bin/bash``
-* To run a single test run: ``vendor/bin/phpunit --testdox``
-* To watch for changes use phpunit-watcher: ``vendor/bin/phpunit-watcher watch --testdox``
+* ``docker exec -it phalcon /bin/bash``
+* To run a single test run: ``/code/vendor/bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``/code/vendor/bin/phpunit-watcher watch --testdox``
 
 Run the test from outside the container using docker-compose:
 * ``docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate``
-* To run a single test run: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon vendor/bin/phpunit --testdox``
-* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec -w /code phalcon vendor/bin/phpunit-watcher watch --testdox``
+* To run a single test run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit-watcher watch --testdox``
 
 
 ## Code coverage (propably unsupported currently)
