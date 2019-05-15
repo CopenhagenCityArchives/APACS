@@ -22,6 +22,10 @@ try {
 	$dotenv = \Dotenv\Dotenv::create('/etc/', '.env');
 	$dotenv->load();
 
+	$di->setShared('response', function () {
+		return new \Phalcon\Http\Response();
+	});
+
 	require __DIR__ . '/config/config.php';
 
 	//TODO: Test if this works as well (better to use one autoloader than two) :
@@ -43,10 +47,6 @@ try {
 	//Setup the database service
 	$di->setShared('db', function () use ($di) {
 		return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-	});
-
-	$di->setShared('response', function () {
-		return new \Phalcon\Http\Response();
 	});
 
 	//Metadata routes collection
