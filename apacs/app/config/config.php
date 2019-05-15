@@ -48,6 +48,11 @@ $di->setShared('pageImageLocation', function () {
 });
 
 $di->setShared('AccessController', function () use ($di) {
-        $className = getenv('APACS_ACCESS_CTRL_NAME');
+		$className = getenv('APACS_ACCESS_CTRL_NAME');
+		
+		if(!isset($className)){
+			throw new Exception("AccessController class name must be set (using APACS_ACCESS_CTRL_NAME)");
+		}
+
 		return new $className($di->get('request'));
 });
