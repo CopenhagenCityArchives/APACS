@@ -16,6 +16,7 @@ before_install:
 # setup infrastructure using docker-compose
 install:
   - docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate
+  - sleep 120
 
 # run tests inside Phalcon container
 script:
