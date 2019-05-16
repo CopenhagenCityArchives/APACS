@@ -25,8 +25,10 @@ install:
 script:
   - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
-# if on branch task2 deploy via ftp
 after_success:
+  # Remove Composer dev dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run composer remove --dev --update-no-dev
+  # Deploy with FTP
   - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php
 
 before_cache:
