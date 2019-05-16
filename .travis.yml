@@ -32,9 +32,9 @@ script:
 
 after_success:
   # Remove Composer dev dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer remove --dev --update-no-dev
+  # - docker-compose -f docker-compose-webserver.deploy.yml run composer remove --dev --update-no-dev
   # Install FTP client used for deployment
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer require nicolab/php-ftp-client
+  # - docker-compose -f docker-compose-webserver.deploy.yml run composer require nicolab/php-ftp-client
   # Deploy with FTP
   - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php
 
