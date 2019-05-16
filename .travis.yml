@@ -10,6 +10,11 @@ notifications:
 services:
   - docker
 
+cache:
+  bundler: true
+  directories:
+    - $HOME/docker
+
 #stop travis mysql
 before_install:
   - sudo service mysql stop
