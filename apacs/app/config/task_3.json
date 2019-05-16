@@ -20,36 +20,53 @@
         "fieldRelatingToParent": null,
         "allowNewValues": 1,
         "fields":  {
-            "20":
+            "310":
             {
                 "tableName": "burial_persons",
-                "fieldName": "birthplace_id",
+                "fieldName": "birthplaces_id",
                 "datasources_id": 9,
                 "hasDecode": 1,
                 "decodeTable": "burial_birthplaces",
                 "decodeField": "birthplace",
                 "codeAllowNewValue": 0,
                 "includeInForm": 1,
-                "formName": "Fødested",
+                "formName": "Fødested (standard til søgning)",
                 "formFieldType": "typeahead",
                 "formFieldOrder": 10,
                 "defaultValue": null,
-                "helpText": "Personens fødested",
+                "helpText": "Vælg fra listen det fødested, der svarer til den kildetro form. Findes værdien ikke på listen, vælg *findes ikke",
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
-                "validationErrorMessage": "Feltet skal udfyldes.",
+                "validationErrorMessage": "Du skal vælge en værdi på listen",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "birthplace"
+            },
+            "320":
+            {
+                "tableName": "burial_persons",
+                "fieldName": "birthplace_free",
+                "datasources_id": null,
+                "hasDecode": 0,
+                "decodeTable": null,
+                "decodeField": null,
+                "codeAllowNewValue": 0,
+                "includeInForm": 1,
+                "formName": "Fødested (kildetro)",
+                "formFieldType": "string",
+                "formFieldOrder": 11,
+                "defaultValue": null,
+                "helpText": "Indtast præcis de bogstaver der står i kilden, inkl. forkortelser, ældre stavemåder og stavefejl",
+                "placeholder": null,
+                "isRequired": 0,
+                "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
+                "validationErrorMessage": "Skriv fødestedet som det står i kilden",
+                "includeInSOLR": 0,
+                "SOLRFieldName": null
             }
         }
     },
     "steps": [
-        {
-            "name": "Markering af indtastningsområde",
-            "description": "Her skal du markere det område i protokollen, der handler om den person/begravelse, som du vil indtaste.",
-            "fields": []
-        },
         {
             "name": "Løbenummer, Navn, Køn, og Alder",
             "description": "",
@@ -74,6 +91,9 @@
                 },
                 {
                     "key": "persons.birthplace"
+                },
+                {
+                    "key": "persons.birthplace_free"
                 },
                 {
                     "key": "persons.ageYears"

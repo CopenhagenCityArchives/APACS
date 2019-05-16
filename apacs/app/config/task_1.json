@@ -781,11 +781,6 @@
     },
     "steps": [
         {
-            "name": "Markering af indtastningsområde",
-            "description": "Her skal du markere det område i protokollen, der handler om den person/begravelse, som du vil indtaste.",
-            "fields": []
-        },
-        {
             "name": "Løbenummer, Navn, Køn, og Alder",
             "description": "",
             "fields": [
