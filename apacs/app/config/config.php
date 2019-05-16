@@ -50,6 +50,13 @@ $di->setShared('cipConfig', function () {
 });
 
 $di->setShared('pageImageLocation', function () {
+	if(getenv('APACS_IMAGE_PATH') == 'local'){
+		return [
+			'path' => $_SERVER['DOCUMENT_ROOT'].'/../collections/',
+			'type' => getenv('APACS_IMAGE_PROTOCOL')
+		];
+	}
+	
 	return [
 		'path' => getenv('APACS_IMAGE_PATH'),
 		'type' => getenv('APACS_IMAGE_PROTOCOL'),
