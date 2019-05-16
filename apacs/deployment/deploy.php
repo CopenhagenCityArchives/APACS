@@ -18,7 +18,7 @@
     echo 'connecting' . PHP_EOL;
     $ftp->connect($host, false, 21);
     $ftp->login($user, $password);
-    $ftp->pasv(true);
+    $ftp->pasv(false);
   //  var_dump($ftp->chdir('public_html'));
   //  var_dump($ftp->nlist('.'));
   /*  var_dump($ftp->pwd());
@@ -30,10 +30,13 @@
     
 // Remove the directory and its contents
     echo 'removing directory ' . $path . PHP_EOL;
-    try{
-$ftp->rmdir($path, true);
-} catch(Exception $e) {
-} 
+    try
+    {
+      $ftp->rmdir($path, true);
+    }
+    catch(Exception $e) {
+    
+    } 
     
     echo 'creating directory ' . $path . PHP_EOL;
     // Create the directory    
