@@ -16,9 +16,9 @@
 
     $ftp = new \FtpClient\FtpClient();
     echo 'connecting' . PHP_EOL;
-    $ftp->connect($host, false, 21);
+    $ftp->connect($host, false, 21,15);
     $ftp->login($user, $password);
-    $ftp->pasv(false);
+    $ftp->pasv(true);
   //  var_dump($ftp->chdir('public_html'));
   //  var_dump($ftp->nlist('.'));
   /*  var_dump($ftp->pwd());
