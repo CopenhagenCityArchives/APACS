@@ -4,7 +4,8 @@ php:
   - 7.1
 
 notifications:
-  email: false
+  email:
+    - stumpdenmark@hotmail.com
 
 services:
   - docker

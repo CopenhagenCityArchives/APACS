@@ -30,7 +30,10 @@
     
 // Remove the directory and its contents
     echo 'removing directory ' . $path . PHP_EOL;
-    $ftp->rmdir($path, true);
+    try{
+$ftp->rmdir($path, true);
+} catch(Exception $e) {
+} 
     
     echo 'creating directory ' . $path . PHP_EOL;
     // Create the directory    
