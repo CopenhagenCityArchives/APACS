@@ -20,7 +20,7 @@
         "fieldRelatingToParent": null,
         "allowNewValues": 1,
         "fields":  {
-            "310":
+            "320":
             {
                 "tableName": "burial_persons",
                 "fieldName": "birthplaces_id",
@@ -32,7 +32,7 @@
                 "includeInForm": 1,
                 "formName": "Fødested (standard til søgning)",
                 "formFieldType": "typeahead",
-                "formFieldOrder": 10,
+                "formFieldOrder": 12,
                 "defaultValue": null,
                 "helpText": "Vælg fra listen det fødested, der svarer til den kildetro form. Findes værdien ikke på listen, vælg *findes ikke",
                 "placeholder": null,
@@ -42,7 +42,7 @@
                 "includeInSOLR": 1,
                 "SOLRFieldName": "birthplace"
             },
-            "320":
+            "310":
             {
                 "tableName": "burial_persons",
                 "fieldName": "birthplace_free",
