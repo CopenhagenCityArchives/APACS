@@ -24,4 +24,4 @@ script:
 
 # if on branch task2 deploy via ftp
 after_success:
-  script: docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php
+  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php
