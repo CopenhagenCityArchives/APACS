@@ -23,7 +23,7 @@ before_install:
 
 # setup infrastructure using docker-compose
 install:
-  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate
+  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
   - sleep 120
 
 # run tests inside Phalcon container
@@ -31,12 +31,8 @@ script:
   - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
 after_success:
-  # Remove Composer dev dependencies
-  # - docker-compose -f docker-compose-webserver.deploy.yml run composer remove --dev --update-no-dev
-  # Install FTP client used for deployment
-  # - docker-compose -f docker-compose-webserver.deploy.yml run composer require nicolab/php-ftp-client
-  # Deploy with FTP
-  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon php /code/deployment/deploy.php
+  - docker-compose -f docker-compose-webserver.deploy.yml build deploy
+  - docker-compose -f docker-compose-webserver.deploy.yml run deploy
 
 before_cache:
   # Save tagged docker images
