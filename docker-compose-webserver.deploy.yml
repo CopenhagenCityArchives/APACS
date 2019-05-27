@@ -5,8 +5,6 @@ services:
     build:
       context: ./
       dockerfile: ./infrastructure/deploy/Dockerfile
-    depends_on:
-      - phalcon
     volumes:
       - ./apacs:/code
     environment:

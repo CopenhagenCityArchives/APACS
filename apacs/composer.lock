@@ -298,16 +298,16 @@
         },
         {
             "name": "swaggest/json-schema",
-            "version": "v0.12.9",
+            "version": "v0.12.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swaggest/php-json-schema.git",
-                "reference": "29125e57ebb34c0a8dc40c637a2430dcc4b374ef"
+                "reference": "5a8e78f79cdc050560b0e3cea1b13d8b72af0d17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swaggest/php-json-schema/zipball/29125e57ebb34c0a8dc40c637a2430dcc4b374ef",
-                "reference": "29125e57ebb34c0a8dc40c637a2430dcc4b374ef",
+                "url": "https://api.github.com/repos/swaggest/php-json-schema/zipball/5a8e78f79cdc050560b0e3cea1b13d8b72af0d17",
+                "reference": "5a8e78f79cdc050560b0e3cea1b13d8b72af0d17",
                 "shasum": ""
             },
             "require": {
@@ -338,7 +338,7 @@
                 }
             ],
             "description": "High definition PHP structures with JSON-schema based validation",
-            "time": "2019-04-24 12:42:11"
+            "time": "2019-05-16 12:33:02"
         },
         {
             "name": "symfony/event-dispatcher",
