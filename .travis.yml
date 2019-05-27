@@ -31,8 +31,10 @@ script:
   - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
 after_success:
-  # remove dev dependencies, which we dont want to deploy
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer remove --dev --update-no-dev
+  # remove dev dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
+  # Install production dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
   # build and run deployment container
   - docker-compose -f docker-compose-webserver.deploy.yml build deploy
   - docker-compose -f docker-compose-webserver.deploy.yml run deploy
