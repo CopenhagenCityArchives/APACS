@@ -36,8 +36,14 @@ after_success:
   # Install production dependencies
   - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
   # build and run deployment container
-  - docker-compose -f docker-compose-webserver.deploy.yml build deploy
-  - docker-compose -f docker-compose-webserver.deploy.yml run deploy
+  - #docker-compose -f docker-compose-webserver.deploy.yml build deploy
+  - #docker-compose -f docker-compose-webserver.deploy.yml run deploy
+  # new test
+  - set -e
+  - sudo apt-get install -y lftp
+
+  - lftp -c -c "set ftps:initial-prot ''; set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate false; open sftp://$FTP_USER:$KBHKILDER_FTP_PASS@$KBHKILDER_FTP_HOST:22; "mirror -R --delete --exclude-glob **/.env --exclude-glob  /vendor/**/test**/*.php --exclude-glob *.yml --exclude-glob tests_api/** --no-empty-dirs --depth-first  --use-pget-n=15 --verbose=3 ${KBHKILDER_FTP_PATH} .; quit;"
+
 
 before_cache:
   # Save tagged docker images
