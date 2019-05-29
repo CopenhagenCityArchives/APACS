@@ -90,10 +90,10 @@
                     "key": "persons.sex"
                 },
                 {
-                    "key": "persons.birthplace"
+                    "key": "persons.birthplace_free"
                 },
                 {
-                    "key": "persons.birthplace_free"
+                    "key": "persons.birthplace"
                 },
                 {
                     "key": "persons.ageYears"
