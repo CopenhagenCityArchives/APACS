@@ -20,6 +20,28 @@
         "fieldRelatingToParent": null,
         "allowNewValues": 1,
         "fields":  {
+            "319":
+            {
+                "tableName": "burial_persons",
+                "fieldName": "birthdate",
+                "datasources_id": null,
+                "hasDecode": 0,
+                "decodeTable": null,
+                "decodeField": null,
+                "codeAllowNewValue": 0,
+                "includeInForm": 1,
+                "formName": "Fødselsdato",
+                "formFieldType": "string",
+                "formFieldOrder": 11,
+                "defaultValue": null,
+                "helpText": "Skrives dd-mm-åååå. Er dag eller måned ikke oplyst skriv i stedet 01, hvor oplysningen mangler, fx 01-01-1899, hvor kun årstallet kendes.",
+                "placeholder": null,
+                "isRequired": 0,
+                "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$/",
+                "validationErrorMessage": "Skriv datoen således: dd-mm-åååå",
+                "includeInSOLR": 1,
+                "SOLRFieldName": "birthdate"
+            },
             "320":
             {
                 "tableName": "burial_persons",
@@ -32,7 +54,7 @@
                 "includeInForm": 1,
                 "formName": "Fødested (standard til søgning)",
                 "formFieldType": "typeahead",
-                "formFieldOrder": 12,
+                "formFieldOrder": 13,
                 "defaultValue": null,
                 "helpText": "Vælg fra listen det fødested, der svarer til den kildetro form. Findes værdien ikke på listen, vælg *findes ikke",
                 "placeholder": null,
@@ -54,7 +76,7 @@
                 "includeInForm": 1,
                 "formName": "Fødested (kildetro)",
                 "formFieldType": "string",
-                "formFieldOrder": 11,
+                "formFieldOrder": 12,
                 "defaultValue": null,
                 "helpText": "Indtast præcis de bogstaver der står i kilden, inkl. forkortelser, ældre stavemåder og stavefejl",
                 "placeholder": null,
