@@ -151,7 +151,7 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$/",
-                "validationErrorMessage": "Du skal bruge formatet dd-mm-åååå. Er dag eller måned ikke oplyst så skriv i stedet 01.",
+                "validationErrorMessage": "Skriv datoen således: dd-mm-åååå",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "dateOfDeath",
                 "SOLRFacet": 1,
