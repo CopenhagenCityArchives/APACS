@@ -1,4 +1,4 @@
-{
+free{
     "name": "Begravelser",
     "description": "Indtastning af begravelsesprotokoller",
     "id": 1,
@@ -67,7 +67,7 @@
             "310":
             {
                 "tableName": "burial_persons",
-                "fieldName": "birthplace_free",
+                "fieldName": "birthplaceOther",
                 "datasources_id": null,
                 "hasDecode": 0,
                 "decodeTable": null,
@@ -112,7 +112,7 @@
                     "key": "persons.sex"
                 },
                 {
-                    "key": "persons.birthplace_free"
+                    "key": "persons.birthplaceOther"
                 },
                 {
                     "key": "persons.birthplace"
