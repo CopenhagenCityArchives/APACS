@@ -10,6 +10,7 @@ class SystemTest extends \UnitTestCase
     public static function setUpBeforeClass(){
         // Set config and db in DI
         $di = new Di();
+        //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
                 "host" => "database",
@@ -35,6 +36,7 @@ class SystemTest extends \UnitTestCase
     public static function tearDownAfterClass(){
         // Set config and db in DI
         $di = new Di();
+        //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
                 "host" => "database",
