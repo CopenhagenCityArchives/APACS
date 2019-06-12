@@ -37,7 +37,7 @@ abstract class UnitTestCase extends TestCase {
 		}
 		
 		// Set config and db in DI
-
+		//TODO Hardcoded db credentials for tests
 		$this->di->setShared('config', function () {
             return [
                 "host" => "database",
