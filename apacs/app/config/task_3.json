@@ -67,7 +67,7 @@ free{
             "310":
             {
                 "tableName": "burial_persons",
-                "fieldName": "birthplaceOther",
+                "fieldName": "birthplace_free",
                 "datasources_id": null,
                 "hasDecode": 0,
                 "decodeTable": null,
@@ -112,7 +112,7 @@ free{
                     "key": "persons.sex"
                 },
                 {
-                    "key": "persons.birthplaceOther"
+                    "key": "persons.birthplace_free"
                 },
                 {
                     "key": "persons.birthplace"
