@@ -10,4 +10,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 #Add source code
 COPY ./indexing ./
 
+#Add .env
+COPY ./.env_prod /usr/src/app/
+
 ENTRYPOINT [ "python", "/usr/src/app/cron.py" ]
