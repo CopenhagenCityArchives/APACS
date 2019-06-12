@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 from pathlib import Path  # python3 only
+from dotenv import load_dotenv
 
 env_path = Path('/etc/.env')
 load_dotenv(dotenv_path=env_path)
