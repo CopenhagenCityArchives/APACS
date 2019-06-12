@@ -23,7 +23,7 @@
             "319":
             {
                 "tableName": "burial_persons",
-                "fieldName": "birthdate",
+                "fieldName": "dateOfBirth",
                 "datasources_id": null,
                 "hasDecode": 0,
                 "decodeTable": null,
@@ -118,7 +118,7 @@
                     "key": "persons.birthplace"
                 },
                 {
-                    "key": "persons.birthdate"
+                    "key": "persons.dateOfBirth"
                 },
                 {
                     "key": "persons.ageYears"
