@@ -118,6 +118,9 @@
                     "key": "persons.birthplace"
                 },
                 {
+                    "key": "persons.birthdate"
+                },
+                {
                     "key": "persons.ageYears"
                 },
                 {
