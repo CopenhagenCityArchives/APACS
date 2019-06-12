@@ -54,7 +54,7 @@ burial_hoods.hood as 'burial_hoods.hood',
 burial_institutions.institution as 'burial_institutions.institution',
 burial_institutions.id as 'burial_institutions.id',
 burial_birthplaces.id as 'burial_birthplaces.id',
-burial_birthplaces.name as 'burial_birthplaces.name',
+burial_birthplaces.birthplace as 'burial_birthplaces.birthplace',
 burial_burials.id as 'burial_burials.id',
 burial_burials.cemetaries_id as 'burial_burials.cemetaries_id',
 burial_burials.chapels_id as 'burial_burials.chapels_id',
@@ -318,7 +318,7 @@ if __name__ == "__main__":
 					'yearOfDeath': yearOfDeath,
 				#	'dateOfDeath': person['burial_persons.dateOfDeath'].strftime("%Y-%m-%dT00:00:00Z") if person['burial_persons.dateOfDeath'] is not None else None,
 					'dateOfDeath': dateOfDeath,
-					'birthplace': person['burial_birthplaces.name'],
+					'birthplace': person['burial_birthplaces.birthplace'],
 					'deathplace' : person['burial_deathplaces.deathplace'],
 
 					#Burial
@@ -379,7 +379,7 @@ if __name__ == "__main__":
 				'dateOfBirth': person['burial_persons.dateOfBirth'] if 'burial_persons.dateOfBirth' in person else '',
 				'yearOfDeath': yearOfDeath,
 				'dateOfDeath': dateOfDeath,
-				'birthplace': person['burial_birthplaces.name'],
+				'birthplace': person['burial_birthplaces.birthplace'],
 				'deathplace' : person['burial_deathplaces.deathplace'],
 
 				#Burial
