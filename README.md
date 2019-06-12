@@ -67,6 +67,11 @@ It is sometimes necessary to add new fields to the Solr service.
 
 Instead of recreating the Solr container, it is enough to update the core schema.
 Connect to docker machine and run this command:
+<<<<<<< HEAD
+=======
+
+* ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
+>>>>>>> f4f08027a623ee9ba57657e0ec9e3efbbf788c6f
 
 * ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
 
