@@ -7,7 +7,7 @@ services:
         dockerfile: ./infrastructure/indexing/Dockerfile_dev
     volumes:
       - ./indexing:/usr/src/app/
-      - ./.env:/etc/.env
+      - .env_dev:/usr/src/app/env.cfg
   solr:
     container_name: solr
     image: library/solr:6.6.3
