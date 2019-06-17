@@ -192,6 +192,6 @@ class AccessController implements IAccessController {
 	}
 
 	public function IsSuperUser(){
-		return count(SuperUsers::findByUsersId($this->GetUserId())) == 1;
+		return count(SuperUsers::findByUsersId($this->GetUserId())) > 0;
 	}
 }
