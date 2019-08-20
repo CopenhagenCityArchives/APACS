@@ -1,2 +1,2 @@
-12 16 * * * /usr/src/app/cron.sh
+0 2 * * * /usr/src/app/cron.sh
 #
