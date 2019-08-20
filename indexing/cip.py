@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import config
 import requests
 import ssl
 import json
@@ -33,7 +32,7 @@ class CIP(object):
 		else:
 			raise Exception((r.status_code, r.reason, r.text))
 
-	def post(self, url, query={}, params={}):
+	def post(self, url, query={}, params={}, retries=5):
 		url = "%s:%d/%s/%s" % (self.host, self.port, self.location, url)
 		if query:
 			url += "?%s" % urllib.parse.urlencode(query)
@@ -43,6 +42,8 @@ class CIP(object):
 				json = r.json()
 				return json
 			except Exception as e:
+				if retries > 0:
+					return self.post(url, query=query, params=params, retries=retries-1)
 				print("URL: %s" % url)
 				print("POST data: %s"% params)
 				print("Data length: %d" % len(r.text))
@@ -80,7 +81,7 @@ class CIP(object):
 			name = field['name']
 			ftype = field['type']
 			if ftype == "DateTime":
-				value = datetime.datetime.fromtimestamp(float(re.match("/Date\((\d+)\)/", value).group(1)) / 1000.0)
+				value = datetime.datetime.fromtimestamp(float(re.match(r"/Date\((\d+)\)/", value).group(1)) / 1000.0)
 			elif ftype == "Enum":
 				value = value['displaystring']
 			elif ftype == "Date":
