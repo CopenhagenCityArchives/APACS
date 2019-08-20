@@ -21,6 +21,7 @@ Config = {
         "password": os.getenv("CUMULUS_PASS"),
         "catalog": os.getenv("CUMULUS_CATALOG"),
         "layout": os.getenv("CUMULUS_LAYOUT"),
+        "location": os.getenv("CUMULUS_LOCATION")
     },
     'polle_db' : {
         "host": os.getenv("POLLE_DB_HOST"),
