@@ -31,3 +31,4 @@ apacs/public/api/incomming_update_collection.log
 apacs/composer.lock
 *.pyc
 .env_dev
+.vscode/
