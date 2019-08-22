@@ -37,7 +37,7 @@ class ErindringerIndexer(IndexerBase):
 
         self.log("Creating index of transcribed...")
         self.transcribed = {}
-        for erindring in self.cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' * && Samlingsnavn == 'Erindring'"):
+        for erindring in self.cip.searchall(Config['cumulus']['catalog'], view=Config['cumulus']['catalog'], querystring="Offentlig == true && 'Related Master Assets' * && Samlingsnavn == 'Erindring'"):
             self.transcribed[erindring['Erindringsnummer']] = erindring
         self.log(f"OK. Created index of {len(self.transcribed)} transcribed.")
 
@@ -52,12 +52,12 @@ class ErindringerIndexer(IndexerBase):
 		
 	
     def get_total(self):
-        search_result = self.cip.search("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !* && Samlingsnavn == 'Erindring'", maxreturned=1)
+        search_result = self.cip.search(Config['cumulus']['catalog'], view=Config['cumulus']['catalog'], querystring="Offentlig == true && 'Related Master Assets' !* && Samlingsnavn == 'Erindring'", maxreturned=1)
         return search_result['totalcount']
 
 
     def get_entries(self):
-        return self.cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Offentlig == true && 'Related Master Assets' !* && Samlingsnavn == 'Erindring'", chunk=50)
+        return self.cip.searchall(Config['cumulus']['catalog'], view=Config['cumulus']['catalog'], querystring="Offentlig == true && 'Related Master Assets' !* && Samlingsnavn == 'Erindring'", chunk=50)
         
 
     def handle_entry(self, erindring):

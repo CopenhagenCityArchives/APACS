@@ -50,7 +50,7 @@ class EfterretningerIndexer(IndexerBase):
 	
 
 	def get_entries(self):
-		return self.cip.searchall("erindringskatalog", view="erindringskatalog", querystring="Samlingsnavn == 'Politiets Efterretninger' && Offentlig == true", chunk=50)
+		return self.cip.searchall(Config['cumulus']['catalog'], view=Config['cumulus']['catalog'], querystring="Samlingsnavn == 'Politiets Efterretninger' && Offentlig == true", chunk=50)
 	
 
 	def handle_entry(self, efterretning):
