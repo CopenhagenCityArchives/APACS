@@ -32,3 +32,4 @@ apacs/composer.lock
 *.pyc
 .env_dev
 .vscode/
+indexing/env.cfg
