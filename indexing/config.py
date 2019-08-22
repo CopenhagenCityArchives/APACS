@@ -14,6 +14,7 @@ else:
 
 Config = {
     "debug" : os.getenv("ENVIRONMENT") == 'DEV',
+    "index-delete": os.getenv("INDEX_DELETE") == "true",
     "cumulus" : {
         "url": os.getenv("CUMULUS_HOST"),
         "port": int(os.getenv("CUMULUS_PORT")),

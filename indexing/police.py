@@ -2,7 +2,6 @@ from base import IndexerBase
 from config import Config
 
 import pymysql
-import pysolr
 import sys
 import json
 from datetime import datetime
@@ -13,7 +12,6 @@ class PoliceIndexer(IndexerBase):
 
     def __init__(self):
         super().__init__()
-        self.documents = []
         self.progress_threshold = 0.02
         self.progress_threshold_next = self.progress_threshold
 
@@ -134,14 +132,6 @@ WHERE p.person_id IN (%s)
     def setup(self):
         self.log("Connecting to MySQL...")
         self.mysql = pymysql.connect(host=Config['polle_db']['host'], user=Config['polle_db']['user'], password=Config['polle_db']['password'], db=Config['polle_db']['database'], charset='utf8')
-        self.log("OK.")
-
-        self.log("Connecting to Solr...")
-        self.solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
-        self.log("OK.")
-        
-        self.log("Deleting all Politiets registerblade from Solr...")
-        self.solr.delete(q=f"collection_id:{self.collection_id()}",commit=True)
         self.log("OK.")
     
 
@@ -336,14 +326,6 @@ WHERE p.person_id IN (%s)
             'adr_to_note': list(map(lambda address: address['to_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else [],
             'adr_from_note': list(map(lambda address: address['from_note'], card['addresses'])) if person['person_type'] == 1 and 'addresses' in card else []
         })
-
-        if len(self.documents) >= 10000:
-            self.solr.add(self.documents, commit=True)
-            self.documents = []
-    
-
-    def wrapup(self):
-        self.solr.add(self.documents, commit=True)
 
 
     def valid_date(self, year, month, day):
