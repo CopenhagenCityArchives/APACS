@@ -33,10 +33,10 @@ class CIP(object):
 			raise Exception((r.status_code, r.reason, r.text))
 
 	def post(self, url, query={}, params={}, retries=5):
-		url = "%s:%d/%s/%s" % (self.host, self.port, self.location, url)
+		uri = "%s:%d/%s/%s" % (self.host, self.port, self.location, url)
 		if query:
-			url += "?%s" % urllib.parse.urlencode(query)
-		r = requests.post(url, data=params, auth=(self.user, self.password), verify=False)
+			uri += "?%s" % urllib.parse.urlencode(query)
+		r = requests.post(uri, data=params, auth=(self.user, self.password), verify=False)
 		if r.status_code == 200:
 			try:
 				json = r.json()
@@ -44,7 +44,7 @@ class CIP(object):
 			except Exception as e:
 				if retries > 0:
 					return self.post(url, query=query, params=params, retries=retries-1)
-				print("URL: %s" % url)
+				print("URL: %s" % uri)
 				print("POST data: %s"% params)
 				print("Data length: %d" % len(r.text))
 				print("Data: %s" % r.text)
