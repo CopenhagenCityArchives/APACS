@@ -2,7 +2,9 @@ from abc import ABC, abstractmethod
 import sys, traceback
 from datetime import datetime
 from time import time
+import pysolr
 
+from config import Config
 from sns import SNS_Notifier
 
 class IndexerBase(ABC):
@@ -18,6 +20,8 @@ class IndexerBase(ABC):
         self.progress_threshold_next = self.progress_threshold
         self.log_prefixes = []
         self.total = None
+        self.commit_threshold = 10000
+        self.documents = []
     
 
     def log(self, msg):
@@ -28,6 +32,13 @@ class IndexerBase(ABC):
     def index(self):
         """Main method for performing the indexing, tying together all abstracted methods."""
         self.log_prefixes.append(self.collection_info())
+
+        self.log_prefixes.append("solr")
+        self.log("Connecting to Solr... ")
+        self.solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
+        self.log("OK.")
+        self.log_prefixes.pop()
+
         self.log(f"Setting up indexing {self.collection_info()} (id={self.collection_id()})")
         try:
             self.log_prefixes.append("setup")
@@ -45,6 +56,16 @@ class IndexerBase(ABC):
         except Exception as e:
             self.handle_error("Exception occured during get_total()!", e)
 
+        if Config["index-delete"]:
+            try:
+                self.log_prefixes.append("delete")
+                self.log(f"Deleting existing documents for {self.collection_info()}...")
+                self.delete()
+                self.log("OK.")
+                self.log_prefixes.pop()
+            except Exception as e:
+                self.handle_error("Exception occured during delete()!", e)
+
         self.log(f"Beginning indexing...")
         self.log_prefixes.append("indexing")
         self.rate_time = time()
@@ -61,17 +82,28 @@ class IndexerBase(ABC):
                 try:
                     self.log_prefixes.append("handle_entry")
                     self.handle_entry(entry)
+                    if len(self.documents) >= self.commit_threshold:
+                        self.solr.add(self.documents, commit=True)
+                        self.documents = []
                     self.rate_entries += 1
                     self.log_prefixes.pop()
                 except Exception as e:
                     self.handle_error("Exception occured during handle_entry()!", e)
+
             # only print progress after, if we didn't print already
             if last_progress_i < last_i:
                 self.print_progress(last_i)
+
+            # commit any remaining documents
+            self.solr.add(self.documents, commit=True)
+            self.documents = []
         except Exception as e:
-            self.handle_error("Exception occured during get_entries()!", e)
+            self.handle_error("Exception occured during index()!", e)
         self.log_prefixes.pop()
-        self.wrapup()
+
+
+    def delete(self):
+        self.solr.delete(q=f"collection_id:{self.collection_id()}", commit=True)
 
 
     def handle_error(self, message, exception):
@@ -118,6 +150,7 @@ class IndexerBase(ABC):
     def setup(self):
         """Perform setup, ie. connect to databases etc."""
         pass
+
     
     @abstractmethod
     def get_total(self):
@@ -133,10 +166,4 @@ class IndexerBase(ABC):
     @abstractmethod
     def handle_entry(self, entry):
         """Handle one of the entries returned by get_entries."""
-        pass
-    
-
-    @abstractmethod
-    def wrapup(self):
-        """Cleanup after indexing, for example to commit the last documents."""
         pass

@@ -5,3 +5,5 @@ WORKDIR /usr/src/app
 # Install requirements
 COPY ./indexing/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
+
+ENTRYPOINT tail -f /dev/null

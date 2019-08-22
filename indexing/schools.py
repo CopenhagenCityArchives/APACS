@@ -6,7 +6,6 @@ import urllib3
 import json
 from datetime import datetime
 
-import pysolr
 import pymysql
 import requests
 
@@ -15,9 +14,9 @@ class SchoolsIndexer(IndexerBase):
 
     def __init__(self):
         super().__init__()
-        self.added_documents = 0
         self.progress_threshold = 0.05
         self.progress_threshold_next = self.progress_threshold
+        self.commit_threshold = 1000
 
     
     def collection_info(self):
@@ -36,14 +35,6 @@ class SchoolsIndexer(IndexerBase):
             password=Config['apacs_db']['password'],
             db=Config['apacs_db']['database'],
             charset='utf8')
-        self.log("OK.")
-
-        self.log("Connecting to Solr... ")
-        self.solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
-        self.log("OK.")
-
-        self.log("Deleting all Skoleprotokol documents in Solr... ")
-        self.solr.delete(q=f"collection_id:{self.collection_id()}")
         self.log("OK.")
     
 
@@ -161,7 +152,7 @@ class SchoolsIndexer(IndexerBase):
             'kildeviser_url': f"http://kbharkiv.dk/kildeviser/#!?collection=100&item={entry['apacs_page_id']}" if entry.get('apacs_page_id') is not None else None
         }
         
-        self.solr.add([{
+        self.documents.append({
             'id': "%s-%s" % (self.collection_id(), entry['IndexFieldID']),
             'collection_id': self.collection_id(),
             'collection_info': "Skoleprotokoller",
@@ -184,15 +175,7 @@ class SchoolsIndexer(IndexerBase):
             'collected_year': data['collected_year'],
             'schoolName': data['schoolName'],
             'comments': data['comments']
-        }], commit=False)
-        self.added_documents += 1
-        if self.added_documents >= 10000:
-            self.solr.commit()
-            self.added_documents = 0
-
-    
-    def wrapup(self):
-        self.solr.commit()
+        })
 
 
 if __name__ == "__main__":

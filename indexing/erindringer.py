@@ -5,7 +5,6 @@ from config import Config
 from cip import CIP
 from base import IndexerBase
 
-import pysolr
 import sys
 import json
 import urllib3
@@ -16,9 +15,9 @@ class ErindringerIndexer(IndexerBase):
 
     def __init__(self):
         super().__init__()
-        self.documents = []
         self.progress_threshold = 0.1
         self.progress_threshold_next = self.progress_threshold
+        self.commit_threshold = 100
 
 
     def collection_id(self):
@@ -42,15 +41,6 @@ class ErindringerIndexer(IndexerBase):
         self.log(f"OK. Created index of {len(self.transcribed)} transcribed.")
 
 
-        self.log("Connecting to Solr...")
-        self.solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
-        self.log("OK.")
-
-        self.log("Deleting all Erindringer documents in Solr... ")
-        self.solr.delete(q=f"collection_id:{self.collection_id()}")
-        self.log("OK.")
-		
-	
     def get_total(self):
         search_result = self.cip.search(Config['cumulus']['catalog'], view=Config['cumulus']['catalog'], querystring="Offentlig == true && 'Related Master Assets' !* && Samlingsnavn == 'Erindring'", maxreturned=1)
         return search_result['totalcount']

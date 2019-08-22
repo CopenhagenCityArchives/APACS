@@ -5,7 +5,6 @@ from config import Config
 from base import IndexerBase
 
 import pymysql
-import pysolr
 import sys
 import json
 
@@ -14,7 +13,6 @@ class BurialIndexer(IndexerBase):
 
 	def __init__(self):
 		super().__init__()
-		self.documents = []
 		self.errors = 0
 
 		self.count_query = "SELECT COUNT(*) as count FROM burial_persons"
@@ -187,14 +185,6 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 		self.mysql = pymysql.connect(host=Config['apacs_db']['host'], user=Config['apacs_db']['user'], password=Config['apacs_db']['password'], db=Config['apacs_db']['database'], charset='utf8')
 		self.log("OK.")
 
-		self.log("Connecting to Solr... ")
-		self.solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
-		self.log("OK.")
-
-		self.log("Deleting all Burial records in Solr...")
-		self.solr.delete(q=f"collection_id:{self.collection_id()}")
-		self.log("OK.")
-
 
 	def get_total(self):
 		with self.mysql.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -363,14 +353,9 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'last_update': person['last_update']
 		})
 
-		if len(self.documents) > 10000:
+		if len(self.documents) >= 10000:
 			self.solr.add(self.documents, commit=True)
 			self.documents = []
-	
-
-	def wrapup(self):
-		self.solr.add(self.documents, commit=True)
-		self.documents = []
 
 
 if __name__ == "__main__":

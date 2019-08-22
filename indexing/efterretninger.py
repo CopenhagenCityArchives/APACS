@@ -4,7 +4,7 @@
 from config import Config
 from cip import CIP
 from base import IndexerBase
-import pysolr
+
 import sys
 import json
 from datetime import datetime
@@ -18,7 +18,7 @@ class EfterretningerIndexer(IndexerBase):
 
 	def __init__(self):
 		super().__init__()
-		self.documents = []
+		self.commit_threshold = 100
 
 	
 	def collection_id(self):
@@ -33,14 +33,6 @@ class EfterretningerIndexer(IndexerBase):
 		self.log("Connecting to CIP... ")
 		self.cip = CIP(Config['cumulus']['url'], Config['cumulus']['port'], Config['cumulus']['user'], Config['cumulus']['password'], Config['cumulus']['location'])
 		self.cip.load_layout(Config['cumulus']['layout'], Config['cumulus']['layout'])
-		self.log("OK.")
-
-		self.log("Connecting to Solr... ")
-		self.solr = pysolr.Solr(Config['solr']['url'], auth=(Config['solr']['user'], Config['solr']['password']), timeout=300)
-		self.log("OK.")
-
-		self.log("Deleting all Politiets Efterretninger documents in Solr... ")
-		self.solr.delete(q=f"collection_id:{self.collection_id()}")
 		self.log("OK.")
 
 
@@ -82,15 +74,6 @@ class EfterretningerIndexer(IndexerBase):
 			'efterretning_type': efterretning.get(u"Description"),
 			'erindring_document_text': efterretning.get('Document Text')
 		})
-
-		if len(self.documents) >= 100:
-			self.solr.add(self.documents, commit=True)
-			self.documents = []
-	
-	
-	def wrapup(self):
-		self.solr.add(self.documents, commit=True)
-		self.documents = []
 
 
 if __name__ == "__main__":
