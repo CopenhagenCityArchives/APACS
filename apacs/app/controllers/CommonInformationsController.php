@@ -524,16 +524,6 @@ class CommonInformationsController extends MainController {
 			!is_null($this->request->getQuery('id', 'string', null, true)) &&
 			is_null($this->request->getQuery('task_id', 'int', null, true))){
 
-			/*$taskId = 0;
-			switch($this->request->getQuery('collection_id', 'int', null)){
-				case '17':
-					$taskId = 2;
-				break;
-				case '18':
-					$taskId = 3;
-				break;
-			}*/
-
 			$result = SpecialErrors::find(['conditions' => 'collection_id = ' . $this->request->getQuery('collection_id') . ' AND source_id = \'' . $this->request->getQuery('id') . '\''])->toArray();
 
 			$result = SpecialErrors::setLabels($result, $this->request->getQuery('collection_id'));
