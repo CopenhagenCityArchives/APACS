@@ -538,7 +538,7 @@ class CommonInformationsController extends MainController {
 		$userId = $this->request->getQuery('relevant_user_id', 'int', null, true);
 		$errors = [];
 
-		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
+		if ((is_null($taskId) || is_null($postId)) && is_null($userId)) {
 			$this->error('collection_id and id are required for special errors. task_id and post_id or task_id and relevant_user_id are required for normal errors');
 			return;
 		}
