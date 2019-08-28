@@ -31,7 +31,7 @@
                 "codeAllowNewValue": 0,
                 "includeInForm": 1,
                 "formName": "Fødselsdato",
-                "formFieldType": "string",
+                "formFieldType": "date",
                 "formFieldOrder": 11,
                 "defaultValue": null,
                 "helpText": "Skrives dd-mm-åååå. Er dag eller måned ikke oplyst skriv i stedet 01, hvor oplysningen mangler, fx 01-01-1899, hvor kun årstallet kendes.",
@@ -40,7 +40,7 @@
                 "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$/",
                 "validationErrorMessage": "Skriv datoen således: dd-mm-åååå",
                 "includeInSOLR": 1,
-                "SOLRFieldName": "birthdate"
+                "SOLRFieldName": "dateOfBirth"
             },
             "320":
             {
