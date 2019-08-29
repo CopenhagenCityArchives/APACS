@@ -314,6 +314,11 @@ class CommonInformationsController extends MainController {
 	public function CreateOrUpdatePost($id = null) {
 		$this->RequireAccessControl();
 
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		if (is_null($taskId)) {
+			throw new InvalidArgumentException("task_id required");
+		}
+
 		$input = $this->GetAndValidateJsonPostData();
 
 		if (!$input) {
@@ -363,7 +368,7 @@ class CommonInformationsController extends MainController {
 		$event->units_id = $page->unit_id;
 		$event->pages_id = $page->id;
 		$event->posts_id = $post->id;
-		$event->tasks_id = 0;
+		$event->tasks_id = $taskId;
 		$event->collections_id = $page->getUnits()->collections_id;
 		$event->event_type = Events::TypeCreateUpdatePost;
 
@@ -374,7 +379,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		//Set last activity on the TaskPage, so it is not received when getting available pages
-		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $page->id]);
+		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $page->id . ' AND tasks_id = ' . $taskId]);
 		if(!is_null($taskPage)){
 			$taskPage->last_activity = time();
 			$taskPage->save();
