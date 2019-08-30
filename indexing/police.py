@@ -118,6 +118,7 @@ FROM
     LEFT JOIN PRB_kontrolleret_stilling ks ON s.kontrolleret_stilling_id = ks.kontrolleret_stilling_id
     LEFT JOIN PRB_person p ON ps.person_id = p.person_id
 WHERE p.person_id IN (%s)
+ORDER BY ps.person_stilling_id ASC
 """
 
 
