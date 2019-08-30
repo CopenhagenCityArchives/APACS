@@ -113,7 +113,7 @@ class IndexerBase(ABC):
         self.log_prefixes.pop()
 
         # report error
-        SNS_Notifier.error(message)
+        SNS_Notifier.error(f"An error occured during indexing of {self.collection_info()}:\n{message}")
 
         # print to stdout
         type_, value_, traceback_ = sys.exc_info()
