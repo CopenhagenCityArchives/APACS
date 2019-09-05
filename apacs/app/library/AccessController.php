@@ -187,7 +187,7 @@ class AccessController implements IAccessController {
 		$attemptingUser = $this->GetUserId();
 
 		//Creating user can always edit
-		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($attemptingUser)) {
+		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($entry->tasks_id)) {
 			return true;
 		}
 /*
@@ -217,7 +217,29 @@ class AccessController implements IAccessController {
 		return false;
 	}
 
-	public function IsSuperUser(){
-		return count(SuperUsers::findByUsersId($this->GetUserId())) == 1;
+	/**
+	 * Check if the authorized user is a superuser for:
+	 *   1) The specified task, if given, or
+	 *   2) Any task, if none is given.
+	 * @param int taskId The id to check for superuser status for.
+	 * @return bool Is the authorized user superuser.
+	 */ 
+	public function IsSuperUser($taskId = null){
+		if ($taskId === null) {
+			return SuperUsers::count([
+				"conditions" => "user_id = :userId:",
+				"bind" => [
+					"userId" => $this->GetUserId()
+				]
+			]) > 0;
+		} else {
+			return SuperUsers::count([
+				"conditions" => "users_id = :userId: AND tasks_id = :taskId:",
+				"bind" => [
+					"userId" => $this->GetUserId(),
+					"taskId" => $taskId
+				]
+			]) > 0;
+		}
 	}
 }
