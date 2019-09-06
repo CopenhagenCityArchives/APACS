@@ -42,36 +42,40 @@ class TaskConfigurationLoader2 {
     }
 
     //Returns a recursive merged array of config and parent config
-    private function override($config){
-        return $this->fillConfig($this->getConfig($config['parentTask']),$config);
+    private function override($config) {
+        $parent = $this->getConfig($config['parentTask']);
+        return $this->fillConfig($parent, $config);
     }
 
-    private function fillConfig( $default, $specific )
+    private function fillConfig($parent, $child)
     {
-        foreach( $specific as $key=> $val )
+        foreach ($child as $prop => $val)
         {
-            if( isset( $default[$key] ) && $key != 'steps' )
+            // if the parent config has the property, and it isn't steps
+            if (isset($parent[$prop]) && $prop != 'steps')
             {
-                if( ! is_array( $default[$key] ) )
+                // for simple values, child values are used
+                if (!is_array($parent[$prop]))
                 {
-                    $default[$key] = $val;
+                    $parent[$prop] = $val;
                 }
-                elseif( array_keys($default[$key]) === range(0, count($default[$key]) - 1) )
+                // for lists, unique values of the concatenated lists are used
+                elseif (array_keys($parent[$prop]) === range(0, count($parent[$prop])-1))
                 {
-                    $default[$key] = array_unique( array_merge( $default[$key], $val ) );
+                    $parent[$prop] = array_values(array_unique(array_merge($parent[$prop], $val), SORT_REGULAR));
                 }
+                // for objects, recursively fill configuration
                 else
                 {
-                    $default[$key] = $this->fillConfig( $default[$key], $val );
+                    $parent[$prop] = $this->fillConfig($parent[$prop], $val);
                 }
             }
+            // use child property if parent is missing it
             else
             {
-                // This happens when a specific key doesn't exists in default configuration.
-
-                $default[$key] = $val;
+                $parent[$prop] = $val;
             }
         }
-        return $default;
+        return $parent;
     }
 }

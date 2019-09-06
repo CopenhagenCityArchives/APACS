@@ -33,6 +33,35 @@ class TaskConfigLoaderTest extends \UnitTestCase {
 		$this->assertTrue($conf1['schema']['properties']['persons']['properties'] === $conf2['schema']['properties']['persons']['properties']);
 	}
 
+	public function test_override() {
+		$c = $this->loader->getConfig(6);
+
+		// overridden in root and intermediate
+		$this->assertEquals(6, $c['intval']);
+
+		// non-overridden (only exists in root)
+		$this->assertEquals("string value", $c['strval']);
+
+		// list concatenation
+		$this->assertEquals([ "a", "b", "c", "d", "e", "f" ], $c['listval']);
+		$this->assertEquals([[1,2,3], ["a", "b", "c"], ["d", "e", "f"], [4,5,6]], $c['objectval']['_listlistval']);
+		$this->assertCount(3, $c['objectval']['_objectlistval']);
+
+		// nested, missing in leaf, overridden from intermediate to root
+		$this->assertEquals("overridden", $c['objectval']['_strval']);
+		$this->assertEquals("overridden", $c['objectval']['_objectval']['__strval']);
+
+		// missing in root and intermediate
+		$this->assertEquals("inserted", $c['newstrval']);
+
+		// missing in intermediate, overridden in root
+		$this->assertEquals(10, $c['intval2']);
+
+		// steps special case
+		$this->assertCount(1, $c['steps']);
+		$this->assertEquals("only step that matters", $c['steps'][0]['strval']);
+	}
+
 	/**
 	* @expectedException Exception
 	*/

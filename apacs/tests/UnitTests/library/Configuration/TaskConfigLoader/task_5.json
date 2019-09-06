@@ -1,0 +1,19 @@
+{
+    "parentTask": 4,
+
+    "intval": "5",
+    "objectval": {
+        "_strval": "overridden",
+        "_objectlistval": [
+            {
+                "__intval": 4,
+                "__strval": "concatenated"
+            }
+        ],
+        "_listlistval": [["d","e","f"], [4,5,6]],
+        "_objectval": {
+            "__strval": "overridden"
+        }
+    },
+    "steps": []
+}
