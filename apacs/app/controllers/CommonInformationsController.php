@@ -281,7 +281,7 @@ class CommonInformationsController extends MainController {
 
 		$result['task_page'] = TasksPages::find(['conditions' => 'pages_id = :pageId:', 'bind' => ['pageId' => $pageId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
 
-		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $result['task_page'][0]['tasks_id']]]);
+		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitId:', 'bind' => ['unitId' => $page->unit_id, 'taskId' => $result['task_page'][0]['tasks_id']]]);
 		if ($taskUnit == false) {
 			throw new Exception('TaskUnit not found for page id ' . $pageId);
 		}
