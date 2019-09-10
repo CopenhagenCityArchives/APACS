@@ -240,6 +240,7 @@ class CommonInformationsController extends MainController {
 		$unitId = $request->getQuery('unit_id', 'int', null, true);
 		$pageNumber = $request->getQuery('page_number', 'int', null, true);
 		$pageId = $request->getQuery('page_id', 'int', null, true);
+		$taskId = $request->getQuery('task_id', 'int', null, true);
 
 		$conditions = [];
 
@@ -277,13 +278,23 @@ class CommonInformationsController extends MainController {
 			$page = Pages::findFirstById($pageId);
 		}
 
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		if (is_null($taskId)) {
+			$this->error('task_id is required');
+			return;
+		}
+
 		$result = $page->toArray();
 
-		$result['task_page'] = TasksPages::find(['conditions' => 'pages_id = :pageId:', 'bind' => ['pageId' => $pageId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
+		$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = :taskId: AND pages_id = :pageId:', 'bind' => ['pageId' => $pageId, 'taskId' => $taskId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
+		if ($taskPage == false) {
+			throw new Exception('TaskUnit not found for page with id=' . $pageId);
+		}
+		$result['task_page'] = $taskPage;
 
-		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitId:', 'bind' => ['unitId' => $page->unit_id, 'taskId' => $result['task_page'][0]['tasks_id']]]);
+		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitId:', 'bind' => ['unitId' => $page->unit_id, 'taskId' => $taskId]]);
 		if ($taskUnit == false) {
-			throw new Exception('TaskUnit not found for page id ' . $pageId);
+			throw new Exception('TaskUnit not found for page with id=' . $pageId);
 		}
 
 		$post = new Posts();
@@ -295,12 +306,12 @@ class CommonInformationsController extends MainController {
 		$auth = $this->getDI()->get('AccessController');
 
 		foreach ($posts as $curPos) {
-			$postEntries = Entries::find('posts_id = ' . $curPos->id);
+			$postEntry = Entries::findFirst('tasks_id = ' . $taskId . ' AND posts_id = ' . $curPos->id);
 			//$postEntries = $curPos->getEntries();
 			$post = $curPos->toArray();
 
 			if (count($postEntries) > 0) {
-				$post['user_can_edit'] = $auth->UserCanEdit($postEntries[0]);
+				$post['user_can_edit'] = $auth->UserCanEdit($postEntry);
 			} else {
 				$post['user_can_edit'] = false;
 			}
@@ -524,25 +535,29 @@ class CommonInformationsController extends MainController {
 
 	public function GetErrorReports() {
 
+		$collectionId = $this->request->getQuery('collection_id', 'int', null, true);
+		$sourceId = $this->request->getQuery('id', 'string', null, true);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$postId = $this->request->getQuery('post_id', 'int', null, true);
+		$userId = $this->request->getQuery('relevant_user_id', 'int', null, true);
+
 		//Assume special errors if collection id is used
-		if(	!is_null($this->request->getQuery('collection_id', 'int', null, true)) &&
-			!is_null($this->request->getQuery('id', 'string', null, true)) &&
-			is_null($this->request->getQuery('task_id', 'int', null, true))){
+		if (is_null($collectionId) && !is_null($sourceId) && is_null($taskId)) {
+			// validate source-id field
+			if (!preg_match("/^\d+-\d+$/", $sourceId, $matches)) {
+				$this->error('invalid id');
+				return;
+			}
 
-			$result = SpecialErrors::find(['conditions' => 'collection_id = ' . $this->request->getQuery('collection_id') . ' AND source_id = \'' . $this->request->getQuery('id') . '\''])->toArray();
-
-			$result = SpecialErrors::setLabels($result, $this->request->getQuery('collection_id'));
+			$result = SpecialErrors::find(['conditions' => 'collection_id = ' . $collectionId . ' AND source_id = \'' . $sourceId . '\''])->toArray();
+			$result = SpecialErrors::setLabels($result, $collectionId);
 
 			$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
 			return;
 		}
 
 		//Normal cases: Task id and post id is set
-		$taskId = $this->request->getQuery('task_id', 'int', null, true);
-		$postId = $this->request->getQuery('post_id', 'int', null, true);
-		$userId = $this->request->getQuery('relevant_user_id', 'int', null, true);
 		$errors = [];
-
 		if ((is_null($taskId) || is_null($postId)) && is_null($userId)) {
 			$this->error('collection_id and id are required for special errors. task_id and post_id or task_id and relevant_user_id are required for normal errors');
 			return;
@@ -658,7 +673,7 @@ class CommonInformationsController extends MainController {
 	public function ImportUnits() {
 		$request = $this->request;
 
-		$collectionId = $request->getPost('collection_id', null, false);
+		$collectionId = $request->getPost('collection_id', "int", false);
 
 		if (!$collectionId) {
 			$this->error('collection_id is required');
@@ -666,6 +681,10 @@ class CommonInformationsController extends MainController {
 		}
 
 		$type = $request->getPost('type', null, Units::OPERATION_TYPE_CREATE);
+		if ($type !== 'create' && $type !== 'update') {
+			$this->error('invalid import type');
+			return;
+		}
 
 		$importer = new Units();
 		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
@@ -683,7 +702,7 @@ class CommonInformationsController extends MainController {
 	public function ImportPages() {
 		$request = $this->request;
 
-		$collectionId = $request->getPost('collection_id', null, false);
+		$collectionId = $request->getPost('collection_id', "int", false);
 
 		if (!$collectionId) {
 			$this->error('collection_id is required');
@@ -691,6 +710,10 @@ class CommonInformationsController extends MainController {
 		}
 
 		$type = $request->getPost('type', null, Pages::OPERATION_TYPE_CREATE);
+		if ($type !== 'create' && $type !== 'update') {
+			$this->error('invalid import type');
+			return;
+		}
 
 		$importer = new Pages();
 		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
