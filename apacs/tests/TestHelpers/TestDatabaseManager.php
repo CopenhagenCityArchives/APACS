@@ -45,4 +45,9 @@ class TestDatabaseManager {
 	public function cleanUpBurialStructure(){
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/burials-structure-and-data-cleanup.sql'));
 	}
+
+	public function refreshEntryForPost1000() {
+		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/burials-refresh-post-entries.sql'));
+	}
+	
 }

@@ -86,6 +86,12 @@ CREATE TABLE `apacs_errorreports` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23135 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
+CREATE TABLE IF NOT EXISTS `apacs_datalists_events`(
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `users_id` int(11) NOT NULL,
+  `event_type` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `apacs_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -97,6 +103,7 @@ CREATE TABLE IF NOT EXISTS `apacs_events` (
   `posts_id` int(11) NOT NULL,
   `event_type` varchar(45) NOT NULL,
   `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `backup` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

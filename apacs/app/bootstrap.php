@@ -97,6 +97,9 @@ try {
 	//Update post
 	$info->patch('/posts/{id:[0-9]+}', 'CreateOrUpdatePost');
 
+	//Delete post
+	$info->delete('/posts/{id:[0-9]+}', 'DeletePost');
+
 	$info->get('/posts/{post:[0-9]+}/image', 'GetPostImage');
 
 	$info->get('/taskschema', 'GetTaskFieldsSchema');
@@ -176,7 +179,7 @@ try {
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
 		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
 		$di->get('response')->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept');
-		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS');
+		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS, DELETE');
 		$di->get('response')->setHeader('Access-Control-Max-Age', '1728000');
 		$di->get('response')->setHeader('Connection', 'keep-alive');
 		$di->get('response')->setHeader('Content-Length', 0);

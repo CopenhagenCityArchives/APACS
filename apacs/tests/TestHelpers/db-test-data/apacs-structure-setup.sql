@@ -338,6 +338,7 @@ CREATE TABLE `apacs_events` (
   `posts_id` int(11) NOT NULL,
   `event_type` char(45) NOT NULL,
   `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `backup` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `tmestamp` (`timestamp`),
   KEY `apacs_pages_idx` (`pages_id`)

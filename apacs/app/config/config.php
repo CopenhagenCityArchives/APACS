@@ -1,7 +1,7 @@
 <?php
 
 
-$envLocation = __DIR__ . '/';
+$envLocation = '/';
 
 if(file_exists($envLocation . '.env')){
 	$dotenv = \Dotenv\Dotenv::create($envLocation, '.env');
