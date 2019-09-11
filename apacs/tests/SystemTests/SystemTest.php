@@ -52,7 +52,7 @@ class SystemTest extends \UnitTestCase
         // Clear database
         $testDBManager = new Mocks\TestDatabaseManager($di);
         $testDBManager->cleanUpApacsStructure();
-        $testDBManager->cleanUpBurialStructure()
+        $testDBManager->cleanUpBurialStructure();
     }
 
     public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
