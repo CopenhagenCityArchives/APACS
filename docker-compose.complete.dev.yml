@@ -3,7 +3,7 @@ services:
   phalcon2:
     build:
       context: ./infrastructure/php-fpm-phalcon
-      dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
+      #dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
     container_name: phalcon2
     depends_on:
       - composer
@@ -28,7 +28,7 @@ services:
       volumes:
         - ./apacs:/code   
   db:
-    image: mysql
+    image: mysql:5.7
     container_name: database
     ports:
       - "3306:3306"
@@ -42,7 +42,7 @@ services:
   solr:
     build:
       context: ./infrastructure/solr/
-      dockerfile: ./infrastructure/solr/Dockerfile
+      #dockerfile: ./infrastructure/solr/Dockerfile
     container_name: solr
     ports:
       - "8989:8983"

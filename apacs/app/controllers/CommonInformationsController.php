@@ -107,7 +107,7 @@ class CommonInformationsController extends MainController {
 		$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($task->GetTaskSchema($taskId));*/
 	}
-
+	//
 	public function GetErrorReportConfig()
 	{
 		//$this->response->setHeader("Cache-Control", "max-age=600");
@@ -315,7 +315,6 @@ class CommonInformationsController extends MainController {
 			} else {
 				$post['user_can_edit'] = false;
 			}
-
 			$result['posts'][] = $post;
 		}
 
@@ -398,6 +397,93 @@ class CommonInformationsController extends MainController {
 
 		$this->response->setStatusCode(200, 'Post created');
 		$this->response->setJsonContent(['post_id' => $post->id]);
+	}
+
+	//New hard Delete
+	public function DeletePost($id) {
+		$this->RequireAccessControl();
+				
+		try {
+			$entries = Entries::find('posts_id = ' . $id);
+
+			if (count($entries) == 0) {
+				$this->error('no entries found for post ' . $id);
+				return;
+			}
+
+			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
+			$entry_num = [];
+			$postData = [];
+			foreach ($entries as $entry) {
+
+				//Loading entities for entry
+				$taskconfigLoader = new TaskConfigurationLoader2();
+				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
+				$entitiesCollection = new EntitiesCollection($taskConf);
+
+				//Loading concrete entry
+				$concreteEntry = new ConcreteEntries($this->getDI());
+				$entry_info = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
+				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entry_info, $entry->id));
+			}
+
+			//Get values for SQL calls
+			$metadata = $entries[0]->GetContext();
+			$tasks_id = $entries[0]->tasks_id;
+			$p_id = $entry_info['persons']['id'];
+			$e_id = $metadata['entry_id'];
+			$t_id = $metadata['task_id'];
+
+			//Delete the specific post
+			$deleteQuery = $this->modelsManager->createQuery('DELETE FROM Posts WHERE id = :id:');
+			$deleteResult = $deleteQuery->execute(['id' => $id]);
+
+			//Run Delete on post relations
+			$deleteEntry	= $this->getDI()->get('db')->query('DELETE FROM apacs_entries WHERE posts_id = :id', ['id' => $id]);
+			$deleteErrorRepo= $this->getDI()->get('db')->query('DELETE FROM apacs_errorreports WHERE posts_id = :id', ['id' => $id]);
+
+			// TODO: Find correct concrete entity query, and further futureproof for new tasks
+			if ($tasks_id == 1 || $tasks_id == 3) {
+
+				$this->getDI()->get('db')->query('DELETE FROM burial_persons WHERE id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_persons_deathcauses WHERE persons_id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_persons_positions WHERE persons_id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_addresses WHERE persons_id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_burials WHERE persons_id = :id', ['id' => $p_id]);
+			}
+
+			//data for the response
+			$response['metadata'] = $metadata;
+			$response['data'] = $postData;
+		}
+
+		catch(Exception $e){
+			$this->response->setStatusCode('500', 'could not delete post');
+			return;
+		}
+
+		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
+		$this->response->setStatusCode(200, 'Post Deleted');
+
+		//Create and save event
+		$backup = json_encode($response);
+
+		$event = new Events();
+		$event->users_id = $this->auth->GetUserId();
+		$event->units_id = $metadata['unit_id'];
+		$event->pages_id = $metadata['page_id'];
+		$event->posts_id = $metadata['post_id'];
+		//Tests had no task id
+		$event->tasks_id = 1;
+		$event->collections_id = $metadata['collection_id'];
+		$event->event_type = Events::TypeDeletePost;
+		$event->backup = $backup;
+		
+		if(!$event->save()){
+			$this->response->setStatusCode('500', 'could not save event');
+			$this->response->setJsonContent(implode(', ', $event->getMessages()));
+			return;
+		}
 	}
 
 	public function GetPostImage($postId) {
