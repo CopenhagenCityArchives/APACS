@@ -227,7 +227,7 @@ class AccessController implements IAccessController {
 	public function IsSuperUser($taskId = null){
 		if ($taskId === null) {
 			return SuperUsers::count([
-				"conditions" => "user_id = :userId:",
+				"conditions" => "users_id = :userId:",
 				"bind" => [
 					"userId" => $this->GetUserId()
 				]
