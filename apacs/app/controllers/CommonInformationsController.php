@@ -310,7 +310,7 @@ class CommonInformationsController extends MainController {
 			//$postEntries = $curPos->getEntries();
 			$post = $curPos->toArray();
 
-			if (count($postEntries) > 0) {
+			if ($postEntry !== null) {
 				$post['user_can_edit'] = $auth->UserCanEdit($postEntry);
 			} else {
 				$post['user_can_edit'] = false;
