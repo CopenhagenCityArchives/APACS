@@ -1,7 +1,7 @@
 <?php
 
 
-$envLocation = '/';
+$envLocation = __DIR__ . '/';
 
 if(file_exists($envLocation . '.env')){
 	$dotenv = \Dotenv\Dotenv::create($envLocation, '.env');
@@ -65,7 +65,7 @@ $di->setShared('pageImageLocation', function () {
 
 $di->setShared('AccessController', function () use ($di) {
 		$className = getenv('APACS_ACCESS_CTRL_NAME');
-		
+
 		if(!class_exists($className)){
 			throw new Exception("AccessController class name must be set (using APACS_ACCESS_CTRL_NAME)");
 		}
