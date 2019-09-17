@@ -466,15 +466,15 @@ class CommonInformationsController extends MainController {
 		$this->response->setStatusCode(200, 'Post Deleted');
 
 		//Create and save event
-		$backup = json_encode($response);
+		$backup = json_encode($response, JSON_UNESCAPED_UNICODE);
 
 		$event = new Events();
 		$event->users_id = $this->auth->GetUserId();
 		$event->units_id = $metadata['unit_id'];
 		$event->pages_id = $metadata['page_id'];
 		$event->posts_id = $metadata['post_id'];
-		//Tests had no task id
-		$event->tasks_id = 1;
+
+		$event->tasks_id = $tasks_id;
 		$event->collections_id = $metadata['collection_id'];
 		$event->event_type = Events::TypeDeletePost;
 		$event->backup = $backup;
