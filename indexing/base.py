@@ -75,28 +75,28 @@ class IndexerBase(ABC):
             for i, entry in enumerate(self.get_entries(), start=1):
                 last_i = i
                 self.progress = i / self.total
-                if self.progress > self.progress_threshold_next:
-                    last_progress_i = i
-                    self.progress_threshold_next += self.progress_threshold
-                    self.print_progress(i)
                 try:
                     self.log_prefixes.append("handle_entry")
                     self.handle_entry(entry)
                     if len(self.documents) >= self.commit_threshold:
                         self.solr.add(self.documents, commit=True)
                         self.documents = []
+                    if self.progress > self.progress_threshold_next:
+                        last_progress_i = i
+                        self.progress_threshold_next += self.progress_threshold
+                        self.print_progress(i)
                     self.rate_entries += 1
                     self.log_prefixes.pop()
                 except Exception as e:
                     self.handle_error("Exception occured during handle_entry()!", e)
 
-            # only print progress after, if we didn't print already
-            if last_progress_i < last_i:
-                self.print_progress(last_i)
-
             # commit any remaining documents
             self.solr.add(self.documents, commit=True)
             self.documents = []
+
+            # only print progress after, if we didn't print already
+            if last_progress_i < last_i:
+                self.print_progress(last_i)
         except Exception as e:
             self.handle_error("Exception occured during index()!", e)
         self.log_prefixes.pop()
