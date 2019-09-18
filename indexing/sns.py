@@ -20,7 +20,7 @@ class SNS_Notifier(object):
 		stack = traceback.format_exception(type_, value_, traceback_)
 		if Config['debug'] != True:
 			client.publish(
-				Message='Here are the details: %s \n\n %s' % (details, stack),
+				Message='Here are the details: %s \n\n %s' % (details, "".join(stack)),
 				Subject="APACS to SOLR index error",
 			    TopicArn='arn:aws:sns:eu-west-1:282251075226:apacs_index_status_error',
 			)

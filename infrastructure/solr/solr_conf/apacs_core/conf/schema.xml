@@ -176,7 +176,7 @@
   <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
     <analyzer>
       <tokenizer class="solr.KeywordTokenizerFactory" />
-      <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
+      <filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />
       <filter class="solr.LowerCaseFilterFactory" />
       <filter class="solr.ScandinavianNormalizationFilterFactory" />
     </analyzer>

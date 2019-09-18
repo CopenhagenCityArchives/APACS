@@ -1,0 +1,14 @@
+{
+    "parentTask": 5,
+
+    "intval": 6,
+    "intval2": 10,
+    "listval": ["d", "e", "f"],
+    "newstrval": "inserted",
+    
+    "steps": [
+        {
+            "strval": "only step that matters"
+        }
+    ]
+}

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import config
 import requests
 import ssl
 import json
@@ -33,17 +32,19 @@ class CIP(object):
 		else:
 			raise Exception((r.status_code, r.reason, r.text))
 
-	def post(self, url, query={}, params={}):
-		url = "%s:%d/%s/%s" % (self.host, self.port, self.location, url)
+	def post(self, url, query={}, params={}, retries=5):
+		uri = "%s:%d/%s/%s" % (self.host, self.port, self.location, url)
 		if query:
-			url += "?%s" % urllib.parse.urlencode(query)
-		r = requests.post(url, data=params, auth=(self.user, self.password), verify=False)
+			uri += "?%s" % urllib.parse.urlencode(query)
+		r = requests.post(uri, data=params, auth=(self.user, self.password), verify=False)
 		if r.status_code == 200:
 			try:
 				json = r.json()
 				return json
 			except Exception as e:
-				print("URL: %s" % url)
+				if retries > 0:
+					return self.post(url, query=query, params=params, retries=retries-1)
+				print("URL: %s" % uri)
 				print("POST data: %s"% params)
 				print("Data length: %d" % len(r.text))
 				print("Data: %s" % r.text)
@@ -80,7 +81,7 @@ class CIP(object):
 			name = field['name']
 			ftype = field['type']
 			if ftype == "DateTime":
-				value = datetime.datetime.fromtimestamp(float(re.match("/Date\((\d+)\)/", value).group(1)) / 1000.0)
+				value = datetime.datetime.fromtimestamp(float(re.match(r"/Date\((\d+)\)/", value).group(1)) / 1000.0)
 			elif ftype == "Enum":
 				value = value['displaystring']
 			elif ftype == "Date":

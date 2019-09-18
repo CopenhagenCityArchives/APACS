@@ -5,6 +5,7 @@ use Phalcon\Mvc\Micro\Collection as MicroCollection;
 $app = new Phalcon\Mvc\Micro();
 
 try {
+
 	//Register an autoloader
 	$loader = new \Phalcon\Loader();
 	$loader->registerDirs(array(
@@ -13,12 +14,26 @@ try {
 		'../../app/library/',
 	))->register();
 
-	include __DIR__ . "/../vendor/autoload.php";
+	include dirname(__DIR__) . "/vendor/autoload.php";
 
 	//Create a DI
 	$di = new Phalcon\DI\FactoryDefault();
 
-	require '../../app/config/config.php';
+	$di->setShared('response', function () {
+		return new \Phalcon\Http\Response();
+	});
+
+	require __DIR__ . '/config/config.php';
+
+	//TODO: Test if this works as well (better to use one autoloader than two) :
+	/**
+	 * Register Files, composer autoloader
+	 */
+// $loader->registerFiles(
+	//     [
+	//         APP_PATH . '/vendor/autoload.php'
+	//     ]
+	// );
 
 	//Setup the configuration service
 	$di->setShared('configuration', function () use ($di) {
@@ -29,10 +44,6 @@ try {
 	//Setup the database service
 	$di->setShared('db', function () use ($di) {
 		return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-	});
-
-	$di->setShared('response', function () {
-		return new \Phalcon\Http\Response();
 	});
 
 	//Metadata routes collection
@@ -85,6 +96,9 @@ try {
 
 	//Update post
 	$info->patch('/posts/{id:[0-9]+}', 'CreateOrUpdatePost');
+
+	//Delete post
+	$info->delete('/posts/{id:[0-9]+}', 'DeletePost');
 
 	$info->get('/posts/{post:[0-9]+}/image', 'GetPostImage');
 
@@ -154,11 +168,18 @@ try {
 	$cumulus->get('/asset/{assetId:[0-9]+}', 'AssetDownload');
 	$app->mount($cumulus);
 
+	// Administration Controller
+	$admin = new MicroCollection();
+	$admin->setHandler(new AdministrationController());
+	$admin->post('/admin/taskunits', 'createTasksUnits');
+	$admin->post('/admin/taskpages', 'createTasksPages');
+	$app->mount($admin);
+
 	//Catch all for preflight checks (always performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
 		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
 		$di->get('response')->setHeader("Access-Control-Allow-Headers", 'Origin, X-Requested-With, Content-Range, Content-Disposition, Content-Type, Authorization, X-Custom-Header, accept');
-		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS');
+		$di->get('response')->setHeader("Access-Control-Allow-Methods", 'GET, PUT, PATCH, POST, OPTIONS, DELETE');
 		$di->get('response')->setHeader('Access-Control-Max-Age', '1728000');
 		$di->get('response')->setHeader('Connection', 'keep-alive');
 		$di->get('response')->setHeader('Content-Length', 0);
@@ -177,11 +198,9 @@ try {
 		$origin = '*';
 		$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
 
-
-		if($di->get('request')->getQuery('callback')){
+		if ($di->get('request')->getQuery('callback')) {
 			$di->get('response')->setHeader('Content-Type', 'application/javascript; charset=utf-8');
-		}
-		else{
+		} else {
 			//Default return is JSON in utf-8
 			$di->get('response')->setHeader('Content-Type', 'application/json; charset=utf-8');
 		}
@@ -207,22 +226,26 @@ try {
 	$di->get('response')->send();
 
 } catch (Exception $e) {
-	//Saving system exception
-	$exception = new SystemExceptions();
+	try
+	{
+		//Saving system exception
+		$exception = new SystemExceptions();
 
-	$mainCtrl = new MainController();
+		$mainCtrl = new MainController();
 
-	$postData = $mainCtrl->GetAndValidateJsonPostData();
+		$postData = $mainCtrl->GetAndValidateJsonPostData();
 
-	if($postData == false){
-		$postData = null;
-	}
+		if ($postData == false) {
+			$postData = null;
+		}
 
-	$exception->save([
-		'type' => 'global_exception',
-		'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' =>  $postData]),
-	]);
+		$exception->save([
+			'type' => 'global_exception',
+			'details' => json_encode(['exception' => $e->getMessage(), 'stackTrace' => $e->getTraceAsString(), 'postData' => $postData]),
+		]);
+	} catch (Exception $exp) {
 
+	} 
 	$di->get('response')->setStatusCode(500, "Server error");
 	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
 	$di->get('response')->send();
