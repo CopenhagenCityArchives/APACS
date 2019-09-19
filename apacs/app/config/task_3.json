@@ -56,7 +56,7 @@
                 "formFieldType": "typeahead",
                 "formFieldOrder": 13,
                 "defaultValue": null,
-                "helpText": "Vælg fra listen det fødested, der svarer til den kildetro form. Findes værdien ikke på listen, vælg *findes ikke",
+                "helpText": "Vælg fra listen det fødested, der svarer til den kildetro form. Findes værdien ikke på listen, vælg *skal oprettes",
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
