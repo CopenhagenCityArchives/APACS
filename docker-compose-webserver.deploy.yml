@@ -1,18 +1,6 @@
 version: '3.3'
 services:
 
-  deploy:
-    build:
-      context: ./
-      dockerfile: ./infrastructure/deploy/Dockerfile
-    volumes:
-      - ./apacs:/code
-    environment:
-      - KBHKILDER_FTP_HOST=${KBHKILDER_FTP_HOST}
-      - KBHKILDER_FTP_PASSWORD=${KBHKILDER_FTP_PASSWORD}
-      - KBHKILDER_FTP_PATH=${KBHKILDER_FTP_PATH}
-      - KBHKILDER_FTP_USER=${KBHKILDER_FTP_USER}
-
   phalcon:
     build:
       context: ./
