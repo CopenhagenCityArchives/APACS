@@ -262,7 +262,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'kildeviser_url': "https://www.kbharkiv.dk/kildeviser/#!?collection=5&item=%s" % (person['page_id']),
 
 			#Person
-			"person_id": person_id,
+			'person_id': person_id,
 			'firstnames': "" if person['burial_persons.firstnames'] is None else person['burial_persons.firstnames'],
 			'lastname': "" if person['burial_persons.lastname'] is None else person['burial_persons.lastname'],
 			'comment': "" if person['burial_persons.comment'] is None else person['burial_persons.comment'],
@@ -279,7 +279,8 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'yearOfDeath': yearOfDeath,
 			'dateOfDeath': dateOfDeath,
 			'birthplace': person['burial_birthplaces.birthplace'],
-			'deathplace' : person['burial_deathplaces.deathplace'],
+			'birthplace_free': person['burial_birthplaces.birthplace_free'],
+			'deathplace': person['burial_deathplaces.deathplace'],
 
 			#Burial
 			'burials' : {
@@ -329,6 +330,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'yearOfDeath': yearOfDeath,
 			'dateOfDeath': dateOfDeath,
 			'birthplace': person['burial_birthplaces.birthplace'],
+			'birthplace_free': person['burial_birthplaces.birthplace_free'],
 			'deathplace' : person['burial_deathplaces.deathplace'],
 
 			#Burial
