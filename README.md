@@ -70,8 +70,6 @@ Connect to docker machine and run this command:
 
 * ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
 
-* ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
-
 This will replace the schema file on the server.
  
 Remember to reload the core in Solr admin.
