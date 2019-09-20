@@ -83,8 +83,8 @@
                 "isRequired": 0,
                 "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
                 "validationMessage": "Skriv fødestedet som det står i kilden",
-                "includeInSOLR": 0,
-                "SOLRFieldName": null
+                "includeInSOLR": 1,
+                "SOLRFieldName": "birthplace_free"
             },
             "4": {
                 "datasources_id": null,
