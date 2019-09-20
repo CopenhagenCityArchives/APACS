@@ -98,6 +98,7 @@
             "name": "dateOfBirth",
             "view_name": "Fødselsdato",
             "collections": [
+                1,
                 17,
                 100
             ],
