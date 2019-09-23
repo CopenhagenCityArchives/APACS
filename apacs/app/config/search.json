@@ -98,6 +98,7 @@
             "name": "dateOfBirth",
             "view_name": "Fødselsdato",
             "collections": [
+                1,
                 17,
                 100
             ],
@@ -120,6 +121,7 @@
         },
         "birthplace": {
             "collections": [
+                1,
                 17
             ],
             "name": "birthplace",
@@ -127,6 +129,17 @@
             "sortable": true,
             "type": "string",
             "view_name": "Fødested"
+        },
+        "birthplace_free": {
+            "collections": [
+                1,
+                17
+            ],
+            "name": "birthplace_free",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Fødested (kildetro)"
         },
         "dateOfDeath": {
             "collections": [

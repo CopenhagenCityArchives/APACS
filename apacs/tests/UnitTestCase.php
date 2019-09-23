@@ -1,13 +1,11 @@
 <?php
+
+include dirname(__DIR__) . "/vendor/autoload.php";
+
 use \Phalcon\Di;
-use \Phalcon\Test\UnitTestCase as PhalconTestCase;
+use \PHPUnit\Framework\TestCase;
 
-abstract class UnitTestCase extends PhalconTestCase {
-
-	/**
-	 * @var \Voice\Cache
-	 */
-	protected $_cache;
+abstract class UnitTestCase extends TestCase {
 
 	/**
 	 * @var \Phalcon\Config
@@ -19,30 +17,52 @@ abstract class UnitTestCase extends PhalconTestCase {
 	 */
 	private $_loaded = false;
 
-	public function setUp() {
+	private $di;
+
+	protected function getDI(){
+		return $this->di;
+	}
+
+	protected function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
         parent::setUp();
-
-        // Load any additional services that might be required during testing
-        $di = Di::getDefault();
-
-        //Sets DI components.
-
-		//Connection to the test database
-		$di->setShared('db', function () {
-			return new \Phalcon\Db\Adapter\Pdo\Mysql([
-				"host" => "database",
-				"username" => "dev",
-				"password" => "123456",
-				"dbname" => "apacs",
-				'charset' => 'utf8',
-			]);
+		
+		
+		// Use default DI if non given in concrete tests
+		
+		if(is_null($di)){
+			$this->di = new Di();
+		}
+		else{
+			$this->di = $di;
+		}
+		
+		// Set config and db in DI
+		//TODO Hardcoded db credentials for tests
+		$this->di->setShared('config', function () {
+            return [
+                "host" => "database",
+                "username" => "dev",
+                "password" => "123456",
+                "dbname" => "apacs",
+                'charset' => 'utf8',
+            ];
 		});
 
-		//Creating the database
-		$di->get('db')->execute(file_get_contents("../init/init.sql"));
+		$this->di->setShared('db', function () {
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($this->get('config'));
+		});
 
-        //Setting the di which will be available for all descending test classes
-        $this->di = $di;
+		// Set DI as default (used in Phalcon Models)
+		Di::setDefault($this->di);
+
+		
+		ORM::configure('mysql:host=' . $this->getDI()->get('config')['host'] . ';dbname=' . $this->getDI()->get('config')['dbname'] . ';charset=utf8;');
+		ORM::configure('driver_options', array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'));
+		ORM::configure('username', $this->getDI()->get('config')['username']);
+		ORM::configure('password', $this->getDI()->get('config')['password']);
+		ORM::configure('id_column', 'id');
+		
+		$this->_config = $config;
 
         $this->_loaded = true;
 	}
@@ -56,7 +76,7 @@ abstract class UnitTestCase extends PhalconTestCase {
             throw new \PHPUnit_Framework_IncompleteTestError('Please run parent::setUp().');
 		}
 
-		$di = Di::getDefault();
-		$di->get('db')->execute(file_get_contents('../init/cleanup.sql'));
+		//$di = Di::getDefault();
+		//$di->get('db')->execute(file_get_contents('../init/cleanup.sql'));
 	}
 }

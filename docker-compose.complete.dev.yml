@@ -1,23 +1,39 @@
 version: '2'
 services:
-  phalcon:
+  phalcon2:
     build:
-      context: ./
-      dockerfile: ./infrastructure/docker_webserver/Dockerfile_dev
-    container_name: webserver
-    ports:
-      - "8000:80"
+      context: ./infrastructure/php-fpm-phalcon
+      #dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
+    container_name: phalcon2
+    depends_on:
+      - composer
     volumes:
-      - ./apacs:/var/www/
+      - ./apacs:/code
     environment:
       - PHP_ENV=DEV
+  nginx2:
+      image: nginx:alpine
+      container_name: nginx2
+      volumes:
+        - ./apacs:/code
+        - ./infrastructure/php-fpm-phalcon/nginx_site.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "8080:80"
+  composer:
+      container_name: composer
+      restart: 'no'
+      image: composer/composer:php7
+      command: update
+      working_dir: /code
+      volumes:
+        - ./apacs:/code   
   db:
-    image: mysql
+    image: mysql:5.7
     container_name: database
     ports:
       - "3306:3306"
     volumes:
-      - ./apacs/init:/docker-entrypoint-initdb.d
+      - ./infrastructure/db/init:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: dev
@@ -26,7 +42,7 @@ services:
   solr:
     build:
       context: ./infrastructure/solr/
-      dockerfile: ./Dockerfile
+      #dockerfile: ./infrastructure/solr/Dockerfile
     container_name: solr
     ports:
       - "8989:8983"
@@ -46,13 +62,5 @@ services:
       - ./indexing:/usr/src/app/
     environment:
       - PYTHON_ENV=DEV
-  composer:
-    container_name: composer
-    restart: 'no'
-    image: composer/composer:php7
-    command: update
-    working_dir: /apacs
-    volumes:
-      - ./apacs:/apacs
 networks:
     default:

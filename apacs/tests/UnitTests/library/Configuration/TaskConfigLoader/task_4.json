@@ -1,0 +1,34 @@
+{
+    "parentTask": null,
+
+    "intval": 4,
+    "intval2": 2,
+    "strval": "string value",
+    "listval": [ "a", "b", "c" ],
+    "objectval": {
+        "_intval": 2,
+        "_strval": "another string value",
+        "_listlistval": [[1,2,3], ["a","b","c"]],
+        "_objectlistval": [
+            {
+                "__intval": 3,
+                "__strval": "value here"
+            },
+            {
+                "__intval": 5,
+                "__strval": "value here"
+            }
+        ],
+        "_objectval": {
+            "__strval": "value here"
+        }
+    },
+    "steps": [
+        {
+            "strval": "should be overridden"
+        },
+        {
+            "strval": "also this"
+        }
+    ]
+}

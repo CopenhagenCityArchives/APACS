@@ -1,0 +1,51 @@
+{
+    "persons": {
+        "firstnames": "Aage Utzon",
+        "lastname": "Frank",
+        "adressOutsideCph": null,
+        "ageYears": 23,
+        "ageMonth": null,
+        "dateOfDeath": "19-09-1906",
+        "civilstatus": "Ugift",
+        "deathplace": "Københavns Amtssygehus Lyngby",
+        "birthname": null,
+        "sex": "Mand",
+        "comment": null,
+        "ageWeeks": null,
+        "ageDays": null,
+        "ageHours": null,
+        "deathcauses": [
+            {
+                "deathcause": "Ulykkestilfælde"
+            },
+            {
+                "deathcause": "Afkræftelse"
+            }
+        ],
+        "positions": [
+            {
+                "position": "Grosserer",
+                "relationtype": "Eget erhverv",
+                "workplace": null
+            },
+            {
+                "position": "Handelsagent",
+                "relationtype": "Eget erhverv",
+                "workplace": null
+            }
+        ],
+        "addresses": {
+            "streetAndHood": "Falkoner Allé",
+            "number": 112,
+            "letter": null,
+            "floor": null,
+            "institution": null
+        },
+        "burials": {
+            "chapel": "Nordre Kapel - Vestre kirkegård",
+            "parish": null,
+            "cemetary": "Vestre Kirkegård",
+            "number": 3967
+        }
+    }
+}

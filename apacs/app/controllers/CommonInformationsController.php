@@ -85,19 +85,29 @@ class CommonInformationsController extends MainController {
 	public function GetTaskFieldsSchema() {
 		$request = $this->request;
 
-		$taskId = $request->getQuery('task_id', 'int', null);
+		$taskId = $request->getQuery('task_id', 'int', null, true);
 
 		if (is_null($taskId)) {
 			$this->error('task_id is required');
 			return;
 		}
 
-		$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
+		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskConf = $taskconfigLoader->getConfig($taskId);
+		$entitiesCollection = new EntitiesCollection($taskConf);
+
+		$mapper = new EntitiesCollectionToTaskSchemaMapper($entitiesCollection);
+		$schema = $mapper->getSchema($taskConf['name'],$taskConf['description'], $taskConf['steps']);
 
 		$this->response->setHeader("Cache-Control", "max-age=600");
-		$this->response->setJsonContent($task->GetTaskSchema($taskId));
-	}
+		$this->response->setJsonContent($schema);
 
+		/*$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
+
+		$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setJsonContent($task->GetTaskSchema($taskId));*/
+	}
+	//
 	public function GetErrorReportConfig()
 	{
 		//$this->response->setHeader("Cache-Control", "max-age=600");
@@ -113,9 +123,9 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetTasksUnits() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$unitId = $this->request->getQuery('unit_id', 'int', null);
-		$indexActive = $this->request->getQuery('index_active', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
+		$indexActive = $this->request->getQuery('index_active', 'int', null, true);
 
 		if (is_null($taskId)) {
 			throw new InvalidArgumentException('task_id or task_id and unit_id are required');
@@ -128,9 +138,9 @@ class CommonInformationsController extends MainController {
 	public function GetUnits() {
 		$request = $this->request;
 
-		$collectionId = $request->getQuery('collection_id', 'int', null);
-		$taskId = $request->getQuery('task_id', 'int', null);
-		$index_active = $request->getQuery('index_active', 'int', null);
+		$collectionId = $request->getQuery('collection_id', 'int', null, true);
+		$taskId = $request->getQuery('task_id', 'int', null, true);
+		$index_active = $request->getQuery('index_active', 'int', null, true);
 
 		if (is_null($collectionId)) {
 			$this->error('collection_id is required');
@@ -227,9 +237,10 @@ class CommonInformationsController extends MainController {
 
 	public function GetPages() {
 		$request = $this->request;
-		$unitId = $request->getQuery('unit_id', 'int', null);
-		$pageNumber = $request->getQuery('page_number', 'int', null);
-		$pageId = $request->getQuery('page_id', 'int', null);
+		$unitId = $request->getQuery('unit_id', 'int', null, true);
+		$pageNumber = $request->getQuery('page_number', 'int', null, true);
+		$pageId = $request->getQuery('page_id', 'int', null, true);
+		$taskId = $request->getQuery('task_id', 'int', null, true);
 
 		$conditions = [];
 
@@ -262,19 +273,28 @@ class CommonInformationsController extends MainController {
 		}
 	}
 
-	//TODO: Task 1 is implicit expected. Task id should be given as input
 	public function GetPage($pageId, $page = null) {
 		if (is_null($page)) {
 			$page = Pages::findFirstById($pageId);
 		}
 
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		if (is_null($taskId)) {
+			$this->error('task_id is required');
+			return;
+		}
+
 		$result = $page->toArray();
 
-		$result['task_page'] = TasksPages::find(['conditions' => 'pages_id = :pageId:', 'bind' => ['pageId' => $pageId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
+		$taskPage = TasksPages::findFirst(['conditions' => 'tasks_id = :taskId: AND pages_id = :pageId:', 'bind' => ['pageId' => $pageId, 'taskId' => $taskId], 'columns' => ['is_done', 'last_activity', 'tasks_id', 'id']])->toArray();
+		if ($taskPage == false) {
+			throw new Exception('TaskUnit not found for page with id=' . $pageId);
+		}
+		$result['task_page'] = $taskPage;
 
-		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId:', 'bind' => ['taskId' => $result['task_page'][0]['tasks_id']]]);
+		$taskUnit = TasksUnits::findFirst(['conditions' => 'tasks_id = :taskId: AND units_id = :unitId:', 'bind' => ['unitId' => $page->unit_id, 'taskId' => $taskId]]);
 		if ($taskUnit == false) {
-			throw new Exception('TaskUnit not found for page id ' . $pageId);
+			throw new Exception('TaskUnit not found for page with id=' . $pageId);
 		}
 
 		$post = new Posts();
@@ -286,16 +306,15 @@ class CommonInformationsController extends MainController {
 		$auth = $this->getDI()->get('AccessController');
 
 		foreach ($posts as $curPos) {
-			$postEntries = Entries::find('posts_id = ' . $curPos->id);
+			$postEntry = Entries::findFirst('tasks_id = ' . $taskId . ' AND posts_id = ' . $curPos->id);
 			//$postEntries = $curPos->getEntries();
 			$post = $curPos->toArray();
 
-			if (count($postEntries) > 0) {
-				$post['user_can_edit'] = $auth->UserCanEdit($postEntries[0]);
+			if ($postEntry !== null) {
+				$post['user_can_edit'] = $auth->UserCanEdit($postEntry);
 			} else {
 				$post['user_can_edit'] = false;
 			}
-
 			$result['posts'][] = $post;
 		}
 
@@ -304,6 +323,11 @@ class CommonInformationsController extends MainController {
 
 	public function CreateOrUpdatePost($id = null) {
 		$this->RequireAccessControl();
+
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		if (is_null($taskId)) {
+			throw new InvalidArgumentException("task_id required");
+		}
 
 		$input = $this->GetAndValidateJsonPostData();
 
@@ -319,9 +343,15 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
+		$page = Pages::findFirst($input['page_id']);
+
+		if($page == false){
+			throw InvalidArgumentException("Page " . $input['page_id'] .  " not found");
+		}
+
 		$post = new Posts();
 		$post->id = $id;
-		$post->pages_id = $input['page_id'];
+		$post->pages_id = $page->id;
 		$post->x = $input['x'];
 		$post->y = $input['y'];
 		$post->height = $input['height'];
@@ -342,16 +372,14 @@ class CommonInformationsController extends MainController {
 		//Saving the thumb
 		$post->SaveThumbImage();
 
-		$page = Pages::findFirstById($input['page_id'])->toArray();
-
+		//Create and save event
 		$event = new Events();
 		$event->users_id = $this->auth->GetUserId();
-		$event->units_id = $page['unit_id'];
-		$event->pages_id = $page['id'];
+		$event->units_id = $page->unit_id;
+		$event->pages_id = $page->id;
 		$event->posts_id = $post->id;
-		//TODO: Hardcoded task_id and collection_id
-		$event->tasks_id = 1;
-		$event->collections_id = 1;
+		$event->tasks_id = $taskId;
+		$event->collections_id = $page->getUnits()->collections_id;
 		$event->event_type = Events::TypeCreateUpdatePost;
 
 		if(!$event->save()){
@@ -361,7 +389,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		//Set last activity on the TaskPage, so it is not received when getting available pages
-		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $input['page_id']]);
+		$taskPage = TasksPages::findFirst(['conditions' => 'pages_id = ' . $page->id . ' AND tasks_id = ' . $taskId]);
 		if(!is_null($taskPage)){
 			$taskPage->last_activity = time();
 			$taskPage->save();
@@ -369,6 +397,93 @@ class CommonInformationsController extends MainController {
 
 		$this->response->setStatusCode(200, 'Post created');
 		$this->response->setJsonContent(['post_id' => $post->id]);
+	}
+
+	//New hard Delete
+	public function DeletePost($id) {
+		$this->RequireAccessControl();
+				
+		try {
+			$entries = Entries::find('posts_id = ' . $id);
+
+			if (count($entries) == 0) {
+				$this->error('no entries found for post ' . $id);
+				return;
+			}
+
+			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
+			$entry_num = [];
+			$postData = [];
+			foreach ($entries as $entry) {
+
+				//Loading entities for entry
+				$taskconfigLoader = new TaskConfigurationLoader2();
+				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
+				$entitiesCollection = new EntitiesCollection($taskConf);
+
+				//Loading concrete entry
+				$concreteEntry = new ConcreteEntries($this->getDI());
+				$entry_info = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
+				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entry_info, $entry->id));
+			}
+
+			//Get values for SQL calls
+			$metadata = $entries[0]->GetContext();
+			$tasks_id = $entries[0]->tasks_id;
+			$p_id = $entry_info['persons']['id'];
+			$e_id = $metadata['entry_id'];
+			$t_id = $metadata['task_id'];
+
+			//Delete the specific post
+			$deleteQuery = $this->modelsManager->createQuery('DELETE FROM Posts WHERE id = :id:');
+			$deleteResult = $deleteQuery->execute(['id' => $id]);
+
+			//Run Delete on post relations
+			$deleteEntry	= $this->getDI()->get('db')->query('DELETE FROM apacs_entries WHERE posts_id = :id', ['id' => $id]);
+			$deleteErrorRepo= $this->getDI()->get('db')->query('DELETE FROM apacs_errorreports WHERE posts_id = :id', ['id' => $id]);
+
+			// TODO: Find correct concrete entity query, and further futureproof for new tasks
+			if ($tasks_id == 1 || $tasks_id == 3) {
+
+				$this->getDI()->get('db')->query('DELETE FROM burial_persons WHERE id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_persons_deathcauses WHERE persons_id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_persons_positions WHERE persons_id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_addresses WHERE persons_id = :id', ['id' => $p_id]);
+				$this->getDI()->get('db')->query('DELETE FROM burial_burials WHERE persons_id = :id', ['id' => $p_id]);
+			}
+
+			//data for the response
+			$response['metadata'] = $metadata;
+			$response['data'] = $postData;
+		}
+
+		catch(Exception $e){
+			$this->response->setStatusCode('500', 'could not delete post');
+			return;
+		}
+
+		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
+		$this->response->setStatusCode(200, 'Post Deleted');
+
+		//Create and save event
+		$backup = json_encode($response, JSON_UNESCAPED_UNICODE);
+
+		$event = new Events();
+		$event->users_id = $this->auth->GetUserId();
+		$event->units_id = $metadata['unit_id'];
+		$event->pages_id = $metadata['page_id'];
+		$event->posts_id = $metadata['post_id'];
+
+		$event->tasks_id = $tasks_id;
+		$event->collections_id = $metadata['collection_id'];
+		$event->event_type = Events::TypeDeletePost;
+		$event->backup = $backup;
+		
+		if(!$event->save()){
+			$this->response->setStatusCode('500', 'could not save event');
+			$this->response->setJsonContent(implode(', ', $event->getMessages()));
+			return;
+		}
 	}
 
 	public function GetPostImage($postId) {
@@ -388,9 +503,9 @@ class CommonInformationsController extends MainController {
 	 * for which there haven't been activity the last 5 minutes, based on the current page number
 	 */
 	public function GetNextAvailablePage() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$unitId = $this->request->getQuery('unit_id', 'int', null);
-		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
+		$currentPageNumber = $this->request->getQuery('current_number', 'int', 0, true);
 
 		if (is_null($taskId) || is_null($unitId) || is_null($currentPageNumber)) {
 			$this->error('task_id, unit_id and current_number are required');
@@ -414,24 +529,27 @@ class CommonInformationsController extends MainController {
 			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
 		}
 
-		$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
+		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
+		$entitiesCollection = new EntitiesCollection($taskConf);
 
 		$concreteEntry = new ConcreteEntries($this->getDI());
-		$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id, true);
+		$entryData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id, true);
 
 		$entryData['post'] = Posts::findFirst(['conditions' => 'id = :id:', 'columns' => 'id,x,y,width,height, pages_id as page_id', 'bind' => ['id' => $entry->posts_id]]);
 		$entryData['task_id'] = $entry->tasks_id;
 		$entryData['page_id'] = $entryData['post']['page_id'];
+		$entryData['post_id'] = $entry->posts_id;
 		$entryData['concrete_entries_id'] = $entry->concrete_entries_id;
-		//TODO: Hardcoded usage of collection id
+		//TODO: Hardcoded solr collection id
 		$entryData['solr_id'] = '1-' . $entry->concrete_entries_id;
 
 		$this->response->setJsonContent($entryData, JSON_NUMERIC_CHECK);
 	}
 
 	public function GetEntries() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$postId = $this->request->getQuery('post_id', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$postId = $this->request->getQuery('post_id', 'int', null, true);
 
 		if (is_null($taskId) || is_null($postId)) {
 			$this->error('task_id and post_id are required');
@@ -459,70 +577,74 @@ class CommonInformationsController extends MainController {
 				return;
 			}
 		*/
-		$entries = Entries::find('posts_id = ' . $id);
+		try{
+			$entries = Entries::find('posts_id = ' . $id);
 
-		if (count($entries) == 0) {
-			$this->error('no entries found for post ' . $id);
-			return;
+			if (count($entries) == 0) {
+				$this->error('no entries found for post ' . $id);
+				return;
+			}
+
+			$postData = [];
+			foreach ($entries as $entry) {
+				//Loading entities for entry
+				$taskconfigLoader = new TaskConfigurationLoader2();
+				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
+				$entitiesCollection = new EntitiesCollection($taskConf);
+
+				//Loading concrete entry
+				$concreteEntry = new ConcreteEntries($this->getDI());
+				$entryData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
+				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entryData, $entry->id));
+			}
+
+			$metadata = $entries[0]->GetContext();
+
+			$auth = $this->getDI()->get('AccessController');
+
+			$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
+			unset($metadata['entry_id']);
+			$response['metadata'] = $metadata;
+			$response['data'] = $postData;
+			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
+			$response['error_reports'] = $errorReports;
 		}
-
-		$postData = [];
-		foreach ($entries as $entry) {
-			//Loading entities for entry
-			$entities = Entities::find(['conditions' => 'task_id = ' . $entry->tasks_id]);
-
-			//Loading concrete entry
-			$concreteEntry = new ConcreteEntries($this->getDI());
-			$entryData = $concreteEntry->LoadEntry($entities, $entry->concrete_entries_id);
-			$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entities, $entryData, $entry->id));
+		catch(Exception $e){
+			throw new Exception('could not load entry: ' . $e->getMessage());
 		}
-
-		$metadata = $entries[0]->GetContext();
-
-		$auth = $this->getDI()->get('AccessController');
-
-		$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
-		unset($metadata['entry_id']);
-		$response['metadata'] = $metadata;
-		$response['data'] = $postData;
-		$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
-		$response['error_reports'] = $errorReports;
+		catch(TypeError $e){
+			throw new Exception('could not load entry (typerror): ' . $e->getMessage());
+		}
 
 		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
 	}
 
 	public function GetErrorReports() {
 
+		$collectionId = $this->request->getQuery('collection_id', 'int', null, true);
+		$sourceId = $this->request->getQuery('id', 'string', null, true);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$postId = $this->request->getQuery('post_id', 'int', null, true);
+		$userId = $this->request->getQuery('relevant_user_id', 'int', null, true);
+
 		//Assume special errors if collection id is used
-		if(	!is_null($this->request->getQuery('collection_id', 'int', null)) &&
-			!is_null($this->request->getQuery('id', 'string', null)) &&
-			is_null($this->request->getQuery('task_id', 'int', null))){
+		if (is_null($collectionId) && !is_null($sourceId) && is_null($taskId)) {
+			// validate source-id field
+			if (!preg_match("/^\d+-\d+$/", $sourceId, $matches)) {
+				$this->error('invalid id');
+				return;
+			}
 
-			/*$taskId = 0;
-			switch($this->request->getQuery('collection_id', 'int', null)){
-				case '17':
-					$taskId = 2;
-				break;
-				case '18':
-					$taskId = 3;
-				break;
-			}*/
-
-			$result = SpecialErrors::find(['conditions' => 'collection_id = ' . $this->request->getQuery('collection_id') . ' AND source_id = \'' . $this->request->getQuery('id') . '\''])->toArray();
-
-			$result = SpecialErrors::setLabels($result, $this->request->getQuery('collection_id'));
+			$result = SpecialErrors::find(['conditions' => 'collection_id = ' . $collectionId . ' AND source_id = \'' . $sourceId . '\''])->toArray();
+			$result = SpecialErrors::setLabels($result, $collectionId);
 
 			$this->response->setJsonContent($result, JSON_NUMERIC_CHECK);
 			return;
 		}
 
 		//Normal cases: Task id and post id is set
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$postId = $this->request->getQuery('post_id', 'int', null);
-		$userId = $this->request->getQuery('relevant_user_id', 'int', null);
 		$errors = [];
-
-		if ((is_null($taskId) || is_null($postId)) && (is_null($userId) || is_null($taskId))) {
+		if ((is_null($taskId) || is_null($postId)) && is_null($userId)) {
 			$this->error('collection_id and id are required for special errors. task_id and post_id or task_id and relevant_user_id are required for normal errors');
 			return;
 		}
@@ -530,7 +652,7 @@ class CommonInformationsController extends MainController {
 		if (!is_null($taskId) && !is_null($postId)) {
 			$conditions = 'tasks_id = ' . $taskId . ' AND posts_id = ' . $postId;
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
-			$errors = ErrorReports::setLabels($errors, $taskId);
+			$errors = ErrorReports::setLabels($errors);
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 
@@ -551,23 +673,47 @@ class CommonInformationsController extends MainController {
 				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
 				//return;
 			}
-			$errors = ErrorReports::setLabels($errors, $taskId);
+			$errors = ErrorReports::setLabels($errors);
+			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
+		}
+
+		// User id is set and task id is not set
+		if (!is_null($userId) && is_null($taskId)) {
+			// Get all errors for the user (where user id matches and the age is under 1 week)
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK)';
+			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
+
+			// Get all the tasks that the user is superuser for
+			$superUsers = SuperUsers::Find(['columns' => 'tasks_id', 'conditions' => 'users_id = :userId:', 'bind' => ['userId' => $userId]]);
+			foreach ($superUsers as $superUser) {
+				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
+				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
+				$errors = array_merge($errors, $superUserErrors);
+			}
+			$errors = ErrorReports::setLabels($errors);
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 	}
 
 	public function GetUser($userId) {
-		$user = Users::findFirst($userId)->toArray();
+		$user = Users::findFirst($userId);
+
+		if(!$user){
+			$this->error("User with id " . $userId . " not found");
+			return;
+		}
+
+		$user = $user->toArray();
 
 		$user['super_user_tasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
 
-		$this->response->setHeader("Cache-Control", "max-age=600");
+		#$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($user, JSON_NUMERIC_CHECK);
 	}
 
 	public function GetActiveUsers() {
-		$taskId = $this->request->getQuery('task_id', 'int', null);
-		$unitId = $this->request->getQuery('unit_id', 'int', null);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
 
 		if (is_null($taskId) || is_null($unitId)) {
 			$this->error('task_id and unit_id are required');
@@ -579,7 +725,7 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetUserActivities() {
-		$userId = $this->request->getQuery('user_id', 'int', null);
+		$userId = $this->request->getQuery('user_id', "int", null, true);
 
 		if (is_null($userId)) {
 			$this->error('user_id is required');
@@ -591,8 +737,8 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetSystemExceptions() {
-		$hours = $this->request->getQuery('hours', 'int', null);
-		$type = $this->request->getQuery('type', 'string', null);
+		$hours = $this->request->getQuery('hours', 'int', null, true);
+		$type = $this->request->getQuery('type', 'string', null, true);
 
 		if (is_null($hours)) {
 			throw new Exception('Hours are required');
@@ -613,7 +759,7 @@ class CommonInformationsController extends MainController {
 	public function ImportUnits() {
 		$request = $this->request;
 
-		$collectionId = $request->getPost('collection_id', null, false);
+		$collectionId = $request->getPost('collection_id', "int", false);
 
 		if (!$collectionId) {
 			$this->error('collection_id is required');
@@ -621,6 +767,10 @@ class CommonInformationsController extends MainController {
 		}
 
 		$type = $request->getPost('type', null, Units::OPERATION_TYPE_CREATE);
+		if ($type !== 'create' && $type !== 'update') {
+			$this->error('invalid import type');
+			return;
+		}
 
 		$importer = new Units();
 		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
@@ -638,7 +788,7 @@ class CommonInformationsController extends MainController {
 	public function ImportPages() {
 		$request = $this->request;
 
-		$collectionId = $request->getPost('collection_id', null, false);
+		$collectionId = $request->getPost('collection_id', "int", false);
 
 		if (!$collectionId) {
 			$this->error('collection_id is required');
@@ -646,6 +796,10 @@ class CommonInformationsController extends MainController {
 		}
 
 		$type = $request->getPost('type', null, Pages::OPERATION_TYPE_CREATE);
+		if ($type !== 'create' && $type !== 'update') {
+			$this->error('invalid import type');
+			return;
+		}
 
 		$importer = new Pages();
 		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];

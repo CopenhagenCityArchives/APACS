@@ -20,13 +20,29 @@ class AccessController implements IAccessController {
 				$this->message = 'access denied: No token given';
 				return false;
 			}
+			
+			$encrypted_token =  crypt($accessToken, 'lkj34kvpndd943f');
 
-			$url = 'https://kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
+			// Validate token in db
+			$dbToken = Tokens::findFirst(['conditions' => 'expires > ' . time() . ' AND token = \'' . $encrypted_token . '\'']);
+
+			if($dbToken){
+				$this->authResponse['access_token'] = $dbToken->token;
+				$this->authResponse['expires'] = $dbToken->expires;
+				$this->authResponse['profile'] = [];
+				$this->authResponse['profile']['id'] = $dbToken->user_id;
+				$this->authResponse['profile']['username'] = $dbToken->user_name;
+				return true;
+			}
+
+			// If token not in db, get from url
+
+			$url = 'https://www.kbharkiv.dk/index.php?option=profile&api=oauth2&access_token=' . $accessToken;
 
 			$response = $this->getWebPage($url);
 
 			if ($response == false) {
-				$this->message = 'Could not get response from auth server:' . $this->message;
+				$this->message = 'Token not authorized on auth server';
 				return false;
 			}
 
@@ -34,11 +50,21 @@ class AccessController implements IAccessController {
 
 			if (json_last_error() !== JSON_ERROR_NONE) {
 				$this->message = 'could not decode response from auth server';
+				$this->authResponse = null;
 				return false;
 			}
-		}
 
-		$this->SyncronizeUser();
+			// Set token in db
+			$token = new Tokens();
+			$token->token = crypt($this->authResponse['access_token'], 'lkj34kvpndd943f');;
+			$token->expires = $this->authResponse['expires'];
+			$token->user_id = $this->authResponse['profile']['id'];
+			$token->user_name = $this->authResponse['profile']['username'];
+			$token->save();
+
+			// When loaded from url, syncronize user data in db
+			$this->SyncronizeUser();
+		}
 
 		return true;
 	}
@@ -161,7 +187,7 @@ class AccessController implements IAccessController {
 		$attemptingUser = $this->GetUserId();
 
 		//Creating user can always edit
-		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($attemptingUser)) {
+		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($entry->tasks_id)) {
 			return true;
 		}
 /*
@@ -191,7 +217,29 @@ class AccessController implements IAccessController {
 		return false;
 	}
 
-	public function IsSuperUser(){
-		return count(SuperUsers::findByUsersId($this->GetUserId())) > 0;
+	/**
+	 * Check if the authorized user is a superuser for:
+	 *   1) The specified task, if given, or
+	 *   2) Any task, if none is given.
+	 * @param int taskId The id to check for superuser status for.
+	 * @return bool Is the authorized user superuser.
+	 */ 
+	public function IsSuperUser($taskId = null){
+		if ($taskId === null) {
+			return SuperUsers::count([
+				"conditions" => "users_id = :userId:",
+				"bind" => [
+					"userId" => $this->GetUserId()
+				]
+			]) > 0;
+		} else {
+			return SuperUsers::count([
+				"conditions" => "users_id = :userId: AND tasks_id = :taskId:",
+				"bind" => [
+					"userId" => $this->GetUserId(),
+					"taskId" => $taskId
+				]
+			]) > 0;
+		}
 	}
 }

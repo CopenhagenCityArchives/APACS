@@ -29,11 +29,11 @@ class ErrorReports extends \Phalcon\Mvc\Model {
 		return file_get_contents('../../app/config/errorreport.json');
 	}
 
-	public static function setLabels($errorReports, $taskId)
+	public static function setLabels($errorReports)
 	{
 		$config = json_decode(ErrorReports::GetConfig(), true);
 		for($i = 0; $i < count( $errorReports ); $i++){
-			foreach($config[$taskId]['error_reports'] as $confRow){
+			foreach($config[$errorReports[$i]['tasks_id']]['error_reports'] as $confRow){
 				if($confRow['entity'] == $errorReports[$i]['entity_name']){
 					$errorReports[$i]['label'] = $confRow['label'];
 				}

@@ -1,0 +1,23 @@
+FROM php:7.1-fpm-alpine3.8
+
+# install make tools, clone phalcon, build it and remove tmp folders and packages
+RUN \
+    apk add git autoconf file g++ gcc libc-dev make pkgconf re2c libtool \
+    check check-dev cyrus-sasl-dev libsodium-dev libssh2-dev imagemagick-dev yaml-dev --no-cache && \
+    cd ~ && git clone https://github.com/phalcon/cphalcon.git && \
+    cd ~/cphalcon && git checkout v3.4.2 && \
+    cd ~/cphalcon/build && ./install && \
+    docker-php-ext-enable phalcon && \
+    rm -rf ~/cphalcon && \
+    apk del git autoconf make m4 perl g++ gcc \
+    musl-dev libc-dev check-dev cyrus-sasl-dev libsodium-dev libssh2-dev yaml-dev openssl-dev imagemagick-dev zlib-dev
+
+RUN docker-php-ext-install pdo pdo_mysql
+
+# copy source code
+COPY /apacs /code
+COPY ./.env /code/app/config/.env
+WORKDIR /code
+
+# copy nginx conf
+COPY /infrastructure/php-fpm-phalcon/nginx_site.conf:/etc/nginx/conf.d/default.conf

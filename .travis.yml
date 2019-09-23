@@ -1,0 +1,57 @@
+language: php
+
+php:
+  - 7.1
+
+notifications:
+  email:
+    - stumpdenmark@hotmail.com
+
+services:
+  - docker
+
+cache:
+  bundler: true
+  directories:
+    - $HOME/docker
+
+addons:
+  apt:
+    packages:
+    - sshpass
+    - rsync
+
+#stop travis mysql
+before_install:
+  - sudo service mysql stop
+  # Load cached docker images
+  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+
+# setup infrastructure using docker-compose
+install:
+  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
+  - sleep 120
+
+# run tests inside Phalcon container
+script:
+  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
+
+after_success:
+  # remove dev dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
+  # Install production dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
+
+deploy:
+  - provider: script
+    script: SSHPASS=${KBHKILDER_SSH_PASSWORD} sshpass -e rsync -r -v -e "ssh -o StrictHostKeyChecking=no" --exclude /tests* --exclude vendor/**/test** --exclude *.yml --exclude .env --exclude composer.* --exclude phpunit.xml --exclude .dockerignore ./apacs/ ${KBHKILDER_SSH_USER}@${KBHKILDER_SSH_HOST}:${KBHKILDER_SSH_PATH}
+    skip_cleanup: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master|development|public-beta)$
+
+before_cache:
+  # Save tagged docker images
+  - >
+    mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
+    | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'

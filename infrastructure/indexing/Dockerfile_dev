@@ -2,12 +2,8 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
-
 # Install requirements
 COPY ./indexing/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-
-
-
-ENTRYPOINT [ "python", "/usr/src/app/cron.py" ]
+ENTRYPOINT tail -f /dev/null

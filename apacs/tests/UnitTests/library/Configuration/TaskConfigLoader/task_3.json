@@ -1,0 +1,82 @@
+{
+    "descriptionInternal": "Test-task til brug i unit tests",
+    "description": "Testtask",
+    "parentTask": null,
+    "entities":[
+        {
+            "name": "persons",
+            "description": "Person i posten",
+            "dbTableName": "test_persons",
+            "type": "array",
+            "fields": {
+                "20": {
+                "name": "firstnames",
+                "required": true,
+                "fieldName": "firstnames",
+                "stepsId": 1
+            }},
+            "entities": [
+                {
+                    "name": "address",
+                    "dbTableName": "test_burials",
+                    "description": "info om begravelsen",
+                    "type": "object",
+                    "fields":[{
+                        "name": "nummer",
+                        "required": true,
+                        "fieldName": "number"
+                    }]
+                }
+            ]}
+    ],
+    "steps":[
+        {
+            "id": "1",
+            "name": "Markering af indtastningsområde",
+            "description": "Her skal du markere det område i protokollen, der handler om den person/begravelse, som du vil indtaste.",
+            "tasks_id": "1",
+            "fields": []
+        },
+        {
+            "id": "2",
+            "name": "Navn, alder og stilling",
+            "description": "",
+            "tasks_id": "1",
+            "fields": [
+                {
+                    "key": "persons.burials.number"
+                },
+                {
+                    "key": "persons.firstnames"
+                },
+                {
+                    "key": "persons.freetext_store"
+                },
+                {
+                    "key": "persons.lastname"
+                },
+                {
+                    "key": "persons.birthname"
+                },
+                {
+                    "key": "persons.sex"
+                },
+                {
+                    "key": "persons.ageYears"
+                },
+                {
+                    "key": "persons.ageMonth"
+                },
+                {
+                    "key": "persons.ageWeeks"
+                },
+                {
+                    "key": "persons.ageDays"
+                },
+                {
+                    "key": "persons.ageHours"
+                }
+            ]
+        }
+    ]
+}

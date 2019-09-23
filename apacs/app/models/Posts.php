@@ -14,7 +14,6 @@ class Posts extends \Phalcon\Mvc\Model {
 
 	/**
 	 * Checks wheter an approximately post already exists on a page
-	 * @param int $page_id
 	 * @param decimal $x
 	 * @param decimal $y
 	 */

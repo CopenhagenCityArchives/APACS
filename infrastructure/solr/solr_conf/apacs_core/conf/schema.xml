@@ -86,6 +86,7 @@
   <field name="cemetary" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="hood" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="deathplace" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="birthplace_free" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Multivalue fields -->
   <field name="deathcauses" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -176,7 +177,7 @@
   <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
     <analyzer>
       <tokenizer class="solr.KeywordTokenizerFactory" />
-      <!--<filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />-->
+      <filter class="solr.SynonymGraphFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />
       <filter class="solr.LowerCaseFilterFactory" />
       <filter class="solr.ScandinavianNormalizationFilterFactory" />
     </analyzer>

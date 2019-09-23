@@ -96,7 +96,7 @@ class MainController extends \Phalcon\Mvc\Controller {
 		$this->response->setStatusCode($errorCode, $errorCodeMessage);
 
 		//Set the content of the response
-		$this->response->setContent($errorMessage);
+		$this->response->setContent(json_encode(['message' => $errorMessage]));
 	}
 
 	/**

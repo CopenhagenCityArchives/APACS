@@ -1,54 +1,57 @@
-## APACS (Archival Presentation And Crowdsourcing System)
+# APACS (Archival Presentation And Crowdsourcing System)
+[![Build Status](https://travis-ci.org/CopenhagenCityArchives/APACS.svg?branch=task2)](https://travis-ci.org/CopenhagenCityArchives/APACS)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
-The system consists of four separate services:
-* A webserver running Apache and PHP (using the Phalcon framework) exposing a RESTful API
+# Services
+The system consists of several services:
+
+* A PHP-FPM server with Phalcon installed. This server executes the PHP code and exposes a JSON-based REST API.
+* An nginx server used in front of the PHP-FPM server.
 * A MySQL database having all metadata and data for collections and indexed informations
 * A SOLR database that exposes all indexed persons locally or through a proxy in the API service
 * An indexer that feeds data to SOLR running Python
 
-## Starting services using docker-composer
-All services can be started using docker-compose.
-There are two docker-compose entities:
-The docker-compose.yml and docker-compose.override.yml is used to start and run the webserver, the MySQL database and the Solr server.
+# docker-compose files
+All services are designed to be started with docker-compose.
 
-The docker-compose-index.yml and docker-compose-index.override.yml are used to start and run the Solr server and the indexer scripts.
+There are several groups of docker-compose-files:
+* ``docker-compose-index.dev.yml`` and ``docker-compose-index.prod.yml``: These files are used for development and deployment of the Solr server as well as the indexation scripts
+* ``docker-compose.webserver.dev.yml`` and ``docker-compose.webserver.prod.yml``: These files are used for development of the webserver and the database.
+* ``docker-compose.complete.dev.yml``: A development infrastructure used when all services are needed.
 
 Notice that the Solr service is included in both files, as the service is used by both the API and the indexer scripts.
 
-The two .override.yml files are used when in development mode. When using docker-compose with these files the code directories are mapped to the instances so changes made in the code appears immediately.
+The two *.prod* docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
-The two other docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
+# Config
+All configuration are set using a .env file located in the root directory.
 
-Notice that the docker compose files can be used to run individual services. If there is a need to test the indexer service, it can be initiated using ``docker-compose -f docker-compose-index.dev.yml up -d indexer`` command.
+See .env_example for possible settings
 
-It is also possible to run a local debugable instance of a PHP server.
+# Development
+## Branches
+This repository consists at the moment of 3 main branches:
+* ``master``: Used in production at kbhkilder.dk/api
+* ``development``: Used for internal tests at kbhkilder.dk/1508/experimental/api
+* ``task2``: Used for internal and external tests of new task and config structure at kbhkilder.dk/1508/public_beta/api
+  
+## Webserver, database and Solr
+All PHP dependencies are installed with Composer, which is run during docker-compose up.
+The services are declared in *docker-compose.dev.yml*
 
-### Development
-#### Webserver, database and Solr
+* ``
+docker-compose -f docker-compose.dev.yml up -d
 ``
-docker-compose -f docker-compose.dev.yml up -d [indexer|solr]
-``
-#### Indexing script and Solr
-``
-docker-compose -f docker-compose-index.dev.yml up -d [phalcon|db|solr]
-``
+## Indexing script and Solr
+The services are declared in *docker-compose-index.dev.yml*
 
-### Running webserver (nginx) and remote database
-Build Docker image:
-``
-docker build -t apacs_dev .
-``
-And start it making the webserver accessible at port 8005:
-``
-docker run -v d:/Udviklingsprojekter/KSA_backend/apacs:/var/www/html -p 8005:80 --name apacs_test apacs_dev
-``
+* ``
+docker-compose -f docker-compose-index.dev.yml up -d [indexer|solr]
+`` 
 
-## Deployment
-### Index service
-To deploy and interact with the deployed machines Docker needs access to the docker-machines.
-The information required for this is to be placed in your user folder (ie. c:\users\your_name\.docker\machine).
-The machine infos can be found here: ``\\Repositories\Docker-machines, AWS``
+# Deployment
+## Indexing script and Solr
+The services are declared in *docker-compose-index.prod.yml*.
 
 Use the following docker-machine (running at AWS): ``apacs-persons``
 
@@ -59,43 +62,45 @@ Get machine env:
 The index service is deployed to AWS using this command:
 ``docker-compose -f docker-compose-index.prod.yml up -d --force-recreate --build indexer``
 
-###Update Solr schema
+## Update Solr schema
+It is sometimes necessary to add new fields to the Solr service.
+
+Instead of recreating the Solr container, it is enough to update the core schema.
 Connect to docker machine and run this command:
-``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
+
+* ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
 
 This will replace the schema file on the server.
  
 Remember to reload the core in Solr admin.
 
-### Webserver
+## Webserver and database
+The services (together with Solr) are declared in *docker-compose.prod.yml*.
+
 The webserver is currently running on a shared host, and as so must be deployed using FTP.
 
-## PHP dependencies
-Are installed when using the docker-compose.yml file. The docker-compose.override.yml does not install PHP dependencies, so here you have to use this command on the webserver service:
+To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon php /code/app/deployment/deploy.php``
 
-``php composer.phar install``
+See deploy.php for details.
 
-## Tests
+# Tests
 
-### Unit tests
+## Unit tests
 
-The test is configured using phpunit.xml.
+PHPUnit and phpunit-watcher are installed with Composer during docker-compose up.
 
-Go to /apacs/tests
+Run the test in the docker container:
+* ``docker exec -it phalcon /bin/bash``
+* To run a single test run: ``/code/vendor/bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``/code/vendor/bin/phpunit-watcher watch --testdox``
 
-Run:
+Run the test from outside the container using docker-compose:
+* ``docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate``
+* To run a single test run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit-watcher watch --testdox``
 
-```
-phpunit -c phpunit.xml
-```
 
-### API endpoint tests
-Go to /apacs/tests_api
-```
-jasmine-node /tests
-```
-
-### Code coverage
+## Code coverage (propably unsupported currently)
 
 Go to /apacs/tests
 
@@ -106,9 +111,8 @@ sudo phpunit --coverage-html ./coverage
 
 Note that test coverage requires XDEBUG to be installed, and to be set up in not only in php5/apache2/php.ini but ALSO in /php5/cli/php.ini
 
-## Dependencies:
-
-* Phalcon: A C-extension library for PHP (find it [here](https://phalconphp.com/en/))
-* Composer (for installing dependencies)
-* PHP Unit (for tests)
-* XDEBUG (only required for PHPUnit code coverage)
+## API endpoint tests (probably outdated)
+Go to /apacs/tests_api
+```
+jasmine-node /tests
+```
