@@ -1,5 +1,5 @@
 # APACS (Archival Presentation And Crowdsourcing System)
-[![Build Status](https://travis-ci.org/CopenhagenCityArchives/APACS.svg?branch=task2)](https://travis-ci.org/CopenhagenCityArchives/APACS)
+[![Build Status](https://travis-ci.org/CopenhagenCityArchives/APACS.svg?branch=master)](https://travis-ci.org/CopenhagenCityArchives/APACS)
 Copenhagen City Archives' configurable backend system used to present and crowdsource digitized collections.
 
 # Services
