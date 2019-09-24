@@ -443,7 +443,7 @@
             "searchable": true,
             "sortable": true,
             "type": "number",
-            "view_name": "År"
+            "view_name": "Kildeår"
         },
         "erindring_photos": {
             "collections": [
