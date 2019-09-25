@@ -11,7 +11,7 @@ services:
       - solr
     volumes:
       - ./apacs:/code
-      - ./.env:/.env
+      - ./.env:/code/app/config/.env
   nginx:
       image: nginx:alpine
       container_name: nginx

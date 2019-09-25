@@ -35,6 +35,17 @@ class IndexDataController extends MainController {
 
 			if($saved){
 				$this->response->setJsonContent(['status' => 'ok']);
+
+				$event = new Events();
+				$event->users_id = $this->auth->GetUserId();
+				$event->datasource_id = $datasourceId;
+				$event->backup = $input['change'];
+				$event->event_type = Events::TypeEdit;
+				if(!$event->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $event->getMessages()));
+					return;
+				}
 			}
 			else{
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
@@ -72,6 +83,17 @@ class IndexDataController extends MainController {
 
 			if($saved){
 				$this->response->setJsonContent(['status' => 'ok']);
+				
+				$event = new Events();
+				$event->users_id = $this->auth->GetUserId();
+				$event->datasource_id = $datasourceId;
+				$event->backup = $input['value'];
+				$event->event_type = Events::TypeCreate;
+				if(!$event->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $event->getMessages()));
+					return;
+				}
 			}
 			else{
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
