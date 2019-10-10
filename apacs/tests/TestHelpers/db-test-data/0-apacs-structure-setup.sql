@@ -331,7 +331,6 @@ CREATE TABLE `apacs_exceptions` (
 CREATE TABLE `apacs_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `users_id` int(11) NOT NULL,
-  `datasource_id` int(11) DEFAULT NULL,
   `collections_id` int(11),
   `tasks_id` int(11),
   `units_id` int(11),
