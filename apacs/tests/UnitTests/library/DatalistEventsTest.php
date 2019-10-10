@@ -85,7 +85,8 @@ class DatalistEventsTest extends \UnitTestCase {
         
         // Create database entries for entities and fields        
         $testDBManager = new Mocks\TestDatabaseManager($di);
-        #$testDBManager->cleanUpBurialStructure();        
+        $testDBManager->cleanUpApacsStructure();
+        $testDBManager->cleanUpBurialStructure();        
     }
 
     public function test_createNewEvent(){
@@ -200,6 +201,7 @@ class DatalistEventsTest extends \UnitTestCase {
         ];
         //get Updated Event
         $response = $this->http->request('PATCH', 'datasource/6', $options2);
+        $status = json_decode((string) $response->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
         $this->assertEquals(200, $response->getStatusCode()); 
