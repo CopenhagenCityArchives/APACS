@@ -191,7 +191,7 @@ class DatalistEventsTest extends \UnitTestCase {
         $eventData = json_decode((string) $event->getBody(), true);
         
         echo($eventData[0]['id']);
-        var_dump($eventData[0]);
+        var_dump($eventData);
         //Update created Event
         $options2 = ['json' => [
             'id' => $eventData[0]['id'],
