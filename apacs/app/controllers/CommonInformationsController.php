@@ -455,12 +455,26 @@ class CommonInformationsController extends MainController {
 			//data for the response
 			$response['metadata'] = $metadata;
 			$response['data'] = $postData;
+
+			try{
+				//Delete from Solr using entry_id
+				ConcreteEntries::DeleteFromSolr($e_id);
+			}
+			catch(Exception $e){
+				$exception = new SystemExceptions();
+				$exception->save([
+					'type' => 'event_delete_solr_error',
+					'details' => json_encode(['exception' => $e->getMessage(), 'post_id' => $id, 'entry_id' => $e_id]),
+				]);
+			}
 		}
 
 		catch(Exception $e){
 			$this->response->setStatusCode('500', 'could not delete post');
 			return;
 		}
+
+		
 
 		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
 		$this->response->setStatusCode(200, 'Post Deleted');
