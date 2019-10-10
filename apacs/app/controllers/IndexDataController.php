@@ -91,7 +91,7 @@ class IndexDataController extends MainController {
 				$dataListEvent->users_id = $this->auth->GetUserId();
 				$dataListEvent->datasource_id = $datasourceId;
 				$dataListEvent->event_type = 'create';
-				$dataListEvent->newValue = $input['value'];
+				$dataListEvent->new_Value = $input['value'];
 				if(!$dataListEvent->save()){
 					$this->response->setStatusCode('500', 'could not save event');
 					$this->response->setJsonContent(implode(', ', $dataListEvent->getMessages()));
