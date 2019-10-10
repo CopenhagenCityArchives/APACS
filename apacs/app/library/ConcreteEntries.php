@@ -630,6 +630,32 @@ class ConcreteEntries {
 		return $result->getStatus();
 	}
 
+	public static function DeleteFromSolr($id){
+		$config = [
+			'endpoint' =>
+			['aws' =>
+				['scheme' => $config['scheme'], 'host' => $config['host'], 'hostname' => $config['host'], 'port' => $config['port'], 'username' => $config['username'], 'password' => $config['password'], 'login' => '', 'path' => $config['path'], 'timeout' => $config['timeout']],
+			],
+		];
+
+		// create a client instance
+		$client = new Solarium\Client($config);
+
+		$client->setDefaultEndPoint('aws');
+
+		// get an update query instance
+		$update = $client->createUpdate();
+
+		// add the delete query and a commit command to the update query
+		$update->addDeleteQuery('id:' . $id);
+		$update->addCommit();
+
+		// this executes the query and returns the result
+		$result = $client->update($update);
+
+		return $result->getStatus();
+	}
+
 	public static function ProxySolrRequest($config) {
 		header("Access-Control-Allow-Origin: *");
 		header('Content-type: application/json; charset=UTF-8');
