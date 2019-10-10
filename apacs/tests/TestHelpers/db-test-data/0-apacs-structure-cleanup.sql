@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS `apacs_entities`;
 DROP TABLE IF EXISTS `apacs_entries`;
 DROP TABLE IF EXISTS `apacs_errorreports`;
 DROP TABLE IF EXISTS `apacs_events`;
+DROP TABLE IF EXISTS `apacs_datalist_events`;
 DROP TABLE IF EXISTS `apacs_fields`;
 DROP TABLE IF EXISTS `apacs_filterlevels`;
 DROP TABLE IF EXISTS `apacs_pages`;

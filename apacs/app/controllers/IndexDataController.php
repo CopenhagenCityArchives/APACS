@@ -1,5 +1,6 @@
 <?php
 
+use function GuzzleHttp\json_encode;
 class IndexDataController extends MainController {
 	private $db;
 
@@ -35,6 +36,32 @@ class IndexDataController extends MainController {
 
 			if($saved){
 				$this->response->setJsonContent(['status' => 'ok']);
+
+				//Log The change
+				$dataListEvent = new DatalistEvents();
+				$dataListEvent->users_id = $this->auth->GetUserId();
+				$dataListEvent->datasource_id = $datasourceId;
+				$dataListEvent->event_type = 'edit';
+				$dataListEvent->oldValue = $input['oldValue'];
+				$dataListEvent->newValue = $input['value'];
+				if(!$dataListEvent->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $dataListEvent->getMessages()));
+					return;
+				}
+
+				$backup = json_encode($input['backup'], JSON_NUMERIC_CHECK);
+
+				$event = new Events();
+				$event->users_id = $this->auth->GetUserId();
+				$event->datasource_id = $datasourceId;
+				$event->backup = $backup;
+				$event->event_type = Events::TypeEdit;
+				if(!$event->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $event->getMessages()));
+					return;
+				}
 			}
 			else{
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
@@ -72,6 +99,29 @@ class IndexDataController extends MainController {
 
 			if($saved){
 				$this->response->setJsonContent(['status' => 'ok']);
+			
+				//Log the evnts
+				$dataListEvent = new DatalistEvents();
+				$dataListEvent->users_id = $this->auth->GetUserId();
+				$dataListEvent->datasource_id = $datasourceId;
+				$dataListEvent->event_type = 'create';
+				$dataListEvent->newValue = $input['value'];
+				if(!$dataListEvent->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $dataListEvent->getMessages()));
+					return;
+				}
+				
+				$event = new Events();
+				$event->users_id = $this->auth->GetUserId();
+				$event->datasource_id = $datasourceId;
+				$event->backup = $input['value'];
+				$event->event_type = Events::TypeCreate;
+				if(!$event->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $event->getMessages()));
+					return;
+				}
 			}
 			else{
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
