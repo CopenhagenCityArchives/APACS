@@ -1,6 +1,5 @@
 <?php
 
-use function GuzzleHttp\json_encode;
 class IndexDataController extends MainController {
 	private $db;
 
