@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS `apacs_collections`;
 DROP TABLE IF EXISTS `apacs_datasources`;
+DROP TABLE IF EXISTS `apacs_datalist_events`
 DROP TABLE IF EXISTS `apacs_entities`;
 DROP TABLE IF EXISTS `apacs_entries`;
 DROP TABLE IF EXISTS `apacs_errorreports`;
