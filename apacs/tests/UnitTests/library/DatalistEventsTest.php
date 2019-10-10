@@ -28,7 +28,10 @@ class DatalistEventsTest extends \UnitTestCase {
         
         // Create database entries for entities and fields        
         $testDBManager = new Mocks\TestDatabaseManager($di);
-        $testDBManager->createDataListEventsStructure();
+        $testDBManager->createApacsStructure();
+        $testDBManager->createEntitiesAndFieldsForTask1();
+        $testDBManager->createApacsMetadataForEntryPost10000Task1();
+        $testDBManager->createBurialDataForEntryPost1000Task1();
     }
 
 	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
@@ -83,7 +86,6 @@ class DatalistEventsTest extends \UnitTestCase {
         // Create database entries for entities and fields        
         $testDBManager = new Mocks\TestDatabaseManager($di);
         $testDBManager->cleanUpApacsStructure();
-
         $testDBManager->cleanUpBurialStructure();        
     }
 

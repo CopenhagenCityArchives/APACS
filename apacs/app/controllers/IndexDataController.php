@@ -48,8 +48,7 @@ class IndexDataController extends MainController {
 					$this->response->setJsonContent(implode(', ', $dataListEvent->getMessages()));
 					return;
 				}
-			}
-			else{
+			} else {
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
 			}
 		}
