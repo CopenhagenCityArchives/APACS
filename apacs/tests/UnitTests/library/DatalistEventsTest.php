@@ -3,9 +3,6 @@
 use \Phalcon\Di;
 use \Phalcon\Mvc\Model\Manager;
 use \Phalcon\Mvc\Model\MetaData\Memory;
-
-use function GuzzleHttp\json_encode;
-
 class DatalistEventsTest extends \UnitTestCase {
 
     private $testDBManager;
@@ -86,6 +83,7 @@ class DatalistEventsTest extends \UnitTestCase {
         // Create database entries for entities and fields        
         $testDBManager = new Mocks\TestDatabaseManager($di);
         $testDBManager->cleanUpApacsStructure();
+
         $testDBManager->cleanUpBurialStructure();        
     }
 
@@ -190,8 +188,8 @@ class DatalistEventsTest extends \UnitTestCase {
 
         //Find crated Event
         $event = $this->http->request('GET', 'datasource/6?q=UpdateEventBySuccessfulAPICall');
-        $eventData = json_decode((string) $response->getBody(), true);
-
+        $eventData = json_decode((string) $event->getBody(), true);
+        echo($eventData[0]['id']);
         //Update created Event
         $options2 = ['json' => [
             'id' => $eventData[0]['id'],
@@ -202,6 +200,7 @@ class DatalistEventsTest extends \UnitTestCase {
         //get Updated Event
         $response = $this->http->request('PATCH', 'datasource/6', $options2);
         $status = json_decode((string) $response->getBody(), true);
+
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
         $this->assertEquals(200, $response->getStatusCode()); 
