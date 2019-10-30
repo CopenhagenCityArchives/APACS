@@ -279,7 +279,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'yearOfDeath': yearOfDeath,
 			'dateOfDeath': dateOfDeath,
 			'birthplace': person['burial_birthplaces.birthplace'],
-			'birthplace_free': person['burial_birthplaces.birthplace_free'],
+			'birthplace_free': person['burial_persons.birthplace_free'],
 			'deathplace': person['burial_deathplaces.deathplace'],
 
 			#Burial
@@ -330,7 +330,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'yearOfDeath': yearOfDeath,
 			'dateOfDeath': dateOfDeath,
 			'birthplace': person['burial_birthplaces.birthplace'],
-			'birthplace_free': person['burial_birthplaces.birthplace_free'],
+			'birthplace_free': person['burial_persons.birthplace_free'],
 			'deathplace' : person['burial_deathplaces.deathplace'],
 
 			#Burial

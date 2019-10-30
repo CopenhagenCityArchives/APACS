@@ -257,16 +257,16 @@
         },
         {
             "name": "swaggest/json-diff",
-            "version": "v3.7.0",
+            "version": "v3.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swaggest/json-diff.git",
-                "reference": "53c412ad8e3fc1293d4e6fdf06f7839698ad897d"
+                "reference": "203014d2d87a60b37dc8a985b71c866e83752f67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swaggest/json-diff/zipball/53c412ad8e3fc1293d4e6fdf06f7839698ad897d",
-                "reference": "53c412ad8e3fc1293d4e6fdf06f7839698ad897d",
+                "url": "https://api.github.com/repos/swaggest/json-diff/zipball/203014d2d87a60b37dc8a985b71c866e83752f67",
+                "reference": "203014d2d87a60b37dc8a985b71c866e83752f67",
                 "shasum": ""
             },
             "require": {
@@ -294,10 +294,11 @@
                 }
             ],
             "description": "JSON diff/rearrange/patch/pointer library for PHP",
-            "time": "2019-04-25 04:15:41"
+            "time": "2019-09-26 11:36:16"
         },
         {
             "name": "swaggest/json-schema",
+<<<<<<< development
             "version": "v0.12.19",
             "source": {
                 "type": "git",
@@ -308,6 +309,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/swaggest/php-json-schema/zipball/c1f3b052d9aa0b898296e3cee305d02f2b41e3ef",
                 "reference": "c1f3b052d9aa0b898296e3cee305d02f2b41e3ef",
+=======
+            "version": "v0.12.21",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/swaggest/php-json-schema.git",
+                "reference": "2b2e7c953e953ff2436f950908fe4ccf03125713"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/swaggest/php-json-schema/zipball/2b2e7c953e953ff2436f950908fe4ccf03125713",
+                "reference": "2b2e7c953e953ff2436f950908fe4ccf03125713",
+>>>>>>> Unit test + DatalistEvents Table orm implementation
                 "shasum": ""
             },
             "require": {
@@ -338,7 +351,11 @@
                 }
             ],
             "description": "High definition PHP structures with JSON-schema based validation",
+<<<<<<< development
             "time": "2019-09-16 21:07:05"
+=======
+            "time": "2019-10-01 13:37:46"
+>>>>>>> Unit test + DatalistEvents Table orm implementation
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1219,22 +1236,22 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.8.1",
+            "version": "1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "1927e75f4ed19131ec9bcc3b002e07fb1173ee76"
+                "reference": "f6811d96d97bdf400077a0cc100ae56aa32b9203"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/1927e75f4ed19131ec9bcc3b002e07fb1173ee76",
-                "reference": "1927e75f4ed19131ec9bcc3b002e07fb1173ee76",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/f6811d96d97bdf400077a0cc100ae56aa32b9203",
+                "reference": "f6811d96d97bdf400077a0cc100ae56aa32b9203",
                 "shasum": ""
             },
             "require": {
                 "doctrine/instantiator": "^1.0.2",
                 "php": "^5.3|^7.0",
-                "phpdocumentor/reflection-docblock": "^2.0|^3.0.2|^4.0",
+                "phpdocumentor/reflection-docblock": "^2.0|^3.0.2|^4.0|^5.0",
                 "sebastian/comparator": "^1.1|^2.0|^3.0",
                 "sebastian/recursion-context": "^1.0|^2.0|^3.0"
             },
@@ -1278,7 +1295,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2019-06-13 12:50:23"
+            "time": "2019-10-03 11:07:50"
         },
         {
             "name": "phpunit/php-code-coverage",

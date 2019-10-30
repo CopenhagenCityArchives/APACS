@@ -35,8 +35,20 @@ class IndexDataController extends MainController {
 
 			if($saved){
 				$this->response->setJsonContent(['status' => 'ok']);
-			}
-			else{
+
+				//Log The change
+				$dataListEvent = new DatalistEvents();
+				$dataListEvent->users_id = $this->auth->GetUserId();
+				$dataListEvent->datasource_id = $datasourceId;
+				$dataListEvent->event_type = 'edit';
+				$dataListEvent->old_value = $input['oldValue'];
+				$dataListEvent->new_value = $input['value'];
+				if(!$dataListEvent->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $dataListEvent->getMessages()));
+					return;
+				}
+			} else {
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);
 			}
 		}
@@ -72,6 +84,18 @@ class IndexDataController extends MainController {
 
 			if($saved){
 				$this->response->setJsonContent(['status' => 'ok']);
+			
+				//Log the evnts
+				$dataListEvent = new DatalistEvents();
+				$dataListEvent->users_id = $this->auth->GetUserId();
+				$dataListEvent->datasource_id = $datasourceId;
+				$dataListEvent->event_type = 'create';
+				$dataListEvent->new_value = $input['value'];
+				if(!$dataListEvent->save()){
+					$this->response->setStatusCode('500', 'could not save event');
+					$this->response->setJsonContent(implode(', ', $dataListEvent->getMessages()));
+					return;
+				}
 			}
 			else{
 				throw new Exception('could not save datasource value. '/* . implode($datasource->getMessages(), ', ')*/);

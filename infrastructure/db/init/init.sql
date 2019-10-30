@@ -86,12 +86,17 @@ CREATE TABLE `apacs_errorreports` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23135 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE IF NOT EXISTS `apacs_datalists_events`(
+CREATE TABLE `apacs_datalist_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `users_id` int(11) NOT NULL,
-  `event_type` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `datasource_id` int(11) NOT NULL,
+  `event_type` char(45) NOT NULL,
+  `old_value` char(45) DEFAULT NULL,
+  `new_value` char(45) NOT NULL,
+  `timestamp` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `tmestamp` (`timestamp`)
+) ENGINE=InnoDB AUTO_INCREMENT=509682 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE IF NOT EXISTS `apacs_events` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -232,7 +237,6 @@ CREATE TABLE `apacs_specialerrors` (
   `source_id` char(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23293 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
-
 
 CREATE TABLE IF NOT EXISTS `apacs_tasks_units` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
