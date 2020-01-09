@@ -50,4 +50,8 @@ class TestDatabaseManager {
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/99-burials-refresh-post-entries.sql'));
 	}
 	
+	public function createDataListEventsStructure() {
+		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-Datalist-Events-structure.sql'));
+
+	}
 }

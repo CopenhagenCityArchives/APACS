@@ -78,6 +78,7 @@ class IndexerBase(ABC):
                 try:
                     self.log_prefixes.append("handle_entry")
                     self.handle_entry(entry)
+                    self.log_prefixes.pop()
                     if len(self.documents) >= self.commit_threshold:
                         self.solr.add(self.documents, commit=True)
                         self.documents = []
@@ -86,7 +87,6 @@ class IndexerBase(ABC):
                         self.progress_threshold_next += self.progress_threshold
                         self.print_progress(i)
                     self.rate_entries += 1
-                    self.log_prefixes.pop()
                 except Exception as e:
                     self.handle_error("Exception occured during handle_entry()!", e)
 
