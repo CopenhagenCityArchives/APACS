@@ -114,8 +114,9 @@ class Objects extends \Phalcon\Mvc\Model {
 					$objects[$i]['metadata']['width'] = $curRow['width'];
 				}
 			}
-			//$objects[$i]['images'][] = 'https://' . $_SERVER['HTTP_HOST'] . $curRow['imageURL'];
-			$objects[$i]['images'][] = 'https://www.kbhkilder.dk' . $curRow['imageURL'];
+			
+			$objects[$i]['images'][] = $curRow['imageURL'];
+			
 			$i++;
 		}
 

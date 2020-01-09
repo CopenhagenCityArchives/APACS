@@ -112,7 +112,12 @@ class ConfigurationLoader {
 
 		$conf['primary_table_name'] = 'apacs_pages';
 
-		$conf['objects_query'] = 'select apacs_pages.id as id, apacs_collections.name, apacs_units.id as units_id, apacs_units.level1_value, apacs_units.level2_value, apacs_units.level3_value, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL, apacs_units.id as starbas_id
+		$conf['objects_query'] = 'select apacs_pages.id as id, apacs_collections.name, apacs_units.id as units_id, apacs_units.level1_value, apacs_units.level2_value, apacs_units.level3_value, 
+			
+			IF(s3 = 1, apacs_pages.image_url, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id)) as imageURL,
+			
+			apacs_units.id as starbas_id, apacs_pages.s3
+
             FROM apacs_pages
             LEFT JOIN apacs_units ON apacs_pages.unit_id = apacs_units.id
             LEFT JOIN apacs_collections ON apacs_units.collections_id = apacs_collections.id

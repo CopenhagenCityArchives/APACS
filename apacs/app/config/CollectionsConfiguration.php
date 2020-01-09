@@ -335,7 +335,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
@@ -416,7 +416,7 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
@@ -513,7 +513,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 4 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
@@ -578,7 +578,7 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'select DISTINCT apacs_pages.id, riv_1, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select DISTINCT apacs_pages.id, riv_1, apacs_pages.starbas_id, nicetitle, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 3 AND is_public = 1 AND :query ORDER BY page_number',
@@ -659,7 +659,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 6 AND is_public = 1 AND :query',
@@ -725,7 +725,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 5 AND is_public = 1 AND :query',
@@ -791,7 +791,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 7 AND is_public = 1 AND :query',
@@ -873,7 +873,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 8 AND is_public = 1 AND :query',
@@ -939,7 +939,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 9 AND is_public = 1 AND :query',
@@ -1005,7 +1005,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 10 AND is_public = 1 AND :query',
@@ -1071,7 +1071,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'SELECT apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
@@ -1137,7 +1137,7 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 12 AND is_public = 1 AND :query',
