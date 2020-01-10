@@ -120,14 +120,10 @@
                 1,
                 17
             ],
-            "datasource": {
-                "field": "birthplace",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/9?q="
-            },
             "name": "birthplace",
             "searchable": true,
             "sortable": true,
-            "type": "typeahead",
+            "type": "string",
             "view_name": "Fødested"
         },
         "birthplace_free": {
