@@ -39,7 +39,7 @@ $collectionsSettings = array(
 		'long_name' => 'Politiets Mandtal for København 1866 - 1923',
 		'gui_required_fields_text' => 'Vælg minimum gade og år',
 		//How to link the data level objects to images
-		'objects_query' => 'select files.id, CONCAT(\'/collections/mandtal\',path) as imageURL, year, month, name FROM files LEFT JOIN volumes ON files.volume_id = volumes.id LEFT JOIN streets on volumes.street_id = streets.id WHERE :query ORDER BY year, month, files.id',
+		'objects_query' => 'select files.id, CONCAT(\'https://www.kbhkilder.dk/collections/mandtal\',path) as imageURL, year, month, name FROM files LEFT JOIN volumes ON files.volume_id = volumes.id LEFT JOIN streets on volumes.street_id = streets.id WHERE :query ORDER BY year, month, files.id',
 		'primary_table_name' => 'files',
 		'starbas_field_name' => false,
 		'levels_type' => 'hierarchy',
@@ -123,7 +123,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'kortteg_files',
 		'starbas_field_name' => 'av_stam_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select kortteg_files.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL, year, height, width,
+		'objects_query' => 'select kortteg_files.id, CONCAT(\'https://www.kbhkilder.dk/collections/kortteg/\',fileName) as imageURL, year, height, width,
                         description,
                         av_beskrivelse,
                         av_stam_id,
