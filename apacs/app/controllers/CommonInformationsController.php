@@ -217,6 +217,7 @@ class CommonInformationsController extends MainController {
 			$unit->description = implode(' ', array_filter([$row['unit']['level1_value'],$row['unit']['level2_value'],$row['unit']['level3_value']], function($v){ return $v !== null; }));
 			$unit->pages = 0;//count(Pages::find('unit_id = ' . $row['unit']['col_unit_id']));
 			$unit->updated = date('Y-m-d H:i:s');
+			$unit->is_public = 	  $row['unit']['is_public'];
 			$unit->level1_value = $row['unit']['level1_value'];
 			$unit->level1_order = $row['unit']['level1_order'];
 			$unit->level2_value = $row['unit']['level2_value'] != '' ? $row['unit']['level2_value'] : null;
