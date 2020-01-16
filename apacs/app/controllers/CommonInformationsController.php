@@ -193,13 +193,54 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function CreateOrUpdateUnits() {
+		//Save local log for debugging incomming requests
 		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody(), FILE_APPEND);
+		
 		$data = $this->GetAndValidateJsonPostData();
+
+		if(!$data){
+			$errorMessage = 'Invalid JSON or no data received, nothing is saved';
+			
+			$this->response->setStatusCode(403, $errorMessage);
+			$this->response->setJsonContent(['error'=> $errorMessage]);
+			
+			$exception = new SystemExceptions();
+			$exception->save([
+				'type' => 'event_starbas_unit_save',
+				'details' => json_encode(['exception' => $errorMessage])
+			]);
+			
+			return;
+		}
+
+		if(!is_numeric($data[0]['unit']['col_id'])){
+			$errorMessage = 'No col_id given in first unit. Nothing is saved';
+
+			$this->response->setStatusCode(403, $errorMessage);
+			$this->response->setJsonContent(['error' => $errorMessage]);
+
+			$exception = new SystemExceptions();
+			$exception->save([
+				'type' => 'event_starbas_unit_save',
+				'details' => json_encode(['exception' => $errorMessage])
+			]);
+
+			return;
+		}
 
 		$collection = Collections::findFirstById($data[0]['unit']['col_id']);
 		if (!$collection) {
-			$this->response->setStatusCode(403, 'Collection not found');
-			$this->response->setJsonContent(['error' => 'No collection with id ' . $data[0]['unit']['col_id'] . ' found']);
+			$errorMessage = 'No collection with id ' . $data[0]['unit']['col_id'] . ' found';
+
+			$this->response->setStatusCode(403, $errorMessage);
+			$this->response->setJsonContent(['error' => $errorMessage]);
+
+			$exception = new SystemExceptions();
+			$exception->save([
+				'type' => 'event_starbas_unit_save',
+				'details' => json_encode(['exception' => $errorMessage])
+			]);
+
 			return;
 		}
 
@@ -226,14 +267,22 @@ class CommonInformationsController extends MainController {
 			$unit->level3_order = $row['unit']['level3_order'] != '' ? $row['unit']['level3_order'] : null;;
 
 			if (!$unit->save()) {
-				$this->response->setStatusCode(500, 'Could not create or update collection');
-				$this->response->setJsonContent(['error' => 'could not save data: ' . implode(', ', $unit->getMessages())]);
-				file_put_contents('incomming_create_or_update_units.log', 'could not save data: ' . implode(', ', $unit->getMessages()), FILE_APPEND);
+				$errorDetails = implode(', ', $unit->getMessages());
+
+				$this->response->setStatusCode(500, $errorDetails);
+				$this->response->setJsonContent(['error' => 'could not save data: ' . $errorDetails]);
+
+				$exception = new SystemExceptions();
+				$exception->save([
+					'type' => 'event_starbas_unit_save',
+					'details' => json_encode(['exception' => 'could not save data: ' . $errorDetails])
+				]);
+
 				return;
 			}
 		}
 
-		$this->response->setJsonContent($data, JSON_NUMERIC_CHECK);
+		$this->response->setJsonContent(['status'=>'all units saved']);
 	}
 
 	public function GetPages() {
