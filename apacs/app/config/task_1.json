@@ -150,7 +150,7 @@
                 "helpText": "Skrives dd-mm-åååå. Er dag eller måned ikke oplyst skriv i stedet 01, hvor oplysningen mangler, fx 01-01-1899, hvor kun årstallet kendes.",
                 "placeholder": null,
                 "isRequired": 0,
-                "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$/",
+                "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](18|19)\\d{2}$/",
                 "validationMessage": "Skriv datoen således: dd-mm-åååå",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "dateOfDeath",
