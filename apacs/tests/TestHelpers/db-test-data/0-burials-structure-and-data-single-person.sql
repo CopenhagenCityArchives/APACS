@@ -36,6 +36,7 @@ CREATE TABLE `burial_persons` (
   `ageWeeks` decimal(4,2) DEFAULT NULL,
   `ageDays` decimal(4,2) DEFAULT NULL,
   `ageHours` int(11) DEFAULT NULL,
+  `birthplace_free` char(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_begrav_persons.deathplace_id_to_begrav.deathplace.id_idx` (`deathplaces_id`),
   KEY `FK_begrav_person.civilstatuses_to_begrav_civilstatuses.id_idx` (`civilstatuses_id`),
@@ -92,9 +93,24 @@ DROP TABLE IF EXISTS `burial_birthplaces`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `burial_birthplaces` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` char(125) COLLATE utf8_danish_ci DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11407 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+  `birthplace` char(125) COLLATE utf8_danish_ci DEFAULT NULL COMMENT 'Formerly known as "name". Has to be "birthplace" until changes in APACS code',
+  `lokalisering` varchar(256) COLLATE utf8_danish_ci DEFAULT NULL,
+  `sogn` char(50) COLLATE utf8_danish_ci DEFAULT NULL,
+  `herred` char(125) COLLATE utf8_danish_ci DEFAULT NULL,
+  `sognenummer` char(5) COLLATE utf8_danish_ci DEFAULT NULL,
+  `kommune` char(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `amt` char(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `opslagsform` char(125) COLLATE utf8_danish_ci DEFAULT NULL,
+  `lokalitetsart` char(125) COLLATE utf8_danish_ci DEFAULT NULL,
+  `priority` tinyint(1) DEFAULT '0',
+  `show` tinyint(1) DEFAULT '1',
+  `reference_polit` int(11) DEFAULT NULL,
+  `country_id` int(11) DEFAULT '204',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `birthplace_UNIQUE` (`birthplace`),
+  KEY `country_idx` (`country_id`),
+  CONSTRAINT `country` FOREIGN KEY (`country_id`) REFERENCES `burial_countries` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=38406 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -103,7 +119,8 @@ CREATE TABLE `burial_birthplaces` (
 
 LOCK TABLES `burial_birthplaces` WRITE;
 /*!40000 ALTER TABLE `burial_birthplaces` DISABLE KEYS */;
-INSERT INTO `burial_birthplaces` (`id`,`name`) VALUES (1,'birthplace_value');
+INSERT INTO `burial_birthplaces`(`id`, `birthplace`, `lokalisering`, `sogn`, `herred`, `sognenummer`, `kommune`, `amt`, `opslagsform`, `lokalitetsart`, `priority`, `show`, `reference_polit`, `country_id`)
+VALUES (1, 'birthplace', 'lokalisering', 'sogn', 'herred', 'sognenummer', 'kommune', 'amt', 'opslagsform', 'lokalitetsart', 0, 1, null, 204);
 /*!40000 ALTER TABLE `burial_birthplaces` ENABLE KEYS */;
 UNLOCK TABLES;
 
