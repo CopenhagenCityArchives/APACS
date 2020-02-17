@@ -55,5 +55,6 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
         - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf    
+        - ./infrastructure/solr/web.xml:/opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
 networks:
     default:
