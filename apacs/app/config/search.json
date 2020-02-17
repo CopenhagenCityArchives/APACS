@@ -615,6 +615,16 @@
             "sortable": true,
             "type": "typeahead",
             "view_name": "Skolens navn"
+        },
+        "last_update": {
+            "collections": [
+                1
+            ],
+            "name": "last_update",
+            "searchable": true,
+            "sortable": true,
+            "type": "date",
+            "view_name": "Sidst opdateret"
         }
     },
     "types": {
