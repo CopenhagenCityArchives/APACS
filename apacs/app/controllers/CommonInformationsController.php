@@ -507,8 +507,8 @@ class CommonInformationsController extends MainController {
 			$response['data'] = $postData;
 
 			try{
-				//Delete from Solr using entry_id
-				ConcreteEntries::DeleteFromSolr($e_id);
+				//Delete from Solr using post id
+				ConcreteEntries::DeleteFromSolr($this->getDI()->get('solrConfig'), $id);
 			}
 			catch(Exception $e){
 				$exception = new SystemExceptions();

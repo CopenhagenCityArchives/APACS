@@ -406,6 +406,7 @@ class IndexDataController extends MainController {
 					'type' => 'event_save_solr_error',
 					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
 				]);
+				$solrId = null;
 			}
 
 			$entry->complete = 1;
