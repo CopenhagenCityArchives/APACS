@@ -1,9 +1,10 @@
 <?php
 
 use \Phalcon\Di;
-class DeleteSolrDataTest extends \SystemTest {
+class DeleteSolrDataTest extends \UnitTestCase{
 
     private $solr;
+    private $http;
 
 	public static function setUpBeforeClass(){
         // Set config and db in DI
@@ -69,6 +70,11 @@ class DeleteSolrDataTest extends \SystemTest {
 	
 
 	public function test_DeleteSolrEntry_GivenValidId() {
+        //assert no initial posts in solrdb
+        $initResponse = $this->solr->request('GET', '?q=*:*&wt=json');
+        $initData = json_decode((string) $initResponse->getBody(), true);
+        $this->assertEquals(0, $initData['response']['numFound']);
+
         //setup a test solr document
 		$entryRequest = file_get_contents(__DIR__ . '/validEntry_task1.json');
         $request = json_decode($entryRequest,true);
@@ -80,9 +86,9 @@ class DeleteSolrDataTest extends \SystemTest {
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertNotNull($responseData['solr_id']);
+
         $solrResponse = $this->solr->request('GET', '?q=id:' . $responseData['solr_id'] . '&wt=json');
         $solrData = json_decode((string) $solrResponse->getBody(), true);
-        //var_dump($solrData);
         $this->assertEquals(1, $solrData['response']['numFound']);
 
         $deleteResponse = $this->http->request('DELETE', 'posts/' . $responseData['post_id']);
@@ -90,8 +96,6 @@ class DeleteSolrDataTest extends \SystemTest {
         
         $checkerResponse = $this->solr->request('GET', '?q=id:' . $responseData['solr_id'] . '&wt=json');
         $checkerData = json_decode((string) $checkerResponse->getBody(), true);
-
-        var_dump($checkerData);
 
         $this->assertEquals(0, $checkerData['response']['numFound']);
 
