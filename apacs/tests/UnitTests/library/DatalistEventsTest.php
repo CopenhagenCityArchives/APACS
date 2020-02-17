@@ -192,7 +192,6 @@ class DatalistEventsTest extends \UnitTestCase {
         //Find crated Event
         $event = $this->http->request('GET', 'datasource/6?q=UpdateEventBySuccessfulAPICall');
         $eventData = json_decode((string) $event->getBody(), true);
-        echo($eventData[0]['id']);
         //Update created Event
         $options2 = ['json' => [
             'id' => $eventData[0]['id'],
