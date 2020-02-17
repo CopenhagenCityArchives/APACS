@@ -367,7 +367,7 @@ class IndexDataController extends MainController {
 			$entry->concrete_entries_id = $concreteId;
 			$entry->users_id = $userId;
 			$entry->complete = 0;
-			$entry->last_update = new \Phalcon\Db\RawValue('CURRENT_TIMESTAMP');
+			$entry->updated = new \Phalcon\Db\RawValue('CURRENT_TIMESTAMP');
 
 			if (!$entry->save()) {
 				throw new RuntimeException('could not save entry information' . $entry->getMessages()[0]);
