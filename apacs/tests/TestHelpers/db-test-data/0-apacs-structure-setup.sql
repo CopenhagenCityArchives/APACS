@@ -123,6 +123,7 @@ CREATE TABLE `apacs_entries` (
   `concrete_entries_id` int(11) DEFAULT NULL,
   `complete` tinyint(1) NOT NULL DEFAULT '0',
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `test` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `posts_id` (`posts_id`),
@@ -142,6 +143,7 @@ CREATE TABLE `apacs_posts` (
   `complete` tinyint(1) NOT NULL DEFAULT '0',
   `image` blob,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `FK_posts.pages_id_to_pages.id_idx` (`pages_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=237867 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
@@ -182,6 +184,7 @@ CREATE TABLE `apacs_units` (
   `level3_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `level3_order` int(11) DEFAULT NULL,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_public` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_units.collections_id_to_collections.id_idx` (`collections_id`),
@@ -287,6 +290,7 @@ CREATE TABLE `apacs_errorreports` (
   `concrete_entries_id` int(11) DEFAULT NULL,
   `original_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `toSuperUser` tinyint(1) DEFAULT '0',
   `superUserTime` timestamp NULL DEFAULT '0000-00-00 00:00:00',
   `field_id` int(11) DEFAULT NULL,
