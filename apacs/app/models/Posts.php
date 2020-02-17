@@ -9,7 +9,7 @@ class Posts extends \Phalcon\Mvc\Model {
 		$this->belongsTo('pages_id', 'Pages', 'id');
 		$this->hasMany('id', 'TasksPosts', 'tasks_id');
 		$this->hasMany('id', 'Entries', 'posts_id');
-		$this->skipAttributes(['last_update']);
+		$this->skipAttributes(['updated']);
 	}
 
 	/**

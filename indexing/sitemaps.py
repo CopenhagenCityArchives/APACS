@@ -52,7 +52,7 @@ if __name__ == "__main__":
 	format = '%m/%d/%Y'
 	while start < totalHits:
 		#Loading documents
-		results = solr.search('collection_id:(1 17 18)',**{"fl":'id,last_update',"start":start, "rows":chunksize})
+		results = solr.search('collection_id:(1 17 18)',**{"fl":'id,updated',"start":start, "rows":chunksize})
 		start = start + chunksize
 		print("found %d documents" % len(results))
 		totalDocs = totalDocs + len(results)
@@ -71,7 +71,7 @@ if __name__ == "__main__":
 			
 			url = ET.SubElement(root, "url")
 			ET.SubElement(url, "loc").text = "https://www.kbharkiv.dk/permalink/post/" + d['id']
-			ET.SubElement(url, "lastmod").text = d['last_update'][0:10]
+			ET.SubElement(url, "lastmod").text = d['updated'][0:10]
 			ET.SubElement(url, "changefreq").text = 'monthly'
 			ET.SubElement(url, "priority").text = '0.8'
 		

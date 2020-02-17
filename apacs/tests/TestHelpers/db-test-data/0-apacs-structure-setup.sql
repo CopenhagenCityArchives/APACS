@@ -122,7 +122,7 @@ CREATE TABLE `apacs_entries` (
   `users_id` int(11) NOT NULL,
   `concrete_entries_id` int(11) DEFAULT NULL,
   `complete` tinyint(1) NOT NULL DEFAULT '0',
-  `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `test` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `posts_id` (`posts_id`),
@@ -141,7 +141,7 @@ CREATE TABLE `apacs_posts` (
   `y` decimal(21,18) DEFAULT NULL,
   `complete` tinyint(1) NOT NULL DEFAULT '0',
   `image` blob,
-  `last_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `FK_posts.pages_id_to_pages.id_idx` (`pages_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=237867 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
@@ -286,7 +286,7 @@ CREATE TABLE `apacs_errorreports` (
   `comment` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `concrete_entries_id` int(11) DEFAULT NULL,
   `original_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `toSuperUser` tinyint(1) DEFAULT '0',
   `superUserTime` timestamp NULL DEFAULT '0000-00-00 00:00:00',
   `field_id` int(11) DEFAULT NULL,

@@ -248,7 +248,7 @@ class SystemTest extends \UnitTestCase
         }
         $this->assertNotNull($afterFirstNames);
 
-        $this->assertGreaterThan(strToTime($beforeMetadata['last_update']), strToTime($afterMetadata['last_update']));
+        $this->assertGreaterThan(strToTime($beforeMetadata['updated']), strToTime($afterMetadata['updated']));
         $this->assertEquals("Bartoline", $beforeFirstNames);
         $this->assertEquals("Cirkeline", $afterFirstNames);
     }
