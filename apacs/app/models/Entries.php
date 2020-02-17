@@ -10,8 +10,6 @@ class Entries extends \Phalcon\Mvc\Model {
 		$this->hasMany('id', 'Errors', 'entry_id');
 		$this->belongsTo('page_id', 'Pages', 'id');
 		$this->belongsTo('task_id', 'Tasks', 'id');
-
-		$this->skipAttributes(['last_update']);
 	}
 
 	public function GetContext() {

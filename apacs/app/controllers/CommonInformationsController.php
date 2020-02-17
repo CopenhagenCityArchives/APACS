@@ -495,7 +495,6 @@ class CommonInformationsController extends MainController {
 
 			// TODO: Find correct concrete entity query, and further futureproof for new tasks
 			if ($tasks_id == 1 || $tasks_id == 3) {
-
 				$this->getDI()->get('db')->query('DELETE FROM burial_persons WHERE id = :id', ['id' => $p_id]);
 				$this->getDI()->get('db')->query('DELETE FROM burial_persons_deathcauses WHERE persons_id = :id', ['id' => $p_id]);
 				$this->getDI()->get('db')->query('DELETE FROM burial_persons_positions WHERE persons_id = :id', ['id' => $p_id]);
@@ -668,7 +667,7 @@ class CommonInformationsController extends MainController {
 			$auth = $this->getDI()->get('AccessController');
 
 			$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
-			unset($metadata['entry_id']);
+			$metadata['entry_id'];
 			$response['metadata'] = $metadata;
 			$response['data'] = $postData;
 			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();

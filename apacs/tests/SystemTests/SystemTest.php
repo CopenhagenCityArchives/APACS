@@ -89,7 +89,6 @@ class SystemTest extends \UnitTestCase
         catch(Exception $e){
             $response = $e->getResponse();
             $responseBodyAsString = $response->getBody()->getContents();
-            var_dump($responseBodyAsString);
         }
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -186,11 +185,72 @@ class SystemTest extends \UnitTestCase
             'json' => $request
         ]);
 
+        $this->assertEquals(200, $response->getStatusCode());
+
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
-        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(10000, $responseData['post_id']);
+    }
+
+    public function test_UpdateEntry_DataChanged_MetadataChanged() {
+        $postId = 10000;
+
+        // get post data
+        $beforeResponse = $this->http->request('GET', 'posts/' . $postId);
+        $this->assertEquals(200, $beforeResponse->getStatusCode());
+        $beforeResponseData = json_decode((string) $beforeResponse->getBody(), true);
+        $beforeData = $beforeResponseData['data'];
+        $beforeMetadata = $beforeResponseData['metadata'];
+
+        // get id of existing entry
+        $entryId = $beforeMetadata['entry_id'];
+        $this->assertNotNull($entryId);
+
+        // extract firstname of entry
+        $beforeFirstNames = null;
+        foreach ($beforeData as $entity) {
+            if ($entity['entity_name'] == 'persons') {
+                foreach ($entity['fields'] as $field) {
+                    if ($field['field_name'] == 'firstnames') {
+                        $beforeFirstNames = $field['value'];
+                    }
+                }
+            }
+        }
+        $this->assertNotNull($beforeFirstNames);
+
+        // perform a change
+        $updateRequest = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'), true);
+        $updateRequest['persons']['firstnames'] = 'Cirkeline';
+        $updateResponse = $this->http->request('PUT', 'entries/' . $entryId, [ 'json' => $updateRequest ]);
+        $this->assertEquals(200, $updateResponse->getStatusCode());
+        $updateResponseData = json_decode((string) $updateResponse->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
+
+        // check that the entry was changed
+        $afterResponse = $this->http->request('GET', 'posts/' . $postId);
+        $this->assertEquals(200, $afterResponse->getStatusCode());
+        $afterResponseData = json_decode((string) $afterResponse->getBody(), true);
+        $afterData = $afterResponseData['data'];
+        $afterMetadata = $afterResponseData['metadata'];
+
+        // extract firstname of entry
+        $afterFirstNames = null;
+        foreach ($afterData as $entity) {
+            if ($entity['entity_name'] == 'persons') {
+                foreach ($entity['fields'] as $field) {
+                    if ($field['field_name'] == 'firstnames') {
+                        $afterFirstNames = $field['value'];
+                    }
+                }
+            }
+        }
+        $this->assertNotNull($afterFirstNames);
+
+        $this->assertGreaterThan(strToTime($beforeMetadata['last_update']), strToTime($afterMetadata['last_update']));
+        $this->assertEquals("Bartoline", $beforeFirstNames);
+        $this->assertEquals("Cirkeline", $afterFirstNames);
     }
 
     public function test_DeletePostWithGivenId() {
