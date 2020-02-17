@@ -483,6 +483,7 @@ class CommonInformationsController extends MainController {
 			$p_id = $entry_info['persons']['id'];
 			$e_id = $metadata['entry_id'];
 			$t_id = $metadata['task_id'];
+			$solrId = $metadata['collection_id'] . '-' . $entry->concrete_entries_id;
 
 			//Delete the specific post
 			$deleteQuery = $this->modelsManager->createQuery('DELETE FROM Posts WHERE id = :id:');
@@ -508,7 +509,7 @@ class CommonInformationsController extends MainController {
 
 			try{
 				//Delete from Solr using post id
-				ConcreteEntries::DeleteFromSolr($this->getDI()->get('solrConfig'), $id);
+				ConcreteEntries::DeleteFromSolr($this->getDI()->get('solrConfig'), $solrId);
 			}
 			catch(Exception $e){
 				$exception = new SystemExceptions();
