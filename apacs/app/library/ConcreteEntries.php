@@ -630,7 +630,7 @@ class ConcreteEntries {
 		return $result->getStatus();
 	}
 
-	public static function DeleteFromSolr($config, $post_id){
+	public static function DeleteFromSolr($config, $solr_id){
 		$config = [
 			'endpoint' =>
 			['aws' =>
@@ -647,7 +647,7 @@ class ConcreteEntries {
 		$update = $client->createUpdate();
 
 		// add the delete query and a commit command to the update query
-		$update->addDeleteQuery('post_id:' . $post_id);
+		$update->addDeleteQuery('id:' . $solr_id);
 		$update->addCommit();
 
 		// this executes the query and returns the result
