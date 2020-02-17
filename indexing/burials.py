@@ -259,7 +259,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'page_number' : person['page_number'],
 			'collection_id': self.collection_id(),
 			'collection_info': person['collection_info'],
-			'last_update': str(person['last_update']),
+			'last_update': person['last_update'].isoformat() + "Z",
 			'kildeviser_url': "https://www.kbharkiv.dk/kildeviser/#!?collection=5&item=%s" % (person['page_id']),
 
 			#Person
@@ -312,7 +312,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'user_name': person['user_name'],
 			'unit_id': person['unit_id'],
 			'page_id': person['page_id'],
-			'last_update': str(person['last_update']),
+			'last_update': person['last_update'].isoformat() + "Z",
 			'collection_id': self.collection_id(),
 			'collection_info': person['collection_info'],
 			'jsonObj': json.dumps(data),
