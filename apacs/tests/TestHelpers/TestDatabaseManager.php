@@ -14,6 +14,10 @@ class TestDatabaseManager {
 		}
 	}
 
+	public function query($sql) {
+		return $this->di->get('db')->query($sql);
+	}
+
 	public function createApacsStructure(){
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-apacs-structure-setup.sql'));
 		$this->apacsStructureCreated = true;
@@ -54,4 +58,6 @@ class TestDatabaseManager {
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-Datalist-Events-structure.sql'));
 
 	}
+
+
 }
