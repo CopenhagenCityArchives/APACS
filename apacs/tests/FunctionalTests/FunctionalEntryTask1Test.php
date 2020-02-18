@@ -132,7 +132,5 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Should have update firstnames
         $this->assertEquals($modifiedEntry['persons']['deathcauses'][0]['deathcause'] , $updatedEntry['persons']['deathcauses'][0]['deathcause'] );
-    }
-
-  
+    }  
 }

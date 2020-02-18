@@ -193,66 +193,6 @@ class SystemTest extends \UnitTestCase
         $this->assertEquals(10000, $responseData['post_id']);
     }
 
-    public function test_UpdateEntry_DataChanged_MetadataChanged() {
-        $postId = 10000;
-
-        // get post data
-        $beforeResponse = $this->http->request('GET', 'posts/' . $postId);
-        $this->assertEquals(200, $beforeResponse->getStatusCode());
-        $beforeResponseData = json_decode((string) $beforeResponse->getBody(), true);
-        $beforeData = $beforeResponseData['data'];
-        $beforeMetadata = $beforeResponseData['metadata'];
-
-        // get id of existing entry
-        $entryId = $beforeMetadata['entry_id'];
-        $this->assertNotNull($entryId);
-
-        // extract firstname of entry
-        $beforeFirstNames = null;
-        foreach ($beforeData as $entity) {
-            if ($entity['entity_name'] == 'persons') {
-                foreach ($entity['fields'] as $field) {
-                    if ($field['field_name'] == 'firstnames') {
-                        $beforeFirstNames = $field['value'];
-                    }
-                }
-            }
-        }
-        $this->assertNotNull($beforeFirstNames);
-
-        // perform a change
-        $updateRequest = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'), true);
-        $updateRequest['persons']['firstnames'] = 'Cirkeline';
-        $updateResponse = $this->http->request('PUT', 'entries/' . $entryId, [ 'json' => $updateRequest ]);
-        $this->assertEquals(200, $updateResponse->getStatusCode());
-        $updateResponseData = json_decode((string) $updateResponse->getBody(), true);
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
-
-        // check that the entry was changed
-        $afterResponse = $this->http->request('GET', 'posts/' . $postId);
-        $this->assertEquals(200, $afterResponse->getStatusCode());
-        $afterResponseData = json_decode((string) $afterResponse->getBody(), true);
-        $afterData = $afterResponseData['data'];
-        $afterMetadata = $afterResponseData['metadata'];
-
-        // extract firstname of entry
-        $afterFirstNames = null;
-        foreach ($afterData as $entity) {
-            if ($entity['entity_name'] == 'persons') {
-                foreach ($entity['fields'] as $field) {
-                    if ($field['field_name'] == 'firstnames') {
-                        $afterFirstNames = $field['value'];
-                    }
-                }
-            }
-        }
-        $this->assertNotNull($afterFirstNames);
-
-        $this->assertGreaterThan(strToTime($beforeMetadata['updated']), strToTime($afterMetadata['updated']));
-        $this->assertEquals("Bartoline", $beforeFirstNames);
-        $this->assertEquals("Cirkeline", $afterFirstNames);
-    }
-
     public function test_DeletePostWithGivenId() {
         //assert if the post exists
         $response = $this->http->request('GET', 'entries?task_id=1&post_id=10000');
@@ -351,5 +291,57 @@ class SystemTest extends \UnitTestCase
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage('<h1>Bad request!</h1>');
         $response = $this->http->request('DELETE', 'posts/');
+    }
+
+    public function test_UpdatePost_NewUpdated_SameCreated() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $this->testDBManager->refreshEntryForPost1000();
+        $postBefore = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = 10000 LIMIT 1')->fetch();
+        $response = $this->http->request('PATCH', 'posts/10000', [
+            'json' => [
+                'x' => "0.5",
+                'y' => "0.7",
+                'height' => "0.2",
+                'width' => "0.5",
+                'page_id' => $postBefore['pages_id']
+            ],
+            'query' => [ 'task_id' => 1 ]
+        ]);
+        $postAfter = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = 10000 LIMIT 1')->fetch();
+        
+        $this->assertNotNull($postBefore['updated'], "Updated was NULL before update.");
+        $this->assertNotNull($postAfter['updated'], "Updated was NULL after update.");
+        $this->assertGreaterThan(strToTime($postBefore['updated']), strToTime($postAfter['updated']));
+        $this->assertEquals($postBefore['created'], $postAfter['created']);
+        $this->assertEquals(0.5, $postAfter['x']);
+        $this->assertEquals(0.7, $postAfter['y']);
+        $this->assertEquals(0.2, $postAfter['height']);
+        $this->assertEquals(0.5, $postAfter['width']);
+    }
+
+    public function test_UpdateEntry_NewUpdated_SameCreated_NewLastUpdateUsersId() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $this->testDBManager->refreshEntryForPost1000();
+        $entryBefore = $this->testDBManager->query('SELECT * FROM `apacs_entries` WHERE `posts_id` = 10000 LIMIT 1')->fetch();
+        $entryId = $entryBefore['id'];
+        $concreteEntryId = $entryBefore['concrete_entries_id'];
+        $concreteEntryBefore = $this->testDBManager->query('SELECT * FROM `burial_persons` WHERE `id` = ' . $concreteEntryId . ' LIMIT 1')->fetch();
+
+        // perform a change
+        $updateRequest = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'), true);
+        $updateRequest['persons']['firstnames'] = 'Cirkeline';
+        $updateResponse = $this->http->request('PUT', 'entries/' . $entryId, [ 'json' => $updateRequest ]);
+        $this->assertEquals(200, $updateResponse->getStatusCode());
+        $updateResponseData = json_decode((string) $updateResponse->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
+
+        $entryAfter = $this->testDBManager->query('SELECT * FROM `apacs_entries` WHERE `posts_id` = 10000 LIMIT 1')->fetch();
+        $concreteEntryAfter = $this->testDBManager->query('SELECT * FROM `burial_persons` WHERE `id` = ' . $concreteEntryId . ' LIMIT 1')->fetch();
+        $this->assertGreaterThan(strToTime($entryBefore['updated']), strToTime($entryAfter['updated']));
+        $this->assertEquals("Bartoline", $concreteEntryBefore['firstnames']);
+        $this->assertEquals("Cirkeline", $concreteEntryAfter['firstnames']);
+        $this->assertEquals($entryBefore['created'], $entryAfter['created']);
+        $this->assertEquals(NULL, $entryBefore['last_update_users_id']);
+        $this->assertEquals(1, $entryAfter['last_update_users_id']);
     }
 }
