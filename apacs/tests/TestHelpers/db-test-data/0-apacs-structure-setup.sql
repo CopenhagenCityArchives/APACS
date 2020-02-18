@@ -120,6 +120,7 @@ CREATE TABLE `apacs_entries` (
   `posts_id` int(11) NOT NULL,
   `tasks_id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
+  `last_update_users_id` int(11) NULL,
   `concrete_entries_id` int(11) DEFAULT NULL,
   `complete` tinyint(1) NOT NULL DEFAULT '0',
   `updated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,

@@ -49,6 +49,8 @@
   <field name="updated" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW+1HOUR"/>
   <field name="user_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="user_name" type="string_ci" indexed="true" stored="true" required="true" multiValued="false"/>
+  <field name="last_update_user_id" type="int" indexed="true" stored="true" required="false" multiValued="false"/>
+  <field name="last_update_user_name" type="string_ci" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="jsonObj" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
 
   <!-- Specific APACS fields. Note that these can be relevant in more than one collection type -->
