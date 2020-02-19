@@ -60,7 +60,8 @@ class DeleteSolrDataTest extends \UnitTestCase{
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
-        $this->solr = new GuzzleHttp\Client(['base_uri' => 'http://solr:8983/solr/apacs_core/select']);
+        $this->solr = new GuzzleHttp\Client(['base_uri' => 'http://solr:8983/solr/apacs_core/']);
+        $this->solr->request('POST', 'update?commit=true', [ 'json' => [ 'delete' => [ 'query' => '*:*' ]]]);
     }
 
     public function tearDown() {
@@ -71,7 +72,7 @@ class DeleteSolrDataTest extends \UnitTestCase{
 
 	public function test_DeleteSolrEntry_GivenValidId() {
         //assert no initial posts in solrdb
-        $initResponse = $this->solr->request('GET', '?q=*:*&wt=json');
+        $initResponse = $this->solr->request('GET', 'select?q=*:*&wt=json');
         $initData = json_decode((string) $initResponse->getBody(), true);
         $this->assertEquals(0, $initData['response']['numFound']);
 
@@ -87,14 +88,14 @@ class DeleteSolrDataTest extends \UnitTestCase{
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertNotNull($responseData['solr_id']);
 
-        $solrResponse = $this->solr->request('GET', '?q=id:' . $responseData['solr_id'] . '&wt=json');
+        $solrResponse = $this->solr->request('GET', 'select?q=id:' . $responseData['solr_id'] . '&wt=json');
         $solrData = json_decode((string) $solrResponse->getBody(), true);
         $this->assertEquals(1, $solrData['response']['numFound']);
 
         $deleteResponse = $this->http->request('DELETE', 'posts/' . $responseData['post_id']);
         $this->assertEquals(200, $deleteResponse->getStatusCode());
         
-        $checkerResponse = $this->solr->request('GET', '?q=id:' . $responseData['solr_id'] . '&wt=json');
+        $checkerResponse = $this->solr->request('GET', 'select?q=id:' . $responseData['solr_id'] . '&wt=json');
         $checkerData = json_decode((string) $checkerResponse->getBody(), true);
 
         $this->assertEquals(0, $checkerData['response']['numFound']);
