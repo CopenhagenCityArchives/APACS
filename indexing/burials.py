@@ -88,10 +88,13 @@ Pages.id as page_id,
 Pages.page_number,
 Entries.id as entry_id,
 Entries.updated as updated,
+Entries.created as created,
 Entries.id as entries_id,
 Entries.concrete_entries_id,
 Users.username as user_name,
-Users.id as user_id
+Users.id as user_id,
+LastUpdateUsers.username as last_update_user_name,
+LastUpdateUsers.id as last_update_user_id
 
 FROM burial_persons
 LEFT JOIN burial_addresses ON burial_addresses.persons_id = burial_persons.id
@@ -116,6 +119,7 @@ LEFT JOIN apacs_units as Units ON Pages.unit_id = Units.id
 LEFT JOIN apacs_collections as Collections ON Units.collections_id = Collections.id
 LEFT JOIN apacs_tasks as Tasks ON Entries.tasks_id = Tasks.id
 LEFT JOIN apacs_users as Users ON Entries.users_id = Users.id
+LEFT JOIN apacs_users as LastUpdateUsers ON Entries.last_update_users_id = LastUpdateUsers.id
 
 
 LIMIT %d, %d
@@ -253,6 +257,8 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'entry_id': person['entries_id'],
 			'user_id': person['user_id'],
 			'user_name': person['user_name'],
+			'last_update_user_id': person['last_update_user_id'],
+			'last_update_user_name': person['last_update_user_name'],
 			'unit_id': person['unit_id'],
 			'unit_description' : person['unit_description'],
 			'page_id': person['page_id'],
@@ -260,6 +266,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'collection_id': self.collection_id(),
 			'collection_info': person['collection_info'],
 			'updated': person['updated'].isoformat() + "Z",
+			'created': person['updated'].isoformat() + "Z",
 			'kildeviser_url': "https://www.kbharkiv.dk/kildeviser/#!?collection=5&item=%s" % (person['page_id']),
 
 			#Person
@@ -310,9 +317,12 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'entry_id': person['entries_id'],
 			'user_id': person['user_id'],
 			'user_name': person['user_name'],
+			'last_update_user_id': person['last_update_user_id'],
+			'last_update_user_name': person['last_update_user_name'],
 			'unit_id': person['unit_id'],
 			'page_id': person['page_id'],
 			'updated': person['updated'].isoformat() + "Z",
+			'created': person['created'].isoformat() + "Z",
 			'collection_id': self.collection_id(),
 			'collection_info': person['collection_info'],
 			'jsonObj': json.dumps(data),
