@@ -344,4 +344,43 @@ class SystemTest extends \UnitTestCase
         $this->assertEquals(NULL, $entryBefore['last_update_users_id']);
         $this->assertEquals(1, $entryAfter['last_update_users_id']);
     }
+
+    public function test_UpdateErrorReport_NewUpdated_SameCreated() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $this->testDBManager->refreshEntryForPost1000();
+        
+        $errorReportData = [
+            "add_metadata" => true,
+            "task_id" => 1,
+            "post_id" => 10000,
+            "comment" => "This is a test error report.",
+            "entity" => "persons.firstnames"
+        ];
+        $createResponse = $this->http->request('POST', '/errorreports', [ 'json' => $errorReportData ]);
+        $this->assertEquals(200, $createResponse->getStatusCode());
+
+        $reportBefore = $this->testDBManager->query('SELECT * FROM `apacs_errorreports` LIMIT 1')->fetch();
+        $errorReportUpdate = [
+            "toSuperUser" => 1
+        ];
+        $this->http->request('PATCH', 'errorreports/' . $reportBefore['id'], [ 'json' => $errorReportUpdate ]);
+        $reportAfter = $this->testDBManager->query('SELECT * FROM `apacs_errorreports` LIMIT 1')->fetch();
+        $errorReportUpdate["toSuperUser"] = 0;
+        sleep(1);
+        $this->http->request('PATCH', 'errorreports/' . $reportBefore['id'], [ 'json' => $errorReportUpdate ]);
+        $reportLast = $this->testDBManager->query('SELECT * FROM `apacs_errorreports` LIMIT 1')->fetch();
+        
+        $this->assertNull($reportBefore['updated']);
+        $this->assertNotNull($reportAfter['updated']);
+        $this->assertNotNull($reportBefore['created']);
+        $this->assertNotNull($reportAfter['created']);
+        $this->assertNotNull($reportLast['created']);
+        $this->assertEquals($reportBefore['created'], $reportAfter['created']);
+        $this->assertEquals($reportAfter['created'], $reportLast['created']);
+        $this->assertGreaterThan($reportAfter['updated'], $reportLast['updated']);
+
+        $this->assertEquals(0, $reportBefore['toSuperUser']);
+        $this->assertEquals(1, $reportAfter['toSuperUser']);
+        $this->assertEquals(0, $reportLast['toSuperUser']);
+    }
 }
