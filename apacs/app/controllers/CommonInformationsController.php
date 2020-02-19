@@ -407,7 +407,9 @@ class CommonInformationsController extends MainController {
 		$post->height = $input['height'];
 		$post->width = $input['width'];
 		$post->complete = 0;
-		$post->updated = date('Y-m-d H:i:s');
+		if (!is_null($id)) {
+			$post->updated = date('Y-m-d H:i:s');
+		}
 
 		if ($post->ApproximatePostExists()) {
 			$this->response->setStatusCode(403, 'Approximate post already exists');
