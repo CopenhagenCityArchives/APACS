@@ -46,6 +46,7 @@
   <field name="page_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_info" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
+  <field name="last_update" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW+1HOUR"/>
   <field name="updated" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW+1HOUR"/>
   <field name="created" type="tdate" indexed="true" stored="true" required="false" multiValued="false" default="NOW+1HOUR"/>
   <field name="user_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
