@@ -79,7 +79,8 @@ class EventsTest extends \UnitTestCase
     }
 
     public function test_GetEventEntriesWithinput_5WeeksOld() {
-        $response = $this->http->request('GET', 'events/create/5');
+        $Unix5WeeksAgo = strtotime("-5 week");
+        $response = $this->http->request('GET', 'events/create/'. $Unix5WeeksAgo);
         $this->assertEquals(200, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertNotNull($responseData);
