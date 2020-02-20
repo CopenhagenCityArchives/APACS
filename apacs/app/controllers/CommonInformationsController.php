@@ -803,9 +803,13 @@ class CommonInformationsController extends MainController {
 		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray(), JSON_NUMERIC_CHECK);
 	}
 
-	public function GetCreatedPostsForLastWeek() {
+	public function GetEventEntriesForLastWeek() {
 		$events = new Events();
-		$this->response->setJsonContent($events->GetCreateEventsWeek());
+		$this->response->setJsonContent($events->GetNumEventsForUsers(null, null));
+	}
+	public function GetEventEntries($event_type, $num_weeks) {
+		$events = new Events();
+		$this->response->setJsonContent($events->GetNumEventsForUsers($event_type, $num_weeks));
 	}
 
 	public function GetSystemExceptions() {
