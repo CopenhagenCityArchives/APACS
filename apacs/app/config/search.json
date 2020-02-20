@@ -624,7 +624,27 @@
             "searchable": true,
             "sortable": true,
             "type": "date",
-            "view_name": "Sidst opdateret"
+            "view_name": "Opdateringsdato"
+        },
+        "created": {
+            "collections": [
+                1
+            ],
+            "name": "created",
+            "searchable": true,
+            "sortable": true,
+            "type": "date",
+            "view_name": "Indtastningsdato"
+        },
+        "last_update_user_name": {
+            "collections": [
+                1
+            ],
+            "name": "last_update_user_name",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Seneste opdaterers brugernavn"
         }
     },
     "types": {
