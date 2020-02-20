@@ -265,8 +265,8 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'page_number' : person['page_number'],
 			'collection_id': self.collection_id(),
 			'collection_info': person['collection_info'],
-			'updated': person['updated'].isoformat() + "Z",
-			'created': person['updated'].isoformat() + "Z",
+			'updated': person['updated'].isoformat() + "Z" if person.get('updated') is not None else None,
+			'created': person['created'].isoformat() + "Z",
 			'kildeviser_url': "https://www.kbharkiv.dk/kildeviser/#!?collection=5&item=%s" % (person['page_id']),
 
 			#Person
@@ -321,7 +321,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'last_update_user_name': person['last_update_user_name'],
 			'unit_id': person['unit_id'],
 			'page_id': person['page_id'],
-			'updated': person['updated'].isoformat() + "Z",
+			'updated': person['updated'].isoformat() + "Z" if person['updated'] is not None else None,
 			'created': person['created'].isoformat() + "Z",
 			'collection_id': self.collection_id(),
 			'collection_info': person['collection_info'],
