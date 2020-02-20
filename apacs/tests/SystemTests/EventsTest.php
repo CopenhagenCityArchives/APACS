@@ -66,15 +66,14 @@ class EventsTest extends \UnitTestCase
     }
 
     public function test_GetEventEntries() {
-
         $response = $this->http->request('GET', 'events');
         $this->assertEquals(200, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertNotNull($responseData);
         $this->assertEquals(797, $responseData[0]['users_id']);
-        $this->assertEquals(2, $responseData[0]['count(users_id)']);
+        $this->assertEquals(2, $responseData[0]['count']);
         $this->assertEquals(798, $responseData[1]['users_id']);
-        $this->assertEquals(1, $responseData[1]['count(users_id)']);
+        $this->assertEquals(1, $responseData[1]['count']);
 
     }
 
@@ -84,10 +83,10 @@ class EventsTest extends \UnitTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertNotNull($responseData);
-        $this->assertEquals('User_3', $responseData[2]['username']);
-        $this->assertEquals(1, $responseData[2]['count(users_id)']);
-        $this->assertEquals(800, $responseData[3]['users_id']);
-        $this->assertEquals(2, $responseData[3]['count(users_id)']);
+        $this->assertEquals('User_4', $responseData[0]['username']);
+        $this->assertEquals(2, $responseData[0]['count']);
+        $this->assertEquals(797, $responseData[1]['users_id']);
+        $this->assertEquals(2, $responseData[1]['count']);
     }
 
 
