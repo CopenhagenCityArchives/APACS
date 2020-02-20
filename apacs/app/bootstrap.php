@@ -125,7 +125,7 @@ try {
 	$info->get('/exceptions', 'GetSystemExceptions');
 
 	$info->get('/events', 'GetEventEntriesForLastWeek');
-	$info->get('/events/{event_type}/{num_weeks:[0-9]+}', 'GetEventEntries');
+	$info->get('/events/{event_type}/{unix_time:[0-9]+}', 'GetEventEntries');
 
 	//Add new collection
 	$info->post('/collections', 'CreateOrUpdateCollection');

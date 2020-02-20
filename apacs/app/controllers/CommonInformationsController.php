@@ -807,9 +807,9 @@ class CommonInformationsController extends MainController {
 		$events = new Events();
 		$this->response->setJsonContent($events->GetNumEventsForUsers(null, null));
 	}
-	public function GetEventEntries($event_type, $num_weeks) {
+	public function GetEventEntries($event_type, $unix_time) {
 		$events = new Events();
-		$this->response->setJsonContent($events->GetNumEventsForUsers($event_type, $num_weeks));
+		$this->response->setJsonContent($events->GetNumEventsForUsers($event_type, $unix_time));
 	}
 
 	public function GetSystemExceptions() {

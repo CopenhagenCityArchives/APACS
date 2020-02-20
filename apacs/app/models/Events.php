@@ -112,18 +112,18 @@ class Events extends \Phalcon\Mvc\Model {
 		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
 	}*/
 
-	public function GetNumEventsForUsers($event_type, $num_weeks) {
+	public function GetNumEventsForUsers($event_type, $unix_time) {
 
 		if ($event_type == null) {
 			$event_type = "create";
 		}
-		if ($num_weeks == null) {
-			$num_weeks = 1;
+		if ($unix_time == null) {
+			$unix_time = strtotime("-1 week");
 		}
 		
-		$sql = 'SELECT users_id, count(users_id), user.username FROM apacs_events join apacs_users User on apacs_events.users_id = User.id WHERE event_type = :event_type and apacs_events.timestamp > (now() - interval :num_weeks week) GROUP BY users_id';
+		$sql = 'SELECT users_id, count(users_id), user.username FROM apacs_events join apacs_users User on apacs_events.users_id = User.id WHERE event_type = :event_type and apacs_events.timestamp > from_unixtime(:unix_time) GROUP BY users_id';
 
-		$resultSet = $this->getDI()->get('db')->query($sql, ['event_type' => $event_type, 'num_weeks' => $num_weeks]);
+		$resultSet = $this->getDI()->get('db')->query($sql, ['event_type' => $event_type, 'unix_time' => $unix_time]);
 		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
 		$result = [];
 		foreach($resultSet->fetchAll() as $row){
