@@ -59,5 +59,7 @@ class TestDatabaseManager {
 
 	}
 
-
+	public function createEventEntries() {
+		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-apacs-events-create-entries.sql'));
+	}
 }
