@@ -124,6 +124,8 @@ try {
 
 	$info->get('/exceptions', 'GetSystemExceptions');
 
+	$info->get('/events', 'GetCreatedPostsForLastWeek');
+
 	//Add new collection
 	$info->post('/collections', 'CreateOrUpdateCollection');
 

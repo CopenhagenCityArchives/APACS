@@ -111,4 +111,17 @@ class Events extends \Phalcon\Mvc\Model {
 		// Execute the query
 		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
 	}*/
+
+	public function GetCreateEventsWeek() {
+		
+		$sql = 'SELECT users_id, count(users_id) FROM apacs_events WHERE event_type = "create" and apacs_events.timestamp > (now() - interval 1 week) GROUP BY users_id';
+
+		$resultSet = $this->getDI()->get('db')->query($sql);
+		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		$result = [];
+		foreach($resultSet->fetchAll() as $row){
+			($result[] = $row);
+		}
+		return $result;
+	}
 }
