@@ -51,7 +51,7 @@ class EventsTest extends \UnitTestCase
         
         // Clear database
         $testDBManager = new Mocks\TestDatabaseManager($di);
-        $testDBManager->cleanUpApacsStructure();
+      //  $testDBManager->cleanUpApacsStructure();
     }
 
     public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
@@ -83,13 +83,11 @@ class EventsTest extends \UnitTestCase
         $this->assertEquals(200, $response->getStatusCode());
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertNotNull($responseData);
-        $this->assertEquals('User_4', $responseData[0]['username']);
+        $this->assertEquals('User_1', $responseData[0]['username']);
+        $this->assertEquals('User_4', $responseData[1]['username']);
         $this->assertEquals(2, $responseData[0]['count']);
-        $this->assertEquals(797, $responseData[1]['users_id']);
+        $this->assertEquals(800, $responseData[1]['users_id']);
         $this->assertEquals(2, $responseData[1]['count']);
     }
-
-
-
 }
 

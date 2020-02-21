@@ -121,7 +121,7 @@ class Events extends \Phalcon\Mvc\Model {
 			$unix_time = strtotime("-1 week");
 		}
 		
-		$sql = 'SELECT users_id, count(users_id) as count, user.username FROM apacs_events join apacs_users User on apacs_events.users_id = User.id WHERE event_type = :event_type and apacs_events.timestamp > from_unixtime(:unix_time) GROUP BY users_id order by count desc';
+		$sql = 'SELECT users_id, count(users_id) AS count, user.username FROM apacs_events join apacs_users User ON apacs_events.users_id = User.id WHERE event_type = :event_type AND apacs_events.timestamp > from_unixtime(:unix_time) GROUP BY users_id ORDER BY count DESC, username ASC';
 
 		$resultSet = $this->getDI()->get('db')->query($sql, ['event_type' => $event_type, 'unix_time' => $unix_time]);
 		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
