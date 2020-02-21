@@ -320,6 +320,7 @@ ORDER BY burial_persons_positions.order, burial_persons_positions.id ASC
 			'last_update_user_id': person['last_update_user_id'],
 			'last_update_user_name': person['last_update_user_name'],
 			'unit_id': person['unit_id'],
+			'unit_description' : person['unit_description'],
 			'page_id': person['page_id'],
 			'updated': f"{person['updated'].date().isoformat()}T00:00:00Z" if person['updated'] is not None else None,
 			'created': f"{person['created'].date().isoformat()}T00:00:00Z" if person['created'] is not None else None,
