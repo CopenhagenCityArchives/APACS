@@ -645,6 +645,16 @@
             "sortable": true,
             "type": "string",
             "view_name": "Seneste opdaterers brugernavn"
+        },
+        "unit_description": {
+            "collections": [
+                1
+            ],
+            "name": "unit_description",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Protokol"
         }
     },
     "types": {
