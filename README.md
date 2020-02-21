@@ -116,3 +116,11 @@ Go to /apacs/tests_api
 ```
 jasmine-node /tests
 ```
+
+# Statistics
+
+Indsættes hvis banana-int coren nulstlles, eksempelvis ved rebuild af Solr.
+Husk at lave schemaet om, så dashboard-feltet er string og ikke multivalued (må ikke være et array), EFTER at dokumentet er indsat.
+Indsættes her: https://aws.kbhkilder.dk/solr/#/banana-int
+Statistikken kan ses her: http://kbhkilder.dk/stats/#/dashboard/solr/Brugerstats
+Credentials: kbharkiv og samme kodeord som APACS-databasen.
