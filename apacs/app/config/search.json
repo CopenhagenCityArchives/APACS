@@ -650,10 +650,14 @@
             "collections": [
                 1
             ],
+            "datasource": {
+                "field": "description",
+                "url": "https://www.kbhkilder.dk/1508/experimental/api/units?description="
+            },
             "name": "unit_description",
             "searchable": true,
             "sortable": true,
-            "type": "string",
+            "type": "typeahead",
             "view_name": "Protokol"
         }
     },
