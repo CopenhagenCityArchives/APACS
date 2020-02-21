@@ -43,6 +43,7 @@
   <field name="post_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="entry_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="unit_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
+  <field name="unit_description" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
   <field name="page_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_id" type="int" indexed="true" stored="true" required="true" multiValued="false"/>
   <field name="collection_info" type="string" indexed="true" stored="true" required="true" multiValued="false"/>
