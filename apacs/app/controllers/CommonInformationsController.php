@@ -139,41 +139,29 @@ class CommonInformationsController extends MainController {
 		$request = $this->request;
 
 		$collectionId = $request->getQuery('collection_id', 'int', null, true);
-		$taskId = $request->getQuery('task_id', 'int', null, true);
-		$index_active = $request->getQuery('index_active', 'int', null, true);
+		$description = $request->getQuery('description', 'string', null, true);
 
-		if (is_null($collectionId)) {
-			$this->error('collection_id is required');
-			return;
+		$conditions = [];
+		$bindings = [];
+		if (!is_null($collectionId)) {
+			$conditions[] = 'collections_id = :colId:';
+			$bindings['colId'] = $collectionId;
 		}
-
-		$conditions = '';
-
-		if (!is_null($index_active)) {
-			$conditions = $conditions . 'index_active = ' . $index_active;
+		if (!is_null($description)) {
+			$conditions[] = 'description LIKE :desc:';
+			$bindings['desc'] = '%' . $description . '%';
 		}
-
-		if (!is_null($taskId)) {
-			$conditions = $conditions . 'tasks_id = ' . $taskId;
-		}
-
-		$resultSet = Units::find([
-			'collection_id' => $collectionId,
+		
+		$units = Units::find([
+			'conditions' => implode(' AND ', $conditions),
+			'bind' => $bindings,
 		]);
 
-		$results = [];
-		$i = 0;
-
-		foreach ($resultSet as $row) {
-			$results[$i] = array_intersect_key($row->toArray(), array_flip(Units::$publicFields));
-			$results[$i]['tasks'] = $row->getTasksUnits(['conditions' => $conditions])->toArray();
-			$i++;
-		}
 
 		$this->response->setHeader("Cache-Control", "max-age=600");
 
-		if (count($results) > 0) {
-			$this->response->setJsonContent($results, JSON_NUMERIC_CHECK);
+		if (count($units) > 0) {
+			$this->response->setJsonContent($units, JSON_NUMERIC_CHECK);
 		} else {
 			$this->response->setJsonContent([]);
 		}
