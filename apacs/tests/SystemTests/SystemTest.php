@@ -89,7 +89,6 @@ class SystemTest extends \UnitTestCase
         catch(Exception $e){
             $response = $e->getResponse();
             $responseBodyAsString = $response->getBody()->getContents();
-            var_dump($responseBodyAsString);
         }
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -186,10 +185,11 @@ class SystemTest extends \UnitTestCase
             'json' => $request
         ]);
 
+        $this->assertEquals(200, $response->getStatusCode());
+
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
-        $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(10000, $responseData['post_id']);
     }
 
@@ -291,5 +291,96 @@ class SystemTest extends \UnitTestCase
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage('<h1>Bad request!</h1>');
         $response = $this->http->request('DELETE', 'posts/');
+    }
+
+    public function test_UpdatePost_NewUpdated_SameCreated() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $this->testDBManager->refreshEntryForPost1000();
+        $postBefore = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = 10000 LIMIT 1')->fetch();
+        $response = $this->http->request('PATCH', 'posts/10000', [
+            'json' => [
+                'x' => "0.5",
+                'y' => "0.7",
+                'height' => "0.2",
+                'width' => "0.5",
+                'page_id' => $postBefore['pages_id']
+            ],
+            'query' => [ 'task_id' => 1 ]
+        ]);
+        $postAfter = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = 10000 LIMIT 1')->fetch();
+        
+        $this->assertNotNull($postBefore['updated'], "Updated was NULL before update.");
+        $this->assertNotNull($postAfter['updated'], "Updated was NULL after update.");
+        $this->assertGreaterThan(strToTime($postBefore['updated']), strToTime($postAfter['updated']));
+        $this->assertEquals($postBefore['created'], $postAfter['created']);
+        $this->assertEquals(0.5, $postAfter['x']);
+        $this->assertEquals(0.7, $postAfter['y']);
+        $this->assertEquals(0.2, $postAfter['height']);
+        $this->assertEquals(0.5, $postAfter['width']);
+    }
+
+    public function test_UpdateEntry_NewUpdated_SameCreated_NewLastUpdateUsersId() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $this->testDBManager->refreshEntryForPost1000();
+        $entryBefore = $this->testDBManager->query('SELECT * FROM `apacs_entries` WHERE `posts_id` = 10000 LIMIT 1')->fetch();
+        $entryId = $entryBefore['id'];
+        $concreteEntryId = $entryBefore['concrete_entries_id'];
+        $concreteEntryBefore = $this->testDBManager->query('SELECT * FROM `burial_persons` WHERE `id` = ' . $concreteEntryId . ' LIMIT 1')->fetch();
+
+        // perform a change
+        $updateRequest = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'), true);
+        $updateRequest['persons']['firstnames'] = 'Cirkeline';
+        $updateResponse = $this->http->request('PUT', 'entries/' . $entryId, [ 'json' => $updateRequest ]);
+        $this->assertEquals(200, $updateResponse->getStatusCode());
+        $updateResponseData = json_decode((string) $updateResponse->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
+
+        $entryAfter = $this->testDBManager->query('SELECT * FROM `apacs_entries` WHERE `posts_id` = 10000 LIMIT 1')->fetch();
+        $concreteEntryAfter = $this->testDBManager->query('SELECT * FROM `burial_persons` WHERE `id` = ' . $concreteEntryId . ' LIMIT 1')->fetch();
+        $this->assertGreaterThan(strToTime($entryBefore['updated']), strToTime($entryAfter['updated']));
+        $this->assertEquals("Bartoline", $concreteEntryBefore['firstnames']);
+        $this->assertEquals("Cirkeline", $concreteEntryAfter['firstnames']);
+        $this->assertEquals($entryBefore['created'], $entryAfter['created']);
+        $this->assertEquals(NULL, $entryBefore['last_update_users_id']);
+        $this->assertEquals(1, $entryAfter['last_update_users_id']);
+    }
+
+    public function test_UpdateErrorReport_NewUpdated_SameCreated() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $this->testDBManager->refreshEntryForPost1000();
+        
+        $errorReportData = [
+            "add_metadata" => true,
+            "task_id" => 1,
+            "post_id" => 10000,
+            "comment" => "This is a test error report.",
+            "entity" => "persons.firstnames"
+        ];
+        $createResponse = $this->http->request('POST', '/errorreports', [ 'json' => $errorReportData ]);
+        $this->assertEquals(200, $createResponse->getStatusCode());
+
+        $reportBefore = $this->testDBManager->query('SELECT * FROM `apacs_errorreports` LIMIT 1')->fetch();
+        $errorReportUpdate = [
+            "toSuperUser" => 1
+        ];
+        $this->http->request('PATCH', 'errorreports/' . $reportBefore['id'], [ 'json' => $errorReportUpdate ]);
+        $reportAfter = $this->testDBManager->query('SELECT * FROM `apacs_errorreports` LIMIT 1')->fetch();
+        $errorReportUpdate["toSuperUser"] = 0;
+        sleep(1);
+        $this->http->request('PATCH', 'errorreports/' . $reportBefore['id'], [ 'json' => $errorReportUpdate ]);
+        $reportLast = $this->testDBManager->query('SELECT * FROM `apacs_errorreports` LIMIT 1')->fetch();
+        
+        $this->assertNull($reportBefore['updated']);
+        $this->assertNotNull($reportAfter['updated']);
+        $this->assertNotNull($reportBefore['created']);
+        $this->assertNotNull($reportAfter['created']);
+        $this->assertNotNull($reportLast['created']);
+        $this->assertEquals($reportBefore['created'], $reportAfter['created']);
+        $this->assertEquals($reportAfter['created'], $reportLast['created']);
+        $this->assertGreaterThan($reportAfter['updated'], $reportLast['updated']);
+
+        $this->assertEquals(0, $reportBefore['toSuperUser']);
+        $this->assertEquals(1, $reportAfter['toSuperUser']);
+        $this->assertEquals(0, $reportLast['toSuperUser']);
     }
 }

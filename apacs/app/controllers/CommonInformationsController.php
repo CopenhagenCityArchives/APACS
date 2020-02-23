@@ -139,41 +139,29 @@ class CommonInformationsController extends MainController {
 		$request = $this->request;
 
 		$collectionId = $request->getQuery('collection_id', 'int', null, true);
-		$taskId = $request->getQuery('task_id', 'int', null, true);
-		$index_active = $request->getQuery('index_active', 'int', null, true);
+		$description = $request->getQuery('description', 'string', null, true);
 
-		if (is_null($collectionId)) {
-			$this->error('collection_id is required');
-			return;
+		$conditions = [];
+		$bindings = [];
+		if (!is_null($collectionId)) {
+			$conditions[] = 'collections_id = :colId:';
+			$bindings['colId'] = $collectionId;
 		}
-
-		$conditions = '';
-
-		if (!is_null($index_active)) {
-			$conditions = $conditions . 'index_active = ' . $index_active;
+		if (!is_null($description)) {
+			$conditions[] = 'description LIKE :desc:';
+			$bindings['desc'] = '%' . $description . '%';
 		}
-
-		if (!is_null($taskId)) {
-			$conditions = $conditions . 'tasks_id = ' . $taskId;
-		}
-
-		$resultSet = Units::find([
-			'collection_id' => $collectionId,
+		
+		$units = Units::find([
+			'conditions' => implode(' AND ', $conditions),
+			'bind' => $bindings,
 		]);
 
-		$results = [];
-		$i = 0;
-
-		foreach ($resultSet as $row) {
-			$results[$i] = array_intersect_key($row->toArray(), array_flip(Units::$publicFields));
-			$results[$i]['tasks'] = $row->getTasksUnits(['conditions' => $conditions])->toArray();
-			$i++;
-		}
 
 		$this->response->setHeader("Cache-Control", "max-age=600");
 
-		if (count($results) > 0) {
-			$this->response->setJsonContent($results, JSON_NUMERIC_CHECK);
+		if (count($units) > 0) {
+			$this->response->setJsonContent($units, JSON_NUMERIC_CHECK);
 		} else {
 			$this->response->setJsonContent([]);
 		}
@@ -407,6 +395,9 @@ class CommonInformationsController extends MainController {
 		$post->height = $input['height'];
 		$post->width = $input['width'];
 		$post->complete = 0;
+		if (!is_null($id)) {
+			$post->updated = date('Y-m-d H:i:s');
+		}
 
 		if ($post->ApproximatePostExists()) {
 			$this->response->setStatusCode(403, 'Approximate post already exists');
@@ -483,6 +474,7 @@ class CommonInformationsController extends MainController {
 			$p_id = $entry_info['persons']['id'];
 			$e_id = $metadata['entry_id'];
 			$t_id = $metadata['task_id'];
+			$solrId = $metadata['collection_id'] . '-' . $entry->concrete_entries_id;
 
 			//Delete the specific post
 			$deleteQuery = $this->modelsManager->createQuery('DELETE FROM Posts WHERE id = :id:');
@@ -494,7 +486,6 @@ class CommonInformationsController extends MainController {
 
 			// TODO: Find correct concrete entity query, and further futureproof for new tasks
 			if ($tasks_id == 1 || $tasks_id == 3) {
-
 				$this->getDI()->get('db')->query('DELETE FROM burial_persons WHERE id = :id', ['id' => $p_id]);
 				$this->getDI()->get('db')->query('DELETE FROM burial_persons_deathcauses WHERE persons_id = :id', ['id' => $p_id]);
 				$this->getDI()->get('db')->query('DELETE FROM burial_persons_positions WHERE persons_id = :id', ['id' => $p_id]);
@@ -507,8 +498,8 @@ class CommonInformationsController extends MainController {
 			$response['data'] = $postData;
 
 			try{
-				//Delete from Solr using entry_id
-				ConcreteEntries::DeleteFromSolr($e_id);
+				//Delete from Solr using post id
+				ConcreteEntries::DeleteFromSolr($this->getDI()->get('solrConfig'), $solrId);
 			}
 			catch(Exception $e){
 				$exception = new SystemExceptions();
@@ -667,7 +658,7 @@ class CommonInformationsController extends MainController {
 			$auth = $this->getDI()->get('AccessController');
 
 			$metadata['user_can_edit'] = $auth->UserCanEdit($entries[0]);
-			unset($metadata['entry_id']);
+			$metadata['entry_id'];
 			$response['metadata'] = $metadata;
 			$response['data'] = $postData;
 			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
@@ -723,7 +714,7 @@ class CommonInformationsController extends MainController {
 		//User id and task id is set
 		if (!is_null($userId) && !is_null($taskId)) {
 			//Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
 
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
@@ -731,10 +722,10 @@ class CommonInformationsController extends MainController {
 
 			//The user is a super user. Let's also get error reports older than 7 days
 			if ($superUsers !== false) {
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $taskId;
+				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $taskId;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
-				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
+				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
 				//return;
 			}
 			$errors = ErrorReports::setLabels($errors);
@@ -744,13 +735,13 @@ class CommonInformationsController extends MainController {
 		// User id is set and task id is not set
 		if (!is_null($userId) && is_null($taskId)) {
 			// Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.last_update > DATE(NOW() - INTERVAL 1 WEEK)';
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK)';
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
 			// Get all the tasks that the user is superuser for
 			$superUsers = SuperUsers::Find(['columns' => 'tasks_id', 'conditions' => 'users_id = :userId:', 'bind' => ['userId' => $userId]]);
 			foreach ($superUsers as $superUser) {
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.last_update < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
+				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
 			}
@@ -798,6 +789,15 @@ class CommonInformationsController extends MainController {
 
 		$events = new Events();
 		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray(), JSON_NUMERIC_CHECK);
+	}
+
+	public function GetEventEntriesForLastWeek() {
+		$events = new Events();
+		$this->response->setJsonContent($events->GetNumEventsForUsers(null, null));
+	}
+	public function GetEventEntries($event_type, $unix_time) {
+		$events = new Events();
+		$this->response->setJsonContent($events->GetNumEventsForUsers($event_type, $unix_time));
 	}
 
 	public function GetSystemExceptions() {

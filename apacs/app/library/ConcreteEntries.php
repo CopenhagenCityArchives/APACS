@@ -582,8 +582,8 @@ class ConcreteEntries {
 		$solrData['entry_id'] = $entryCon['entry_id'];
 		$solrData['user_id'] = $entryCon['user_id'];
 		$solrData['user_name'] = $entryCon['user_name'];
-		//$solrData['last_update'] = $entryCon['last_update'];
-		$solrData['last_update'] = date('Y-m-d\TH:i:s.u\Z', strtotime($entryCon['last_update']));
+		//$solrData['updated'] = $entryCon['updated'];
+		$solrData['updated'] = date('Y-m-d\TH:i:s.u\Z', strtotime($entryCon['updated']));
 
 		$solrData['collection_info'] = $entryCon['collection_name'];
 
@@ -630,7 +630,7 @@ class ConcreteEntries {
 		return $result->getStatus();
 	}
 
-	public static function DeleteFromSolr($id){
+	public static function DeleteFromSolr($config, $solr_id){
 		$config = [
 			'endpoint' =>
 			['aws' =>
@@ -647,7 +647,7 @@ class ConcreteEntries {
 		$update = $client->createUpdate();
 
 		// add the delete query and a commit command to the update query
-		$update->addDeleteQuery('id:' . $id);
+		$update->addDeleteQuery('id:' . $solr_id);
 		$update->addCommit();
 
 		// this executes the query and returns the result

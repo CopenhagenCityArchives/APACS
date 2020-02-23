@@ -615,6 +615,50 @@
             "sortable": true,
             "type": "typeahead",
             "view_name": "Skolens navn"
+        },
+        "updated": {
+            "collections": [
+                1
+            ],
+            "name": "updated",
+            "searchable": true,
+            "sortable": true,
+            "type": "date",
+            "view_name": "Opdateringsdato"
+        },
+        "created": {
+            "collections": [
+                1
+            ],
+            "name": "created",
+            "searchable": true,
+            "sortable": true,
+            "type": "date",
+            "view_name": "Indtastningsdato"
+        },
+        "last_update_user_name": {
+            "collections": [
+                1
+            ],
+            "name": "last_update_user_name",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Seneste opdaterers brugernavn"
+        },
+        "unit_description": {
+            "collections": [
+                1
+            ],
+            "datasource": {
+                "field": "description",
+                "url": "https://www.kbhkilder.dk/1508/experimental/api/units?description="
+            },
+            "name": "unit_description",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "view_name": "Protokol"
         }
     },
     "types": {

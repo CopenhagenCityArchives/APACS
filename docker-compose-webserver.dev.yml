@@ -10,6 +10,7 @@ services:
       - db
       - solr
     volumes:
+      - ./test-assets:/test-assets
       - ./apacs:/code
       - ./.env:/code/app/config/.env
   nginx:
@@ -25,8 +26,8 @@ services:
   composer:
       container_name: composer
       restart: 'no'
-      image: composer/composer:php7
-      command: update
+      image: composer
+      command: install
       working_dir: /code
       volumes:
         - ./apacs:/code
@@ -55,5 +56,6 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
         - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf    
+        - ./infrastructure/solr/web.xml:/opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
 networks:
     default:

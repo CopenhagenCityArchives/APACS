@@ -81,6 +81,7 @@ try {
 
 	$info->get('/tasksunits', 'GetTasksUnits');
 	$info->get('/units/{unitId:[0-9]+}', 'GetUnit');
+	$info->get('/units', 'GetUnits');
 	//   $info->post('/units', 'ImportUnits');
 
 	$info->get('/pages', 'GetPages');
@@ -123,6 +124,9 @@ try {
 	$info->get('/users/{id:[0-9]+}', 'GetUser');
 
 	$info->get('/exceptions', 'GetSystemExceptions');
+
+	$info->get('/events', 'GetEventEntriesForLastWeek');
+	$info->get('/events/{event_type}/{unix_time:[0-9]+}', 'GetEventEntries');
 
 	//Add new collection
 	$info->post('/collections', 'CreateOrUpdateCollection');
@@ -247,6 +251,6 @@ try {
 
 	} 
 	$di->get('response')->setStatusCode(500, "Server error");
-	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage()]);
+	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage(), 'trace' => explode("\n", $e->getTraceAsString())]);
 	$di->get('response')->send();
 }

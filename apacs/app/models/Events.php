@@ -111,4 +111,24 @@ class Events extends \Phalcon\Mvc\Model {
 		// Execute the query
 		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
 	}*/
+
+	public function GetNumEventsForUsers($event_type, $unix_time) {
+
+		if ($event_type == null) {
+			$event_type = "create";
+		}
+		if ($unix_time == null) {
+			$unix_time = strtotime("-1 week");
+		}
+		
+		$sql = 'SELECT users_id, count(users_id) AS count, user.username FROM apacs_events join apacs_users User ON apacs_events.users_id = User.id WHERE event_type = :event_type AND apacs_events.timestamp > from_unixtime(:unix_time) GROUP BY users_id ORDER BY count DESC, username ASC';
+
+		$resultSet = $this->getDI()->get('db')->query($sql, ['event_type' => $event_type, 'unix_time' => $unix_time]);
+		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
+		$result = [];
+		foreach($resultSet->fetchAll() as $row){
+			($result[] = $row);
+		}
+		return $result;
+	}
 }

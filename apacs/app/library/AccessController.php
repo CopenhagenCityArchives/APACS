@@ -191,7 +191,7 @@ class AccessController implements IAccessController {
 			return true;
 		}
 /*
-		$errorReport = ErrorReports::findFirst(['conditions' => 'entries_id = :entriesId: AND deleted = 0', 'bind' => ['entriesId' => $entry->id], 'order' => 'last_update']);
+		$errorReport = ErrorReports::findFirst(['conditions' => 'entries_id = :entriesId: AND deleted = 0', 'bind' => ['entriesId' => $entry->id], 'order' => 'updated']);
 
 		$attemptingUserIsSuperUser = $this->IsSuperUser($attemptingUser);
 
@@ -203,7 +203,7 @@ class AccessController implements IAccessController {
 		//If error reports are given and the error report are older than a week and the user is super user
 		if ($errorReport &&
 			$attemptingUserIsSuperUser &&
-			strtotime($errorReport->last_update) < strtotime('-1 week')) {
+			strtotime($errorReport->updated) < strtotime('-1 week')) {
 			return true;
 		} else {
 			$this->message = 'Du har ikke rettighed til at rette indtastningen, da det er under 7 dage siden, den er blevet fejlmeldt';

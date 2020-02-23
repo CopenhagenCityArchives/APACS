@@ -54,9 +54,11 @@ CREATE TABLE IF NOT EXISTS `apacs_entries` (
   `posts_id` int(11) NOT NULL,
   `tasks_id` int(11) NOT NULL,
   `users_id` int(11) NOT NULL,
+  `last_update_users_id` int(11) NULL,
   `concrete_entries_id` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
   `complete` tinyint(1) NOT NULL DEFAULT '0',
-  `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
@@ -74,7 +76,8 @@ CREATE TABLE `apacs_errorreports` (
   `comment` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `concrete_entries_id` int(11) DEFAULT NULL,
   `original_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `toSuperUser` tinyint(1) DEFAULT '0',
   `superUserTime` timestamp NULL,
   `field_id` int(11) DEFAULT NULL,
@@ -183,7 +186,8 @@ CREATE TABLE IF NOT EXISTS `apacs_posts` (
   `y` decimal(21,18) DEFAULT NULL,
   `complete` tinyint(1) NOT NULL DEFAULT '0',
   `image` blob,
-  `last_update` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=247 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
@@ -262,7 +266,8 @@ CREATE TABLE IF NOT EXISTS `apacs_units` (
   `level2_order` int(11) DEFAULT NULL,
   `level3_value` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
   `level3_order` int(11) DEFAULT NULL,
-  `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated` timestamp NULL DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_public` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `level_value` (`level1_value`,`level2_value`,`level3_value`) COMMENT 'Used to make distinct queries for values faster',

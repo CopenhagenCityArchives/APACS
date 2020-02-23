@@ -335,12 +335,16 @@ class IndexDataController extends MainController {
 				$userId = $this->auth->GetUserId();
 				$userName = $this->auth->GetUserName();
 				$entry = new Entries();
+				$lastUpdateUserName = NULL;
+				$lastUpdateUserId = NULL;
 			} else {
 				//Existing entry
 				$entry = Entries::findFirstById($entryId);
 
 				$userId = $entry->users_id;
 				$userName = Users::findFirstById($entry->users_id)->username;
+				$lastUpdateUserId = $this->auth->GetUserId();
+				$lastUpdateUserName = $this->auth->GetUserName();
 
 				if (!$this->AuthorizeUser($entry)) {
 					return;
@@ -366,7 +370,9 @@ class IndexDataController extends MainController {
 			$entry->posts_id = $jsonData['post_id'];
 			$entry->concrete_entries_id = $concreteId;
 			$entry->users_id = $userId;
+			$entry->last_update_users_id = $lastUpdateUserId;
 			$entry->complete = 0;
+			$entry->updated = new \Phalcon\Db\RawValue('CURRENT_TIMESTAMP');
 
 			if (!$entry->save()) {
 				throw new RuntimeException('could not save entry information' . $entry->getMessages()[0]);
@@ -389,7 +395,7 @@ class IndexDataController extends MainController {
 			$solrDataToSave = array_merge(
 				$solrData,
 				$conEnData,
-				['user_id' => $userId, 'user_name' => $userName],
+				['user_id' => $userId, 'user_name' => $userName, 'last_update_user_id' => $lastUpdateUserId, 'last_update_user_name' => $lastUpdateUserName ],
 				['jsonObj' => json_encode($solrJsonObj)] //TODO: Hardcoded name of main entity
 			);
 
@@ -406,6 +412,7 @@ class IndexDataController extends MainController {
 					'type' => 'event_save_solr_error',
 					'details' => json_encode(['exception' => $e->getMessage(), 'rawPostData' => $this->request->getRawBody()]),
 				]);
+				$solrId = null;
 			}
 
 			$entry->complete = 1;

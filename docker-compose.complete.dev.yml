@@ -22,8 +22,8 @@ services:
   composer:
       container_name: composer
       restart: 'no'
-      image: composer/composer:php7
-      command: update
+      image: composer
+      command: install
       working_dir: /code
       volumes:
         - ./apacs:/code   
