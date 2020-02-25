@@ -408,7 +408,7 @@ class CommonInformationsController extends MainController {
 		//Saving the post
 		if (!$post->save()) {
 			$exceptionMsg = 'Could not save post.';
-			foreach ($post->getMessage() as $message) {
+			foreach ($post->getMessages() as $message) {
 				$exceptionMsg = $exceptionMsg . " " . $message;
 			}
 			throw new InvalidArgumentException($exceptionMsg);
