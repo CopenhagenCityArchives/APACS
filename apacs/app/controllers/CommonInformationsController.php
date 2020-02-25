@@ -407,7 +407,11 @@ class CommonInformationsController extends MainController {
 
 		//Saving the post
 		if (!$post->save()) {
-			throw new InvalidArgumentException('Could not save post.');
+			$exceptionMsg = 'Could not save post.';
+			foreach ($post->getMessage() as $message) {
+				$exceptionMsg = $exceptionMsg . " " . $message;
+			}
+			throw new InvalidArgumentException($exceptionMsg);
 		}
 
 		//Saving the thumb
@@ -437,7 +441,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		$this->response->setStatusCode(200, 'Post created');
-		$this->response->setJsonContent(['post_id' => $post->id]);
+		$this->response->setContent(json_encode(['post_id' => $post->id], JSON_NUMERIC_CHECK));
 	}
 
 	//New hard Delete
