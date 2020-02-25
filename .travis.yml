@@ -30,7 +30,7 @@ before_install:
 # setup infrastructure using docker-compose
 install:
   - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
-  - sleep 120
+  - sleep 30
 
 # run tests inside Phalcon container
 script:
