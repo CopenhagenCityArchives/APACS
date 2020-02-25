@@ -60,7 +60,7 @@ class Posts extends \Phalcon\Mvc\Model {
 		//imagejpeg(imagecrop($image, $rect), './temp.jpg', 60);
 
 		//More usable solution
-		$tempPath = './ ' . md5(rand()) . '.jpg';
+		$tempPath = './' . md5(rand()) . '.jpg';
 		$resizedImage = imagecreatetruecolor($rect['width'], $rect['height']);
 		if (!imagecopyresized($resizedImage, $image, 0, 0, $rect['x'], $rect['y'], $rect['width'], $rect['height'], $rect['width'], $rect['height'])) {
 			throw new RuntimeException('could not crop image for post id ' . $this->id);
