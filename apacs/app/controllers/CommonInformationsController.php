@@ -415,7 +415,10 @@ class CommonInformationsController extends MainController {
 		}
 
 		//Saving the thumb
-		$post->SaveThumbImage();
+		if ($post->SaveThumbImage() == FALSE) {
+			$this->response->setStatusCode(500, 'Failed creating thumbnail.');
+			return;
+		}
 
 		//Create and save event
 		$event = new Events();

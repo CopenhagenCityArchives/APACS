@@ -39,6 +39,10 @@ class Posts extends \Phalcon\Mvc\Model {
 		//var_dump();
 		$image = imagecreatefromjpeg($this->getPages()->GetLocalPathToConcreteImage());
 
+		if ($image == FALSE) {
+			return FALSE;
+		}
+
 		$imgHeight = imagesy($image);
 		$imgWidth = imagesx($image);
 

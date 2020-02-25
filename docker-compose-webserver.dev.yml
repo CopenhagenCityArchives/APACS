@@ -10,7 +10,6 @@ services:
       - db
       - solr
     volumes:
-      - ./test-assets:/test-assets
       - ./apacs:/code
       - ./.env:/code/app/config/.env
   nginx:
