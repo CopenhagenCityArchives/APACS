@@ -306,8 +306,9 @@ class SystemTest extends \UnitTestCase
             'query' => [ 'task_id' => 1 ]
         ]);
         $this->assertEquals(200, $response->getStatusCode());
+        $responseBody = (string) $response->getBody();
         $responseData = json_decode((string) $response->getBody(), true);
-        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON, got ". $responseBody);
         $postId = $responseData['post_id'];  
         $this->assertInternalType('int', $postId);
 
