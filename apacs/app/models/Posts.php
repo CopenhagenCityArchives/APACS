@@ -40,11 +40,15 @@ class Posts extends \Phalcon\Mvc\Model {
 		$image = imagecreatefromjpeg($this->getPages()->GetLocalPathToConcreteImage());
 
 		if ($image == FALSE) {
-			return FALSE;
+			throw new RuntimeException('Could not find image located at ' . $this->getPages()->GetLocalPathToConcreteImage());
 		}
 
 		$imgHeight = imagesy($image);
 		$imgWidth = imagesx($image);
+
+		if ($imgHeight == FALSE || $imgWidth == FALSE) {
+			throw new RuntimeException('Could not read dimensions of image loaded at ' . $this->getPages()->GetLocalPathToConcreteImage());
+		}
 
 		$rect = [];
 		$rect['x'] = $imgWidth * $this->x;
