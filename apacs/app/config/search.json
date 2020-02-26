@@ -652,7 +652,7 @@
             ],
             "datasource": {
                 "field": "description",
-                "url": "https://www.kbhkilder.dk/1508/experimental/api/units?description="
+                "url": "https://www.kbhkilder.dk/1508/experimental/api/units?collection_id=1&description="
             },
             "name": "unit_description",
             "searchable": true,
