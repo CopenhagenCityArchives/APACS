@@ -161,7 +161,7 @@ class CommonInformationsController extends MainController {
 		$this->response->setHeader("Cache-Control", "max-age=600");
 
 		if (count($units) > 0) {
-			$this->response->setJsonContent($units, JSON_NUMERIC_CHECK);
+			$this->response->setJsonContent($units->toArray(), JSON_NUMERIC_CHECK);
 		} else {
 			$this->response->setJsonContent([]);
 		}
