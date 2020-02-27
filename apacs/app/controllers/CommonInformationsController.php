@@ -155,6 +155,8 @@ class CommonInformationsController extends MainController {
 		$units = Units::find([
 			'conditions' => implode(' AND ', $conditions),
 			'bind' => $bindings,
+			'order' => 'description',
+			'limit' => 100
 		]);
 
 
