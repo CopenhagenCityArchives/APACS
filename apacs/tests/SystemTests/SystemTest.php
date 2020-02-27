@@ -293,6 +293,32 @@ class SystemTest extends \UnitTestCase
         $response = $this->http->request('DELETE', 'posts/');
     }
 
+    public function test_CreatePost() {
+        $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
+        $response = $this->http->request('POST', 'posts', [
+            'json' => [
+                'x' => "0.05",
+                'y' => "0.11",
+                'height' => "0.38",
+                'width' => "0.43",
+                'page_id' => 145054
+            ],
+            'query' => [ 'task_id' => 1 ]
+        ]);
+        $this->assertEquals(200, $response->getStatusCode());
+        $responseBody = (string) $response->getBody();
+        $responseData = json_decode((string) $response->getBody(), true);
+        $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON, got ". $responseBody);
+        $postId = $responseData['post_id'];  
+        $this->assertInternalType('int', $postId);
+
+        $post = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = ' . $postId . ' LIMIT 1')->fetch();
+        $this->assertEquals(0.05, $post['x']);
+        $this->assertEquals(0.11, $post['y']);
+        $this->assertEquals(0.38, $post['height']);
+        $this->assertEquals(0.43, $post['width']);
+    }
+
     public function test_UpdatePost_NewUpdated_SameCreated() {
         $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
         $this->testDBManager->refreshEntryForPost1000();
