@@ -335,6 +335,7 @@ class IndexDataController extends MainController {
 				$userId = $this->auth->GetUserId();
 				$userName = $this->auth->GetUserName();
 				$entry = new Entries();
+				$entry->created = date('Y-m-d H:i:s');
 				$lastUpdateUserName = NULL;
 				$lastUpdateUserId = NULL;
 			} else {
