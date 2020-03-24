@@ -378,18 +378,24 @@ class CommonInformationsController extends MainController {
 		//Check if all required fields are set
 		$this->CheckFields($input, ['x', 'y', 'height', 'width', 'page_id']);
 
-		if (!is_null($id) && Posts::findFirstById($id) == false) {
-			$this->returnError(400, 'Unknown post', 'The post with id ' . $id . ' does not exist');
-			return;
+		if (is_null($id)) {
+			$post = new Posts();
+			$post->created = date('Y-m-d H:i:s');
+		} else {
+			$post = Posts::findFirstById($id);
+			if ($post == false) {
+				$this->returnError(400, 'Unknown post', 'The post with id ' . $id . ' does not exist');
+				return;
+			}
+			$post->updated = date('Y-m-d H:i:s');
 		}
 
 		$page = Pages::findFirst($input['page_id']);
 
-		if($page == false){
+		if ($page == false) {
 			throw InvalidArgumentException("Page " . $input['page_id'] .  " not found");
 		}
 
-		$post = new Posts();
 		$post->id = $id;
 		$post->pages_id = $page->id;
 		$post->x = $input['x'];
@@ -397,9 +403,6 @@ class CommonInformationsController extends MainController {
 		$post->height = $input['height'];
 		$post->width = $input['width'];
 		$post->complete = 0;
-		if (!is_null($id)) {
-			$post->updated = date('Y-m-d H:i:s');
-		}
 
 		if ($post->ApproximatePostExists()) {
 			$this->response->setStatusCode(403, 'Approximate post already exists');
