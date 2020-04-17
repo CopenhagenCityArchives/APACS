@@ -336,12 +336,13 @@ class IndexDataController extends MainController {
 				$userName = $this->auth->GetUserName();
 				$entry = new Entries();
 				$entry->created = date('Y-m-d H:i:s');
+				$entry->updated = NULL;
 				$lastUpdateUserName = NULL;
 				$lastUpdateUserId = NULL;
 			} else {
 				//Existing entry
 				$entry = Entries::findFirstById($entryId);
-
+				$entry->updated = date('Y-m-d H:i:s');
 				$userId = $entry->users_id;
 				$userName = Users::findFirstById($entry->users_id)->username;
 				$lastUpdateUserId = $this->auth->GetUserId();
@@ -373,7 +374,6 @@ class IndexDataController extends MainController {
 			$entry->users_id = $userId;
 			$entry->last_update_users_id = $lastUpdateUserId;
 			$entry->complete = 0;
-			$entry->updated = new \Phalcon\Db\RawValue('CURRENT_TIMESTAMP');
 
 			if (!$entry->save()) {
 				throw new RuntimeException('could not save entry information' . $entry->getMessages()[0]);
