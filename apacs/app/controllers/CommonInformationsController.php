@@ -720,7 +720,7 @@ class CommonInformationsController extends MainController {
 		//User id and task id is set
 		if (!is_null($userId) && !is_null($taskId)) {
 			//Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK)) AND tasks_id = ' . $taskId;
 
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
@@ -741,13 +741,13 @@ class CommonInformationsController extends MainController {
 		// User id is set and task id is not set
 		if (!is_null($userId) && is_null($taskId)) {
 			// Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK)';
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))';
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
 			// Get all the tasks that the user is superuser for
 			$superUsers = SuperUsers::Find(['columns' => 'tasks_id', 'conditions' => 'users_id = :userId:', 'bind' => ['userId' => $userId]]);
 			foreach ($superUsers as $superUser) {
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
+				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
 			}
