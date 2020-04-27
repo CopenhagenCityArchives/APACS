@@ -9,7 +9,7 @@ class Posts extends \Phalcon\Mvc\Model {
 		$this->belongsTo('pages_id', 'Pages', 'id');
 		$this->hasMany('id', 'TasksPosts', 'tasks_id');
 		$this->hasMany('id', 'Entries', 'posts_id');
-		$this->skipAttributes(['created']);
+		$this->skipAttributes(['last_update']);
 	}
 
 	/**
@@ -39,8 +39,16 @@ class Posts extends \Phalcon\Mvc\Model {
 		//var_dump();
 		$image = imagecreatefromjpeg($this->getPages()->GetLocalPathToConcreteImage());
 
+		if ($image == FALSE) {
+			throw new RuntimeException('Could not find image located at ' . $this->getPages()->GetLocalPathToConcreteImage());
+		}
+
 		$imgHeight = imagesy($image);
 		$imgWidth = imagesx($image);
+
+		if ($imgHeight == FALSE || $imgWidth == FALSE) {
+			throw new RuntimeException('Could not read dimensions of image loaded at ' . $this->getPages()->GetLocalPathToConcreteImage());
+		}
 
 		$rect = [];
 		$rect['x'] = $imgWidth * $this->x;
@@ -48,22 +56,26 @@ class Posts extends \Phalcon\Mvc\Model {
 		$rect['height'] = $imgHeight * $this->height;
 		$rect['width'] = $imgWidth * $this->width;
 
-		//This only works in PHP > 5.5
-		//imagejpeg(imagecrop($image, $rect), './temp.jpg', 60);
-
-		//More usable solution
-		$tempPath = './ ' . md5(rand()) . '.jpg';
 		$resizedImage = imagecreatetruecolor($rect['width'], $rect['height']);
 		if (!imagecopyresized($resizedImage, $image, 0, 0, $rect['x'], $rect['y'], $rect['width'], $rect['height'], $rect['width'], $rect['height'])) {
 			throw new RuntimeException('could not crop image for post id ' . $this->id);
 		}
 
-		if (!imagejpeg($resizedImage, $tempPath, 60)) {
+		// free original image data
+		imagedestroy($image);
+
+		// capture image data with output buffering
+		ob_start();
+		$jpegCreated = imagejpeg($resizedImage, NULL, 60);
+		$this->image = ob_get_contents();
+		ob_end_clean();
+
+		if ($jpegCreated == FALSE) {
 			throw new RuntimeException('could not save resized image to temp path');
 		}
 
-		$this->image = file_get_contents($tempPath);
-		unlink($tempPath);
+		// free resized image
+		imagedestroy($resizedImage);
 
 		$this->complete = 0;
 		if ($this->Save() == false) {
@@ -71,6 +83,7 @@ class Posts extends \Phalcon\Mvc\Model {
 		}
 
 		$this->image = null;
+
 	}
 
 	//Returns the next possible post for a page, calculated from previous posts for the page

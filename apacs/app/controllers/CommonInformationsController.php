@@ -155,13 +155,15 @@ class CommonInformationsController extends MainController {
 		$units = Units::find([
 			'conditions' => implode(' AND ', $conditions),
 			'bind' => $bindings,
+			'order' => 'description',
+			'limit' => 100
 		]);
 
 
 		$this->response->setHeader("Cache-Control", "max-age=600");
 
 		if (count($units) > 0) {
-			$this->response->setJsonContent($units, JSON_NUMERIC_CHECK);
+			$this->response->setJsonContent($units->toArray(), JSON_NUMERIC_CHECK);
 		} else {
 			$this->response->setJsonContent([]);
 		}
@@ -376,18 +378,24 @@ class CommonInformationsController extends MainController {
 		//Check if all required fields are set
 		$this->CheckFields($input, ['x', 'y', 'height', 'width', 'page_id']);
 
-		if (!is_null($id) && Posts::findFirstById($id) == false) {
-			$this->returnError(400, 'Unknown post', 'The post with id ' . $id . ' does not exist');
-			return;
+		if (is_null($id)) {
+			$post = new Posts();
+			$post->created = date('Y-m-d H:i:s');
+		} else {
+			$post = Posts::findFirstById($id);
+			if ($post == false) {
+				$this->returnError(400, 'Unknown post', 'The post with id ' . $id . ' does not exist');
+				return;
+			}
+			$post->updated = date('Y-m-d H:i:s');
 		}
 
 		$page = Pages::findFirst($input['page_id']);
 
-		if($page == false){
+		if ($page == false) {
 			throw InvalidArgumentException("Page " . $input['page_id'] .  " not found");
 		}
 
-		$post = new Posts();
 		$post->id = $id;
 		$post->pages_id = $page->id;
 		$post->x = $input['x'];
@@ -395,9 +403,6 @@ class CommonInformationsController extends MainController {
 		$post->height = $input['height'];
 		$post->width = $input['width'];
 		$post->complete = 0;
-		if (!is_null($id)) {
-			$post->updated = date('Y-m-d H:i:s');
-		}
 
 		if ($post->ApproximatePostExists()) {
 			$this->response->setStatusCode(403, 'Approximate post already exists');
@@ -407,7 +412,8 @@ class CommonInformationsController extends MainController {
 
 		//Saving the post
 		if (!$post->save()) {
-			throw new InvalidArgumentException('Could not save post.');
+			$exceptionMsg = 'Could not save post. ' . implode('. ', $post->getMessages());
+			throw new InvalidArgumentException($exceptionMsg);
 		}
 
 		//Saving the thumb
@@ -437,7 +443,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		$this->response->setStatusCode(200, 'Post created');
-		$this->response->setJsonContent(['post_id' => $post->id]);
+		$this->response->setContent(json_encode(['post_id' => $post->id], JSON_NUMERIC_CHECK));
 	}
 
 	//New hard Delete
@@ -714,7 +720,7 @@ class CommonInformationsController extends MainController {
 		//User id and task id is set
 		if (!is_null($userId) && !is_null($taskId)) {
 			//Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId;
+			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK)) AND tasks_id = ' . $taskId;
 
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
@@ -735,13 +741,13 @@ class CommonInformationsController extends MainController {
 		// User id is set and task id is not set
 		if (!is_null($userId) && is_null($taskId)) {
 			// Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK)';
+			$conditions = 'reporting_users_id = ' . $userId . ' AND toSuperUser != 1 AND (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))';
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
 			// Get all the tasks that the user is superuser for
 			$superUsers = SuperUsers::Find(['columns' => 'tasks_id', 'conditions' => 'users_id = :userId:', 'bind' => ['userId' => $userId]]);
 			foreach ($superUsers as $superUser) {
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
+				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
 			}

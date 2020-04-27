@@ -18,6 +18,10 @@ class ErrorReports extends \Phalcon\Mvc\Model {
 		$this->superUserTime = date('Y-m-d H:i:s', strtotime("+1 week"));
 	}
 
+	public function beforeCreate() {
+		$this->created = date('Y-m-d H:i:s');
+	}
+
 	public function beforeUpdate() {
 		$this->updated = date('Y-m-d H:i:s');
 	}

@@ -165,7 +165,7 @@
             ],
             "datasource": {
                 "field": "deathplace",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/8?q="
+                "url": "datasource/8?q="
             },
             "name": "deathplace",
             "searchable": true,
@@ -191,7 +191,7 @@
             ],
             "datasource": {
                 "field": "streetAndHood",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/3?q="
+                "url": "datasource/3?q="
             },
             "name": "streets",
             "searchable": true,
@@ -217,7 +217,7 @@
             ],
             "datasource": {
                 "field": "institution",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/13?q="
+                "url": "datasource/13?q="
             },
             "name": "institutions",
             "searchable": true,
@@ -281,7 +281,7 @@
             ],
             "datasource": {
                 "field": "deathcause",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/2?q="
+                "url": "datasource/2?q="
             },
             "name": "deathcauses",
             "searchable": true,
@@ -295,7 +295,7 @@
             ],
             "datasource": {
                 "field": "cemetary",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/7?q="
+                "url": "datasource/7?q="
             },
             "name": "cemetary",
             "searchable": true,
@@ -309,7 +309,7 @@
             ],
             "datasource": {
                 "field": "chapel",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/6?q="
+                "url": "datasource/6?q="
             },
             "name": "chapel",
             "searchable": true,
@@ -323,7 +323,7 @@
             ],
             "datasource": {
                 "field": "parish",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/10?q="
+                "url": "datasource/10?q="
             },
             "name": "parish",
             "searchable": true,
@@ -337,7 +337,7 @@
             ],
             "datasource": {
                 "field": "position",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/1?q="
+                "url": "datasource/1?q="
             },
             "name": "positions",
             "searchable": true,
@@ -361,7 +361,7 @@
             ],
             "datasource": {
                 "field": "workplace",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/14?q="
+                "url": "datasource/14?q="
             },
             "name": "workplace",
             "searchable": true,
@@ -608,7 +608,7 @@
             ],
             "datasource": {
                 "field": "schoolName",
-                "url": "https://www.kbhkilder.dk/1508/stable/api/datasource/15?q="
+                "url": "datasource/15?q="
             },
             "name": "schoolName",
             "searchable": true,
@@ -652,7 +652,7 @@
             ],
             "datasource": {
                 "field": "description",
-                "url": "https://www.kbhkilder.dk/1508/experimental/api/units?description="
+                "url": "units?collection_id=1&description="
             },
             "name": "unit_description",
             "searchable": true,

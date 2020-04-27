@@ -165,6 +165,7 @@
   <copyField source="places" dest="freetext_store"/>
   <copyField source="institutions" dest="freetext_store"/>
   <copyField source="erindring_position" dest="freetext_store"/>
+  <copyField source="erindring_description" dest="freetext_store"/>
   <copyField source="erindring_parent_position" dest="freetext_store"/>
   <copyField source="erindring_spouse_position" dest="freetext_store"/>
   <copyField source="erindring_keywords" dest="freetext_store"/>
