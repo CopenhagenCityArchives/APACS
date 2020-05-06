@@ -738,7 +738,7 @@ class CommonInformationsController extends MainController {
 					continue;
 				}
 
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
+				$conditions = '((toSuperUser = 1) OR NOW() > superUserTime) AND tasks_id = ' . $superUser->tasks_id;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
 			}
