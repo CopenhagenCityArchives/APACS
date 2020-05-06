@@ -717,36 +717,27 @@ class CommonInformationsController extends MainController {
 			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
 		}
 
-		//User id and task id is set
-		if (!is_null($userId) && !is_null($taskId)) {
-			//Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'users_id = ' . $userId . ' AND toSuperUser != 1 AND (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK)) AND tasks_id = ' . $taskId;
+		// User id is set
+		if (!is_null($userId)) {
 
-			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
+			// Get all errors for the user (where user id matches, and is not deleted)
+			$conditions = 'users_id = ' . $userId . ' AND deleted = 0';
 
-			$superUsers = SuperUsers::findFirst(['conditions' => 'users_id = :userId: AND tasks_id = :taskId:', 'bind' => ['userId' => $userId, 'taskId' => $taskId]]);
-
-			//The user is a super user. Let's also get error reports older than 7 days
-			if ($superUsers !== false) {
-				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $taskId;
-				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
-				$errors = array_merge($errors, $superUserErrors);
-				//$this->response->setJsonContent(ErrorReports::findByRawSql('apacs_errorreports.updated < DATE(NOW() - INTERVAL 1 WEEK) AND tasks_id = ' . $taskId)->toArray(), JSON_NUMERIC_CHECK);
-				//return;
+			// If task id is set, user it to filter
+			if (!is_null($taskId)) {
+				$conditions .= ' AND tasks_id = ' . $taskId;
 			}
-			$errors = ErrorReports::setLabels($errors);
-			$this->response->setJsonContent($errors, JSON_NUMERIC_CHECK);
-		}
 
-		// User id is set and task id is not set
-		if (!is_null($userId) && is_null($taskId)) {
-			// Get all errors for the user (where user id matches and the age is under 1 week)
-			$conditions = 'reporting_users_id = ' . $userId . ' AND toSuperUser != 1 AND (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))';
 			$errors = ErrorReports::FindByRawSql($conditions)->toArray();
 
 			// Get all the tasks that the user is superuser for
 			$superUsers = SuperUsers::Find(['columns' => 'tasks_id', 'conditions' => 'users_id = :userId:', 'bind' => ['userId' => $userId]]);
 			foreach ($superUsers as $superUser) {
+				// If task id is set, skip other tasks
+				if (!is_null($taskId) && $taskId != $superUser->tasks_id) {
+					continue;
+				}
+
 				$conditions = '((toSuperUser = 1) OR (apacs_errorreports.updated > DATE(NOW() - INTERVAL 1 WEEK) OR apacs_errorreports.updated IS NULL AND apacs_errorreports.created > DATE(NOW() - INTERVAL 1 WEEK))) AND tasks_id = ' . $superUser->tasks_id;
 				$superUserErrors = ErrorReports::findByRawSql($conditions)->toArray();
 				$errors = array_merge($errors, $superUserErrors);
