@@ -689,7 +689,7 @@ class CommonInformationsController extends MainController {
 		$userId = $this->request->getQuery('relevant_user_id', 'int', null, true);
 
 		//Assume special errors if collection id is used
-		if (is_null($collectionId) && !is_null($sourceId) && is_null($taskId)) {
+		if (!is_null($collectionId) && !is_null($sourceId) && is_null($taskId)) {
 			// validate source-id field
 			if (!preg_match("/^\d+-\d+$/", $sourceId, $matches)) {
 				$this->error('invalid id');
