@@ -9,13 +9,13 @@
         "phpunit/phpunit": "^5.0",
         "spatie/phpunit-watcher": "^1.8",
         "guzzlehttp/guzzle": "^6.3"
-
     },
     "require": {
         "solarium/solarium": "v3.5.1",
         "j4mie/idiorm": "^1.5",
         "arjunkomath/crud": "dev-master",
         "swaggest/json-schema": "^0.12.7",
-        "vlucas/phpdotenv": "v3.3.3"
+        "vlucas/phpdotenv": "v3.3.3",
+        "auth0/auth0-php": "~5.0"
     }
 }
