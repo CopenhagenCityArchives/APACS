@@ -473,6 +473,7 @@ class CommonInformationsController extends MainController {
 				$entry_info = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
 				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entry_info, $entry->id));
 			}
+			
 
 			//Get values for SQL calls
 			$metadata = $entries[0]->GetContext();
@@ -481,6 +482,26 @@ class CommonInformationsController extends MainController {
 			$e_id = $metadata['entry_id'];
 			$t_id = $metadata['task_id'];
 			$solrId = $metadata['collection_id'] . '-' . $entry->concrete_entries_id;
+
+			//Create and save event
+			$backup = json_encode($response, JSON_UNESCAPED_UNICODE);
+
+			$event = new Events();
+			$event->users_id = $this->auth->GetUserId();
+			$event->units_id = $metadata['unit_id'];
+			$event->pages_id = $metadata['page_id'];
+			$event->posts_id = $metadata['post_id'];
+
+			$event->tasks_id = $tasks_id;
+			$event->collections_id = $metadata['collection_id'];
+			$event->event_type = Events::TypeDeletePost;
+			$event->backup = $backup;
+			
+			if(!$event->save()){
+				$this->response->setStatusCode('500', 'could not save event');
+				$this->response->setJsonContent(implode(', ', $event->getMessages()));
+				return;
+			}
 
 			//Delete the specific post
 			$deleteQuery = $this->modelsManager->createQuery('DELETE FROM Posts WHERE id = :id:');
@@ -503,48 +524,24 @@ class CommonInformationsController extends MainController {
 			$response['metadata'] = $metadata;
 			$response['data'] = $postData;
 
-			try{
+			try {
 				//Delete from Solr using post id
 				ConcreteEntries::DeleteFromSolr($this->getDI()->get('solrConfig'), $solrId);
-			}
-			catch(Exception $e){
+			} catch(Exception $e) {
 				$exception = new SystemExceptions();
 				$exception->save([
 					'type' => 'event_delete_solr_error',
 					'details' => json_encode(['exception' => $e->getMessage(), 'post_id' => $id, 'entry_id' => $e_id]),
 				]);
 			}
-		}
-
-		catch(Exception $e){
+		} catch(Exception $e) {
 			$this->response->setStatusCode('500', 'could not delete post');
 			return;
 		}
 
 		
-
 		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
 		$this->response->setStatusCode(200, 'Post Deleted');
-
-		//Create and save event
-		$backup = json_encode($response, JSON_UNESCAPED_UNICODE);
-
-		$event = new Events();
-		$event->users_id = $this->auth->GetUserId();
-		$event->units_id = $metadata['unit_id'];
-		$event->pages_id = $metadata['page_id'];
-		$event->posts_id = $metadata['post_id'];
-
-		$event->tasks_id = $tasks_id;
-		$event->collections_id = $metadata['collection_id'];
-		$event->event_type = Events::TypeDeletePost;
-		$event->backup = $backup;
-		
-		if(!$event->save()){
-			$this->response->setStatusCode('500', 'could not save event');
-			$this->response->setJsonContent(implode(', ', $event->getMessages()));
-			return;
-		}
 	}
 
 	public function GetPostImage($postId) {

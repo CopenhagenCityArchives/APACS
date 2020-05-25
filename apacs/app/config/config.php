@@ -63,6 +63,15 @@ $di->setShared('pageImageLocation', function () {
 	];
 });
 
+$di->setShared('auth0Config', function () {
+	return [
+		'issuer' => getenv('AUTH0_ISSUER'),
+		'audience' => getenv('AUTH0_AUDIENCE'),
+		'cacheLocation' => getenv('AUTH0_CACHE_LOCATION'),
+		'cacheDuration' => getenv('AUTH0_CACHE_DURATION'),
+	];
+});
+
 $di->setShared('AccessController', function () use ($di) {
 		$className = getenv('APACS_ACCESS_CTRL_NAME');
 
@@ -70,5 +79,5 @@ $di->setShared('AccessController', function () use ($di) {
 			throw new Exception("AccessController class name must be set (using APACS_ACCESS_CTRL_NAME)");
 		}
 
-		return new $className($di->get('request'));
+		return new $className($di);
 });
