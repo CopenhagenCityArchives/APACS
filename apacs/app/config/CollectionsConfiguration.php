@@ -123,7 +123,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'kortteg_files',
 		'starbas_field_name' => 'av_stam_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select kortteg_files.id, CONCAT(\'https://kbhkilder-tiles.kbharkiv.dk/\',kortteg_files.cumulus_id, \'/\',kortteg_files.cumulus_id,\'/_files/\') as imageURL, year, height, width,
+		'objects_query' => 'select kortteg_files.id, CONCAT(\'https://kbhkilder-tiles.kbharkiv.dk/\',kortteg_files.cumulus_id, \'/\',kortteg_files.cumulus_id,\'_files/\') as imageURL, year, height, width,
                         description,
                         av_beskrivelse,
                         av_stam_id,
