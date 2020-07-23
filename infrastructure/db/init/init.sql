@@ -276,7 +276,8 @@ CREATE TABLE IF NOT EXISTS `apacs_units` (
 
 CREATE TABLE IF NOT EXISTS `apacs_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `username` char(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `auth0_user_id` char(45) COLLATE utf8_danish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=608 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
