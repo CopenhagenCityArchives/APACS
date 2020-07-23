@@ -393,7 +393,7 @@ class CommonInformationsController extends MainController {
 		$page = Pages::findFirst($input['page_id']);
 
 		if ($page == false) {
-			throw InvalidArgumentException("Page " . $input['page_id'] .  " not found");
+			throw new InvalidArgumentException("Page " . $input['page_id'] .  " not found");
 		}
 
 		$post->id = $id;

@@ -16,7 +16,7 @@ All services are designed to be started with docker-compose.
 
 There are several groups of docker-compose-files:
 * ``docker-compose-index.dev.yml`` and ``docker-compose-index.prod.yml``: These files are used for development and deployment of the Solr server as well as the indexation scripts
-* ``docker-compose-webserver.dev.yml`` and ``docker-compose.webserver.prod.yml``: These files are used for development of the webserver and the database.
+* ``docker-compose-webserver.dev.yml`` and ``docker-compose-webserver.prod.yml``: These files are used for development of the webserver and the database.
 * ``docker-compose.complete.dev.yml``: A development infrastructure used when all services are needed.
 
 Notice that the Solr service is included in both files, as the service is used by both the API and the indexer scripts.
