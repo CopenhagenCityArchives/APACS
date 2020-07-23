@@ -1,8 +1,13 @@
 <?php
+use Auth0\SDK\Auth0;
+use Auth0\SDK\Exception\CoreException;
+use Auth0\SDK\Exception\ApiException;
 
 use Auth0\SDK\Exception\InvalidTokenException;
 use Auth0\SDK\Helpers\JWKFetcher;
 use Auth0\SDK\Helpers\Tokens\AsymmetricVerifier;
+use Auth0\SDK\Helpers\Tokens\SymmetricVerifier;
+
 use Auth0\SDK\Helpers\Tokens\TokenVerifier;
 use Kodus\Cache\FileCache;
 
@@ -11,7 +16,7 @@ class Auth0AccessController implements IAccessController {
     private $request;
     private $message;
     private $token = null;
-    private $tokenInfo = null;
+    private $userInfo = null;
 
     private $config;
 
@@ -19,7 +24,55 @@ class Auth0AccessController implements IAccessController {
         $this->request = $di->get('request');
         $this->config = $di->get('auth0Config');
         $this->message = 'constructed';
+
+        // Initialize the Auth0 class with required credentials.
+        $this->auth0 = new Auth0([
+            'domain' => 'https://kbharkiv.eu.auth0.com',//getenv('AUTH0_DOMAIN'),
+            'client_id' => 'asdas',//getenv('AUTH0_CLIENT_ID'),
+            'client_secret' => getenv('AUTH0_CLIENT_SECRET'),
+            'redirect_uri' => getenv('AUTH0_REDIRECT_URI'),
+
+            // The scope determines what data is provided in the ID token.
+            // See: https://auth0.com/docs/scopes/current
+            'scope' => 'openid,email,profile,userinfo',
+        ]);
+
     }
+
+    private function getWebPage($url) {
+		$options = array(
+			CURLOPT_RETURNTRANSFER => true, // return web page
+			CURLOPT_HEADER => false, // don't return headers
+			CURLOPT_FOLLOWLOCATION => true, // follow redirects
+			CURLOPT_MAXREDIRS => 10, // stop after 10 redirects
+			CURLOPT_ENCODING => "", // handle compressed
+			CURLOPT_USERAGENT => "test", // name of client
+			CURLOPT_AUTOREFERER => true, // set referrer on redirect
+			CURLOPT_CONNECTTIMEOUT => 10, // time-out on connect
+            CURLOPT_TIMEOUT => 10, // time-out on response
+            CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $this->token]
+			
+		);
+
+        $ch = curl_init($url);
+		curl_setopt_array($ch, $options);
+		
+		$content = curl_exec($ch);
+		$err = curl_error($ch);
+		if ($err) {
+			$this->message = 'Could not contact auth server: ' . $err;
+			return false;
+		}
+
+		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == '401') {
+			$this->message = 'Invalid token (401 from auth server)';
+			return false;
+		}
+
+		curl_close($ch);
+
+		return $content;
+	}
 
 	public function AuthenticateUser() {
         $accessToken = $this->GetAccessToken();
@@ -29,45 +82,117 @@ class Auth0AccessController implements IAccessController {
             return false;
         }
 
-        $cacheHandler = new FileCache($this->config['cacheLocation'], $this->config['cacheDuration']);
-        $jwksUri      = $this->config['issuer'] . '.well-known/jwks.json';
+        //TODO: Caching not implemented, but it should be. Caching of tokens should also be considered
+        //$cacheHandler = new FileCache($this->config['cacheLocation'], $this->config['cacheDuration']);
 
-        $jwksFetcher   = new JWKFetcher($cacheHandler, [ 'base_uri' => $jwksUri ]);
+        $jwksUri = getenv('AUTH0_DOMAIN') . '/.well-known/jwks.json';
+        $jwksFetcher   = new JWKFetcher(null, [ 'base_uri' => $jwksUri ]);
         $sigVerifier   = new AsymmetricVerifier($jwksFetcher);
         $tokenVerifier = new TokenVerifier($this->config['issuer'], $this->config['audience'], $sigVerifier);
 
-        // TODO: Can other exceptions be thrown?
         try {
             $this->tokenInfo = $tokenVerifier->verify($accessToken);
-            $this->token = $token;
+            
+            $this->token = $accessToken;
+
+            //Get userinfo with access token
+            $this->userInfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
+            
+            //Find APACS user based on AUTH0 user id (sub)
+            $apacsUser = Users::findFirst('auth0_user_id = \'' . $this->userInfo['sub'] . '\'');
+            
+            if(!$apacsUser){
+                throw new Exception("Could find user in APACS users table");
+            }
+
+            //Use APACS user id as user id
+            $this->userInfo['id'] = $apacsUser->id;
+            
+            //Use nickname as username
+            $this->userInfo['username'] = $this->userInfo['nickname'];
+
+            //If Auth0 and APACS username does not match, syncronise APACS info
+            if($apacsUser->username !== $this->userInfo['username']){
+                $this->SyncronizeUser();
+            }
+
             return true;
         }
         catch(InvalidTokenException $e) {
-            var_dump($this->config);
             $this->message = 'Access denied: ' . $e->getMessage();
             return false;
         }
+        catch(Exception $exp){
+            $this->message = 'Access denied: ' . $exp->getMessage();
+            return false;
+        }
     }
+
+    private function SyncronizeUser() {
+		$user = new Users();
+
+		$user->id = $this->userInfo['id'];
+        $user->username = $this->userInfo['nickname'];
+        $user->auth0_user_id = $this->userInfo['sub'];
+		$user->save();
+	}
 
 	public function GetMessage() {
         return $this->message;
     }
 
 	public function GetUserId() {
-        return $tokenInfo['user_id'];
+        return $this->userInfo['id'];
     }
 
 	public function GetUserName() {
-        return $tokenInfo['user_name'];
+        return $this->userInfo['username'];
     }
 
 	public function UserCanEdit($entry) {
+		/**
+		 * Who can edit when:
+		 * 1) Users who created the post, at any time, and super users, at any time.
+		 * No relevant by the time (commented out in the code):
+		 * 2) Super users if no error reports are present
+		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
+		 */
+
+		$attemptingUser = $this->GetUserId();
+
+		//Creating user can always edit
+		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($entry->tasks_id)) {
+			return true;
+        }
+                
         return false;
     }
 
-    public function IsSuperUser() {
-        return false;
-    }
+	/**
+	 * Check if the authorized user is a superuser for:
+	 *   1) The specified task, if given, or
+	 *   2) Any task, if none is given.
+	 * @param int taskId The id to check for superuser status for.
+	 * @return bool Is the authorized user superuser.
+	 */ 
+	public function IsSuperUser($taskId = null){
+		if ($taskId === null) {
+			return SuperUsers::count([
+				"conditions" => "users_id = :userId:",
+				"bind" => [
+					"userId" => $this->GetUserId()
+				]
+			]) > 0;
+		} else {
+			return SuperUsers::count([
+				"conditions" => "users_id = :userId: AND tasks_id = :taskId:",
+				"bind" => [
+					"userId" => $this->GetUserId(),
+					"taskId" => $taskId
+				]
+			]) > 0;
+		}
+	}
 
     private function GetAccessToken() {
         $authHeader = $this->request->getServer('HTTP_AUTHORIZATION');
