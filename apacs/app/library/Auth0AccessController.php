@@ -1,5 +1,4 @@
 <?php
-use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Exception\ApiException;
 
@@ -24,19 +23,6 @@ class Auth0AccessController implements IAccessController {
         $this->request = $di->get('request');
         $this->config = $di->get('auth0Config');
         $this->message = 'constructed';
-
-        // Initialize the Auth0 class with required credentials.
-        $this->auth0 = new Auth0([
-            'domain' => 'https://kbharkiv.eu.auth0.com',//getenv('AUTH0_DOMAIN'),
-            'client_id' => 'asdas',//getenv('AUTH0_CLIENT_ID'),
-            'client_secret' => getenv('AUTH0_CLIENT_SECRET'),
-            'redirect_uri' => getenv('AUTH0_REDIRECT_URI'),
-
-            // The scope determines what data is provided in the ID token.
-            // See: https://auth0.com/docs/scopes/current
-            'scope' => 'openid,email,profile,userinfo',
-        ]);
-
     }
 
     private function getWebPage($url) {
@@ -82,36 +68,36 @@ class Auth0AccessController implements IAccessController {
             return false;
         }
 
-        //TODO: Caching not implemented, but it should be. Caching of tokens should also be considered
-        //$cacheHandler = new FileCache($this->config['cacheLocation'], $this->config['cacheDuration']);
+        //TODO: Caching of tokens should be considered
+        $cacheHandler = new FileCache('./cache', 600);
 
         $jwksUri = getenv('AUTH0_DOMAIN') . '/.well-known/jwks.json';
-        $jwksFetcher   = new JWKFetcher(null, [ 'base_uri' => $jwksUri ]);
+        $jwksFetcher   = new JWKFetcher($cacheHandler, [ 'base_uri' => $jwksUri ]);
         $sigVerifier   = new AsymmetricVerifier($jwksFetcher);
         $tokenVerifier = new TokenVerifier($this->config['issuer'], $this->config['audience'], $sigVerifier);
 
         try {
             $this->tokenInfo = $tokenVerifier->verify($accessToken);
-            
+
             $this->token = $accessToken;
 
-            //Get userinfo with access token
+            // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
             $this->userInfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
-            
-            //Find APACS user based on AUTH0 user id (sub)
+
+            // Find APACS user based on AUTH0 user id (sub)
             $apacsUser = Users::findFirst('auth0_user_id = \'' . $this->userInfo['sub'] . '\'');
             
             if(!$apacsUser){
                 throw new Exception("Could find user in APACS users table");
             }
 
-            //Use APACS user id as user id
+            // Use APACS user id as user id
             $this->userInfo['id'] = $apacsUser->id;
             
-            //Use nickname as username
+            // Use nickname as username
             $this->userInfo['username'] = $this->userInfo['nickname'];
 
-            //If Auth0 and APACS username does not match, syncronise APACS info
+            // If Auth0 and APACS username does not match, syncronise APACS info
             if($apacsUser->username !== $this->userInfo['username']){
                 $this->SyncronizeUser();
             }
