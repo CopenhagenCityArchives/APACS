@@ -49,7 +49,18 @@ deploy:
     on:
       all_branches: true
       condition: $TRAVIS_BRANCH =~ ^(master|development|public-beta)$
-
+  - provider: eb
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    region: eu-west-1
+    app: APACS
+    env: apacs-test
+    bucket: elasticbeanstalk-eu-west-1-282251075226
+    edge: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(auth0)$
+      
 before_cache:
   # Save tagged docker images
   - >
