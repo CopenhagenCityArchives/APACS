@@ -1,7 +1,7 @@
 language: php
 
 php:
-  - 7.1
+  - 7.3
 
 services:
   - docker
@@ -29,7 +29,8 @@ cache:
 #  - sleep 30
 
 # run tests inside Phalcon container
-#script:
+script:
+  - echo "JEK"
 # - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
 #after_success:
