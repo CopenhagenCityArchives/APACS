@@ -3,10 +3,6 @@ language: php
 php:
   - 7.1
 
-notifications:
-  email:
-    - stumpdenmark@hotmail.com
-
 services:
   - docker
 
