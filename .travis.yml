@@ -55,7 +55,7 @@ deploy:
     on:
       all_branches: true
       condition: $TRAVIS_BRANCH =~ ^(auth0)$
-
+      
 before_cache:
   # Save tagged docker images
   - >
