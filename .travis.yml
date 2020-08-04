@@ -51,7 +51,7 @@ deploy:
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     region: eu-west-1
     app: APACS
-    env: apacs-test
+    env: apacs-test-auth0
     bucket: elasticbeanstalk-eu-west-1-282251075226
     edge: true
     on:
