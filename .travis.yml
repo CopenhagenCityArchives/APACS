@@ -11,40 +11,40 @@ cache:
   directories:
     - $HOME/docker
 
-addons:
-  apt:
-    packages:
-    - sshpass
-    - rsync
+#addons:
+#  apt:
+#    packages:
+#    - sshpass
+#    - rsync
 
 #stop travis mysql
-before_install:
-  - sudo service mysql stop
+#before_install:
+#  - sudo service mysql stop
   # Load cached docker images
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+#  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
 # setup infrastructure using docker-compose
-install:
-  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
-  - sleep 30
+#install:
+#  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
+#  - sleep 30
 
 # run tests inside Phalcon container
 #script:
 # - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
 
-after_success:
+#after_success:
   # remove dev dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
+#  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
   # Install production dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
+#  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
 
 deploy:
-  - provider: script
-    script: SSHPASS=${KBHKILDER_SSH_PASSWORD} sshpass -e rsync -r -v -e "ssh -o StrictHostKeyChecking=no" --exclude /tests* --exclude vendor/**/test** --exclude *.yml --exclude .env --exclude composer.* --exclude phpunit.xml --exclude .dockerignore ./apacs/ ${KBHKILDER_SSH_USER}@${KBHKILDER_SSH_HOST}:${KBHKILDER_SSH_PATH}
-    skip_cleanup: true
-    on:
-      all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^(master|development|public-beta)$
+#  - provider: script
+#    script: SSHPASS=${KBHKILDER_SSH_PASSWORD} sshpass -e rsync -r -v -e "ssh -o StrictHostKeyChecking=no" --exclude /tests* --exclude vendor/**/test** --exclude *.yml --exclude .env --exclude composer.* --exclude phpunit.xml --exclude .dockerignore ./apacs/ ${KBHKILDER_SSH_USER}@${KBHKILDER_SSH_HOST}:${KBHKILDER_SSH_PATH}
+#    skip_cleanup: true
+#    on:
+#      all_branches: true
+#      condition: $TRAVIS_BRANCH =~ ^(master|development|public-beta)$
   - provider: eb
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
