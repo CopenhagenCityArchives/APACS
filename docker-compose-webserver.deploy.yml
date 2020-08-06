@@ -2,9 +2,7 @@ version: '3.3'
 services:
 
   phalcon:
-    build:
-      context: ./
-      dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
+    image: apacs:latest
     container_name: phalcon
     depends_on:
       - composer
