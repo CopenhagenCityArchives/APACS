@@ -33,7 +33,7 @@ before_install:
 # Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
   - docker --version  # document the version travis is using
-
+  - docker login
   # Prepare for deployment of Docker image
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
