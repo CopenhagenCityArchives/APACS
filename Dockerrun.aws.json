@@ -29,7 +29,7 @@
             "dependsOn": [
                 {
                     "containerName": "composer-installer",
-                    "conditions": "SUCCESS"
+                    "condition": "SUCCESS"
                 }
             ],
             "mountPoints": [
@@ -77,7 +77,9 @@
             "image": "composer",
             "essential": false,
             "workingDirectory": "/code",
-            "command": ["install"],
+            "command": [
+                "install"
+            ],
             "memory": 128,
             "mountPoints": [
                 {
