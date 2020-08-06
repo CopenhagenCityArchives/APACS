@@ -19,9 +19,14 @@ addons:
     - sshpass
     - rsync
 
-#stop travis mysql
 before_install:
-  #- sudo service mysql stop
+  #stop travis mysql as we're using MySQL in an image
+  - sudo service mysql stop
+  # update Docker
+  - apt update -y
+  - apt install --only-upgrade docker-ce -y
+  - docker info
+
   # Load cached docker images
   - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
