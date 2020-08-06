@@ -1,12 +1,15 @@
 <?php
 
+use \Auth0\SDK\API\Authentication;
+use \Auth0\SDK\API\Management;
+
 class UsersController extends \Phalcon\Mvc\Controller {
 	private $config;
 	private $response;
 	private $request;
 
 	public function onConstruct() {
-		$this->config = $this->getDI()->get('collectionsConfiguration');
+		$this->auth0Config = $this->getDI()->get('auth0Config');
 		$this->response = $this->getDI()->get('response');
 		$this->request = $this->getDI()->get('request');
 	}
@@ -42,6 +45,27 @@ class UsersController extends \Phalcon\Mvc\Controller {
 			$this->response->setJsonContent($results[0]);
 		} else {
 			$this->response->setJsonContent($results);
+		}
+	}
+
+	public function UpdateUserProfile() {
+		$auth0_api = new Authentication(
+			$this->auth0Config['domain'],
+			$this->auth0Config['client_id']
+		);
+
+		$config = [
+			'client_secret' => $this->auth0Config['client_secret'],
+			'client_id' => $this->auth0Config['client_id'],
+			'audience' => $this->auth0Config['mgmt_audience'],
+		];
+
+		try {
+			$result = $auth0_api->client_credentials($config);
+			echo '<pre>'.print_r($result, true).'</pre>';
+			die();
+		} catch (Exception $e) {
+			die( $e->getMessage() );
 		}
 	}
 }

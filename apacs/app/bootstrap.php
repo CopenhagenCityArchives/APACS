@@ -142,6 +142,10 @@ try {
 
 	$app->mount($info);
 
+	$users = new MicroCollection();
+	$users->setHandler(new UsersController());
+	$users->get('/users/', 'UpdateUserProfile');
+
 	//Index data routes
 	$indexing = new MicroCollection();
 	$indexing->setHandler(new IndexDataController());
