@@ -36,7 +36,7 @@ try {
 	// );
 
 	//Setup the configuration service
-	$di->setShared('configuration', function () use ($di) {
+	$di->setShared('collectionsConfiguration', function () use ($di) {
 		//Loading the almighty configuration array
 		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
 	});

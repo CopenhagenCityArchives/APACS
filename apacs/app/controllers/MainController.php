@@ -9,7 +9,7 @@ class MainController extends \Phalcon\Mvc\Controller {
 	protected $auth;
 
 	public function onConstruct() {
-		$this->config = $this->getDI()->get('configuration');
+		$this->config = $this->getDI()->get('collectionsConfiguration');
 		$this->response = $this->getDI()->get('response');
 		$this->request = $this->getDI()->get('request');
 		$this->auth = $this->getDI()->get('AccessController');

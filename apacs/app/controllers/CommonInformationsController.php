@@ -836,7 +836,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		$importer = new Units();
-		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
+		$colConfig = $this->getDI()->get('collectionsConfiguration')->getCollection($collectionId)[0];
 
 		if ($importer->Import($type, $collectionId, $colConfig['units_id_field'], $colConfig['units_info_field'], $colConfig['units_table'], $colConfig['units_info_condition'])) {
 			$this->response->setStatusCode('201', 'Content added');
@@ -865,7 +865,7 @@ class CommonInformationsController extends MainController {
 		}
 
 		$importer = new Pages();
-		$colConfig = $this->getDI()->get('configuration')->getCollection($collectionId)[0];
+		$colConfig = $this->getDI()->get('collectionsConfiguration')->getCollection($collectionId)[0];
 
 		if ($importer->Import($type, $collectionId, $colConfig['pages_id_field'], $colConfig['pages_unit_id_field'], $colConfig['pages_table'], $colConfig['pages_image_url'], $colConfig['pages_info_condition'])) {
 			$this->response->setStatusCode('201', 'Content added');

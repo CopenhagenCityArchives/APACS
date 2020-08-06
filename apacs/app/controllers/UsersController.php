@@ -6,7 +6,7 @@ class UsersController extends \Phalcon\Mvc\Controller {
 	private $request;
 
 	public function onConstruct() {
-		$this->config = $this->getDI()->get('configuration');
+		$this->config = $this->getDI()->get('collectionsConfiguration');
 		$this->response = $this->getDI()->get('response');
 		$this->request = $this->getDI()->get('request');
 	}

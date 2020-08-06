@@ -19,7 +19,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 	}
 
 	private function getConfig() {
-		return $this->getDI()->get('configuration');
+		return $this->getDI()->get('collectionsConfiguration');
 	}
 
 	public function getCollectionInfoJSON($collectionId = false) {
