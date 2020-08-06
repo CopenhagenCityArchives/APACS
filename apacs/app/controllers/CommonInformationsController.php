@@ -813,6 +813,10 @@ class CommonInformationsController extends MainController {
 		$this->response->setJsonContent($results);
 	}
 
+	public function healthCheck(){
+		$this->response->setJsonContent(['status'=>'ok']);
+	}
+
 	//TODO: Delete when starbas API is implemented
 	public function ImportUnits() {
 		$request = $this->request;

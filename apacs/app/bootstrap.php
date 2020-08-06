@@ -137,6 +137,9 @@ try {
 	//Add or change units
 	$info->post('/units', 'CreateOrUpdateUnits');
 
+	// Health check
+	$info->get('/health', 'healthCheck');
+
 	$app->mount($info);
 
 	//Index data routes
@@ -161,8 +164,6 @@ try {
 
 	$indexing->patch('/errorreports/{errorreportId:[0-9]+}', 'UpdateErrorReport');
 	$indexing->patch('/errorreports', 'UpdateErrorReports');
-
-	$indexing->get('/test', 'authCheck');
 
 	$app->mount($indexing);
 

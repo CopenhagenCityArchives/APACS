@@ -7,10 +7,6 @@ class IndexDataController extends MainController {
 		$this->response->setJsonContent(Datasources::find(['columns' => ['id', 'name', 'valueField'], 'conditions' => 'isPublicEditable = 1'])->toArray());
 	}
 
-	public function authCheck(){
-		$this->RequireAccessControl(true);
-	}
-
 	public function UpdateDatasourceValue($datasourceId){
 
 		$this->RequireAccessControl(true);
