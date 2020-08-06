@@ -799,7 +799,8 @@ class CommonInformationsController extends MainController {
 		$type = $this->request->getQuery('type', 'string', null, true);
 
 		if (is_null($hours)) {
-			throw new Exception('Hours are required');
+			$this->error('hours are required');
+			return;
 		}
 
 		if(!is_null($type)){
