@@ -23,37 +23,33 @@ addons:
 before_install:
   #- sudo service mysql stop
   # Load cached docker images
-  #- if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
-# setup infrastructure using docker-compose
-install:
-  #- docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
-  #- sleep 30
-  - echo "ok"
-
-# run tests inside Phalcon container
+# Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
+  - docker --version  # document the version travis is using
+
+  # Create containers used in tests (and install dependencies using Composer)
+  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
+  - sleep 30
+
+  # Run tests using phpunit
+  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
+  
+  # remove dev dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
+  # Install production dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
+
+  # Prepare for deployment of Docker image
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
   - eval $(aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  - docker pull 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
-  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
-
-after_success:
-  # remove dev dependencies
-  #- docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
-  # Install production dependencies
-  #- docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
-  
-  #- docker --version  # document the version travis is using
-  #- pip install --user awscli # install aws cli w/o sudo
-  #- export PATH=$PATH:$HOME/.local/bin # put aws in the path
-  #- eval $(aws ecr get-login --region eu-west-1) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  
+    
   # build and push APACS image
-  #- docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
-  #- docker tag apacs 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
-  #- docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
+  - docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
+  - docker tag apacs 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
+  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
 
 deploy:
   - provider: script
