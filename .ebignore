@@ -5,6 +5,9 @@ infrastructure/db
 infrastructure/indexing
 infrastructure/solr
 indexing
+apacs/tests
+apacs/tests_api
+apacs/vendor
 .env_example
 .env_dev
 .env_prod
