@@ -5,7 +5,7 @@ class EventsTest extends \UnitTestCase
     private $testDBManager;
     private $http;
 
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
@@ -31,7 +31,7 @@ class EventsTest extends \UnitTestCase
 
     }
        
-    public static function tearDownAfterClass(){
+    public static function tearDownAfterClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
@@ -54,13 +54,13 @@ class EventsTest extends \UnitTestCase
       //  $testDBManager->cleanUpApacsStructure();
     }
 
-    public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
+    public function setUp() : void
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
     }
 
-    public function tearDown() {
+    public function tearDown() : void {
         $this->http = null;
         parent::tearDown();
     }

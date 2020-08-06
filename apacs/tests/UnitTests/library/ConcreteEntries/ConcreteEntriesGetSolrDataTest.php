@@ -2,11 +2,11 @@
 
 class ConcreteEntriesGetSolrTest extends \UnitTestCase {
 
-	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	public function setUp() : void {
         parent::setUp();
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 	}
 

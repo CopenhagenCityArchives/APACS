@@ -6,7 +6,7 @@ class DeleteSolrDataTest extends \UnitTestCase{
     private $solr;
     private $http;
 
-	public static function setUpBeforeClass(){
+	public static function setUpBeforeClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
@@ -32,7 +32,7 @@ class DeleteSolrDataTest extends \UnitTestCase{
         $testDBManager->createBurialDataForEntryPost1000Task1();
 	}
 	
-	public static function tearDownAfterClass(){
+	public static function tearDownAfterClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
@@ -56,7 +56,7 @@ class DeleteSolrDataTest extends \UnitTestCase{
         $testDBManager->cleanUpBurialStructure();
     }
 
-    public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
+    public function setUp() : void
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
@@ -64,7 +64,7 @@ class DeleteSolrDataTest extends \UnitTestCase{
         $this->solr->request('POST', 'update?commit=true', [ 'json' => [ 'delete' => [ 'query' => '*:*' ]]]);
     }
 
-    public function tearDown() {
+    public function tearDown() : void {
         $this->http = null;
         parent::tearDown();
 	}

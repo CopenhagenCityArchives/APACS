@@ -8,7 +8,7 @@ class DatalistEventsTest extends \UnitTestCase {
     private $testDBManager;
     private $http;
 
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
@@ -34,7 +34,7 @@ class DatalistEventsTest extends \UnitTestCase {
         $testDBManager->createBurialDataForEntryPost1000Task1();
     }
 
-	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	public function setUp() : void {
 
         if (is_null($di)) {
             $di = new Di();
@@ -59,13 +59,13 @@ class DatalistEventsTest extends \UnitTestCase {
 
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
         parent::tearDown();
         $this->http = null;
 
     }
     
-    public static function tearDownAfterClass() {
+    public static function tearDownAfterClass()  : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests

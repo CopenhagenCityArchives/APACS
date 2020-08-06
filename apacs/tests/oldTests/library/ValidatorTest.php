@@ -2,11 +2,11 @@
 
 class ValidationRuleSetTest extends \UnitTestCase {
 
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+	public function setUp() :void {
 		parent::setUp($di, $config);
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 	}
 

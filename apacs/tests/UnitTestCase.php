@@ -23,7 +23,7 @@ abstract class UnitTestCase extends TestCase {
 		return $this->di;
 	}
 
-	protected function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	protected function setUp() : void {
         parent::setUp();
 		
 		

@@ -3,14 +3,14 @@
 class TaskConfigLoaderTest extends \UnitTestCase {
 
 	private $loader;
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+	public function setUp() : void {
 		parent::setUp();
 		$testConfigPath = dirname(__DIR__) . '/TaskConfigLoader';
 
 		$this->loader = new TaskConfigurationLoader2($testConfigPath);
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 		$this->loader = null;
 	}

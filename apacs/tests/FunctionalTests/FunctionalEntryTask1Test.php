@@ -7,7 +7,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
     private $testDBManager;
     private $concreteEntry;
 
-	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	public function setUp() : void {
 
         // We need the modelsManager and therefore FactoryDefault DI to use Phalcons models in the tests
         $di = new FactoryDefault();    
@@ -24,7 +24,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $this->concreteEntry->startTransaction();
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
         
         // Dont save data
         $this->concreteEntry->rollbackTransaction();
