@@ -36,7 +36,7 @@ script:
   - docker image ps
 
   # Create containers used in tests (and install dependencies using Composer)
-  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
+  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate --build solr nginx composer db phalcon
   - sleep 30
 
   # Run tests using phpunit
