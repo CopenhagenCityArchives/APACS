@@ -28,7 +28,7 @@ before_install:
 # Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
   - docker --version  # document the version travis is using
-
+  
   # Create containers used in tests (and install dependencies using Composer)
   - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
   - sleep 30
@@ -38,6 +38,7 @@ script:
   
   # remove dev dependencies
   - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
+  
   # Install production dependencies
   - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
 
@@ -71,7 +72,7 @@ deploy:
       condition: $TRAVIS_BRANCH =~ ^(auth0)$
       
 before_cache:
-#  # Save tagged docker images
+# Save tagged docker images
   - >
     mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
     | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'
