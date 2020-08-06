@@ -67,6 +67,7 @@ $di->setShared('auth0Config', function () {
 	return [
 		'issuer' => getenv('AUTH0_ISSUER'),
 		'audience' => getenv('AUTH0_AUDIENCE'),
+		'domain' => getenv('AUTH0_DOMAIN'),
 		'cacheLocation' => getenv('AUTH0_CACHE_LOCATION'),
 		'cacheDuration' => getenv('AUTH0_CACHE_DURATION'),
 	];

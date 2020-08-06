@@ -71,7 +71,7 @@ class Auth0AccessController implements IAccessController {
         //TODO: Caching of tokens should be considered
         $cacheHandler = new FileCache('./cache', 600);
 
-        $jwksUri = getenv('AUTH0_DOMAIN') . '/.well-known/jwks.json';
+        $jwksUri = $this->config['domain'] . '/.well-known/jwks.json';
         $jwksFetcher   = new JWKFetcher($cacheHandler, [ 'base_uri' => $jwksUri ]);
         $sigVerifier   = new AsymmetricVerifier($jwksFetcher);
         $tokenVerifier = new TokenVerifier($this->config['issuer'], $this->config['audience'], $sigVerifier);
