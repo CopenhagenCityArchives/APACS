@@ -1,4 +1,4 @@
-FROM php:7.1-fpm-alpine3.8
+FROM php:7.4-fpm-alpine
 
 # install make tools, clone phalcon, build it and remove tmp folders and packages
 RUN \
@@ -15,6 +15,6 @@ RUN \
 RUN docker-php-ext-install pdo pdo_mysql
 
 # copy source code
-COPY /apacs /code
+#COPY /apacs /code
 #COPY /.env /code/app/config/.env
 WORKDIR /code
