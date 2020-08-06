@@ -65,6 +65,8 @@ $di->setShared('pageImageLocation', function () {
 
 $di->setShared('auth0Config', function () {
 	return [
+		'client_id' => getenv('AUTH0_CLIENT_ID'),
+		'client_secret' => getenv('AUTH0_CLIENT_SECRET'),
 		'issuer' => getenv('AUTH0_ISSUER'),
 		'audience' => getenv('AUTH0_AUDIENCE'),
 		'mgmt_audience' => getenv('AUTH0_MANAGEMENT_AUDIENCE'),
