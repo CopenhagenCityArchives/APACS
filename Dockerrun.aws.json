@@ -71,21 +71,6 @@
                     "readOnly": false
                 }
             ]
-        },
-        {
-            "name": "composer-installer",
-            "image": "composer",
-            "essential": false,
-            "workingDirectory": "/code",
-            "command": "install",
-            "memory": 128,
-            "mountPoints": [
-                {
-                    "sourceVolume": "apacs-code",
-                    "containerPath": "/code",
-                    "readOnly": false
-                }
-            ]
         }
     ]
 }
