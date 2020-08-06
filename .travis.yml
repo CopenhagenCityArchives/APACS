@@ -33,12 +33,10 @@ before_install:
 # Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
   - docker --version  # document the version travis is using
-  - docker login
-  - sudo docker login
   # Prepare for deployment of Docker image
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
-  - eval $(aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+  - eval $(aws ecr get-login-password --region eu-west-1 | sudo docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com) #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
   - docker image ps
 
   # Create containers used in tests (and install dependencies using Composer)
