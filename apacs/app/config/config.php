@@ -71,17 +71,18 @@ $di->setShared('auth0Config', function () {
 		'audience' => getenv('AUTH0_AUDIENCE'),
 		'mgmt_audience' => getenv('AUTH0_MANAGEMENT_AUDIENCE'),
 		'domain' => getenv('AUTH0_DOMAIN'),
+		'jwks_uri' => getenv('AUTH0_JWKS_URI'),
 		'cacheLocation' => getenv('AUTH0_CACHE_LOCATION'),
 		'cacheDuration' => getenv('AUTH0_CACHE_DURATION'),
 	];
 });
 
 $di->setShared('AccessController', function () use ($di) {
-		$className = getenv('APACS_ACCESS_CTRL_NAME');
+	$className = getenv('APACS_ACCESS_CTRL_NAME');
 
-		if(!class_exists($className)){
-			throw new Exception("AccessController class name must be set (using APACS_ACCESS_CTRL_NAME)");
-		}
+	if(!class_exists($className)){
+		throw new Exception("AccessController class name must be set (using APACS_ACCESS_CTRL_NAME)");
+	}
 
-		return new $className($di);
+	return new $className($di);
 });

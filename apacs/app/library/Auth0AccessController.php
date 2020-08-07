@@ -71,7 +71,7 @@ class Auth0AccessController implements IAccessController {
         //TODO: Caching of tokens should be considered
         $cacheHandler = new FileCache('./cache', 600);
 
-        $jwksUri = $this->config['domain'] . '/.well-known/jwks.json';
+        $jwksUri = $this->config['jwks_uri'];
         $jwksFetcher   = new JWKFetcher($cacheHandler, [ 'base_uri' => $jwksUri ]);
         $sigVerifier   = new AsymmetricVerifier($jwksFetcher);
         $tokenVerifier = new TokenVerifier($this->config['issuer'], $this->config['audience'], $sigVerifier);
@@ -88,7 +88,7 @@ class Auth0AccessController implements IAccessController {
             $apacsUser = Users::findFirst('auth0_user_id = \'' . $this->userInfo['sub'] . '\'');
             
             if(!$apacsUser){
-                throw new Exception("Could find user in APACS users table");
+                throw new Exception("Couldn't find user in APACS users table");
             }
 
             // Use APACS user id as user id
