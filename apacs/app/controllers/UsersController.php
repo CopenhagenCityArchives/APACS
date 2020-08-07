@@ -3,16 +3,7 @@
 use \Auth0\SDK\API\Authentication;
 use \Auth0\SDK\API\Management;
 
-class UsersController extends \Phalcon\Mvc\Controller {
-	private $config;
-	private $response;
-	private $request;
-
-	public function onConstruct() {
-		$this->auth0Config = $this->getDI()->get('auth0Config');
-		$this->response = $this->getDI()->get('response');
-		$this->request = $this->getDI()->get('request');
-	}
+class UsersController extends MainController {
 
 	public function GetActiveUsers() {
 		$collectionId = $this->request->query('collection_id', 'int', false);
@@ -48,24 +39,42 @@ class UsersController extends \Phalcon\Mvc\Controller {
 		}
 	}
 
-	public function UpdateUserProfile() {
+	private function getManagementAccessToken() {
 		$auth0_api = new Authentication(
-			$this->auth0Config['domain'],
-			$this->auth0Config['client_id']
+			$this->getDI()->get('auth0Config')['domain'],
+			$this->getDI()->get('auth0Config')['client_id']
 		);
 
 		$config = [
-			'client_secret' => $this->auth0Config['client_secret'],
-			'client_id' => $this->auth0Config['client_id'],
-			'audience' => $this->auth0Config['mgmt_audience'],
+			'client_secret' => $this->getDI()->get('auth0Config')['client_secret'],
+			'client_id' => $this->getDI()->get('auth0Config')['client_id'],
+			'audience' => $this->getDI()->get('auth0Config')['mgmt_audience'],
 		];
 
 		try {
 			$result = $auth0_api->client_credentials($config);
-			echo '<pre>'.print_r($result, true).'</pre>';
-			die();
+			return $result['access_token'];
 		} catch (Exception $e) {
-			die( $e->getMessage() );
+			echo $e->getMessage();
+			return false;
 		}
+	}
+
+	public function UpdateUserProfile() {
+		$this->RequireAccessControl();
+		$user = Users::findFirst($this->auth->GetUserId());
+
+		if ($user == null) {
+			die('user was null');
+		}
+
+		$access_token = $this->getManagementAccessToken();
+		if (!$access_token) {
+			die('could not get mgmt access token');
+		}
+
+		$mgmt_api = new Management($access_token, $this->getDI()->get('auth0Config')['domain']);
+
+		$this->returnJson($mgmt_api->users()->update($user->auth0_user_id, [ 'family_name' => 'touched by an API' ]));
 	}
 }
