@@ -29,7 +29,7 @@ before_install:
   - docker --version
 
   # Load cached docker images
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  #- if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
 # Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
