@@ -144,7 +144,8 @@ try {
 
 	$users = new MicroCollection();
 	$users->setHandler(new UsersController());
-	$users->get('/users/', 'UpdateUserProfile');
+	$users->patch('/user', 'UpdateUserProfile');
+	$app->mount($users);
 
 	//Index data routes
 	$indexing = new MicroCollection();
