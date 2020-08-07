@@ -40,7 +40,14 @@ script:
   - docker image ls
 
   # Create containers used in tests (and install dependencies using Composer)
-  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate --build solr nginx composer db phalcon
+  # make sure the vendor dir is empty
+  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
+  
+  # install dependencies
+  - docker-compose -f docker-compose-webserver.deploy.yml run composer 
+  
+  # start solr, phalcon, db and nginx
+  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate --build solr nginx db phalcon
   - sleep 30
 
   # Run tests using phpunit
