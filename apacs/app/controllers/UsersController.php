@@ -65,16 +65,21 @@ class UsersController extends MainController {
 		$user = Users::findFirst($this->auth->GetUserId());
 
 		if ($user == null) {
-			die('user was null');
+			$this->returnError('user was null');
+		}
+
+		$profile = $this->GetAndValidateJsonPostData();
+		if ($profile == false) {
+			return;
 		}
 
 		$access_token = $this->getManagementAccessToken();
 		if (!$access_token) {
-			die('could not get mgmt access token');
+			$this->returnError('could not get mgmt access token');
 		}
 
 		$mgmt_api = new Management($access_token, $this->getDI()->get('auth0Config')['domain']);
 
-		$this->returnJson($mgmt_api->users()->update($user->auth0_user_id, [ 'family_name' => 'touched by an API' ]));
+		$this->returnJson($mgmt_api->users()->update($user->auth0_user_id, $profile));
 	}
 }
