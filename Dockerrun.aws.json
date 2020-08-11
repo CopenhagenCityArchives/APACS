@@ -6,38 +6,14 @@
             "host": {
                 "sourcePath": "/var/app/current/infrastructure/nginx/nginx_site.conf"
             }
-        },
-        {
-            "name": "apacs-code",
-            "host": {
-                "sourcePath": "/var/app/current/apacs"
-            }
-        },
-        {
-            "name": "apacs-env",
-            "host": {
-                "sourcePath": "/var/app/current/.env"
-            }
         }
     ],
     "containerDefinitions": [
         {
-            "name": "phalcon",
+            "name": "apacs",
             "image": "282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest",
             "essential": true,
-            "memory": 128,
-            "mountPoints": [
-                {
-                    "sourceVolume": "apacs-code",
-                    "containerPath": "/code",
-                    "readOnly": false
-                },
-                {
-                    "sourceVolume": "apacs-env",
-                    "containerPath": "/code/app/config/.env",
-                    "readOnly": false
-                }
-            ]
+            "memory": 128
         },
         {
             "name": "nginx-proxy",
@@ -51,17 +27,12 @@
                 }
             ],
             "links": [
-                "phalcon"
+                "apacs"
             ],
             "mountPoints": [
                 {
                     "sourceVolume": "nginx-proxy-conf",
                     "containerPath": "/etc/nginx/conf.d/default.conf",
-                    "readOnly": false
-                },
-                {
-                    "sourceVolume": "apacs-code",
-                    "containerPath": "/code",
                     "readOnly": false
                 }
             ]
