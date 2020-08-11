@@ -289,7 +289,7 @@ class ConcreteEntries {
 				}
 
 				//Let's create the new value
-				if (count($fieldValues) == 0) {
+				if (!is_countable($fieldValues) || count($fieldValues) == 0) {
 					
 					$saveData = [$fakeField['fieldName'] => $data[$fakeField['fieldName']]];
 
@@ -468,7 +468,8 @@ class ConcreteEntries {
 	public function SaveEntriesForTask(IEntitiesCollection $entitiesCollection, $data) {
 		$dbCon = ORM::get_db();
 
-		if(count($entitiesCollection->getEntities())==0){
+		$entities = $entitiesCollection->getEntitiesAsFlatArray();
+		if (!is_countable($entities) || count($entities) == 0) {
 			throw new InvalidArgumentException("no entities given!");
 		}
 

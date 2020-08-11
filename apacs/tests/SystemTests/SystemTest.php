@@ -11,10 +11,10 @@ class SystemTest extends \UnitTestCase
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "mysql-tests",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs-tests-db",
+                "dbname" => "apacs",
                 'charset' => 'utf8',
             ];
 		});
@@ -37,10 +37,10 @@ class SystemTest extends \UnitTestCase
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "mysql-tests",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs-tests-db",
+                "dbname" => "apacs",
                 'charset' => 'utf8',
             ];
 		});
@@ -310,7 +310,7 @@ class SystemTest extends \UnitTestCase
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON, got ". $responseBody);
         $postId = $responseData['post_id'];  
-        $this->assertInternalType('int', $postId);
+        $this->assertIsInt($postId);
 
         $post = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = ' . $postId . ' LIMIT 1')->fetch();
         $this->assertEquals(0.05, $post['x']);

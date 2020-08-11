@@ -14,10 +14,10 @@ class DatalistEventsTest extends \UnitTestCase {
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "mysql-tests",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs-tests-db",
+                "dbname" => "apacs",
                 'charset' => 'utf8',
             ];
         });
@@ -62,10 +62,10 @@ class DatalistEventsTest extends \UnitTestCase {
         //TODO Hardcoded db credentials for tests
         $di->setShared('config', function () {
             return [
-                "host" => "mysql-tests",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs-tests-db",
+                "dbname" => "apacs",
                 'charset' => 'utf8',
             ];
         });

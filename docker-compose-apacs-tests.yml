@@ -1,27 +1,27 @@
 version: '3.3'
 services:
 
-  apacs-tests:
+  apacs:
     build:
       context: ./
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
     image: apacs:latest
     container_name: apacs-tests
     depends_on:
-      - mysql-tests
+      - mysql
       - solr
     environment:
       - APACS_ACCESS_CTRL_NAME=FakeAccessController
 
       - APACS_DB_CHARSET=utf8
-      - APACS_DB_DATABASE=apacs-tests-db
+      - APACS_DB_DATABASE=apacs
       - APACS_DB_HOST=mysql-tests
       - APACS_DB_PASSWORD=123456
       - APACS_DB_PORT=3306
       - APACS_DB_USER=dev
 
-      - APACS_IMAGE_PATH=local
-      - APACS_IMAGE_PROTOCOL=http
+      - APACS_IMAGE_PATH=/code/tests/test-assets/
+      - APACS_IMAGE_PROTOCOL=file
 
       - ENVIRONMENT=DEVELOPMENT
       
@@ -34,7 +34,7 @@ services:
       
       - SOLR_TIMEOUT=10
 
-  mysql-tests:
+  mysql:
     image: mysql:5.7
     container_name: mysql-tests
     volumes:
@@ -44,13 +44,13 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: dev
       MYSQL_PASSWORD: 123456
-      MYSQL_DATABASE: apacs-tests-db
+      MYSQL_DATABASE: apacs
 
   nginx:
       image: nginx:alpine
       container_name: nginx
       depends_on:
-        - apacs-tests
+        - apacs
       volumes:
         - ./infrastructure/nginx/nginx_site.conf:/etc/nginx/conf.d/default.conf
       ports:

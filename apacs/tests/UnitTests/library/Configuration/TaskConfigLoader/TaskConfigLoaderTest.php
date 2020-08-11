@@ -62,10 +62,8 @@ class TaskConfigLoaderTest extends \UnitTestCase {
 		$this->assertEquals("only step that matters", $c['steps'][0]['strval']);
 	}
 
-	/**
-	* @expectedException Exception
-	*/
 	public function test_LoadFromNonExistingFile_ThrowException() {
+		$this->expectException(Exception::class);
 		$conf = $this->loader->getConfig(1000000);
 	}
 }

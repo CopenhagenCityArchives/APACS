@@ -38,10 +38,10 @@ abstract class UnitTestCase extends TestCase {
 		//TODO Hardcoded db credentials for tests
 		$this->di->setShared('config', function () {
             return [
-                "host" => "mysql-tests",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs-tests-db",
+                "dbname" => "apacs",
                 'charset' => 'utf8',
             ];
 		});
@@ -67,11 +67,11 @@ abstract class UnitTestCase extends TestCase {
 
 	/**
 	 * Check if the test case is setup properly
-	 * @throws \PHPUnit_Framework_IncompleteTestError;
+	 * @throws \Exception;
 	 */
 	public function __destruct() {
 	   if(!$this->_loaded) {
-            throw new \PHPUnit_Framework_IncompleteTestError('Please run parent::setUp().');
+            throw new Exception('Please run parent::setUp().');
 		}
 
 		//$di = Di::getDefault();
