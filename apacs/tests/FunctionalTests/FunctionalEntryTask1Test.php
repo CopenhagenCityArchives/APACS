@@ -7,7 +7,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
     private $testDBManager;
     private $concreteEntry;
 
-	public function setUp() : void {
+	public function setUp($di = null) : void {
 
         // We need the modelsManager and therefore FactoryDefault DI to use Phalcons models in the tests
         $di = new FactoryDefault();    

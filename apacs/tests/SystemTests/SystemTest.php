@@ -11,10 +11,10 @@ class SystemTest extends \UnitTestCase
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql-tests",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs",
+                "dbname" => "apacs-tests-db",
                 'charset' => 'utf8',
             ];
 		});
@@ -37,10 +37,10 @@ class SystemTest extends \UnitTestCase
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql-tests",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs",
+                "dbname" => "apacs-tests-db",
                 'charset' => 'utf8',
             ];
 		});
@@ -55,7 +55,7 @@ class SystemTest extends \UnitTestCase
         $testDBManager->cleanUpBurialStructure();
     }
 
-    public function setUp() : void
+    public function setUp($di = null) : void
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);

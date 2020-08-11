@@ -3,7 +3,7 @@
 class ConfigurationFieldsHolderTest extends \UnitTestCase {
 
 	private $loader;
-	public function setUp() : void {
+	public function setUp($di = null) : void {
 		parent::setUp();
 
 	}

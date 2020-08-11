@@ -14,10 +14,10 @@ class DatalistEventsTest extends \UnitTestCase {
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql-tests",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs",
+                "dbname" => "apacs-tests-db",
                 'charset' => 'utf8',
             ];
         });
@@ -34,35 +34,26 @@ class DatalistEventsTest extends \UnitTestCase {
         $testDBManager->createBurialDataForEntryPost1000Task1();
     }
 
-	public function setUp() : void {
-
+	public function setUp($di = null) : void {
         if (is_null($di)) {
             $di = new Di();
         }
 
-        $di->set(
-            'modelsManager',
-            function() {
-                return new Manager();
-            }
-        );
+        $di->set('modelsManager', function() {
+            return new Manager();
+        });
 
-        $di->set(
-            'modelsMetadata',
-            function() {
-                return new Memory();
-            }
-        );
+        $di->set('modelsMetadata', function() {
+            return new Memory();
+        });
 
-        parent::setUp($di, $config);
+        parent::setUp($di);
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
-
 	}
 
 	public function tearDown() : void {
         parent::tearDown();
         $this->http = null;
-
     }
     
     public static function tearDownAfterClass()  : void {
@@ -71,10 +62,10 @@ class DatalistEventsTest extends \UnitTestCase {
         //TODO Hardcoded db credentials for tests
         $di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql-tests",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs",
+                "dbname" => "apacs-tests-db",
                 'charset' => 'utf8',
             ];
         });

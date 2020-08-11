@@ -19,20 +19,18 @@ abstract class UnitTestCase extends TestCase {
 
 	private $di;
 
-	protected function getDI(){
+	protected function getDI()
+	{
 		return $this->di;
 	}
 
-	protected function setUp() : void {
+	protected function setUp($di = null) : void {
         parent::setUp();
 		
-		
 		// Use default DI if non given in concrete tests
-		
-		if(is_null($di)){
+		if (is_null($di)) {
 			$this->di = new Di();
-		}
-		else{
+		} else {
 			$this->di = $di;
 		}
 		
@@ -40,10 +38,10 @@ abstract class UnitTestCase extends TestCase {
 		//TODO Hardcoded db credentials for tests
 		$this->di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql-tests",
                 "username" => "dev",
                 "password" => "123456",
-                "dbname" => "apacs",
+                "dbname" => "apacs-tests-db",
                 'charset' => 'utf8',
             ];
 		});

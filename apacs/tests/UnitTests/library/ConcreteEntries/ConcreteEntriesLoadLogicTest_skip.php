@@ -2,7 +2,7 @@
 
 class ConcreteEntriesLoadLogicTest_skip extends \UnitTestCase {
 
-	public function setUp() : void {
+	public function setUp($di = null) : void {
         parent::setUp();
       
         $this->crudMock = new Mocks\CrudMock();

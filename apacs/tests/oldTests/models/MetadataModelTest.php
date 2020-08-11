@@ -4,7 +4,7 @@ class MetadataModelTest extends \UnitTestCase {
 
 	private $_model;
 
-	public function setUp() : void {
+	public function setUp($di = null) : void {
 		parent::setUp();
 		$this->_model = new Metadata();
 		//$this->_model->loadConfig(include "./mockData/MockCollectionsConfiguration.php");

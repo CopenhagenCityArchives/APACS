@@ -4,7 +4,7 @@ class ConfigurationLoaderTest extends \UnitTestCase {
 
 	private $_model;
 
-	public function setUp() : void {
+	public function setUp($di = null) : void {
 		parent::setUp();
 		$mockCol = new Mocks\MockedCollectionsSettings();
 
