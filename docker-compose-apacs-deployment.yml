@@ -7,10 +7,6 @@ services:
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
     image: apacs:latest
     container_name: apacs
-    volumes:
-      - ./apacs:/code
-    depends_on:
-      - composer
     environment:
       - APACS_ACCESS_CTRL_NAME=${APACS_ACCESS_CTRL_NAME}
 
@@ -40,22 +36,11 @@ services:
       image: nginx:alpine
       container_name: nginx
       volumes:
-        - ./apacs:/code
         - ./infrastructure/nginx/nginx_site.conf:/etc/nginx/conf.d/default.conf
       depends_on:
         - apacs
       ports:
        - "80:80"
-
-  # Composer installs production dependencies
-  composer:
-      container_name: composer
-      restart: 'no'
-      image: composer
-      command: install --prefer-dist --no-dev --optimize-autoloader 
-      working_dir: /code
-      volumes:
-        - ./apacs:/code
 
 networks:
     default:
