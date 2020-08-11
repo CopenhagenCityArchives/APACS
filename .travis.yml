@@ -41,24 +41,8 @@ script:
 
   # Create containers used in tests (and install dependencies using Composer)
   # make sure the vendor dir is empty
-  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
-  
-  # install dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer 
-  
-  # start solr, phalcon, db and nginx
-  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate --build solr nginx db phalcon
+  - docker-compose -f docker-compose-apacs-tests.yml up -d
   - sleep 30
-
-  # Run tests using phpunit
-  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
-  
-  # remove dev dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
-  
-  # Install production dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
-
 
   # build and push APACS image
   - docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
