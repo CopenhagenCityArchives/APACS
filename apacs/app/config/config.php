@@ -29,7 +29,6 @@ $di->setShared('solrConfig', function () {
 		return [
 			"scheme" => getenv('SOLR_SCHEME'),
 			"host" => getenv('SOLR_HOST'),
-			"dns" => getenv('SOLR_DNS'),
 			"port" => getenv('SOLR_PORT'),
 			"path" => getenv('SOLR_PATH'),
 			"timeout" => getenv('SOLR_TIMEOUT'),
