@@ -4,7 +4,7 @@ services:
   apacs:
     build:
       context: ./
-      dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
+      dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_tests
     image: apacs:latest
     container_name: apacs-tests
     depends_on:
