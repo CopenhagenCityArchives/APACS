@@ -14,9 +14,11 @@ RUN \
 
 RUN docker-php-ext-install pdo pdo_mysql
 
-
-RUN apk add libpng-dev
-RUN docker-php-ext-install gd
+# add libpng to enable image manipulation with PHP
+RUN apk add --no-cache libpng libpng-dev libjpeg-turbo libjpeg-turbo-dev freetype freetype-dev
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-install -j$(nproc) gd
+RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 
 RUN apk add --no-cache git openssh composer && composer global require hirak/prestissimo
 COPY ./apacs /code
