@@ -23,4 +23,4 @@ RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 RUN apk add --no-cache git openssh composer && composer global require hirak/prestissimo
 COPY ./apacs /code
 WORKDIR /code
-RUN composer install
+RUN composer install --prefer-dist --no-dev --optimize-autoloader
