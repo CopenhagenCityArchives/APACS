@@ -20,16 +20,13 @@ addons:
     - rsync
 
 before_install:
-  #stop travis mysql as we're using MySQL in an image
+  # Stop travis mysql as we're using MySQL in an image
   - sudo service mysql stop
-  # update Docker
- # - docker --version
- # - sudo apt update -y
- # - sudo apt install --only-upgrade docker-ce -y
+  # Print Docker version for debugging purposes
   - docker --version
 
   # Load cached docker images
-  #- if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
 
 # Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
@@ -37,12 +34,11 @@ script:
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
   - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  - docker image ls
-
-  # Create containers used in tests (and install dependencies using Composer)
-  # make sure the vendor dir is empty
+  
+  # Run tests
   - docker-compose -f docker-compose-apacs-tests.yml up -d
   - sleep 30
+  - docker-compose -f docker-compose-apacs-tests.yml exec apacs /code/vendor/bin/phpunit
 
   # build and push APACS image
   - docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
