@@ -14,4 +14,11 @@ RUN \
 
 RUN docker-php-ext-install pdo pdo_mysql
 
+
+RUN apk add libpng-dev
+RUN docker-php-ext-install gd
+
+RUN apk add --no-cache git openssh composer && composer global require hirak/prestissimo
+COPY ./apacs /code
 WORKDIR /code
+RUN composer install
