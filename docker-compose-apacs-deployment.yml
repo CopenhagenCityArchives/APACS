@@ -6,7 +6,7 @@ services:
       context: ./
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_prod
     image: apacs:latest
-    container_name: phalcon
+    container_name: apacs
     volumes:
       - ./apacs:/code
     depends_on:

@@ -14,7 +14,4 @@ RUN \
 
 RUN docker-php-ext-install pdo pdo_mysql
 
-# copy source code
-#COPY /apacs /code
-#COPY /.env /code/app/config/.env
 WORKDIR /code

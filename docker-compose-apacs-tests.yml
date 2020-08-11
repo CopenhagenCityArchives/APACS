@@ -40,8 +40,6 @@ services:
   mysql-tests:
     image: mysql:5.7
     container_name: mysql-tests
-    ports:
-      - "3306:3306"
     volumes:
       - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
       - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
@@ -57,7 +55,6 @@ services:
       depends_on:
         - apacs-tests
       volumes:
-        - ./apacs:/code
         - ./infrastructure/nginx/nginx_site.conf:/etc/nginx/conf.d/default.conf
       ports:
        - "8080:80"
