@@ -26,3 +26,7 @@ WORKDIR /code
 RUN composer install --prefer-dist --no-dev --optimize-autoloader
 RUN composer global remove hirak/prestissimo \
     && apk del git openssh composer
+
+RUN mkdir /tmp/cache
+RUN chown www-data:www-data /tmp/cache
+RUN chmod ug+rw /tmp/cache
