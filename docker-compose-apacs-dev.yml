@@ -7,14 +7,18 @@ services:
       dockerfile: ./infrastructure/php-fpm-phalcon/Dockerfile_dev
     container_name: apacs
     depends_on:
+      - composer
       - mysql
       - solr
+    volumes:
+      - ./apacs:/code
+      - ./vendor:/code/vendor
     environment:
       - APACS_ACCESS_CTRL_NAME=FakeAccessController
 
       - APACS_DB_CHARSET=utf8
       - APACS_DB_DATABASE=apacs
-      - APACS_DB_HOST=mysql-tests
+      - APACS_DB_HOST=mysql
       - APACS_DB_PASSWORD=123456
       - APACS_DB_PORT=3306
       - APACS_DB_USER=dev
@@ -32,10 +36,21 @@ services:
       - SOLR_PASSWORD=6nXSaEJBH7
       
       - SOLR_TIMEOUT=10
+  
+  composer:
+    container_name: composer
+    build:
+      context: ./infrastructure/composer/
+      dockerfile: Dockerfile
+    command: install
+    restart: 'no'
+    volumes:
+      - ./apacs:/app
+      - ./vendor:/app/vendor
 
   mysql:
     image: mysql:5.7
-    container_name: mysql-tests
+    container_name: mysql
     volumes:
       - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
       - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
