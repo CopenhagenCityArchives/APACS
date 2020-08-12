@@ -25,4 +25,4 @@ COPY ./apacs /code
 WORKDIR /code
 RUN composer install --prefer-dist --no-dev --optimize-autoloader
 RUN composer global remove hirak/prestissimo \
-    apk del git openssh composer
+    && apk del git openssh composer
