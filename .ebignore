@@ -18,3 +18,4 @@ docker-compose-webserver.dev.yml
 docker-compose-webserver.prod.yml
 LICENSE
 solr-backup-brugerstats.json
+docker_images
