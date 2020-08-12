@@ -6,6 +6,12 @@
             "host": {
                 "sourcePath": "/var/app/current/infrastructure/nginx/nginx_site.conf"
             }
+        },
+        {
+            "name": "auth0-cache",
+            "host": {
+                "sourcePath": "/var/app/current/cache/auth0"
+            }
         }
     ],
     "containerDefinitions": [
@@ -13,7 +19,14 @@
             "name": "apacs",
             "image": "282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest",
             "essential": true,
-            "memory": 128
+            "memory": 128,
+            "mountPoints": [
+                {
+                    "sourceVolume": "auth0-cache",
+                    "containerPath": "/var/cache/auth0",
+                    "readOnly": false
+                }
+            ]
         },
         {
             "name": "nginx-proxy",
