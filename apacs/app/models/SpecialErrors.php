@@ -10,11 +10,17 @@ class SpecialErrors extends \Phalcon\Mvc\Model {
 
 	public static function setLabels($errorReports, $taskId)
 	{
-		$config = json_decode(ErrorReports::GetConfig(), true);
-		for($i = 0; $i < count( $errorReports ); $i++){
-			foreach($config[$taskId]['error_reports'] as $confRow){
-				if($confRow['entity'] == $errorReports[$i]['entity']){
-					$errorReports[$i]['label'] = $confRow['label'];
+		$config = ErrorReports::GetConfig();
+		for($i = 0; $i < count( $errorReports ); $i++) {
+			foreach ($config as $collectionConf) {
+				if ($collectionConf['task_id'] != $taskId) {
+					continue;
+				}
+				
+				foreach ($collectionConf['error_reports'] as $confRow) {
+					if ($confRow['entity'] == $errorReports[$i]['entity']) {
+						$errorReports[$i]['label'] = $confRow['label'];
+					}
 				}
 			}
 		}
