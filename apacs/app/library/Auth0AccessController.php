@@ -69,7 +69,7 @@ class Auth0AccessController implements IAccessController {
         }
 
         //TODO: Caching of tokens should be considered
-        $cacheHandler = new FileCache('./cache', 600);
+        $cacheHandler = new FileCache($this->config['cacheLocation'], $this->config['cacheDuration']);
 
         $jwksUri = $this->config['jwks_uri'];
         $jwksFetcher   = new JWKFetcher($cacheHandler, [ 'base_uri' => $jwksUri ]);
