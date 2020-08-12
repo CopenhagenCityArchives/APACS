@@ -12,7 +12,7 @@ services:
       - solr
     volumes:
       - ./apacs:/code
-      - ./vendor:/code/vendor
+      - composer-vendor:/code/vendor
     environment:
       - APACS_ACCESS_CTRL_NAME=FakeAccessController
 
@@ -46,7 +46,7 @@ services:
     restart: 'no'
     volumes:
       - ./apacs:/app
-      - ./vendor:/app/vendor
+      - composer-vendor:/app/vendor
 
   mysql:
     image: mysql:5.7
@@ -54,6 +54,8 @@ services:
     volumes:
       - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
       - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_USER: dev
@@ -82,6 +84,8 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
         - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
+volumes:
+  composer-vendor:
 
 networks:
-    default:
+  default:
