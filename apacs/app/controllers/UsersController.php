@@ -65,17 +65,44 @@ class UsersController extends MainController {
 		$user = Users::findFirst($this->auth->GetUserId());
 
 		if ($user == null) {
-			$this->returnError('user was null');
-		}
-
-		$profile = $this->GetAndValidateJsonPostData();
-		if ($profile == false) {
+			$this->returnError(400, 'Bad Request', 'Could not find user');
 			return;
 		}
 
+		$data = $this->GetAndValidateJsonPostData();
+		if ($data == false) {
+			$this->returnError(400, 'Bad Request', 'Missing or invalid data');
+			return;
+		}
+
+		$profile = [];
+		if (array_key_exists('username', $data)) {
+			$profile['username'] = $data['username'];
+
+			if (Users::count(['username' => $profile['username']]) !== 0) {
+				$this->returnError(400, 'Username Exists');
+				return;
+			}
+		}
+
+		if (array_key_exists('email', $data)) {
+			$profile['email'] = $data['email'];
+		}
+
+		if (array_key_exists('password', $data)) {
+			$profile['password'] = $data['password'];
+		}
+
+		if ($profile == []) {
+			$this->returnError(400, 'Bad Request', 'Must update email, username or password.');
+			return;
+		}
+
+
 		$access_token = $this->getManagementAccessToken();
 		if (!$access_token) {
-			$this->returnError('could not get mgmt access token');
+			$this->returnError(500, 'Internal Server Error');
+			return;
 		}
 
 		$mgmt_api = new Management($access_token, $this->getDI()->get('auth0Config')['domain']);
