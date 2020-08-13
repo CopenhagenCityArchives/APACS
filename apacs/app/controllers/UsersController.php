@@ -65,13 +65,13 @@ class UsersController extends MainController {
 		$user = Users::findFirst($this->auth->GetUserId());
 
 		if ($user == null) {
-			$this->returnError(400, 'Bad Request', 'Could not find user');
+			$this->returnError(400, 'Bad Request', 'Could not find user', 'Could not find user');
 			return;
 		}
 
 		$data = $this->GetAndValidateJsonPostData();
 		if ($data == false) {
-			$this->returnError(400, 'Bad Request', 'Missing or invalid data');
+			$this->returnError(400, 'Bad Request', 'Missing or invalid data', 'Missing or invalid data');
 			return;
 		}
 
@@ -79,7 +79,7 @@ class UsersController extends MainController {
 		if (array_key_exists('nickname', $data)) {
 			$profile['nickname'] = $data['nickname'];
 
-			if (Users::count(['username' => $profile['nickname']]) !== 0) {
+			if (Users::count(['username' => $profile['nickname']]) > 0) {
 				$this->returnError(400, 'Username Exists', 'Username already exists');
 				return;
 			}
