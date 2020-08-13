@@ -80,7 +80,7 @@ class UsersController extends MainController {
 			$profile['nickname'] = $data['nickname'];
 
 			if (Users::count(['username' => $profile['nickname']]) !== 0) {
-				$this->returnError(400, 'Username Exists');
+				$this->returnError(400, 'Username Exists', 'Username already exists');
 				return;
 			}
 		}
