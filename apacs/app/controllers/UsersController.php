@@ -76,10 +76,10 @@ class UsersController extends MainController {
 		}
 
 		$profile = [];
-		if (array_key_exists('username', $data)) {
-			$profile['username'] = $data['username'];
+		if (array_key_exists('nickname', $data)) {
+			$profile['nickname'] = $data['nickname'];
 
-			if (Users::count(['username' => $profile['username']]) !== 0) {
+			if (Users::count(['username' => $profile['nickname']]) !== 0) {
 				$this->returnError(400, 'Username Exists');
 				return;
 			}
@@ -94,7 +94,7 @@ class UsersController extends MainController {
 		}
 
 		if ($profile == []) {
-			$this->returnError(400, 'Bad Request', 'Must update email, username or password.');
+			$this->returnError(400, 'Bad Request', 'Must update email, nickname or password.');
 			return;
 		}
 
