@@ -79,7 +79,10 @@ class UsersController extends MainController {
 		if (array_key_exists('nickname', $data)) {
 			$profile['nickname'] = $data['nickname'];
 
-			if (Users::count(['username' => $profile['nickname']]) > 0) {
+			if (Users::findFirst([
+				'conditions' => 'username = :username',
+				'bind' => ['username' => $profile['nickname']]
+			]) != null) {
 				$this->returnError(400, 'Username Exists', 'Username already exists');
 				return;
 			}
