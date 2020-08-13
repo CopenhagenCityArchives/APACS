@@ -80,7 +80,7 @@ class UsersController extends MainController {
 			$profile['nickname'] = $data['nickname'];
 
 			if (Users::findFirst([
-				'conditions' => 'username = :username',
+				'conditions' => 'username = :username:',
 				'bind' => ['username' => $profile['nickname']]
 			]) != null) {
 				$this->returnError(400, 'Username Exists', 'Username already exists');
