@@ -78,16 +78,18 @@ class Auth0AccessController implements IAccessController {
 
         try {
             $this->tokenInfo = $tokenVerifier->verify($accessToken);
-
             $this->token = $accessToken;
-
+            
             // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
             $this->userInfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
 
             // Find APACS user based on AUTH0 user id (sub)
-            $apacsUser = Users::findFirst('auth0_user_id = \'' . $this->userInfo['sub'] . '\'');
+            $apacsUser = Users::findFirst([
+				'conditions' => 'auth0_user_id = :sub:',
+				'bind' => ['sub' => $this->userInfo['sub']]
+            ]);
             
-            if(!$apacsUser){
+            if (!$apacsUser){
                 throw new Exception("Couldn't find user in APACS users table");
             }
 
@@ -144,7 +146,7 @@ class Auth0AccessController implements IAccessController {
 		 * 3) Superusers, if an error report are present, a specified amount of time after the error has been reported
 		 */
 
-		$attemptingUser = $this->GetUserId();
+        $attemptingUser = $this->GetUserId();
 
 		//Creating user can always edit
 		if ($entry->users_id == $attemptingUser || $this->IsSuperUser($entry->tasks_id)) {
@@ -161,7 +163,7 @@ class Auth0AccessController implements IAccessController {
 	 * @param int taskId The id to check for superuser status for.
 	 * @return bool Is the authorized user superuser.
 	 */ 
-	public function IsSuperUser($taskId = null){
+	public function IsSuperUser($taskId = null) {
 		if ($taskId === null) {
 			return SuperUsers::count([
 				"conditions" => "users_id = :userId:",
