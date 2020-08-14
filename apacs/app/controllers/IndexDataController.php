@@ -276,7 +276,7 @@ class IndexDataController extends MainController {
 			throw new InvalidArgumentException('No error report found for id ' . $errorReportId);
 		}
 
-		if ($this->auth->GetUserId() !== $er->users_id && count(SuperUsers::findFirstById($er->users_id)) == 0) {
+		if ($this->auth->GetUserId() !== $er->users_id && !$this->auth->IsSuperUser($er->tasks_id)) {
 			throw new InvalidArgumentException('The user cannot change the error report with id ' . $errorReportId);
 		}
 
