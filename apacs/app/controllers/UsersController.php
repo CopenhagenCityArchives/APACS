@@ -101,7 +101,6 @@ class UsersController extends MainController {
 			return;
 		}
 
-
 		$access_token = $this->getManagementAccessToken();
 		if (!$access_token) {
 			$this->returnError(500, 'Internal Server Error');
@@ -110,6 +109,12 @@ class UsersController extends MainController {
 
 		$mgmt_api = new Management($access_token, $this->getDI()->get('auth0Config')['domain']);
 
-		$this->returnJson($mgmt_api->users()->update($user->auth0_user_id, $profile));
+		$updateResponse = $mgmt_api->users()->update($user->auth0_user_id, $profile);
+
+		if (array_key_exists('email', $data)) {
+			$mgmt_api->jobs()->verificationEmail();
+		}
+
+		$this->returnJson($updateResponse);
 	}
 }
