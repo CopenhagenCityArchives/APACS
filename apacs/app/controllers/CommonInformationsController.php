@@ -314,6 +314,8 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetPage($pageId, $page = null) {
+		$this->RequireAccessControl();
+
 		if (is_null($page)) {
 			$page = Pages::findFirstById($pageId);
 		}
