@@ -112,7 +112,7 @@ class UsersController extends MainController {
 		$updateResponse = $mgmt_api->users()->update($user->auth0_user_id, $profile);
 
 		if (array_key_exists('email', $data)) {
-			$mgmt_api->jobs()->verificationEmail();
+			$mgmt_api->jobs()->sendVerificationEmail();
 		}
 
 		$this->returnJson($updateResponse);
