@@ -22,7 +22,6 @@ class Auth0AccessController implements IAccessController {
 	public function __construct($di) {
         $this->request = $di->get('request');
         $this->config = $di->get('auth0Config');
-        $this->message = 'constructed';
     }
 
     private function getWebPage($url) {
