@@ -88,7 +88,7 @@ class IndexerBase(ABC):
                         self.print_progress(i)
                     self.rate_entries += 1
                 except Exception as e:
-                    self.handle_error("Exception occured during handle_entry()!", e)
+                    self.handle_error("Exception occured during handle_entry()!", e, entry=entry)
 
             # commit any remaining documents
             self.solr.add(self.documents, commit=True)
@@ -106,14 +106,17 @@ class IndexerBase(ABC):
         self.solr.delete(q=f"collection_id:{self.collection_id()}", commit=True)
 
 
-    def handle_error(self, message, exception):
+    def handle_error(self, message, exception, entry=None):
         """Called whenever a fatal error occurred that needs to be reported and logged."""
         # We move one level out of log prefixes
         # since the stage clearly failed.
         self.log_prefixes.pop()
 
         # report error
-        SNS_Notifier.error(f"An error occured during indexing of {self.collection_info()}:\n{message}")
+        sns_message = f"An error occured during indexing of {self.collection_info()}:\n{message}"
+        if entry is not None:
+            sns_message += f"\n{entry}"
+        SNS_Notifier.error(sns_message)
 
         # print to stdout
         type_, value_, traceback_ = sys.exc_info()
@@ -121,6 +124,8 @@ class IndexerBase(ABC):
         self.log(f"Indexing aborted: {message}")
         self.log_prefixes.append(type(exception).__name__)
         self.log(str(exception))
+        if entry is not None:
+            self.log(str(entry))
         self.log_prefixes.append("stack")
         for line in ("\n".join(stack)).rstrip().split("\n"):
             self.log(line)
