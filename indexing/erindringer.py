@@ -8,6 +8,7 @@ from base import IndexerBase
 import sys
 import json
 import urllib3
+import datetime
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class ErindringerIndexer(IndexerBase):
@@ -72,7 +73,7 @@ class ErindringerIndexer(IndexerBase):
         if "Periode" in erindring:
             jsonObj['period'] = erindring['Periode']
         if u"Fødselsår" in erindring:
-            jsonObj['yearOfBirth'] = erindring[u'Fødselsår']
+            jsonObj['yearOfBirth'] = erindring[u'Fødselsår'].year if isinstance(erindring[u'Fødselsår'], datetime.date) else erindring[u'Fødselsår']
         if "Description" in erindring:
             jsonObj['description'] = erindring['Description']
         if "Erindringsnummer" in erindring:
@@ -114,7 +115,7 @@ class ErindringerIndexer(IndexerBase):
             'lastname': erindring['Efternavn'] if 'Efternavn' in erindring else (erindring['Navn'].split(',')[0].strip() if 'Navn' in erindring and len(erindring['Navn'].split(',')) > 0 else None),
             'sex': erindring.get('Køn'),
             'civilstatus': erindring.get('Civilstatus'),
-            'yearOfBirth': erindring.get('Fødselsår'),
+            'yearOfBirth':  jsonObj.get('Fødselsår'),
             "erindring_position": erindring.get('Stilling hovedperson'),
             "erindring_parent_position": erindring.get(u'Stilling forældre'),
             "erindring_spouse_position": erindring.get(u'Stilling ægtefælle'),
