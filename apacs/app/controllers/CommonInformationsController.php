@@ -125,7 +125,7 @@ class CommonInformationsController extends MainController {
 	public function GetTasksUnits() {
 		$taskId = $this->request->getQuery('task_id', 'int', null, true);
 		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
-		$indexActive = $this->request->getQuery('index_active', 'int', null, true);
+		$indexActive = $this->request->getQuery('index_active', 'int');
 
 		if (is_null($taskId)) {
 			throw new InvalidArgumentException('task_id or task_id and unit_id are required');
