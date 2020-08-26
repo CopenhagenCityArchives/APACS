@@ -5,39 +5,45 @@ use \Auth0\SDK\API\Management;
 
 class UsersController extends MainController {
 
-	// TODO: Duplicated in common informations controller or something
 	public function GetActiveUsers() {
-		$collectionId = $this->request->query('collection_id', 'int', false);
-		$unitId = $this->request->query('unit_id', 'int', false);
-		$pageId = $this->request->query('page_id', 'int', false);
+		$taskId = $this->request->getQuery('task_id', 'int', null, true);
+		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
 
-		if ($collectionId == false && $unitId == false && $pageId == false) {
-			$this->response->setStatusCode('400', 'Wrong parameter');
-			$this->response->setJsonContent(['error_message' => 'collection_id, unit_id or page_id is required']);
+		if (is_null($taskId) || is_null($unitId)) {
+			$this->error('task_id and unit_id are required');
+			return;
 		}
 
-		$conditions = '';
-		if ($collectionId !== false) {
-			$conditions = 'e.collection_id = ' . $collectionId;
-		} else if ($unitId !== false) {
-			$conditions = 'e.unit_id = ' . $unitId;
-		} else {
-			$conditions = 'e.page_id  = ' . $pageId;
+		$events = new Events();
+		$this->response->setJsonContent($events->GetActiveUsersForTaskAndUnit($taskId, $unitId));
+	}
+
+	public function GetUser($userId) {
+		$user = Users::findFirst($userId);
+
+		if(!$user){
+			$this->error("User with id " . $userId . " not found");
+			return;
 		}
 
-		//When is a user active? Right now it's 15*60 seconds = 15 minutes
-		$activeSessionDuration = time() - (15 * 60);
+		$user = $user->toArray();
 
-		$conditions = $conditions . ' AND timestamp < ' . $activeSessionDuration;
+		$user['super_user_tasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
 
-		$query = $this->modelsManager->createQuery('SELECT DISTINCT u.id, u.userName, u.profileImageUrl, p.page_number FROM Users as u LEFT JOIN Entries as e ON u.id = e.user_id LEFT JOIN Pages p ON e.page_id = p.id WHERE ' . $conditions);
+		#$this->response->setHeader("Cache-Control", "max-age=600");
+		$this->response->setJsonContent($user, JSON_NUMERIC_CHECK);
+	}
 
-		$results = $query->execute();
-		if (count($results) == 1) {
-			$this->response->setJsonContent($results[0]);
-		} else {
-			$this->response->setJsonContent($results);
+	public function GetUserActivities() {
+		$userId = $this->request->getQuery('user_id', "int", null, true);
+
+		if (is_null($userId)) {
+			$this->error('user_id is required');
+			return;
 		}
+
+		$events = new Events();
+		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray(), JSON_NUMERIC_CHECK);
 	}
 
 	private function getManagementAccessToken() {

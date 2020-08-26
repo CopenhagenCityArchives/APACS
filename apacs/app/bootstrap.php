@@ -114,12 +114,6 @@ try {
 
 	$info->get('/errorreports', 'GetErrorReports');
 
-	$info->get('/useractivities', 'GetUserActivities');
-
-	$info->get('/activeusers', 'GetActiveUsers');
-
-	$info->get('/users/{id:[0-9]+}', 'GetUser');
-
 	$info->get('/exceptions', 'GetSystemExceptions');
 
 	$info->get('/events', 'GetEventEntriesForLastWeek');
@@ -141,7 +135,15 @@ try {
 
 	$users = new MicroCollection();
 	$users->setHandler(new UsersController());
+		
+	$users->get('/useractivities', 'GetUserActivities');
+	
+	$users->get('/activeusers', 'GetActiveUsers');
+	
+	$users->get('/users/{id:[0-9]+}', 'GetUser');
+
 	$users->patch('/user', 'UpdateUserProfile');
+
 	$app->mount($users);
 
 	//Index data routes

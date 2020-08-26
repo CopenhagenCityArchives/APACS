@@ -746,47 +746,6 @@ class CommonInformationsController extends MainController {
 		}
 	}
 
-	public function GetUser($userId) {
-		$user = Users::findFirst($userId);
-
-		if(!$user){
-			$this->error("User with id " . $userId . " not found");
-			return;
-		}
-
-		$user = $user->toArray();
-
-		$user['super_user_tasks'] = SuperUsers::find(['conditions' => 'users_id = :userId:', 'bind' => ['userId' => $user['id']], 'columns' => ['tasks_id']])->toArray();
-
-		#$this->response->setHeader("Cache-Control", "max-age=600");
-		$this->response->setJsonContent($user, JSON_NUMERIC_CHECK);
-	}
-
-	public function GetActiveUsers() {
-		$taskId = $this->request->getQuery('task_id', 'int', null, true);
-		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
-
-		if (is_null($taskId) || is_null($unitId)) {
-			$this->error('task_id and unit_id are required');
-			return;
-		}
-
-		$events = new Events();
-		$this->response->setJsonContent($events->GetActiveUsersForTaskAndUnit($taskId, $unitId));
-	}
-
-	public function GetUserActivities() {
-		$userId = $this->request->getQuery('user_id', "int", null, true);
-
-		if (is_null($userId)) {
-			$this->error('user_id is required');
-			return;
-		}
-
-		$events = new Events();
-		$this->response->setJsonContent($events->GetUserActivitiesForUnits($userId)->toArray(), JSON_NUMERIC_CHECK);
-	}
-
 	public function GetEventEntriesForLastWeek() {
 		$events = new Events();
 		$this->response->setJsonContent($events->GetNumEventsForUsers(null, null));
