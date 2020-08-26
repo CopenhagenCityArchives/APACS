@@ -13,7 +13,7 @@ class Pages extends \Phalcon\Mvc\Model {
 	const OPERATION_TYPE_UPDATE = 'update';
 
 	public function getSource() {
-		return 'apacs_' . 'pages';
+		return 'apacs_pages';
 	}
 
 	public function initialize() {

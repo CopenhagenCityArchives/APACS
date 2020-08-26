@@ -2,7 +2,7 @@
 
 class Posts extends \Phalcon\Mvc\Model {
 	public function getSource() {
-		return 'apacs_' . 'posts';
+		return 'apacs_posts';
 	}
 
 	public function initialize() {

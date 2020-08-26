@@ -3,7 +3,7 @@
 class Users extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'users';
+		return 'apacs_users';
 	}
 
 	public function initialize() {

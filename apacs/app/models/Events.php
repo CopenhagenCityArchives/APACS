@@ -16,7 +16,7 @@ class Events extends \Phalcon\Mvc\Model {
 	const UserActivityTimeLimit = '15 MINUTE';
 
 	public function getSource() {
-		return 'apacs_' . 'events';
+		return 'apacs_events';
 	}
 
 	public function beforeSave() {

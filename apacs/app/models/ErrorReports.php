@@ -6,7 +6,7 @@ use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 class ErrorReports extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'errorreports';
+		return 'apacs_errorreports';
 	}
 
 	public function initialize() {

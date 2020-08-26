@@ -3,7 +3,7 @@
 class DatalistEvents extends \Phalcon\Mvc\Model {
 
     public function getSource() {
-            return 'apacs_' . 'datalist_events';
+            return 'apacs_datalist_events';
     }
     
     protected $id;

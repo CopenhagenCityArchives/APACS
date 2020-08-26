@@ -13,7 +13,7 @@ class Units extends \Phalcon\Mvc\Model {
 	const OPERATION_TYPE_UPDATE = 'update';
 
 	public function getSource() {
-		return 'apacs_' . 'units';
+		return 'apacs_units';
 	}
 
 	public function initialize() {

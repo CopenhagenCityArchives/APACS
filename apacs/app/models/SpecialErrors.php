@@ -5,7 +5,7 @@ use Phalcon\Mvc\Model\Query;
 class SpecialErrors extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'specialerrors';
+		return 'apacs_specialerrors';
 	}
 
 	public static function setLabels($errorReports, $taskId)

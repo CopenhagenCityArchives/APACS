@@ -255,6 +255,9 @@ try {
 	} catch (Exception $exp) {
 
 	} 
+	//Always set Access-Control-Allow-Origin on global exceptions
+	$origin = '*';
+	$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
 	$di->get('response')->setStatusCode(500, "Server error");
 	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage(), 'trace' => explode("\n", $e->getTraceAsString())]);
 	$di->get('response')->send();
