@@ -96,22 +96,6 @@ class Events extends \Phalcon\Mvc\Model {
 		return $result;
 	}
 
-	/*public function GetActiveUsers($conditions = null) {
-		$sql = 'SELECT distinct username, page_number FROM apacs_events as Events
-			LEFT JOIN apacs_users as Users ON Events.users_id = Users.id
-			LEFT JOIN apacs_pages as Pages ON Events.pages_id = Pages.id
-			WHERE timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ')';
-
-		if (!is_null($conditions)) {
-			$sql = $sql . ' AND ' . $conditions;
-		}
-		// Base model
-		$events = new Events();
-
-		// Execute the query
-		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
-	}*/
-
 	public function GetNumEventsForUsers($event_type, $unix_time) {
 
 		if ($event_type == null) {
