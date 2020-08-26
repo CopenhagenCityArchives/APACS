@@ -80,12 +80,23 @@ class Auth0AccessController implements IAccessController {
             $this->token = $accessToken;
             
             // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
-            $this->userInfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
+            $auth0_userinfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
+            
+            // Set userInfo
+            $this->userInfo = [];
 
-            // Find APACS user based on AUTH0 user id (sub)
+            // Auth0 user id comes from "sub"
+            $this->userInfo['auth0_user_id'] = $auth0_userinfo['sub'];
+            
+            // Map Auth0 nickname to APACS username
+            $this->userInfo['username'] = $auth0_userinfo['nickname'];
+
+            $auth0_userinfo = null;
+            
+            // Find APACS user based on AUTH0 user id
             $apacsUser = Users::findFirst([
 				'conditions' => 'auth0_user_id = :sub:',
-				'bind' => ['sub' => $this->userInfo['sub']]
+				'bind' => ['sub' => $this->userInfo['auth0_user_id']]
             ]);
             
             if (!$apacsUser){
@@ -94,9 +105,6 @@ class Auth0AccessController implements IAccessController {
 
             // Use APACS user id as user id
             $this->userInfo['id'] = $apacsUser->id;
-            
-            // Use nickname as username
-            $this->userInfo['username'] = $this->userInfo['nickname'];
 
             // If Auth0 and APACS username does not match, syncronise APACS info
             if($apacsUser->username !== $this->userInfo['username']){
@@ -117,11 +125,7 @@ class Auth0AccessController implements IAccessController {
 
     private function SyncronizeUser() {
 		$user = new Users();
-
-		$user->id = $this->userInfo['id'];
-        $user->username = $this->userInfo['nickname'];
-        $user->auth0_user_id = $this->userInfo['sub'];
-		$user->save();
+		$user->save($this->userInfo);
 	}
 
 	public function GetMessage() {
