@@ -14,14 +14,12 @@ The system consists of several services:
 # docker-compose files
 All services are designed to be started with docker-compose.
 
-There are several groups of docker-compose-files:
-* ``docker-compose-index.dev.yml`` and ``docker-compose-index.prod.yml``: These files are used for development and deployment of the Solr server as well as the indexation scripts
-* ``docker-compose-webserver.dev.yml`` and ``docker-compose-webserver.prod.yml``: These files are used for development of the webserver and the database.
-* ``docker-compose.complete.dev.yml``: A development infrastructure used when all services are needed.
+There are several docker-compose-files:
+* ``docker-compose-apacs-dev.yml``: Used for local development and testing
+* ``docker-compose-ci-apacs-tests.yml``: Used to run tests before deployment in Travis
+* ``docker-compose-index.dev.yml``: Used development and deployment of the Solr server as well as the indexation scripts
+* ``docker-compose-index.prod.yml``: Used when deploying the indexing services (Solr and indexer) in a remote docker-machine. In this file the local code is copied to the docker images being used, and no drive mapping occurs.
 
-Notice that the Solr service is included in both files, as the service is used by both the API and the indexer scripts.
-
-The two *.prod* docker-compose files are used when deploying or running the code at external hosts. In these files the local code are copied to the docker images being used, and no drive mapping occurs.
 
 # Config
 All configuration are set using a .env file located in the root directory.
@@ -33,16 +31,16 @@ See .env_example for possible settings
 This repository consists at the moment of 3 main branches:
 * ``master``: Used in production at kbhkilder.dk/api
 * ``development``: Used for internal tests at kbhkilder.dk/1508/experimental/api
-* ``task2``: Used for internal and external tests of new task and config structure at kbhkilder.dk/1508/public_beta/api
+* ``auth0``: Used for internal and external tests of new new authoization flow at https://api-dev-auth0.kbharkiv.dk
   
-## Webserver, database and Solr
+## API
 All PHP dependencies are installed with Composer, which is run during docker-compose up.
-The services are declared in *docker-compose.dev.yml*
 
 * ``
-docker-compose -f docker-compose.dev.yml up -d
+docker-compose -f docker-compose-apacs-dev.yml up -d
 ``
-## Indexing script and Solr
+
+## Indexing
 The services are declared in *docker-compose-index.dev.yml*
 
 * ``
@@ -50,6 +48,9 @@ docker-compose -f docker-compose-index.dev.yml up -d [indexer|solr]
 `` 
 
 # Deployment
+## API
+The services are deployed using Travis and AWS Elastic Beanstalk. See .travis.yml for details.
+
 ## Indexing script and Solr
 The services are declared in *docker-compose-index.prod.yml*.
 
@@ -62,7 +63,7 @@ Get machine env:
 The index service is deployed to AWS using this command:
 ``docker-compose -f docker-compose-index.prod.yml up -d --force-recreate --build indexer``
 
-## Update Solr schema
+### Update Solr schema
 It is sometimes necessary to add new fields to the Solr service.
 
 Instead of recreating the Solr container, it is enough to update the core schema.
@@ -73,15 +74,6 @@ Connect to docker machine and run this command:
 This will replace the schema file on the server.
  
 Remember to reload the core in Solr admin.
-
-## Webserver and database
-The services (together with Solr) are declared in *docker-compose.prod.yml*.
-
-The webserver is currently running on a shared host, and as so must be deployed using FTP.
-
-To deploy using FTP and PHP run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon php /code/app/deployment/deploy.php``
-
-See deploy.php for details.
 
 # Tests
 
@@ -95,9 +87,9 @@ Run the test in the docker container:
 * To watch for changes use phpunit-watcher: ``/code/vendor/bin/phpunit-watcher watch --testdox``
 
 Run the test from outside the container using docker-compose:
-* ``docker-compose -f docker-compose-webserver.dev.yml up -d --force-recreate``
-* To run a single test run: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit --testdox``
-* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-webserver.dev.yml exec phalcon /code/vendor/bin/phpunit-watcher watch --testdox``
+* Start the services: ``docker-compose -f docker-compose-apacs-dev.yml up -d --force-recreate``
+* To run a single test run: ``docker-compose -f docker-compose-apacs-dev.yml exec apacs /code/vendor/bin/phpunit --testdox``
+* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-apacs-dev.yml exec phalcon /code/vendor/bin/phpunit-watcher watch --testdox``
 
 
 ## Code coverage (propably unsupported currently)
@@ -119,7 +111,7 @@ jasmine-node /tests
 
 # Statistics
 
-Indsættes hvis banana-int coren nulstlles, eksempelvis ved rebuild af Solr.
+Indsættes hvis banana-int coren nulstilles, eksempelvis ved rebuild af Solr.
 Husk at lave schemaet om, så dashboard-feltet er string og ikke multivalued (må ikke være et array), EFTER at dokumentet er indsat.
 Indsættes her: https://aws.kbhkilder.dk/solr/#/banana-int
 Statistikken kan ses her: http://kbhkilder.dk/stats/#/dashboard/solr/Brugerstats
