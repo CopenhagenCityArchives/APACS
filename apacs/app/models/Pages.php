@@ -34,59 +34,6 @@ class Pages extends \Phalcon\Mvc\Model {
 		return $pathInfo['path'] . $this->relative_filename_converted;
 	}
 
-	//TODO: Delete when starbas API is implemented
-	private function getImportCreateSQL() {
-		return 'INSERT INTO ' . $this->getSource() . ' (concrete_page_id, collection_id, concrete_unit_id, tablename, image_url) SELECT :id, :collectionId, :unitId, ":table", :imageUrl FROM :table :conditions';
-	}
-
-	//TODO: Delete when starbas API is implemented
-	private function getImportUpdateSQL() {
-		return 'UPDATE ' . $this->getSource() . ' LEFT JOIN :table ON ' . $this->getSource() . '.concrete_page_id = :table.:id SET tablename = ":table", image_url = :imageUrl :conditions';
-	}
-
-	//TODO: Delete when starbas API is implemented
-	public function Import($type, $collectionId, $idField, $unitIdField, $table, $image_url_field, $conditions = NULL) {
-		if ($type == self::OPERATION_TYPE_CREATE && $this->dataAlreadyImported('apacs_pages', $collectionId)) {
-			$this->status = ['error' => 'pages are already imported (collection and tablename already exists'];
-			return false;
-		}
-
-		$sql = ($type == self::OPERATION_TYPE_UPDATE ? $this->getImportUpdateSQL() : $this->getImportCreateSQL());
-
-		$sql = str_replace(':collectionId', $collectionId, $sql);
-		$sql = str_replace(':id', $idField, $sql);
-		$sql = str_replace(':unitId', $unitIdField, $sql);
-		$sql = str_replace(':table', $table, $sql);
-		$sql = str_replace(':imageUrl', $image_url_field, $sql);
-		$sql = str_replace(':conditions', $conditions == NULL ? '' : 'WHERE ' . $conditions, $sql);
-
-		return $this->runQueryGetStatus($sql);
-	}
-
-	//TODO: Delete when starbas API is implemented. Check for usage!
-	private function runQueryGetStatus($query) {
-		$connection = $this->getDI()->get('db');
-		$success = $connection->execute($query);
-
-		if ($success) {
-			$this->status = ["affected_rows" => $connection->affectedRows()];
-		} else {
-			$this->status = ["status" => "could not execute query", "error_message" => $connection->getErrorInfo()];
-		}
-
-		return $success;
-	}
-
-	//TODO: Delete when starbas API is implemented
-	private function dataAlreadyImported($type, $collectionId) {
-		$sql = 'SELECT * FROM ' . $type . ' WHERE collection_id = \'' . $collectionId . '\' LIMIT 1';
-		$resultSet = $this->getDI()->get('db')->query($sql);
-		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);
-		$results = $resultSet->fetchAll();
-
-		return count($results) > 0;
-	}
-
 	public function GetStatus() {
 		return $this->status;
 	}

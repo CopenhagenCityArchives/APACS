@@ -82,13 +82,10 @@ try {
 	$info->get('/tasksunits', 'GetTasksUnits');
 	$info->get('/units/{unitId:[0-9]+}', 'GetUnit');
 	$info->get('/units', 'GetUnits');
-	//   $info->post('/units', 'ImportUnits');
 
 	$info->get('/pages', 'GetPages');
 	$info->get('/pages/{page:[0-9]+}', 'GetPage');
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
-
-	$info->post('/pages', 'ImportPages');
 
 	$info->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
 
