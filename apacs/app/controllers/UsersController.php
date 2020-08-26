@@ -5,6 +5,7 @@ use \Auth0\SDK\API\Management;
 
 class UsersController extends MainController {
 
+	// TODO: Duplicated in common informations controller or something
 	public function GetActiveUsers() {
 		$collectionId = $this->request->query('collection_id', 'int', false);
 		$unitId = $this->request->query('unit_id', 'int', false);
