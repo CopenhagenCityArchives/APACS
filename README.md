@@ -88,8 +88,8 @@ Run the test in the docker container:
 
 Run the test from outside the container using docker-compose:
 * Start the services: ``docker-compose -f docker-compose-apacs-dev.yml up -d --force-recreate``
-* To run a single test run: ``docker-compose -f docker-compose-apacs-dev.yml exec apacs /code/vendor/bin/phpunit --testdox``
-* To watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-apacs-dev.yml exec phalcon /code/vendor/bin/phpunit-watcher watch --testdox``
+* Run all tests: ``docker-compose -f docker-compose-apacs-dev.yml exec apacs vendor/bin/phpunit`` (you can use --testdox to get unit test documentation)
+* Watch for changes use phpunit-watcher: ``docker-compose -f docker-compose-apacs-dev.yml exec apacs vendor/bin/phpunit-watcher watch``
 
 
 ## Code coverage (propably unsupported currently)
