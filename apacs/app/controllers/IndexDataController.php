@@ -108,7 +108,7 @@ class IndexDataController extends MainController {
 	}
 
 	public function GetDataFromDatasouce($dataSourceId) {
-		$query = $this->request->getQuery('q', null, null, true);
+		$query = $this->request->getQuery('q', null);
 		$getAll = $this->request->getQuery('all', null, false, true);
 
 		if(!$getAll && (is_null($dataSourceId) || is_null($query))){
@@ -495,8 +495,8 @@ class IndexDataController extends MainController {
 
 		$this->RequireAccessControl();
 
-		$taskId = $this->request->getQuery('task_id', 'int', null, true);
-		$pageId = $this->request->getQuery('page_id', 'int', null, true);
+		$taskId = $this->request->getQuery('task_id', 'int');
+		$pageId = $this->request->getQuery('page_id', 'int');
 
 		$jsonData = $this->GetAndValidateJsonPostData();
 

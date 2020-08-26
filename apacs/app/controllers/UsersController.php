@@ -6,8 +6,8 @@ use \Auth0\SDK\API\Management;
 class UsersController extends MainController {
 
 	public function GetActiveUsers() {
-		$taskId = $this->request->getQuery('task_id', 'int', null, true);
-		$unitId = $this->request->getQuery('unit_id', 'int', null, true);
+		$taskId = $this->request->getQuery('task_id', 'int');
+		$unitId = $this->request->getQuery('unit_id', 'int');
 
 		if (is_null($taskId) || is_null($unitId)) {
 			$this->error('task_id and unit_id are required');
@@ -35,7 +35,7 @@ class UsersController extends MainController {
 	}
 
 	public function GetUserActivities() {
-		$userId = $this->request->getQuery('user_id', "int", null, true);
+		$userId = $this->request->getQuery('user_id', "int");
 
 		if (is_null($userId)) {
 			$this->error('user_id is required');
