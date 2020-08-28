@@ -49,7 +49,19 @@ docker-compose -f docker-compose-index.dev.yml up -d [indexer|solr]
 
 # Deployment
 ## API
+### Production
 The services are deployed using Travis and AWS Elastic Beanstalk. See .travis.yml for details.
+
+### Testing (at Elastic Beanstalk)
+Copy the file Repositories\env-files\APACS\apacs-test-v1.cfg.yml to .elasticbeanstalk/saved_configs/ 
+
+Deploy a test environment at Elastic Beanstalk using this command: 
+
+* ``eb create apacs-test-environment-name --cfg apacs-test-v1``
+
+This will build a brand new test environment in Elastic Beanstalk.
+
+NOTE that this environment runs at the production database!
 
 ## Indexing script and Solr
 The services are declared in *docker-compose-index.prod.yml*.
