@@ -84,6 +84,11 @@ class MainController extends \Phalcon\Mvc\Controller {
 		}
 	}
 
+	//TODO: Should be removed. Use returnError instead
+	protected function error($error_message) {
+		$this->returnError(400, 'Wrong parameters', $error_message);
+	}
+
 	/**
 	 * Returns an error
 	 * @param int Error code. Defaults to 404 (not found)

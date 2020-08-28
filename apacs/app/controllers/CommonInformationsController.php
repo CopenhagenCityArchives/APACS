@@ -2,12 +2,6 @@
 
 class CommonInformationsController extends MainController {
 
-	//TODO: Should be removed. Use returnError in MainController instead
-	private function error($error_message) {
-		$this->response->setStatusCode(400, 'Wrong parameters');
-		$this->response->setJsonContent(['message' => $error_message]);
-	}
-
 	public function GetCollections() {
 		$confLoader = new DBConfigurationLoader();
 		$this->response->setJsonContent($confLoader->GetCollections(), JSON_NUMERIC_CHECK);
