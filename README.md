@@ -57,9 +57,13 @@ Copy the file Repositories\env-files\APACS\apacs-test-v1.cfg.yml to .elasticbean
 
 Deploy a test environment at Elastic Beanstalk using this command: 
 
-* ``eb create apacs-test-environment-name --cfg apacs-test-v1``
+* ``eb create apacs-test-environment-name --cname apacs-test --cfg apacs-test-v1``
 
 This will build a brand new test environment in Elastic Beanstalk.
+
+Use the new environment: ``eb use apacs-test-environtment-name``
+
+Changes to the application are deployed using ``eb deploy``
 
 NOTE that this environment runs at the production database!
 
