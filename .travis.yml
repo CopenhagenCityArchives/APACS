@@ -58,13 +58,13 @@ deploy:
       condition: $TRAVIS_BRANCH =~ ^(development)$
 
   - provider: elasticbeanstalk
-      access_key_id: ${AWS_ACCESS_KEY_ID}
-      secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-      region: eu-west-1
-      app: APACS
-      env: apacs-production
-      bucket: elasticbeanstalk-eu-west-1-282251075226
-      edge: true
-      on:
-        all_branches: true
-        condition: $TRAVIS_BRANCH =~ ^(master)$      
+    access_key_id: ${AWS_ACCESS_KEY_ID}
+    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+    region: eu-west-1
+    app: APACS
+    env: apacs-production
+    bucket: elasticbeanstalk-eu-west-1-282251075226
+    edge: true
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH =~ ^(master)$      
