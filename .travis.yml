@@ -13,12 +13,6 @@ cache:
   directories:
     - docker_images
 
-addons:
-  apt:
-    packages:
-    - sshpass
-    - rsync
-
 before_install:
   # Stop travis mysql as we're using MySQL in an image
   - sudo service mysql stop
@@ -51,12 +45,6 @@ script:
   - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
 
 deploy:
-  - provider: script
-    script: SSHPASS=${KBHKILDER_SSH_PASSWORD} sshpass -e rsync -r -v -e "ssh -o StrictHostKeyChecking=no" --exclude /tests* --exclude vendor/**/test** --exclude *.yml --exclude .env --exclude composer.* --exclude phpunit.xml --exclude .dockerignore ./apacs/ ${KBHKILDER_SSH_USER}@${KBHKILDER_SSH_HOST}:${KBHKILDER_SSH_PATH}
-    cleanup: false
-    on:
-      all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^(master|development|public-beta)$
   - provider: elasticbeanstalk
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
@@ -67,4 +55,16 @@ deploy:
     edge: true
     on:
       all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^(auth0)$
+      condition: $TRAVIS_BRANCH =~ ^(development)$
+
+  - provider: elasticbeanstalk
+      access_key_id: ${AWS_ACCESS_KEY_ID}
+      secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+      region: eu-west-1
+      app: APACS
+      env: apacs-production
+      bucket: elasticbeanstalk-eu-west-1-282251075226
+      edge: true
+      on:
+        all_branches: true
+        condition: $TRAVIS_BRANCH =~ ^(master)$      
