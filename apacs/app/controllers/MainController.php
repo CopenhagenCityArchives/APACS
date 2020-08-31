@@ -9,7 +9,7 @@ class MainController extends \Phalcon\Mvc\Controller {
 	protected $auth;
 
 	public function onConstruct() {
-		$this->config = $this->getDI()->get('configuration');
+		$this->config = $this->getDI()->get('collectionsConfiguration');
 		$this->response = $this->getDI()->get('response');
 		$this->request = $this->getDI()->get('request');
 		$this->auth = $this->getDI()->get('AccessController');
@@ -82,6 +82,11 @@ class MainController extends \Phalcon\Mvc\Controller {
 		if ($responseData != null) {
 			$this->response->setJsonContent($responseData);
 		}
+	}
+
+	//TODO: Should be removed. Use returnError instead
+	public function error($error_message) {
+		$this->returnError(400, 'Wrong parameters', $error_message);
 	}
 
 	/**

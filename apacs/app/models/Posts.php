@@ -2,7 +2,7 @@
 
 class Posts extends \Phalcon\Mvc\Model {
 	public function getSource() {
-		return 'apacs_' . 'posts';
+		return 'apacs_posts';
 	}
 
 	public function initialize() {
@@ -33,11 +33,9 @@ class Posts extends \Phalcon\Mvc\Model {
 	 * Save a snippet of the image to which the post relates.
 	 */
 	public function SaveThumbImage() {
-		//	unlink('./temp.jpg');
-
-		//	$imageData = file_get_contents($page->image_url);
-		//var_dump();
-		$image = imagecreatefromjpeg($this->getPages()->GetLocalPathToConcreteImage());
+		$context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
+		$imageData = file_get_contents($this->getPages()->GetLocalPathToConcreteImage(), false, $context);
+		$image = imagecreatefromstring($imageData);
 
 		if ($image == FALSE) {
 			throw new RuntimeException('Could not find image located at ' . $this->getPages()->GetLocalPathToConcreteImage());

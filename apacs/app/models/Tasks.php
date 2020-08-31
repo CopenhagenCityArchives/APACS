@@ -2,7 +2,7 @@
 
 class Tasks extends \Phalcon\Mvc\Model {
 	public function getSource() {
-		return 'apacs_' . 'tasks';
+		return 'apacs_tasks';
 	}
 
 	public function initialize() {

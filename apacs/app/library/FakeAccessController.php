@@ -5,8 +5,8 @@
  */
 class FakeAccessController implements IAccessController {
 
-	public function __construct($request) {
-		$this->request = $request;
+	public function __construct($di) {
+		$this->request = $di->get('request');
 	}
 
 	public function AuthenticateUser() {

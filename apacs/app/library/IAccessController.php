@@ -2,7 +2,7 @@
 
 interface IAccessController {
 
-	public function __construct($request);
+	public function __construct($di);
 
 	public function AuthenticateUser(); //: bool;
 

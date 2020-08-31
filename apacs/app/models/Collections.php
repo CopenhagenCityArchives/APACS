@@ -2,7 +2,7 @@
 
 class Collections extends \Phalcon\Mvc\Model {
 	public function getSource() {
-		return 'apacs_' . 'collections';
+		return 'apacs_collections';
 	}
 
 	public function initialize() {

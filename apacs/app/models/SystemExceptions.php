@@ -2,7 +2,7 @@
 
 class SystemExceptions extends \Phalcon\Mvc\Model {
 	public function getSource() {
-		return 'apacs_' . 'exceptions';
+		return 'apacs_exceptions';
 	}
 
 	public function initialize() {

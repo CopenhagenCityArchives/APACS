@@ -19,7 +19,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 	}
 
 	private function getConfig() {
-		return $this->getDI()->get('configuration');
+		return $this->getDI()->get('collectionsConfiguration');
 	}
 
 	public function getCollectionInfoJSON($collectionId = false) {
@@ -172,8 +172,8 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		//Filters no set, check id of page or unit
 		if (count($incomingFilters) == 0) {
 			$request = $this->getDI()->get('request');
-			$id = $request->getQuery("id", null, null);
-			$unit_id = $request->getQuery("unit_id", null, null);
+			$id = $request->getQuery("id");
+			$unit_id = $request->getQuery("unit_id");
 
 			if (!is_null($id)) {
 				$newFilter = [];

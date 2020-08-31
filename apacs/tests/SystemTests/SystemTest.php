@@ -5,13 +5,13 @@ class SystemTest extends \UnitTestCase
     private $testDBManager;
     private $http;
 
-    public static function setUpBeforeClass(){
+    public static function setUpBeforeClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
                 "dbname" => "apacs",
@@ -31,13 +31,13 @@ class SystemTest extends \UnitTestCase
         $testDBManager->createBurialDataForEntryPost1000Task1();
     }
        
-    public static function tearDownAfterClass(){
+    public static function tearDownAfterClass() : void {
         // Set config and db in DI
         $di = new Di();
         //TODO Hardcoded db credentials for tests
 		$di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
                 "dbname" => "apacs",
@@ -55,13 +55,13 @@ class SystemTest extends \UnitTestCase
         $testDBManager->cleanUpBurialStructure();
     }
 
-    public function setUp(Phalcon\DiInterface $di = NULL, ?Phalcon\Config $config = NULL)
+    public function setUp($di = null) : void
     {
         parent::setUp();
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
     }
 
-    public function tearDown() {
+    public function tearDown() : void {
         $this->http = null;
         parent::tearDown();
     }
@@ -310,7 +310,7 @@ class SystemTest extends \UnitTestCase
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON, got ". $responseBody);
         $postId = $responseData['post_id'];  
-        $this->assertInternalType('int', $postId);
+        $this->assertIsInt($postId);
 
         $post = $this->testDBManager->query('SELECT * FROM `apacs_posts` WHERE `id` = ' . $postId . ' LIMIT 1')->fetch();
         $this->assertEquals(0.05, $post['x']);

@@ -1,4 +1,4 @@
-FROM php:7.1-fpm-alpine3.8
+FROM php:7.3-fpm-alpine
 
 # install make tools, clone phalcon, build it and remove tmp folders and packages
 
@@ -12,7 +12,7 @@ RUN \
     apk add git autoconf file g++ gcc libc-dev make pkgconf re2c libtool \
     check check-dev cyrus-sasl-dev libsodium-dev libssh2-dev imagemagick-dev yaml-dev --no-cache && \
     cd ~ && git clone https://github.com/phalcon/cphalcon.git && \
-    cd ~/cphalcon && git checkout v3.4.2 && \
+    cd ~/cphalcon && git checkout v3.4.5 && \
     cd ~/cphalcon/build && ./install && \
     docker-php-ext-enable phalcon && \
     rm -rf ~/cphalcon && \
