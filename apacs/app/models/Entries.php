@@ -3,7 +3,7 @@
 class Entries extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'entries';
+		return 'apacs_entries';
 	}
 
 	public function initialize() {

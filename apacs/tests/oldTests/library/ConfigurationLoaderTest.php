@@ -4,14 +4,14 @@ class ConfigurationLoaderTest extends \UnitTestCase {
 
 	private $_model;
 
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		parent::setUp($di, $config);
+	public function setUp($di = null) : void {
+		parent::setUp();
 		$mockCol = new Mocks\MockedCollectionsSettings();
 
 		$this->_model = new ConfigurationLoader($mockCol->getCollection());
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 		$this->_model = null;
 	}

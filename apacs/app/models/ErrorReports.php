@@ -6,7 +6,7 @@ use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 class ErrorReports extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'errorreports';
+		return 'apacs_errorreports';
 	}
 
 	public function initialize() {
@@ -26,22 +26,18 @@ class ErrorReports extends \Phalcon\Mvc\Model {
 		$this->updated = date('Y-m-d H:i:s');
 	}
 
-	/*public function GetWithUsers($conditions) {
-		$query = new Query('SELECT Errors.*, Users.* FROM Errors LEFT JOIN Errors.user_id = Users.id LEFT JOIN Users Errors.reporting_user_id = Users.id WHERE Errors.deleted = 0 AND ' . $conditions, $this->getDI());
-		return $query->execute(['taskId' => $this->tasks_id, 'stepsId' => $this->id]);
-	}*/
-
 	public static function GetConfig()
 	{
-		return file_get_contents('../../app/config/errorreport.json');
+		return json_decode(file_get_contents('../../app/config/errorreport.json'), true);
 	}
 
 	public static function setLabels($errorReports)
 	{
-		$config = json_decode(ErrorReports::GetConfig(), true);
-		for($i = 0; $i < count( $errorReports ); $i++){
-			foreach($config[$errorReports[$i]['tasks_id']]['error_reports'] as $confRow){
-				if($confRow['entity'] == $errorReports[$i]['entity_name']){
+		$config = ErrorReports::GetConfig();
+		for ($i = 0; $i < count($errorReports); $i++) {
+			$confRows = $config[$errorReports[$i]['collection_id']]['error_reports'];
+			foreach ($confRows as $confRow) {
+				if ($confRow['entity'] == $errorReports[$i]['entity_name']) {
 					$errorReports[$i]['label'] = $confRow['label'];
 				}
 			}

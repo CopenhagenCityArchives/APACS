@@ -3,7 +3,7 @@
 class Datasources extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'datasources';
+		return 'apacs_datasources';
 	}
 
 	public function initialize() {

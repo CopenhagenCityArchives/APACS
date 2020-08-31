@@ -2,13 +2,13 @@
 
 class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
 
-	public function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	public function setUp($di = null) : void {
         parent::setUp();
       
         $this->crudMock = new Mocks\CrudMock();
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 	}
 

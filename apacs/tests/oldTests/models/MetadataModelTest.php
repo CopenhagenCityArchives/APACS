@@ -4,13 +4,13 @@ class MetadataModelTest extends \UnitTestCase {
 
 	private $_model;
 
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
-		parent::setUp($di, $config);
+	public function setUp($di = null) : void {
+		parent::setUp();
 		$this->_model = new Metadata();
 		//$this->_model->loadConfig(include "./mockData/MockCollectionsConfiguration.php");
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 		$this->_model = null;
 	}

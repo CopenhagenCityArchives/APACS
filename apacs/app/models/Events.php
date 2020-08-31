@@ -16,7 +16,7 @@ class Events extends \Phalcon\Mvc\Model {
 	const UserActivityTimeLimit = '15 MINUTE';
 
 	public function getSource() {
-		return 'apacs_' . 'events';
+		return 'apacs_events';
 	}
 
 	public function beforeSave() {
@@ -96,22 +96,6 @@ class Events extends \Phalcon\Mvc\Model {
 		return $result;
 	}
 
-	/*public function GetActiveUsers($conditions = null) {
-		$sql = 'SELECT distinct username, page_number FROM apacs_events as Events
-			LEFT JOIN apacs_users as Users ON Events.users_id = Users.id
-			LEFT JOIN apacs_pages as Pages ON Events.pages_id = Pages.id
-			WHERE timestamp > TIMESTAMP(NOW() - INTERVAL ' . self::UserActivityTimeLimit . ')';
-
-		if (!is_null($conditions)) {
-			$sql = $sql . ' AND ' . $conditions;
-		}
-		// Base model
-		$events = new Events();
-
-		// Execute the query
-		return new Resultset(null, $events, $events->getReadConnection()->query($sql));
-	}*/
-
 	public function GetNumEventsForUsers($event_type, $unix_time) {
 
 		if ($event_type == null) {
@@ -121,7 +105,10 @@ class Events extends \Phalcon\Mvc\Model {
 			$unix_time = strtotime("-1 week");
 		}
 		
-		$sql = 'SELECT users_id, count(users_id) AS count, user.username FROM apacs_events join apacs_users User ON apacs_events.users_id = User.id WHERE event_type = :event_type AND apacs_events.timestamp > from_unixtime(:unix_time) GROUP BY users_id ORDER BY count DESC, username ASC';
+		$sql = 'SELECT users_id, count(users_id) AS count, User.username
+		        FROM apacs_events join apacs_users User ON apacs_events.users_id = User.id
+				WHERE event_type = :event_type AND apacs_events.timestamp > from_unixtime(:unix_time)
+				GROUP BY users_id ORDER BY count DESC, username ASC';
 
 		$resultSet = $this->getDI()->get('db')->query($sql, ['event_type' => $event_type, 'unix_time' => $unix_time]);
 		$resultSet->setFetchMode(Phalcon\Db::FETCH_ASSOC);

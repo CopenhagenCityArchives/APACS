@@ -19,20 +19,18 @@ abstract class UnitTestCase extends TestCase {
 
 	private $di;
 
-	protected function getDI(){
+	protected function getDI()
+	{
 		return $this->di;
 	}
 
-	protected function setUp(Phalcon\DiInterface $di = NULL, Phalcon\Config $config = NULL) {
+	protected function setUp($di = null) : void {
         parent::setUp();
 		
-		
 		// Use default DI if non given in concrete tests
-		
-		if(is_null($di)){
+		if (is_null($di)) {
 			$this->di = new Di();
-		}
-		else{
+		} else {
 			$this->di = $di;
 		}
 		
@@ -40,7 +38,7 @@ abstract class UnitTestCase extends TestCase {
 		//TODO Hardcoded db credentials for tests
 		$this->di->setShared('config', function () {
             return [
-                "host" => "database",
+                "host" => "mysql",
                 "username" => "dev",
                 "password" => "123456",
                 "dbname" => "apacs",
@@ -69,11 +67,11 @@ abstract class UnitTestCase extends TestCase {
 
 	/**
 	 * Check if the test case is setup properly
-	 * @throws \PHPUnit_Framework_IncompleteTestError;
+	 * @throws \Exception;
 	 */
 	public function __destruct() {
 	   if(!$this->_loaded) {
-            throw new \PHPUnit_Framework_IncompleteTestError('Please run parent::setUp().');
+            throw new Exception('Please run parent::setUp().');
 		}
 
 		//$di = Di::getDefault();

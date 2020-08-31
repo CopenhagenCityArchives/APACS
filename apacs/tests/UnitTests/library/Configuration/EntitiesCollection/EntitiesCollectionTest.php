@@ -5,14 +5,14 @@ class EntitiesCollectionTest extends \UnitTestCase {
 	private $mapper;
 	private $configArray;
 
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+	public function setUp($di = null) : void {
 		parent::setUp();
 
 		$configArray = json_decode(file_get_contents(__DIR__ . '/task1_config.json'),true);
 		$this->mapper = new EntitiesCollection($configArray);
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 	}
 

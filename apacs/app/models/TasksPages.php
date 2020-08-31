@@ -5,7 +5,7 @@ use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 
 class TasksPages extends \Phalcon\Mvc\Model {
 	public function getSource() {
-		return 'apacs_' . 'tasks_pages';
+		return 'apacs_tasks_pages';
 	}
 
 	public function initialize() {

@@ -5,7 +5,7 @@ use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 class TasksUnits extends \Phalcon\Mvc\Model {
 
 	public function getSource() {
-		return 'apacs_' . 'tasks_units';
+		return 'apacs_tasks_units';
 	}
 
 	public function initialize() {

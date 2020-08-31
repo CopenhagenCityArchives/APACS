@@ -1,15 +1,17 @@
+os: linux
+dist: xenial
+
 language: php
 
 php:
-  - 7.1
+  - 7.3
 
 services:
   - docker
 
 cache:
-  bundler: true
   directories:
-    - $HOME/docker
+    - docker_images
 
 addons:
   apt:
@@ -17,48 +19,52 @@ addons:
     - sshpass
     - rsync
 
-#stop travis mysql
 before_install:
+  # Stop travis mysql as we're using MySQL in an image
   - sudo service mysql stop
+  # Print Docker version for debugging purposes
+  - docker --version
+
   # Load cached docker images
-  - if [[ -d $HOME/docker ]]; then ls $HOME/docker/*.tar.gz | xargs -I {file} sh -c "zcat {file} | docker load"; fi
+  - docker load -i docker_images/images.tar || true
 
-# setup infrastructure using docker-compose
-install:
-  - docker-compose -f docker-compose-webserver.deploy.yml up -d --force-recreate solr nginx composer db phalcon
-  - sleep 30
+     
+before_cache:
+  # Cache docker images
+  - docker save -o docker_images/images.tar $(docker images -a -q)
 
-# run tests inside Phalcon container
+# Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
-  - docker-compose -f docker-compose-webserver.deploy.yml exec phalcon /code/vendor/bin/phpunit
+  # Prepare for deployment of Docker image
+  - pip install --user awscli # install aws cli w/o sudo
+  - export PATH=$PATH:$HOME/.local/bin # put aws in the path
+  - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
+  
+  # Run tests
+  - docker-compose -f docker-compose-ci-apacs-tests.yml up -d
+  - sleep 30
+  - docker-compose -f docker-compose-ci-apacs-tests.yml exec apacs /code/vendor/bin/phpunit
 
-after_success:
-  # remove dev dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run --entrypoint "rm -rf /code/vendor" composer
-  # Install production dependencies
-  - docker-compose -f docker-compose-webserver.deploy.yml run composer install --prefer-dist --no-dev --optimize-autoloader
+  # build and push APACS image
+  - docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
+  - docker tag apacs 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
+  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
 
 deploy:
   - provider: script
     script: SSHPASS=${KBHKILDER_SSH_PASSWORD} sshpass -e rsync -r -v -e "ssh -o StrictHostKeyChecking=no" --exclude /tests* --exclude vendor/**/test** --exclude *.yml --exclude .env --exclude composer.* --exclude phpunit.xml --exclude .dockerignore ./apacs/ ${KBHKILDER_SSH_USER}@${KBHKILDER_SSH_HOST}:${KBHKILDER_SSH_PATH}
-    skip_cleanup: true
+    cleanup: false
     on:
       all_branches: true
       condition: $TRAVIS_BRANCH =~ ^(master|development|public-beta)$
-  - provider: eb
+  - provider: elasticbeanstalk
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     region: eu-west-1
     app: APACS
-    env: apacs-test
+    env: apacs-test-auth0-2
     bucket: elasticbeanstalk-eu-west-1-282251075226
     edge: true
     on:
       all_branches: true
       condition: $TRAVIS_BRANCH =~ ^(auth0)$
-      
-before_cache:
-  # Save tagged docker images
-  - >
-    mkdir -p $HOME/docker && docker images -a --filter='dangling=false' --format '{{.Repository}}:{{.Tag}} {{.ID}}'
-    | xargs -n 2 -t sh -c 'test -e $HOME/docker/$1.tar.gz || docker save $0 | gzip -2 > $HOME/docker/$1.tar.gz'

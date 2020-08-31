@@ -8,7 +8,7 @@ class TasksFields extends \Phalcon\Mvc\Model
 
     public function getSource()
     {
-        return 'apacs_' . 'tasks_fields';
+        return 'apacs_tasks_fields';
     }
 
     public function initialize()

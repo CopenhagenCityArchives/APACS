@@ -11,7 +11,7 @@ class TasksUsers extends \Phalcon\Mvc\Model
 
     public function getSource()
     {
-        return 'apacs_' . 'tasks_users';
+        return 'apacs_tasks_users';
     }
 
     public function initialize()

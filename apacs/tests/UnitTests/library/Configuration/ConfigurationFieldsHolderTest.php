@@ -3,12 +3,12 @@
 class ConfigurationFieldsHolderTest extends \UnitTestCase {
 
 	private $loader;
-	public function setUp(\Phalcon\DiInterface $di = NULL, \Phalcon\Config $config = NULL) {
+	public function setUp($di = null) : void {
 		parent::setUp();
 
 	}
 
-	public function tearDown() {
+	public function tearDown() : void {
 		parent::tearDown();
 	}
 

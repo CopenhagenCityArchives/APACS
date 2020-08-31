@@ -4,7 +4,7 @@ class Filters extends \Phalcon\Mvc\Model
 {
     public function getSource()
     {
-        return 'apacs_' . 'filters';
+        return 'apacs_filters';
     }
 
     public function initialize()

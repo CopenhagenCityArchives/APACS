@@ -32,7 +32,7 @@ class Objects extends \Phalcon\Mvc\Model {
 
 		foreach ($allFilters as $filter) {
 
-			$incommingFilter = $request->getQuery($filter['name'], null, false);
+			$incommingFilter = $request->getQuery($filter['name']);
 
 			if ($incommingFilter !== false) {
 				$filter['value'] = $incommingFilter;

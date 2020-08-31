@@ -1,4 +1,4 @@
-INSERT INTO `apacs`.`apacs_users`
+INSERT INTO `apacs_users`
 (`id`, `username`)
 VALUES
 (797, 'User_1'),
@@ -7,7 +7,7 @@ VALUES
 (800, 'User_4');
 
 
-INSERT INTO `apacs`.`apacs_events`
+INSERT INTO `apacs_events`
 (`id`, `users_id`, `collections_id`, `tasks_id`, `units_id`, `pages_id`, `posts_id`, `event_type`, `timestamp`, `backup`)
 VALUES
 ('1', '797', '1', '1', '96', '127952', '307527', 'create', TIMESTAMPADD(DAY,-1,now()), NULL),

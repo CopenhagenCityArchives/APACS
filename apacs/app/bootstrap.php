@@ -36,7 +36,7 @@ try {
 	// );
 
 	//Setup the configuration service
-	$di->setShared('configuration', function () use ($di) {
+	$di->setShared('collectionsConfiguration', function () use ($di) {
 		//Loading the almighty configuration array
 		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
 	});
@@ -82,13 +82,10 @@ try {
 	$info->get('/tasksunits', 'GetTasksUnits');
 	$info->get('/units/{unitId:[0-9]+}', 'GetUnit');
 	$info->get('/units', 'GetUnits');
-	//   $info->post('/units', 'ImportUnits');
 
 	$info->get('/pages', 'GetPages');
 	$info->get('/pages/{page:[0-9]+}', 'GetPage');
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
-
-	$info->post('/pages', 'ImportPages');
 
 	$info->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
 
@@ -117,12 +114,6 @@ try {
 
 	$info->get('/errorreports', 'GetErrorReports');
 
-	$info->get('/useractivities', 'GetUserActivities');
-
-	$info->get('/activeusers', 'GetActiveUsers');
-
-	$info->get('/users/{id:[0-9]+}', 'GetUser');
-
 	$info->get('/exceptions', 'GetSystemExceptions');
 
 	$info->get('/events', 'GetEventEntriesForLastWeek');
@@ -137,7 +128,23 @@ try {
 	//Add or change units
 	$info->post('/units', 'CreateOrUpdateUnits');
 
+	// Health check
+	$info->get('/health', 'healthCheck');
+
 	$app->mount($info);
+
+	$users = new MicroCollection();
+	$users->setHandler(new UsersController());
+		
+	$users->get('/useractivities', 'GetUserActivities');
+	
+	$users->get('/activeusers', 'GetActiveUsers');
+	
+	$users->get('/users/{id:[0-9]+}', 'GetUser');
+
+	$users->patch('/user', 'UpdateUserProfile');
+
+	$app->mount($users);
 
 	//Index data routes
 	$indexing = new MicroCollection();
@@ -161,8 +168,6 @@ try {
 
 	$indexing->patch('/errorreports/{errorreportId:[0-9]+}', 'UpdateErrorReport');
 	$indexing->patch('/errorreports', 'UpdateErrorReports');
-
-	$indexing->get('/test', 'authCheck');
 
 	$app->mount($indexing);
 
@@ -250,6 +255,9 @@ try {
 	} catch (Exception $exp) {
 
 	} 
+	//Always set Access-Control-Allow-Origin on global exceptions
+	$origin = '*';
+	$di->get('response')->setHeader("Access-Control-Allow-Origin", $origin);
 	$di->get('response')->setStatusCode(500, "Server error");
 	$di->get('response')->setJsonContent(['message' => "Global exception: " . $e->getMessage(), 'trace' => explode("\n", $e->getTraceAsString())]);
 	$di->get('response')->send();
