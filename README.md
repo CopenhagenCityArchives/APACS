@@ -29,9 +29,8 @@ See .env_example for possible settings
 # Development
 ## Branches
 This repository consists at the moment of 3 main branches:
-* ``master``: Used in production at kbhkilder.dk/api
-* ``development``: Used for internal tests at kbhkilder.dk/1508/experimental/api
-* ``auth0``: Used for internal and external tests of new new authoization flow at https://api-dev-auth0.kbharkiv.dk
+* ``master``: Used in production at https://api.kbharkiv.dk
+* ``development``: Used for internal tests at https://api-dev-auth0.kbharkiv.dk
   
 ## API
 All PHP dependencies are installed with Composer, which is run during docker-compose up.
@@ -65,7 +64,7 @@ Use the new environment: ``eb use apacs-test-environtment-name``
 
 Changes to the application are deployed using ``eb deploy``
 
-NOTE that this environment runs at the production database!
+NOTE that this environment runs on the production database!
 
 ## Indexing script and Solr
 The services are declared in *docker-compose-index.prod.yml*.
