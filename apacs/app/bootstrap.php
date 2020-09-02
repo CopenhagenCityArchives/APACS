@@ -184,6 +184,14 @@ try {
 	$admin->post('/admin/taskpages', 'createTasksPages');
 	$app->mount($admin);
 
+	// Permalink controller
+	$permalink = new MicroCollection();
+	$permalink->setHandler(new PermalinkController());
+	$permalink->get('/permalink/sitepages/{pageName:(search|politforum)}', 'RedirectToPage');
+	$permalink->get('/permalink/post/{postId:(\d{2,3}\-\d{1,10})}', 'RedirectToPost');
+	$permalink->get('/permalink/source/{collectionId:[0-9]+}/{itemId:[0-9]+}', 'RedirectToSource');
+	$app->mount($permalink);
+
 	//Catch all for preflight checks (always performed with an OPTIONS request)
 	$app->options('/{catch:(.*)}', function () use ($app, $di) {
 		$di->get('response')->setHeader('Access-Control-Allow-Credentials', 'true');
