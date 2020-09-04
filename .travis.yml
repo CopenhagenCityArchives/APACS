@@ -10,6 +10,8 @@ services:
   - docker
 
 cache:
+  yarn: true
+  pip: true
   directories:
     - docker_images
 
