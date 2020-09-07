@@ -177,6 +177,13 @@ try {
 	$cumulus->get('/asset/{assetId:[0-9]+}', 'AssetDownload');
 	$app->mount($cumulus);
 
+	// Image assets
+	$imageAsset = new MicroCollection();
+	$imageAsset->setHandler(new ImageAssetController());
+	$imageAsset->get('/getfile/{assetId:[\w\/-]+}', 'GetImageAssetByIdentifier');
+	$imageAsset->get('/getfile', 'GetImageAssetByIdentifier');
+	$app->mount($imageAsset);
+
 	// Administration Controller
 	$admin = new MicroCollection();
 	$admin->setHandler(new AdministrationController());
