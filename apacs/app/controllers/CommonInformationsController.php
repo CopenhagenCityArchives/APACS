@@ -106,7 +106,7 @@ class CommonInformationsController extends MainController {
 	{
 		//$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
-		$this->response->setContent(ErrorReports::GetConfig());
+		$this->response->setJsonContent(ErrorReports::GetConfig());
 	}
 
 	public function GetSearchConfig()
