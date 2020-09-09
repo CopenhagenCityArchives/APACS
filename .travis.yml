@@ -9,10 +9,6 @@ php:
 services:
   - docker
 
-cache:
-  directories:
-    - docker_images
-
 addons:
   apt:
     packages:
@@ -25,14 +21,7 @@ before_install:
   # Print Docker version for debugging purposes
   - docker --version
 
-  # Load cached docker images
-  - docker load -i docker_images/images.tar || true
-
      
-before_cache:
-  # Cache docker images
-  - docker save -o docker_images/images.tar $(docker images -a -q)
-
 # Setup containers, run tests, clean up, install production dependencies and push Docker image
 script:
   # Prepare for deployment of Docker image
