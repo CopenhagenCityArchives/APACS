@@ -11,36 +11,8 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 			$assetId
 		);
 
-		return $this->curl_get_contents($url);
-		
+	
 		$auth = base64_encode(sprintf("%s:%s",
-			$this->getDI()->get('cipConfig')['user'],
-			$this->getDI()->get('cipConfig')['pass']
-		));
-
-		// use key 'http' even if you send the request to https://...
-		$options = array(
-			'http' => array(
-				'header'  => array(sprintf("Authorization: Basic %s", $auth)),
-				'method'  => 'GET'
-			),
-			'ssl' => array(
-				'verify_peer' => false
-			)
-		);
-		$context  = stream_context_create($options);
-		$result = @file_get_contents($url, false, $context);
-		if ($result === false) {
-			$this->response->setStatusCode(400, "Invalid Asset ID");
-		} else {
-			header('Content-Type: application/pdf');
-			echo $result;
-		}
-	}
-
-	private function curl_get_contents($url)
-	{
-	  	$auth = base64_encode(sprintf("%s:%s",
 			$this->getDI()->get('cipConfig')['user'],
 			$this->getDI()->get('cipConfig')['pass']
 		));
@@ -55,12 +27,15 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 		]);
 
 		$data = curl_exec($ch);
-		var_dump($data);
-
 		curl_close($ch);
-	  	return $data;
-	}
 
+		if ($result === false) {
+			$this->response->setStatusCode(400, "Invalid Asset ID");
+		} else {
+			header('Content-Type: application/pdf');
+			echo $result;
+		}
+	}
 }
 
 ?>
