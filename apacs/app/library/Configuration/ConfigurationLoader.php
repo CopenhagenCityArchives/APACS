@@ -279,9 +279,9 @@ class ConfigurationLoader {
 			}
 
 			//If gui_type is preset, the data field has to by filled
-			if ($collectionConfig['levels'][$i]['gui_type'] == 'preset' && (!is_countable($collectionConfig['levels'][$i]['data']) || count($collectionConfig['levels'][$i]['data']) == 0)) {
-				throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
-			}
+			//if ($collectionConfig['levels'][$i]['gui_type'] == 'preset' && (!is_countable($collectionConfig['levels'][$i]['data']) || count($collectionConfig['levels'][$i]['data']) == 0)) {
+			//	throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
+			//}
 
 			$collectionConfig['api_documentation_url'] =  self::getCurrentApiUrl()  . 'collections/' . $collectionConfig['id'] . '/info';
 			$i++;
