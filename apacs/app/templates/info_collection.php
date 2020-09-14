@@ -12,11 +12,11 @@
                 <span class="span9">
                     <h2>API for <?php echo $obj['long_name']; ?></h2>
                     <!--<p>
-                        <span class="label label-success">Service</span> <strong>https://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></strong>
+                        <span class="label label-success">Service</span> <strong>https://api.kbharkiv.dk/collections/<?php echo $obj['id']; ?></strong>
                     </p>-->
                     <p><?php echo $obj['info']; ?></p>
                     <!--<span class="label label-info">Eksempel</span>
-                    <a target="_blank" href="https://www.kbhkilder.dk/api/collections">https://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
+                    <a target="_blank" href="https://api.kbharkiv.dk/collections">https://api.kbharkiv.dk/collections/<?php echo $obj['id']; ?></a>-->
                 </span>
                 <?php if(!is_null($obj['stats'])){ ?>
                 <div class="span9">&nbsp;</div>

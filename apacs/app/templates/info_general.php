@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Kbhkilder.dk</title>
+        <title>api.kbhakiv.dk</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <!-- Latest compiled and minified CSS, Twitter Bootstrap -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
@@ -11,14 +11,14 @@
             <div class="row-fluid">
                 <div>
                     <div class="span9">
-                        <h2>api.kbhkilder.dk</h2>
-                        <p>api.kbhkilder.dk udgør den centrale indgang til Københavns Stadsarkivs digitaliserede kilder og deres metadata.</p>
+                        <h2>api.kbharkiv.dk</h2>
+                        <p>api.kbharkiv.dk udgør den centrale indgang til Københavns Stadsarkivs digitaliserede kilder og deres metadata.</p>
                         <p>Disse data er tilgængelige gennem et JSON-baseret REST-API.</p>
                         <p>Herunder ses grundlæggende informationer om hver digitaliseret samling.</p>
                         <p>&nbsp;</p>
                     </div>
                     <!--<p>
-                        <span class="label label-success">Service</span> <strong>https://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></strong>
+                        <span class="label label-success">Service</span> <strong>https://api.kbharkiv.dk/api/collections/<?php echo $obj['id']; ?></strong>
                     </p>-->
                 </div>
                 <div class="span9">
@@ -57,7 +57,7 @@
                     </div>
                     <p>&nbsp;</p>
                     <!--<span class="label label-info">Eksempel</span>
-                    <a target="_blank" href="https://www.kbhkilder.dk/api/collections">https://www.kbhkilder.dk/api/collections/<?php echo $obj['id']; ?></a>-->
+                    <a target="_blank" href="https://api.kbharkiv.dk/collections">https://api.kbharkiv.dk/collections/<?php echo $obj['id']; ?></a>-->
                 </div>
                 <?php foreach ($cols as $obj) {?>
                     <?php if (!is_null($obj['stats'])) {?>

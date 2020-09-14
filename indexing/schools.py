@@ -149,7 +149,7 @@ class SchoolsIndexer(IndexerBase):
             'page_number': entry['OpslagsNr'],
             'unit_description': entry['description'],
             'collected_year': dateofentry.year if dateofentry is not None else None,
-            'kildeviser_url': f"http://kbharkiv.dk/kildeviser/#!?collection=100&item={entry['apacs_page_id']}" if entry.get('apacs_page_id') is not None else None
+            'kildeviser_url': f"https://kildeviser.kbharkiv.dk/#!?collection=100&item={entry['apacs_page_id']}" if entry.get('apacs_page_id') is not None else None
         }
         
         self.documents.append({
