@@ -26,7 +26,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 			sprintf("Authorization: Basic %s", $auth)
 		]);
 
-		$data = curl_exec($ch);
+		$result = curl_exec($ch);
 		curl_close($ch);
 
 		if ($result === false) {
