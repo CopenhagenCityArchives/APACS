@@ -32,10 +32,9 @@ class Objects extends \Phalcon\Mvc\Model {
 
 		foreach ($allFilters as $filter) {
 
-			$incommingFilter = $request->getQuery($filter['name']);
-
-			if ($incommingFilter !== false) {
-				$filter['value'] = $incommingFilter;
+			$incomingFilter = $request->getQuery($filter['name']);
+			if (!is_null($incomingFilter)) {
+				$filter['value'] = $incomingFilter;
 				$collectedFilters[] = $filter;
 
 				if (count($this->_searchArrayForValue($requiredFilters, 'name', $filter['name'])) > 0) {
