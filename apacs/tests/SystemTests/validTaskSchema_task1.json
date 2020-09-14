@@ -402,7 +402,7 @@
                         "description": "Vælg dødsstedet fra listen, hvis stedet ikke findes så vælg *skal oprettes.",
                         "type": "string",
                         "format": "typeahead",
-                        "datasource": "https://www.kbhkilder.dk/api/datasource/8?q=",
+                        "datasource": "https://api.kbharkiv.dk/datasource/8?q=",
                         "datasourceValueField": "deathplace"
                     },
                     "comment": {
@@ -481,7 +481,7 @@
                                     "description": "Hvis dødsårsagen ikke matcher en af valgmulighederne på listen, skal du vælge *skal oprettes. Tilføj flere dødsårsager",
                                     "type": "string",
                                     "format": "typeahead",
-                                    "datasource": "https://www.kbhkilder.dk/api/datasource/2?q=",
+                                    "datasource": "https://api.kbharkiv.dk/datasource/2?q=",
                                     "datasourceValueField": "deathcause"
                                 }
                             }
@@ -535,7 +535,7 @@
                                     "description": "Forstået som stilling, ikke civilstand.",
                                     "type": "string",
                                     "format": "typeahead",
-                                    "datasource": "https://www.kbhkilder.dk/api/datasource/1?q=",
+                                    "datasource": "https://api.kbharkiv.dk/datasource/1?q=",
                                     "datasourceValueField": "position"
                                 },
                                 "relationtype": {
@@ -610,7 +610,7 @@
                                     "description": "Evt. arbejdssted eller organisation.",
                                     "type": "string",
                                     "format": "typeahead",
-                                    "datasource": "https://www.kbhkilder.dk/api/datasource/14?q=",
+                                    "datasource": "https://api.kbharkiv.dk/datasource/14?q=",
                                     "datasourceValueField": "workplace"
                                 }
                             }
@@ -661,7 +661,7 @@
                                 "description": "Vælg et gadenavn fra listen. Hvis den ikke findes på listen så vælg *Skal oprettes",
                                 "type": "string",
                                 "format": "typeahead",
-                                "datasource": "https://www.kbhkilder.dk/api/datasource/3?q=",
+                                "datasource": "https://api.kbharkiv.dk/datasource/3?q=",
                                 "datasourceValueField": "streetAndHood"
                             },
                             "number": {
@@ -787,7 +787,7 @@
                                 "description": "Skal udfyldes hvis adressen er en institution og ikke et gadenavn.",
                                 "type": "string",
                                 "format": "typeahead",
-                                "datasource": "https://www.kbhkilder.dk/api/datasource/13?q=",
+                                "datasource": "https://api.kbharkiv.dk/datasource/13?q=",
                                 "datasourceValueField": "institution"
                             }
                         }
@@ -865,7 +865,7 @@
                                 "description": "Teksten, der står efter \"Fra\". Vær opmærksom på forkortelser.  Findes det der står ikke på listen ikke vælges *skal oprettes",
                                 "type": "string",
                                 "format": "typeahead",
-                                "datasource": "https://www.kbhkilder.dk/api/datasource/6?q=",
+                                "datasource": "https://api.kbharkiv.dk/datasource/6?q=",
                                 "datasourceValueField": "chapel"
                             },
                             "parish": {
@@ -895,7 +895,7 @@
                                 "description": "Tekst, der står til venstre for \"Til\". Hvis dette område er tomt, springes feltet over.",
                                 "type": "string",
                                 "format": "typeahead",
-                                "datasource": "https://www.kbhkilder.dk/api/datasource/10?q=",
+                                "datasource": "https://api.kbharkiv.dk/datasource/10?q=",
                                 "datasourceValueField": "parish"
                             },
                             "cemetary": {
@@ -925,7 +925,7 @@
                                 "description": "Teksten, der står efter \"Til\". Findes kirkegården ikke vælges *skal oprettes",
                                 "type": "string",
                                 "format": "typeahead",
-                                "datasource": "https://www.kbhkilder.dk/api/datasource/7?q=",
+                                "datasource": "https://api.kbharkiv.dk/datasource/7?q=",
                                 "datasourceValueField": "cemetary"
                             }
                         }

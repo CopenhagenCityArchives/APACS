@@ -11,8 +11,8 @@
             <div class="row-fluid">
                 <div>
                     <div class="span9">
-                        <h2>Kbhkilder.dk</h2>
-                        <p>Kbhkilder.dk udgør den centrale indgang til Københavns Stadsarkivs digitaliserede kilder og deres metadata.</p>
+                        <h2>api.kbhkilder.dk</h2>
+                        <p>api.kbhkilder.dk udgør den centrale indgang til Københavns Stadsarkivs digitaliserede kilder og deres metadata.</p>
                         <p>Disse data er tilgængelige gennem et JSON-baseret REST-API.</p>
                         <p>Herunder ses grundlæggende informationer om hver digitaliseret samling.</p>
                         <p>&nbsp;</p>
