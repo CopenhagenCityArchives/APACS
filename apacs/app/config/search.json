@@ -120,10 +120,14 @@
                 1,
                 17
             ],
+            "datasource": {
+                "field": "birthplace",
+                "url": "datasource/9?q="
+            },
             "name": "birthplace",
             "searchable": true,
             "sortable": true,
-            "type": "string",
+            "type": "typeahead",
             "view_name": "Fødested"
         },
         "birthplace_free": {
