@@ -130,6 +130,7 @@ try {
 
 	// Health check
 	$info->get('/health', 'healthCheck');
+	$info->head('/health', 'healthCheck');
 
 	$app->mount($info);
 
