@@ -1,0 +1,20 @@
+  option_settings:
+    - namespace: aws:elasticbeanstalk:healthreporting:system
+      option_name: ConfigDocument
+      value: {
+  "Rules": {
+    "Environment": {
+      "Application": {
+        "ApplicationRequests4xx": {
+          "Enabled": false
+        }
+      },
+      "ELB": {
+        "ELBRequests4xx": {
+          "Enabled": true
+        }
+      }
+    }
+  },
+  "Version": 1
+}
