@@ -16,4 +16,4 @@ COPY .env_prod /usr/src/app/env.cfg
 
 RUN crontab /usr/src/app/crontab
 RUN chmod +x /usr/src/app/cron.sh
-ENTRYPOINT cron && tail -f /dev/null
+ENTRYPOINT echo "Indexer started at:" && date && cron && tail -f /dev/null
