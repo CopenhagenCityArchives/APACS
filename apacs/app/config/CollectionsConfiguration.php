@@ -124,15 +124,23 @@ $collectionsSettings = array(
 		'primary_table_name' => 'kortteg_files',
 		'starbas_field_name' => 'av_stam_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select kortteg_files.id, CONCAT(\'https://kbhkilder-tiles.kbharkiv.dk/\',kortteg_files.cumulus_id, \'/\',kortteg_files.cumulus_id,\'_files/\') as imageURL, year, height, width,
-                        description,
-                        av_beskrivelse,
-                        av_stam_id,
-                        if(av_aar_fra is not null AND av_aar_fra != 0, CONCAT(av_aar_fra, " - ", av_aar_til), av_aar) as time_desc
-                        FROM kortteg_files
-                        LEFT JOIN kortteg_new_tags ON kortteg_files.new_tag_id = kortteg_new_tags.id
-                        LEFT JOIN kortteg_starbas_data on kortteg_files.eksemplar_id = kortteg_starbas_data.eks_id
-                        WHERE :query',
+		'objects_query' => "select kortteg_files.id, 
+								CONCAT('https://kbhkilder-tiles.kbharkiv.dk/', 
+									if(kortteg_files.cumulus_collection_prefix is not null, CONCAT(cumulus_collection_prefix, "/"), ''), 
+									kortteg_files.cumulus_id, 
+									'/',
+									kortteg_files.cumulus_id,'_files/') as imageURL, 
+								year, 
+								height, 
+								width,
+								description,
+								av_beskrivelse,
+								av_stam_id,
+								if(av_aar_fra is not null AND av_aar_fra != 0, CONCAT(av_aar_fra, " - ", av_aar_til), av_aar) as time_desc
+								FROM kortteg_files
+								LEFT JOIN kortteg_new_tags ON kortteg_files.new_tag_id = kortteg_new_tags.id
+								LEFT JOIN kortteg_starbas_data on kortteg_files.eksemplar_id = kortteg_starbas_data.eks_id
+								WHERE :query",
 		'levels_type' => 'flat',
 		'levels' => array(
 			//Kategori, søgebar
