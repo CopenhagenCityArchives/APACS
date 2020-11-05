@@ -27,10 +27,13 @@ script:
   - sleep 30
   - docker-compose -f docker-compose-ci-apacs-tests.yml exec apacs /code/vendor/bin/phpunit
 
+  # Add tag in Dockerrun.aws.json
+  - sed -i "s/{image-tag}/${IMAGE_TAG}/g" Dockerrun.aws.json
+
   # build and push APACS image
   - docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
-  - docker tag apacs 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
-  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:latest
+  - docker tag apacs 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:${IMAGE_TAG}
+  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:${IMAGE_TAG}
 
 deploy:
   - provider: elasticbeanstalk
