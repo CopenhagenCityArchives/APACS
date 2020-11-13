@@ -29,7 +29,7 @@ script:
   - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
 
   # Add tag in Dockerrun.aws.json
-  - sed -i "s/{image-tag}/${IMAGE_TAG}/g" docker.compose.yml
+  - sed -i "s/{image-tag}/${IMAGE_TAG}/g" docker-compose.yml
 
   # build and push APACS Solr image
   - docker build -f ./infrastructure/solr/Dockerfile -t apacs-solr .
