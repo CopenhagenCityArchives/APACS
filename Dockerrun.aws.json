@@ -2,6 +2,12 @@
     "AWSEBDockerrunVersion": 2,
     "volumes": [
         {
+            "name": "solr-data",
+            "host": {
+                "sourcePath": "/var/app/solr-data"
+            }
+        },
+        {
             "name": "banana_core",
             "host": {
                 "sourcePath": "/solr-data/banana-int"
@@ -26,17 +32,25 @@
                     "containerPort": 8983
                 }
             ],
-            "mountPoints": [
+            "environment": [
                 {
-                    "sourceVolume": "banana_core",
-                    "containerPath": "/opt/solr/server/solr/banana-int",
-                    "readOnly": false
+                  "name": "SOLR_HOME",
+                  "value": "/data/solr"
                 },
                 {
-                    "sourceVolume": "mycores",
-                    "containerPath": "/opt/solr/server/solr/mycores",
-                    "readOnly": false
+                  "name": "INIT_SOLR_HOME",
+                  "value": "yes"
                 }
+            ],
+            "mountPoints": [
+                {
+                    "sourceVolume": "awseb-logs-solr-app",
+                    "containerPath": "/opt/solr/server/logs"
+                  },
+                  {
+                    "sourceVolume": "solr-data",
+                    "containerPath": "/data/solr"
+                  }
             ]
         },
         {

@@ -1,4 +1,4 @@
-FROM library/solr
+FROM library/solr:6.6.6
 
 COPY solr_conf/ /opt/solr/server/solr/configsets/solr_conf/
 COPY web.xml /opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
@@ -13,7 +13,7 @@ COPY web.xml /opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
 
 COPY --chown=solr:solr security.json /opt/solr/server/solr/security.json
 
-ENTRYPOINT [ "docker-entrypoint.sh", "solr-precreate", "apacs_core", "/opt/solr/server/solr/configsets/solr_conf/apacs_core", "-Ddisable.configEdit=true" ]
+ENTRYPOINT [ "docker-entrypoint.sh", "solr-precreate", "apacs_core", "-Ddisable.configEdit=true" ]
 
 # Precreate both cores
 #ENTRYPOINT [ "bash", "-c", "precreate-core apacs_core /opt/solr/server/solr/configsets/solr_conf/apacs_core;", "precreate-core banana-int;", "-Ddisable.configEdit=true"]
