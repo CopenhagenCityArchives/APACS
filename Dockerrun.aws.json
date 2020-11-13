@@ -4,13 +4,13 @@
         {
             "name": "banana_core",
             "host": {
-                "sourcePath": "/tmp/solr-data/banana-int"
+                "sourcePath": "/solr-data/banana-int"
             }
         },
         {
             "name": "mycores",
             "host": {
-                "sourcePath": "/tmp/solr-data/mycores"
+                "sourcePath": "/solr-data/mycores"
             }
         }
     ],
