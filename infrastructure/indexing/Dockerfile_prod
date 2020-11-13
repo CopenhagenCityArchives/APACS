@@ -12,7 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Add source code
 COPY ./indexing ./
-COPY .env_prod /usr/src/app/env.cfg
 
 RUN crontab /usr/src/app/crontab
 RUN chmod +x /usr/src/app/cron.sh
