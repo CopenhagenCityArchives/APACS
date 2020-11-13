@@ -31,9 +31,6 @@ script:
   # Add tag in Dockerrun.aws.json
   - sed -i "s/{image-tag}/${IMAGE_TAG}/g" docker-compose.yml
 
-  # Remove Dockerrun.aws.json
-  - rm Dockerrun.aws.json
-
   # build and push APACS Solr image
   - docker build -f ./infrastructure/solr/Dockerfile -t apacs-solr ./infrastructure/solr
   - docker tag apacs-solr 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-solr:${IMAGE_TAG}

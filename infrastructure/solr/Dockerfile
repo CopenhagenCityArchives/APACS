@@ -12,3 +12,5 @@ RUN /opt/solr/bin/solr start && \
     /opt/solr/bin/solr stop
 
 COPY --chown=solr:solr security.json /opt/solr/server/solr/security.json
+
+ENTRYPOINT [ "docker-entrypoint.sh", "solr-precreate", "apacs_core", "/opt/solr/server/solr/configsets/solr_conf/apacs_core", "-Ddisable.configEdit=true" ]

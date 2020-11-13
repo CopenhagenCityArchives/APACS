@@ -2,43 +2,48 @@
     "AWSEBDockerrunVersion": 2,
     "volumes": [
         {
-            "name": "nginx-proxy-conf",
+            "name": "banana_core",
             "host": {
-                "sourcePath": "/var/app/current/infrastructure/nginx/nginx_site.conf"
+                "sourcePath": "/tmp/solr-data/banana-int"
             }
         },
         {
-            "name": "auth0-cache",
+            "name": "mycores",
             "host": {
-                "sourcePath": "/var/app/current/cache/auth0"
+                "sourcePath": "/tmp/solr-data/mycores"
             }
         }
     ],
     "containerDefinitions": [
         {
-            "name": "apacs",
-            "image": "282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:{image-tag}",
+            "name": "solr",
+            "image": "282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-solr:{image-tag}",
             "essential": true,
-            "memory": 128,
+            "memory": 1500,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 8983
+                }
+            ],
             "mountPoints": [
                 {
-                    "sourceVolume": "auth0-cache",
-                    "containerPath": "/var/cache/auth0",
+                    "sourceVolume": "banana_core",
+                    "containerPath": "/opt/solr/server/solr/banana-int",
+                    "readOnly": false
+                },
+                {
+                    "sourceVolume": "mycores",
+                    "containerPath": "/opt/solr/server/solr/mycores",
                     "readOnly": false
                 }
             ]
         },
         {
-            "name": "nginx-proxy",
-            "image": "nginx:alpine",
+            "name": "indexer",
+            "image": "282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-indexer:{image-tag}",
             "essential": true,
-            "memory": 128,
-            "portMappings": [
-                {
-                    "hostPort": 80,
-                    "containerPort": 80
-                }
-            ],
+            "memory": 500,
             "links": [
                 "apacs"
             ],
