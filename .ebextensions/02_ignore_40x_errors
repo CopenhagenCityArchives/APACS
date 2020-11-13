@@ -11,7 +11,7 @@
       },
       "ELB": {
         "ELBRequests4xx": {
-          "Enabled": true
+          "Enabled": false
         }
       }
     }
