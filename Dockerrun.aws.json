@@ -45,7 +45,7 @@
             "essential": true,
             "memory": 500,
             "links": [
-                "apacs"
+                "solr"
             ],
             "mountPoints": [
                 {
