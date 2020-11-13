@@ -11,9 +11,9 @@ services:
 
 stages:
   - name: script
-    if: branch in (master, development)
+    if: branch in (solr-eb)
   - name: deploy
-    if: branch in (master, development)
+    if: branch in (solr-eb)
 
 before_install:
   # Stop travis mysql as we're using MySQL in an image
@@ -27,41 +27,30 @@ script:
   - pip install --user awscli # install aws cli w/o sudo
   - export PATH=$PATH:$HOME/.local/bin # put aws in the path
   - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 282251075226.dkr.ecr.eu-west-1.amazonaws.com #needs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY envvars
-  
-  # Run tests
-  - docker-compose -f docker-compose-ci-apacs-tests.yml up -d
-  - sleep 30
-  - docker-compose -f docker-compose-ci-apacs-tests.yml exec apacs /code/vendor/bin/phpunit
 
   # Add tag in Dockerrun.aws.json
-  - sed -i "s/{image-tag}/${IMAGE_TAG}/g" Dockerrun.aws.json
+  - sed -i "s/{image-tag}/${IMAGE_TAG}/g" docker.compose.yml
 
-  # build and push APACS image
-  - docker build -f ./infrastructure/php-fpm-phalcon/Dockerfile_prod -t apacs .
-  - docker tag apacs 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:${IMAGE_TAG}
-  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:${IMAGE_TAG}
+  # build and push APACS Solr image
+  - docker build -f ./infrastructure/solr/Dockerfile -t apacs-solr .
+  - docker tag apacs-solr 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-solr:${IMAGE_TAG}
+  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-solr:${IMAGE_TAG}
+
+  # build and push APACS Indexer image
+  - docker build -f ./infrastructure/indexing/Dockerfile_prod -t apacs-indexer .
+  - docker tag apacs-indexer 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-indexer:${IMAGE_TAG}
+  - docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-indexer:${IMAGE_TAG}
+
 
 deploy:
   - provider: elasticbeanstalk
     access_key_id: ${AWS_ACCESS_KEY_ID}
     secret_access_key: ${AWS_SECRET_ACCESS_KEY}
     region: eu-west-1
-    app: APACS
-    env: apacs-test-auth0-2
+    app: apacs-solr-prod
+    env: apacs-solr-prod
     bucket: elasticbeanstalk-eu-west-1-282251075226
     edge: true
     on:
       all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^(development)$
-
-  - provider: elasticbeanstalk
-    access_key_id: ${AWS_ACCESS_KEY_ID}
-    secret_access_key: ${AWS_SECRET_ACCESS_KEY}
-    region: eu-west-1
-    app: APACS
-    env: apacs-production
-    bucket: elasticbeanstalk-eu-west-1-282251075226
-    edge: true
-    on:
-      all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^(master)$      
+      condition: $TRAVIS_BRANCH =~ ^(solr-eb)$
