@@ -23,7 +23,7 @@
     "containerDefinitions": [
         {
             "name": "solr",
-            "image": "solr:6.6.6",
+            "image": "282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs-solr:{image-tag}",
             "essential": true,
             "memory": 1500,
             "portMappings": [
@@ -43,10 +43,6 @@
                 }
             ],
             "mountPoints": [
-                {
-                    "sourceVolume": "awseb-logs-solr-app",
-                    "containerPath": "/opt/solr/server/logs"
-                  },
                   {
                     "sourceVolume": "solr-data",
                     "containerPath": "/data/solr"
