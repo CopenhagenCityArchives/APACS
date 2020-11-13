@@ -1,4 +1,4 @@
-FROM library/solr:6.6.6
+FROM library/solr:8.1.1
 
 COPY solr_conf/ /opt/solr/server/solr/configsets/solr_conf/
 COPY web.xml /opt/solr/server/solr-webapp/webapp/WEB-INF/web.xml
