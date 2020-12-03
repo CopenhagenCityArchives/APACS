@@ -33,6 +33,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 			$this->response->setStatusCode(400, "Invalid Asset ID");
 		} else {
 			header('Content-Type: application/pdf');
+			header("Access-Control-Allow-Origin: *");
 			echo $result;
 		}
 	}
