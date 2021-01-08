@@ -6,7 +6,7 @@
     "Environment": {
       "Application": {
         "ApplicationRequests4xx": {
-          "Enabled": false
+          "Enabled": true
         }
       },
       "ELB": {
