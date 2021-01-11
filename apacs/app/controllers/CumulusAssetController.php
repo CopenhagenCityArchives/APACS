@@ -26,14 +26,37 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 			sprintf("Authorization: Basic %s", $auth)
 		]);
 
+		$headers = [];
+
+		// this function is called by curl for each header received
+		curl_setopt($ch, CURLOPT_HEADERFUNCTION,
+		function($curl, $header) use (&$headers)
+		{
+			$len = strlen($header);
+			$header = explode(':', $header, 2);
+			if (count($header) < 2) // ignore invalid headers
+				return $len;
+
+			$headers[strtolower(trim($header[0]))][] = trim($header[1]);
+
+			return $len;
+		});
+
 		$result = curl_exec($ch);
 		curl_close($ch);
 
 		if ($result === false) {
 			$this->response->setStatusCode(400, "Invalid Asset ID");
 		} else {
-			header('Content-Type: application/pdf');
-			header("Access-Control-Allow-Origin: *");
+			if(isset($headers['content-type'])){
+				header('Content-Type: ' . $headers['content-type']);
+				header("Access-Control-Allow-Origin: *");
+			}
+			else{
+				header('Content-Type: application/pdf');
+				header("Access-Control-Allow-Origin: *");
+			}
+			
 			echo $result;
 		}
 	}
