@@ -49,7 +49,7 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 			$this->response->setStatusCode(400, "Invalid Asset ID");
 		} else {
 			if(isset($headers['content-type'])){
-				header('Content-Type: ' . $headers['content-type']);
+				header('Content-Type: ' . $headers['content-type'][0]);
 				header("Access-Control-Allow-Origin: *");
 			}
 			else{
