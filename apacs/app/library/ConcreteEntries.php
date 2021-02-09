@@ -104,7 +104,7 @@ class ConcreteEntries {
 
 		$results = [];
 
-		foreach ($entitiesCollection->getEntitiesAsFlatArray() as $entity) {
+		foreach ($entitiesCollection->getEntities()->flattenTree() as $entity) {
 			//if( isset($entityData[$entity->name][0]) ){
 
 			$data = $entityData[$entity->name];
@@ -187,7 +187,7 @@ class ConcreteEntries {
 		}
 
 		//Load in flat form
-		foreach ($entitiesCollection->getEntitiesAsFlatArray() as $entity) {
+		foreach ($entitiesCollection->getEntities()->flattenTree() as $entity) {
 			$results[$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
 		}
 
@@ -468,7 +468,7 @@ class ConcreteEntries {
 	public function SaveEntriesForTask(IEntitiesCollection $entitiesCollection, $data) {
 		$dbCon = ORM::get_db();
 
-		$entities = $entitiesCollection->getEntitiesAsFlatArray();
+		$entities = $entitiesCollection->getEntities()->flattenTree();
 		if (!is_countable($entities) || count($entities) == 0) {
 			throw new InvalidArgumentException("no entities given!");
 		}
