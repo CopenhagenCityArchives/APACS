@@ -105,7 +105,7 @@ class Datasources extends \Phalcon\Mvc\Model {
 			if (isset($datasource) && $datasource !== false) {
 				$values = $datasource->GetValuesAsArray();
 				if (!$values) {
-					$field['datasource'] = 'https://api.kbharkiv.dk/datasource/' . $datasource->id . '?q=';
+					$field['datasource_id'] = $datasource->id;
 					$field['datasourceValueField'] = $datasource->valueField;
 				} else {
 					$field['enum'] = $values;
