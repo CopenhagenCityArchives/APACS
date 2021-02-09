@@ -35,6 +35,40 @@ class ConfigurationEntity implements IEntity {
 		$this->validationMessages = [];
 	}
 
+	/**
+	 * Returns a flattened array of ConfigurationEntity tree structure,
+	 * with the first element being the current ConfiguratioEntity.
+	 * 
+	 * For example, it transforms the structure:
+	 *   entity1 {
+	 * 	   entities: [
+	 *       entity2 { entities: null },
+	 *       entity3 { entities: [
+	 * 		     entity4 { entities: null }
+	 *         ]
+	 *       },
+	 *       entity5 { entities: null },
+	 *     ]
+	 *   }
+	 * 
+	 * into:
+	 *   [ entity1 { .. }, entity2 { .. }, entity3 { .. }, entity4 { .. }, entity5 { .. } ]
+	 */
+	public function flattenTree() {
+		$flattened = [];
+		$flattened[] = $this;
+
+		if (!$this->entities == null) {
+			foreach ($this->entities as $childEntity) {
+				foreach ($childEntity->flattenTree() as $flattenedEntity) {
+					$flattened[] = $flattenedEntity;
+				}
+			}
+		}
+
+		return $flattened;
+	}
+
 	public function toArray(){
 		return $this->array;
 	}
