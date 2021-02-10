@@ -2,7 +2,7 @@ version: '3.3'
 services:
 
   apacs:
-    image: 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:{image_tag}
+    image: 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:{image-tag}
     container_name: apacs
     depends_on:
       - composer
