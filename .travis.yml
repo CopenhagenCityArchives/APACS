@@ -43,7 +43,10 @@ script:
 
   # Create docker-compose.yml only if the resolutions branch
   # that deploys to a single-container environment is active.
-  - [[ "${TRAVIS_BRANCH}" = "resolutions" ]] && sed "s/{image-tag}/${IMAGE_TAG}/g" docker-compose-apacs-beta.yml > docker-compose.yml
+  - |
+    if [ "${TRAVIS_BRANCH}" = "resolutions" ]; then
+      sed "s/{image-tag}/${IMAGE_TAG}/g" docker-compose-apacs-beta.yml > docker-compose.yml
+    fi
 
 
 deploy:
