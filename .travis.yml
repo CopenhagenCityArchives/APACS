@@ -45,6 +45,7 @@ script:
   # that deploys to a single-container environment is active.
   - |
     if [ "${TRAVIS_BRANCH}" = "resolutions" ]; then
+      rm Dockerrun.aws.json
       sed "s/{image-tag}/${IMAGE_TAG}/g" docker-compose-apacs-beta.yml > docker-compose.yml
     fi
 
