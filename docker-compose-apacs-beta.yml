@@ -37,9 +37,7 @@ services:
   
   composer:
     container_name: composer
-    build:
-      context: ./infrastructure/composer/
-      dockerfile: Dockerfile
+    image: composer:latest
     command: install
     restart: 'no'
     volumes:
