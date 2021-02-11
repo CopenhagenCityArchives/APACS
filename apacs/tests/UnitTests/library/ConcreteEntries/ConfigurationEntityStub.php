@@ -8,7 +8,7 @@ class ConfigurationEntityStub extends \ConfigurationEntity {
 	public $current;
 	public $isDataValid;
 	public $next;
-	public $AllEntityFieldsAreEmptyReturn;
+	public $UserEntryIsEmptyReturn;
 
 	public function __construct(Array $entity) {
         parent::__construct($entity);
@@ -17,7 +17,7 @@ class ConfigurationEntityStub extends \ConfigurationEntity {
 		$this->current = $entity['current'] ?? false;
 		$this->isDataValid = $entity['isDataValid'] ?? true;
 		$this->next = $entity['next'] ?? false;
-		$this->AllEntityFieldsAreEmptyReturn = $entity['AllEntityFieldsAreEmpty'] ?? false;
+		$this->UserEntryIsEmptyReturn = $entity['UserEntryIsEmpty'] ?? false;
 		
 	}
 
@@ -39,8 +39,8 @@ class ConfigurationEntityStub extends \ConfigurationEntity {
 		return $this->next;
 	}
 
-	public function AllEntityFieldsAreEmpty(array $entityData){
-		return $this->AllEntityFieldsAreEmptyReturn;
+	public function UserEntryIsEmpty(array $entityData){
+		return $this->UserEntryIsEmptyReturn;
 	}
 	public function GetValidationStatus(){
 		return "validation status";

@@ -11,15 +11,13 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 	}
 
     // secondary entities, throw exception on missing reference to parent
-    public function test_SaveSecondaryEntity_WithNoReferenceToPrimaryEntity_ThrowException(){
-        $entity = EntitiesTestData::getSimpleSecondaryEntity();
-
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entititesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+    public function test_SaveSecondaryEntity_AsArray_WithNoReferenceToPrimaryEntity_ThrowException() {
+        $entityData = EntitiesTestData::getSimpleSecondaryEntity();
+        $entityData['type'] = 'array'; 
+        $entity = new ConfigurationEntity($entityData);
 
         $inputData = [
-            'field2'=>'value2', 
+            'field2' => 'value2', 
             'parentEntityReferenceField'=>null
         ];
 
@@ -28,19 +26,16 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entititesCollection->getPrimaryEntity(), $inputData);
+        $entry->save($entity, $inputData);
     }
 
     
     //No data for primary entity
     public function test_SavePrimaryEntity_WithNoData_ThrowException(){
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
         
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
-        
+        $entity = new ConfigurationEntity($entityData);
         $inputData = [];
 
         $crudMock = $this->createMock(Mocks\CrudMock::class);
@@ -48,21 +43,19 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
     
     public function test_SavePrimaryEntity_WithInvalidData_ThrowException(){
         
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['isDataValid'] = false;
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['isDataValid'] = false;
         
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entity = new ConfigurationEntity($entityData);
 
         $inputData = [
             $entity->name => [
-                'field1'=>'value1']
+                'field1'=>'invalid_value1']
         ];
 
         $crudMock = $this->createMock(Mocks\CrudMock::class);
@@ -73,54 +66,51 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
 
     //Invalid data for primary entity 
     public function test_SaveSecondaryObjectEntity_WithInvalidData_ThrowException(){
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
-        $entity['entities'][0]['isDataValid'] = false;
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entityData['entities'][0]['type'] = 'object';
+        $entityData['entities'][0]['isDataValid'] = false;
         
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entity = new ConfigurationEntity($entityData);
         
         $inputData = [
-            $entity['name'] => [
-                'field1'=>'value1',
-                $entity['entities'][0]['name'] => [
+            $entityData['name'] => [
+                'field1'=>'invalid_value1',
+                $entityData['entities'][0]['name'] => [
                 ]
         ]];
 
         $crudMock = $this->createMock(Mocks\CrudMock::class);
 
-        //Saving should be cancel with rollBack
-        $crudMock->expects($this->exactly(1))
+        // Invalid data means that Save is never called
+        $crudMock->expects($this->never())
             ->method('save')
             ->willReturn(1);
 
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
 
     public function test_SaveSecondaryEntityArray_WithInvalidData_ThrowException(){
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
-        $entity['entities'][0]['isDataValid'] = false;
-        $entity['entities'][0]['type'] = 'array';
-        $entity['entities'][0]['AllEntityFieldsAreEmpty'] = false;
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entityData['entities'][0]['isDataValid'] = false;
+        $entityData['entities'][0]['type'] = 'array';
+        $entityData['entities'][0]['UserEntryIsEmpty'] = false;
         
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entity = new ConfigurationEntity($entityData);
         
         $inputData = [
-            $entity['name'] => [
-                'field1'=>'value1',
-                $entity['entities'][0]['name'] => [
+            $entityData['name'] => [
+                'field1'=>'invalid_value1',
+                $entityData['entities'][0]['name'] => [
                     [
                     'field2' => 'value2',
                     'parentEntityReferenceField' => null
@@ -130,32 +120,30 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
 
         $crudMock = $this->createMock(Mocks\CrudMock::class);
 
-        //Saving should be cancel with rollBack
-        $crudMock->expects($this->exactly(1))
+        // Never calls save
+        $crudMock->expects($this->never())
             ->method('save')
             ->willReturn(1);
 
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
 
     public function test_SaveSecondaryEntityArray_WithNoData_Ignore(){
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
         
         //Return true to test empty data
-        $entity['entities'][0]['isDataValid'] = true;
-        $entity['entities'][0]['type'] = 'array';
-        $entity['entities'][0]['AllEntityFieldsAreEmpty'] = true;
+        $entityData['entities'][0]['isDataValid'] = true;
+        $entityData['entities'][0]['type'] = 'array';
+        $entityData['entities'][0]['UserEntryIsEmpty'] = true;
 
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entity = new ConfigurationEntity($entityData);
         
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 'field1'=>'value1'
         ]];
 
@@ -168,18 +156,6 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
-
-    // Obsolete. IEntities required
-    public function xtest_SaveWithNoEntities_ThrowException(){
-        $this->expectException(InvalidArgumentException::class);
-        $crudMock = $this->createMock(Mocks\CrudMock::class);
-        $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask(null, null);
-    }
-
-    /*
-    Empty secondary entity (object): Already tested in test_SaveSecondaryObjectEntity_WithNoDataButId_RemoveEntity
-    */
 }

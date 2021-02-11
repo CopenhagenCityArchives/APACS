@@ -28,8 +28,6 @@ class ConcreteEntries {
 			catch(Exception $e){
 
 			}
-			//ORM::configure('logging', true);
-			//echo ORM::get_last_query();
 			$this->crud = new CRUD\CRUD();
 		}
 	}
@@ -38,35 +36,71 @@ class ConcreteEntries {
 		return $this->di;
 	}
 
-	public function Load($entity, $primaryKeyName, $id) {
-		if(!isset($primaryKeyName)){
-			throw new InvalidArgumentException("Primary key name not given in ConcreteEntries::Load for entity " . $entity->name);
-		}
-		if ($entity->type == 'array') {
+	private function HandleEntry(IEntity $entity, Array $entry) {
+		foreach ($entity->getFields() as $field) {
+			if ($field->formFieldType == 'date' && isset($entry[$field->fieldName])) {
+				$entry[$field->fieldName] = date('d-m-Y', strtotime($entry[$field->fieldName]));
+			}
 
-			return $this->buildJoins($entity)->where($primaryKeyName, $id)->order_by_asc('order')->find_array();
-		} else {
-			$result = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
-
-			if (isset($result[0])) {
-				foreach ($entity->getFields() as $field) {
-					if ($field->formFieldType == 'date' && isset($result[0][$field->fieldName])) {
-						$result[0][$field->fieldName] = date('d-m-Y', strtotime($result[0][$field->fieldName]));
-					}
-
-					/*if ($field->formFieldType == 'decimal' && isset($result[0][$field->fieldName])) {
-						$result[0][$field->fieldName] = str_replace('.', ',', $result[0][$field->fieldName]);
-					}*/
-
-					//TODO: Hardcoded! Fix when form supports decimal data types
-					if(($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours' || $field->fieldName == 'ageMonth' || $field->fieldName == 'ageYears') && isset($result[0][$field->fieldName])){
-						$result[0][$field->fieldName] = str_replace('.', ',', $result[0][$field->fieldName]);
-					}
-				}
-
-				return $result[0];
+			//TODO: Hardcoded! Fix when form supports decimal data types
+			if(($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours' || $field->fieldName == 'ageMonth' || $field->fieldName == 'ageYears') && isset($result[0][$field->fieldName])){
+				$entry[$field->fieldName] = str_replace('.', ',', $result[0][$field->fieldName]);
 			}
 		}
+
+		foreach ($entity->getChildren() as $childEntity) {
+			if ($childEntity->type == 'array') {
+				$entry[$childEntity->name] = $this->LoadArray($childEntity, $entry['id']);
+			} else if ($childEntity->type == 'object' && isset($entry[$childEntity->entityKeyName])) {
+				$entry[$childEntity->name] = $this->LoadObject($childEntity, 'id', $entry[$childEntity->entityKeyName]);
+			} else {
+				if ($childEntity->required == 1) {
+					throw new RuntimeException('Could not load entity ' . $entity->name . ': Missing required child entity ' . $childEntity->name);
+				}
+
+				$entry[$childEntity->name] = NULL;
+			}
+		}
+
+		return $entry;
+	}
+
+	/**
+	 * Load related entities.
+	 */
+	private function LoadArray(IEntity $entity, $parentId) {
+		if ($entity->type != 'array') {
+			throw new InvalidArgumentException('LoadArray called with invalid entity type "' . $entity->type . '"');
+		}
+
+		$entries = $this->buildJoins($entity)->where($entity->entityKeyName, $parentId)->order_by_asc('order')->find_array();
+		
+		$values = [];
+		foreach ($entries as $entry) {
+			$values[] = $this->HandleEntry($entity, $entry);
+		}
+
+		return $values;
+	}
+
+	/**
+	 * Load the data connected to an entity structure.
+	 */
+	private function LoadObject(IEntity $entity, string $primaryKeyName, int $id) {
+		if ($entity->type != 'object') {
+			throw new InvalidArgumentException("LoadObject for ". $entity->name ." called with invalid entity type '" . $entity->type . "' ");
+		}
+
+		if (!isset($primaryKeyName)) {
+			throw new InvalidArgumentException("Primary key name not given in ConcreteEntries::Load for entity " . $entity->name);
+		}
+
+		$entries = $this->buildJoins($entity)->where($primaryKeyName, $id)->find_array();
+		if (is_null($entries) || count($entries) == 0) {
+			return null;
+		}
+		
+		return $this->HandleEntry($entity, $entries[0]);
 	}
 
 	private function buildJoins(IEntity $entity) {
@@ -86,9 +120,16 @@ class ConcreteEntries {
 		//We always want the id of the entry
 		$joins = $joins->select($entity->primaryTableName . '.id');
 
-		//We also want the foreign key to the primary entity for secondary entities
-		if ($entity->isPrimaryEntity != '1') {
+		// For array (1-n) entities, select the field relating to the parent TODO: Check up on this
+		if ($entity->type == 'array') {
 			$joins = $joins->select($entity->entityKeyName);
+		}
+
+		// Select the fields that refer to (1-1) child entities TODO: Check up on this
+		foreach ($entity->getChildren() as $childEntity) {
+			if ($childEntity->type == 'object') {
+				$joins = $joins->select($entity->primaryTableName . "." . $childEntity->entityKeyName);
+			}
 		}
 
 		//Adding joins
@@ -99,227 +140,247 @@ class ConcreteEntries {
 		}
 		return $joins;
 	}
-
-	public function ConcatEntitiesAndData(IEntitiesCollection $entitiesCollection, $entityData, $entry_id) {
-
+	
+	/**
+	 * Decorate an entry with entity information.
+	 */
+	public function ConcatEntitiesAndData(IEntity $entity, $entityData, $entry_id) {
 		$results = [];
 
-		foreach ($entitiesCollection->getEntities()->flattenTree() as $entity) {
-			//if( isset($entityData[$entity->name][0]) ){
+		$merged = [];
+		$merged['entity_name'] = $entity->name;
+		$merged['label'] = $entity->guiName;
+		$merged['entry_id'] = $entry_id;
+		$merged['fields'] = [];
 
-			$data = $entityData[$entity->name];
+		if ($entity->type == 'object') {
+			$merged['concrete_entries_id'] = isset($entityData['id']) ? $entityData['id'] : null;
 
-			if ($entity->type == 'object') {
-				$temp = $data;
-				unset($data);
-				$data = [];
-				$data[] = $temp;
-				//var_dump($data);
+			foreach ($entity->getFields() as $field) {
+				$fieldValue = [];
+				$fieldValue['field_name'] = $field->GetRealFieldName();
+				$fieldValue['label'] = $field->formName;
+				$fieldValue['value'] = isset($entityData[$field->GetRealFieldName()]) ? $entityData[$field->GetRealFieldName()] : null;
+				$fieldValue['parent_id'] = $entityData['id'];
+				$merged['fields'][] = $fieldValue;
 			}
+			$results[] = $merged;
 
-			$entityRow = [];
-			$entityRow['entity_name'] = $entity->name;
-			$entityRow['label'] = $entity->guiName;
-			$entityRow['entry_id'] = $entry_id;
-			//$entityRow['task_id'] = $entity->task_id;
-			$entityRow['concrete_entries_id'] = isset($data[0]['id']) ? $data[0]['id'] : null;
-			$entityRow['fields'] = [];
-			$i = 0;
-			$addFieldsAsArray = $entity->type == 'array';
-			foreach ($data as $row) {
-				$fieldValueRow = [];
-				//Set field name and value for each field
-				foreach ($entity->getFields() as $field) {
-					//if (isset($row[$field->GetRealFieldName()])) {
-					$fieldValueRow['field_name'] = $field->GetRealFieldName();
-					$fieldValueRow['label'] = $field->formName;
-					$fieldValueRow['value'] = isset($row[$field->GetRealFieldName()]) ? $row[$field->GetRealFieldName()] : null;
-					$fieldValueRow['parent_id'] = $row['id'];
-
-					if ($addFieldsAsArray == true) {
-						$entityRow['fields'][$i][] = $fieldValueRow;
-					} else {
-						$entityRow['fields'][] = $fieldValueRow;
-					}
-					//}
+			foreach ($entity->getChildren() as $child) {
+				$childData = $entityData[$child->name];
+				if (!isset($childData)) {
+					continue;
 				}
+
+				$results = array_merge($results, $this->ConcatEntitiesAndData($child, $childData, $entry_id));
+			}
+		} else if ($entity->type == 'array') {
+			$merged['concrete_entries_id'] = isset($entityData[0]['id']) ? $entityData[0]['id'] : null;
+
+			$childResults = [];
+			$i = 0;
+			foreach ($entityData as $item) {
+				foreach ($entity->getFields() as $field) {
+					$fieldValue = [];
+					$fieldValue['field_name'] = $field->GetRealFieldName();
+					$fieldValue['label'] = $field->formName;
+					$fieldValue['value'] = isset($item[$field->GetRealFieldName()]) ? $item[$field->GetRealFieldName()] : null;
+					$fieldValue['parent_id'] = $item['id'];
+					$merged['fields'][$i][] = $fieldValue;
+				}
+
+				foreach ($entity->getChildren() as $child) {
+					$childData = $item[$entity->name];
+					if (!isset($childData)) {
+						continue;
+					}
+					
+					$childResults = $this->ConcatEntitiesAndData($child, $childData, $entry_id);
+				}
+
 				$i++;
 			}
-			$results[] = $entityRow;
-			//	}
+
+			$results[] = $merged;
+			$results = array_merge($results, $childResults);
 		}
 
 		return $results;
 	}
 
 	/**
-	 * Loads a complete entry. Can be loaded either hierarchical (secondary entities are a part of the primary entity),
-	 * or not (all entities are in the same level)
-	 * @param [type]  $entities         The entities that describes the data to load
-	 * @param [type]  $id               The id of the concrete entry to load
-	 * @param boolean $loadhierarchical Indication of wheter or not to load the data in a hierarchical form. Defaults to false.
+	 * Loads a complete entry.
+	 * 
+	 * @param IEntity  $entity  The entity that describes the data to load
+	 * @param int      $id      The id of the concrete entry to load
 	 */
-	public function LoadEntry(IEntitiesCollection $entitiesCollection, $id, $loadhierarchical = false) {
+	public function LoadEntry(IEntity $entity, $id) {
 		$results = [];
 
-		/*usort($entities, function ($a, $b) {
-			if ($a->viewOrder == $b->viewOrder) {
-				return 0;
-			}
-
-			return ($a->viewOrder < $b->viewOrder) ? -1 : 1;
-		});*/
-		//Load in hierarchical form
-		if ($loadhierarchical) {
-			$primaryEntity = $entitiesCollection->GetPrimaryEntity();
-
-			//Load primary entity
-			$results[$primaryEntity->name] = $this->Load($primaryEntity, 'id', $id);
-
-			$secondaryEntities = $entitiesCollection->GetSecondaryEntities();
-
-			//Load secondary entities
-			foreach ($secondaryEntities as $entity) {
-				$results[$primaryEntity->name][$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
-			}
-
-			return $results;
-		}
-
-		//Load in flat form
-		foreach ($entitiesCollection->getEntities()->flattenTree() as $entity) {
-			$results[$entity->name] = $this->Load($entity, $entity->entityKeyName, $id);
-		}
+		// Load primary entity
+		$results[$entity->name] = $this->LoadObject($entity, 'id', $id);
 
 		return $results;
 	}
 
-	public function convertDataFromHierarchy($entities, $data) {
-		$results = [];
-
-		$primaryEntity = $this->getPrimaryEntity($entities);//$entities->GetPrimaryEntity($entities);
-
-		$results[$primaryEntity->name] = $data[$primaryEntity->name];
-
-		//foreach ($entities->GetSecondaryEntities($entities) as $entity) {
-		$secondaryEntities = $this->getSecondaryEntities($entities);
-		foreach ($secondaryEntities as $entity) {
-			$results[$entity->name] = $data[$primaryEntity->name][$entity->name];
-			unset($results[$primaryEntity->name][$entity->name]);
+	public function DeleteArrayEntries(IEntity $entity, Array $entries) {
+		if ($entity->type != 'array') {
+			throw new InvalidArgumentException('DeleteArrayEntries called with invalid entity type "' . $entity->type . '"');
 		}
 
-		return $results;
-	}
-
-	//TODO: Hardcoded!
-	public function deleteConcreteEntries($oldData, $newData) {
-		foreach ($oldData['persons']['deathcauses'] as $row) {
-			if (!in_array($row, $newData['persons']['deathcauses'])) {
-				$this->DeleteConcreteEntry('burial_persons_deathcauses', $row['id']);
-				//	echo 'deleted burial_deathcauses' . $row['id'];
-			}
+		foreach ($entries as $entry) {
+			$this->DeleteSingleEntry($entity, $entry);
 		}
-
-		foreach ($oldData['persons']['positions'] as $row) {
-			if (!in_array($row, $newData['persons']['positions'])) {
-				$this->DeleteConcreteEntry('burial_persons_positions', $row['id']);
-				//	echo 'deleted burial_positions' . $row['id'];
-			}
-		}
-	}
-
-	//TODO: Hardcoded!
-	public function removeAdditionalDataFromNewData(&$oldData, &$newData) {
-		array_walk($newData['persons']['deathcauses'], [$this, 'removeIds'], $oldData['persons']['deathcauses']);
-		array_walk($newData['persons']['positions'], [$this, 'removeIds'], $oldData['persons']['positions']);
-	}
-
-	private function removeIds(&$item, $key, $orgArray) {
-
-		//If item is not found in the original array, remove all ids
-		if (!in_array($item, $orgArray)) {
-			unset($item['persons_id']);
-			unset($item['id']);
-		}
-	}
-
-	public function DeleteConcreteEntry($tableName, $id) {
-		$this->crud->delete($tableName, $id);
 	}
 
 	/**
-	 * Deletes a concrete entry
-	 * Note that it is assumed that related tables are deleted using cascading constraints!
-	 * @param Array $entities The entities array
-	 * @param integer $id       the id of the concrete entry
+	 * Deletes a single entry of the given entity type.
 	 */
-	/*public function Delete($entities, $id) {
-		//$primaryEntity = Entities::GetPrimaryEntity($entities);
-		$this->crud->delete($primaryEntity->primaryTableName, $id);
-	}*/
+	public function DeleteSingleEntry(IEntity $entity, Array $entry) {
+		// First delete entries of child entities that depend on this entity
+		foreach (array_filter($entity->getChildren(), function ($child) { return $child->type == "array"; }) as $childEntity) {
+			$childEntries = $entry[$childEntity->name];
+			$this->DeleteArrayEntries($childEntity, $childEntries);
+		}
+
+		// Delete the entry of the entity itself
+		if (!isset($entry['id'])) {
+			throw new InvalidArgumentException('Entry for entity ' . $entity->name . ' missing primary key value.');
+		}
+		$this->crud->delete($entity->primaryTableName, $entry['id']);
+
+		// Delete entries that this entry was depending on
+		foreach (array_filter($entity->getChildren(), function ($child) { return $child->type == "object"; }) as $childEntity) {
+			$childEntry = $entry[$childEntity->name];
+
+			$this->DeleteSingleEntry($childEntity, $childEntry);
+		}
+	}
+
+	/**
+	 * Traverses the old entry data and new entry data simultaneously, finding the
+	 * subentries that have been removed from the old to the new.
+	 */
+	public function DeleteRemovedSubentries(IEntity $entity, Array $old, Array $new) {
+		foreach ($entity->getChildren() as $child) {
+			if ($child->type == 'object') {
+				// We only care about children that were there before the update
+				if (isset($old[$child->name])) {
+
+					if (!isset($new[$child->name])) {
+						// It was removed, so we delete it.
+						$this->DeleteSingleEntry($child, $old[$child->name]);
+					} else {
+						// Not deleted, recurse to check children of children
+						$this->DeleteRemovedSubentries($child, $old[$child->name], $new[$child->name]);
+					}
+				}
+			} else if ($child->type == 'array') {
+				// We only care about children that were there before the update
+				if (isset($old[$child->name])) {
+
+					if (!isset($new[$child->name])) {
+						// It was removed, so we delete it.
+						$this->DeleteSingleEntry($child, $old[$child->name]);
+					} else {
+						// Not deleted, recurse to check children of children
+						$this->DeleteRemovedSubentries($child, $old[$child->name], $new[$child->name]);
+					}
+				}
+			} else {
+				throw new RuntimeException('Unexpected entity type ' . $child->type);
+			}
+		}
+	}
 
 	/**
 	 * Saves an entry based on an entity.
 	 * As entity can consist of more than one table, each field
 	 * is checked for relations, and decoded if they exists
-	 * @param Entities $entity The data structure defining entity
-	 * @param Array $data The data to save. Only single rows are supported!
+	 * 
+	 * @param IEntity $entity  The data structure defining entity
+	 * @param Array   $data    The data to save. Only single rows are supported!
+	 * 
+	 * @return int The primary key id of the created entry.
 	 */
 	public function Save(IEntity $entity, Array $data) {
-		//Decoding and saving code values
-		foreach ($entity->getFields() as $field) {
+		if (!$entity->isDataValid($data)) {
+			throw new InvalidArgumentException('Could validate data for entity ' . $entity->name . '. Validation Error: ' . $entity->GetValidationStatus());
+		}
 
+		// Child entities that have a 1-1 relationship with the current entity.
+		$dependedEntities = array_filter($entity->getChildren(), function(IEntity $child) { return $child->type != 'array'; });
+
+		// Child entities that have a 1-n relationship with the current entity.
+		$dependingEntities = array_filter($entity->getChildren(), function(IEntity $child) { return $child->type == 'array'; });
+
+		// Save the child entities that must be saved before this one.
+		$dependedsSaved = [];
+		foreach ($dependedEntities as $dependedEntity) {
+			// Skip or throw exception if data is missing
+			if ($dependedEntity->required == '1' && (!isset($data[$dependedEntity->name]) || $dependedEntity->UserEntryIsEmpty($data[$dependedEntity->name]))) {
+				throw new InvalidArgumentException('Entity data not set: ' . $entity->name);
+			}
+
+			// If entity data is not defined, it can be skipped
+			if (!isset($data[$dependedEntity->name])) {
+				continue;
+			}
+
+			// If the user entry is empty, delete the entry for the depended on entity, and continue
+			if ($dependedEntity->UserEntryIsEmpty($data[$dependedEntity->name])) {
+				// Delete entity id empty but id is set
+				if (isset($data[$dependedEntity->name]['id'])){
+					if ($dependedEntity->type == 'array') {
+						$this->DeleteArrayEntries($dependedEntity, $data[$dependedEntity->name]);
+					} else {
+						$this->DeleteSingleEntry($dependedEntity, $data[$dependedEntity->name]);
+					}
+				}
+
+				continue;
+			}
+
+			$dependedData = $data[$dependedEntity->name];
+			$dependedsSaved[] = [
+				'id' => $this->Save($dependedEntity, $dependedData),
+				'entity' => $dependedEntity
+			];
+		}
+		
+
+		// Decoding and saving code values
+		foreach ($entity->getFields() as $field) {
+			// Skip fields that are not decodable
 			if ($field->hasDecode == 0 || !isset($data[$field->decodeField])) {
 				continue;
 			}
-			//This is a field that needs decoding
-			//Lets get the data from the decode table
-			//Creating an entry consisting of the decode table and a field in the table identified by decodeField
-			$fakeField = $field->toArray();
-			$fakeField['fieldName'] = $field->decodeField;
-			//var_dump('her',$field->decodeTable, $field->decodeField,$data[$field->decodeField]);
 
+			// Find the decoded value in the decode table
 			$fieldValues = $this->crud->find($field->decodeTable, $field->decodeField, $data[$field->decodeField]);
-			//Value not given
 			if (!isset($fieldValues[0]['id'])) {
-
-				//new value not allowed. Throw error
+				// Could not decode (ie. value does not exist)
 				if (!$field->codeAllowNewValue) {
-					throw new InvalidArgumentException('The field ' . $field->decodeField . ' has a value that does not exist: ' . $data[$fakeField['decodeField']]);
+					throw new InvalidArgumentException('The field ' . $field->decodeField . ' has a value that does not exist: ' . $data[$field->decodeField]);
 				}
 
-				//Let's create the new value
+				// Create the new value and get the set the code
 				if (!is_countable($fieldValues) || count($fieldValues) == 0) {
-					
-					$saveData = [$fakeField['fieldName'] => $data[$fakeField['fieldName']]];
-
-					//$fieldValues = $ge->Save($saveData);
+					$saveData = [$field->decodeField => $data[$field->decodeField]];
 					$id = $this->crud->save($field->decodeTable, $saveData);
-					//Let's use the id of the decode value
 					$data[$field->fieldName] = $id;
-
 				}
 			} else {
+				// Decoded the value, setting the value to the code id
 				$data[$field->fieldName] = $fieldValues[0]['id'];
 			}
 		}
 		$fields = $entity->fields->toArray();
 
-		//The data is now decoded
-		//We're adding another fake field: The EntityKey. This referes to the main entity of the task
-		if ($entity->isPrimaryEntity != 1) {
-			//Implementation using Fields model:
+		if ($entity->isPrimaryEntity != 1 && $entity->type == 'array') {
+			// If this entity is not the primary entity, but it is an array
+			// it must have a reference to its parent
 
-			// $entityField = new Fields();
-			// $entityField->fieldName = $entity->entityKeyName;
-
-			// if (!isset($data[$entityField->fieldName])) {
-			// 	throw new InvalidArgumentException('the entity cannot be saved, as there is no value for the entity key field: ' . $entityField->fieldName);
-			// }
-
-			// $fields[] = $entityField->toArray();
-
-			//Implementation using array
 			$entityField = [];
 			$entityField['fieldName'] = $entity->entityKeyName;
 			$entityField['formFieldType'] = 'string';
@@ -331,37 +392,64 @@ class ConcreteEntries {
 			$fields[] = $entityField;
 		}
 
-		//We are adding an 'order' field for all array entities
-		if($entity->type == 'array'){
-			//Implementation using Fields model:
-
-			//$orderField = new Fields();
-			//$orderField->fieldName = 'order';
-
-			//if(!isset($data[$orderField->fieldName])){
-			//	$data[$orderField->fieldName] = 0;
-			//}
-
-			//$fields[] = $orderField->toArray();
-
-			//Implementation using array
+		// We are adding an 'order' field for all array entities
+		if ($entity->type == 'array') {
 			$orderField = [];
 			$orderField['fieldName'] = 'order';
 			$orderField['formFieldType'] = 'integer';
 
-			if(!isset($data[$orderField['fieldName']])){
+			if (!isset($data[$orderField['fieldName']])) {
 				$data[$orderField['fieldName']] = 0;
 			}
 
 			$fields[] = $orderField;
 		}
 
-		//Let's save the data
-		$id = isset($data['id']) ? $data['id'] : null;
-		$newId = $this->crud->save($entity->primaryTableName, $this->GetFieldsValuesArray($fields, $data), $id);
-		if (!$newId) {
-			throw new RuntimeException('could not save the entry ' . $entity->name);
+		// Get the data to save from the Entity fields
+		$saveData = $this->GetFieldsValuesArray($fields, $data);
+
+		// Add the ids of the depended (1-1) entities to the save data
+		foreach ($dependedsSaved as $dependedSaved) {
+			$saveData[$dependedSaved['entity']->entityKeyName] = $dependedSaved['id'];
 		}
+
+		// Save the entity
+		$id = isset($data['id']) ? $data['id'] : null;
+		$newId = $this->crud->save($entity->primaryTableName, $saveData, $id);
+		if (!$newId) {
+			throw new RuntimeException('Could not save the entry for the entity ' . $entity->name);
+		}
+
+		// Save the depending (1-n) entities by themselves.
+		foreach ($dependingEntities as $dependingEntity) {
+			if (!isset($data[$dependingEntity->name])) {
+				if ($dependingEntity->required == '1') {
+					throw new InvalidArgumentException('Entity data not set: ' . $entity->name);
+				}
+
+				continue;
+			}
+
+			
+			$i = 0;
+			// Save each item of the array
+			foreach ($data[$dependingEntity->name] as $item) {
+				if ($dependingEntity->UserEntryIsEmpty($item)) {
+					continue;
+				}
+
+				$i++;
+
+				// Set the identifier of the parent entity
+				$item[$dependingEntity->entityKeyName] = $newId;
+
+				//TODO: Hardcoded ordering based on the order of the  rows in the array
+				$item['order'] = $i;
+
+				$this->Save($dependingEntity, $item);
+			}
+		}
+		
 		return $newId;
 	}
 
@@ -429,143 +517,38 @@ class ConcreteEntries {
 		$dbCon = ORM::get_db();
 		$dbCon->commit();
 	}
-
-	// Return the primary entity.
-	// Input: Array or Entities model
-	private function getPrimaryEntity($entities){
-		$primaryEntity;
-		foreach($entities as $el){
-			if($el->isPrimaryEntity == '1'){
-				$primaryEntity = $el;
-			}
-		}
-
-		return $primaryEntity;
-	}
-
 	
-	// Return the secondary entities.
-	// Input: Array or Entities model
-	private function getSecondaryEntities($entities){
-		$secondaryEntities = [];
-		foreach($entities as $el){
-			if($el->isPrimaryEntity == '0'){
-				$secondaryEntities[] = $el;
-			}
-		}
-		return $secondaryEntities;
-	}
-
 	/**
 	 * Saving entries for a task. Each entry is validated and saved
 	 * The primary entity is special, as it's insert id is used for the following entities
 	 * All saving is done in a transaction, which is rolled back on error
-	 * @param Array  $entities An array of Entities
-	 * @param Array $data 	   The data to save
+	 * 
+	 * @param IEntity $entitiy  The entity tree
+	 * @param Array $data 	    The data to save
 	 * @throws InvalidArgumentException if data is not set, or is not valid
 	 * @throws RuntimeException if data could not be saved to the database
 	 */
-	public function SaveEntriesForTask(IEntitiesCollection $entitiesCollection, $data) {
+	public function SaveEntriesForTask(IEntity $entity, $data) {
 		$dbCon = ORM::get_db();
 
-		$entities = $entitiesCollection->getEntities()->flattenTree();
-		if (!is_countable($entities) || count($entities) == 0) {
-			throw new InvalidArgumentException("no entities given!");
-		}
-
-		//Save primary entity and get id
-		//$primaryEntity = Entities::GetPrimaryEntity($entities);
-		$primaryEntity = $entitiesCollection->getPrimaryEntity();
-
-		//Saving main entity
-		if (!isset($data[$primaryEntity->name])) {
+		// Saving main entity
+		if (!isset($data[$entity->name])) {
 			$this->rollbackTransaction();
-			throw new InvalidArgumentException('no data given for ' . $primaryEntity->name);
+			throw new InvalidArgumentException('Could not save entry: No data given for ' . $entity->name);
 		}
-	//	var_dump('validating in concrete', $primaryEntity->name,$data);
 
-		if (!$primaryEntity->isDataValid($data[$primaryEntity->name])) {
+		try {
+			$primaryId = $this->Save($entity, $data[$entity->name]);
+		} catch (Exception $e) {
 			$this->rollbackTransaction();
-			throw new InvalidArgumentException('could not save primary entity. Input error ' . $primaryEntity->GetValidationStatus());
+			throw $e;
 		}
-
-		$primaryId = $this->Save($primaryEntity, $data[$primaryEntity->name]);
 
 		if (is_null($primaryId)) {
 			$this->rollbackTransaction();
-			throw new RuntimeException('could not get insert id for primary entity');
+			throw new RuntimeException('Could not get insert id for primary entity');
 		}
 
-		$secondaryEntities = $entitiesCollection->getSecondaryEntities();
-		//foreach (array_filter($entities, function ($el) {return $el->isPrimaryEntity != '1';}) as $entity) {
-		//foreach (Entities::GetSecondaryEntities($entities) as $entity) {
-		foreach($secondaryEntities as $entity){
-			if (!isset($data[$primaryEntity->name][$entity->name])) {
-				if ($entity->required == '1') {
-					throw new InvalidArgumentException('entity data not set: ' . $entity->name);
-				}
-				continue;
-			}
-
-			
-			if ($entity->type == 'object') {			
-				if ($entity->AllEntityFieldsAreEmpty($data[$primaryEntity->name][$entity->name])) {
-					//Delete entity id empty but id is set
-					if(isset($data[$primaryEntity->name][$entity->name]['id'])){
-						$this->DeleteConcreteEntry($entity->primaryTableName, $data[$primaryEntity->name][$entity->name]['id']);
-					}
-				//var_dump('saving',$data[$primaryEntity->name][$entity->name]);
-
-					//var_dump('entiteten havde intet data:', $data[$primaryEntity->name][$entity->name]);
-					continue;
-				}
-				
-
-				//Setting the identifier of the primary entity
-				$data[$primaryEntity->name][$entity->name][$entity->entityKeyName] = $primaryId;
-
-				if (!$entity->isDataValid($data[$primaryEntity->name][$entity->name])) {
-					//$dbCon->rollback();
-					throw new InvalidArgumentException('could not save single row of secondary entity ' . $entity->name . ' data. Input error ' . $entity->GetValidationStatus());
-				}
-
-				try {
-					$this->Save($entity, $data[$primaryEntity->name][$entity->name]);
-				} catch (Exception $e) {
-					//$dbCon->rollback();
-					throw new RuntimeException('Error while saving: ' . $e);
-				}
-			} else {
-				$i = 0;
-				foreach ($data[$primaryEntity->name][$entity->name] as $row) {
-					if ($entity->AllEntityFieldsAreEmpty($row)) {
-						continue;
-					}
-
-					$i++;
-
-					//Setting the identifier of the primary entity
-					$row[$entity->entityKeyName] = $primaryId;
-
-					if (!$entity->isDataValid($row)) {
-						//$dbCon->rollback();
-						throw new InvalidArgumentException('could not save array row of secondary entity ' . $entity->name . ' data. Input error ' . $entity->GetValidationStatus());
-					}
-
-					//TODO: Hardcoded ordering based on the order of the  rows in the array
-					$row['order'] = $i;
-
-					try {
-						$this->Save($entity, $row);
-					} catch (Exception $e) {
-						//$dbCon->rollback();
-						throw new RuntimeException('Error while saving: ' . $e);
-					}
-				}
-			}
-		}
-
-		//$dbCon->commit();
 		return $primaryId;
 	}
 
@@ -612,12 +595,6 @@ class ConcreteEntries {
 		}
 
 		$doc1 = $update->createDocument();
-
-		//	$post = new Posts();
-		//		$doc1->id = $solrData['id'];
-
-		//var_dump(($solrData));
-
 		foreach ($solrData as $key => $row) {
 			if (is_array($row) || (strlen($key) > 0 && strlen(trim($row)) > 0)) {
 				$doc1->{$key} = $row;
@@ -692,21 +669,19 @@ class ConcreteEntries {
 	 * For entities of type array and includeInSOLR = 1, all related fields with includeInSOLR = 1 is sent to
 	 * SOLR in a concated form, one row pr. entity, and all values are put in arrays according to the field
 	 * they belong to
-	 * @param Array $entities The entities to save
+	 * @param IEntity $entity The entities to save
 	 * @param Array $data     The data to convert
 	 */
-	public function GetSolrData(IEntitiesCollection $entities, $data) {
+	public function GetSolrData(IEntity $entity, $data) {
 		$solrData = [];
 
-		$primaryEntity = $entities->GetPrimaryEntity();
+		$solrData = $entity->getDenormalizedData($data[$entity->name]);
 
-		$solrData = $primaryEntity->getDenormalizedData($data[$primaryEntity->name]);
-
-		foreach ($entities->getSecondaryEntities() as $entity) {
-			if(isset($data[$primaryEntity->name][$entity->name]) && count($data[$primaryEntity->name][$entity->name])>0){
-				$solrData = array_merge($solrData, $entity->getDenormalizedData($data[$primaryEntity->name][$entity->name]));
+		foreach ($entity->getChildren() as $childEntity) {
+			if (isset($data[$entity->name][$childEntity->name]) && count($data[$entity->name][$childEntity->name]) > 0){
+				$solrData = array_merge($solrData, $childEntity->getDenormalizedData($data[$entity->name][$childEntity->name]));
+				
 			}
-
 		}
 
 		return $solrData;

@@ -531,7 +531,7 @@
             {
                 "name": "addresses",
                 "isPrimaryEntity": 0,
-                "entityKeyName": "persons_id",
+                "entityKeyName": "addresses_id",
                 "type": "object",
                 "required": 0,
                 "countPerEntry": 1,
@@ -667,7 +667,7 @@
             {
                 "name": "burials",
                 "isPrimaryEntity": 0,
-                "entityKeyName": "persons_id",
+                "entityKeyName": "burials_id",
                 "type": "object",
                 "required": 0,
                 "countPerEntry": 1,

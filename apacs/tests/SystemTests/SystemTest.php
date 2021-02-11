@@ -32,14 +32,7 @@ class SystemTest extends \IntegrationTestCase
     }
 
     public function test_GetPost_Task1_ReturnValidData(){
-        try{
-            $response = $this->http->request('GET', 'posts/10000');
-        }
-        catch(Exception $e){
-            $response = $e->getResponse();
-            $responseBodyAsString = $response->getBody()->getContents();
-        }
-
+        $response = $this->http->request('GET', 'posts/10000');
         $this->assertEquals(200, $response->getStatusCode());
 
         $validPost = json_decode(file_get_contents(__DIR__ . '/TestData/validPost_task1.json'),true);
@@ -159,13 +152,16 @@ class SystemTest extends \IntegrationTestCase
         //refresh DB
         $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
         $this->testDBManager->refreshEntryForPost1000();
+
         //Get DB output and assert correct data
         $query = $this->getDI()->get('db')->query('SELECT * FROM burial_persons WHERE id = 9718');
         $person = $query->fetch();
         $this->assertEquals($person['firstnames'], 'Bartoline');
+
         //Run Deletion
         $response = $this->http->request('DELETE', 'posts/10000');
         $this->assertEquals(200, $response->getStatusCode());
+
         //Assert null on same query
         $newQuery = $this->getDI()->get('db')->query('SELECT firstnames FROM burial_persons WHERE id = 9718');
         $newPerson = $newQuery->fetch();
@@ -175,25 +171,30 @@ class SystemTest extends \IntegrationTestCase
     public function test_DeletedPostBurialAddresses() {
         $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
         $this->testDBManager->refreshEntryForPost1000();
-        $query = $this->getDI()->get('db')->query('SELECT * FROM burial_addresses WHERE persons_id = 9718');
-        $person = $query->fetch();
-        $this->assertEquals($person['streets_id'], 7782);
+
+        $addressQuery = $this->getDI()->get('db')->query('SELECT * FROM burial_addresses WHERE id = 8544');
+        $address = $addressQuery->fetch();
+        $this->assertEquals($address['streets_id'], 7782);
+
         $response = $this->http->request('DELETE', 'posts/10000');
         $this->assertEquals(200, $response->getStatusCode());
-        $newQuery = $this->getDI()->get('db')->query('SELECT * FROM burial_addresses WHERE persons_id = 9718');
-        $newPerson = $newQuery->fetch();
-        $this->assertNull($newPerson['streets_id']);
+
+        $countAddressQuery = $this->getDI()->get('db')->query('SELECT COUNT(*) as cnt FROM burial_addresses WHERE id = 8544');
+        $this->assertEquals(0, $countAddressQuery->fetch()['cnt']);
     }
 
     public function test_DeletedPostBurialBurials() {
         $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
         $this->testDBManager->refreshEntryForPost1000();
-        $query = $this->getDI()->get('db')->query('SELECT * FROM burial_burials WHERE persons_id = 9718');
-        $person = $query->fetch();
-        $this->assertEquals($person['cemetaries_id'], 11);
+
+        $burialQuery = $this->getDI()->get('db')->query('SELECT * FROM burial_burials WHERE id = 9132');
+        $burial = $burialQuery->fetch();
+        $this->assertEquals(11, $burial['cemetaries_id']);
+
         $response = $this->http->request('DELETE', 'posts/10000');
         $this->assertEquals(200, $response->getStatusCode());
-        $newQuery = $this->getDI()->get('db')->query('SELECT * FROM burial_addresses WHERE persons_id = 9718');
+
+        $newQuery = $this->getDI()->get('db')->query('SELECT COUNT(*) as cnt FROM burial_addresses WHERE id = 9132');
         $newPerson = $newQuery->fetch();
         $this->assertNull($newPerson['cemetaries_id']);
     }

@@ -1,10 +1,62 @@
 <?php
+use GuzzleHttp\Psr7;
+use GuzzleHttp\Exception\ClientException;
 
 use \Phalcon\Di;
 class DeleteSolrDataTest extends \IntegrationTestCase {
 
     private $solr;
     private $http;
+
+	public static function setUpBeforeClass() : void {
+        // Set config and db in DI
+        $di = new Di();
+        //TODO Hardcoded db credentials for tests
+		$di->setShared('config', function () {
+            return [
+                "host" => "mysql",
+                "username" => "dev",
+                "password" => "123456",
+                "dbname" => "apacs",
+                'charset' => 'utf8',
+            ];
+		});
+
+		$di->setShared('db', function () use ($di) {
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
+        });
+        
+        // Create database entries for entities and fields        
+        $testDBManager = new Mocks\TestDatabaseManager($di);
+        $testDBManager->createApacsStructure();
+        $testDBManager->createEntitiesAndFieldsForTask1();
+        $testDBManager->createApacsMetadataForEntryPost10000Task1();
+        $testDBManager->createBurialDataForEntryPost1000Task1();
+	}
+	
+	public static function tearDownAfterClass() : void {
+        // Set config and db in DI
+        $di = new Di();
+        //TODO Hardcoded db credentials for tests
+		$di->setShared('config', function () {
+            return [
+                "host" => "mysql",
+                "username" => "dev",
+                "password" => "123456",
+                "dbname" => "apacs",
+                'charset' => 'utf8',
+            ];
+		});
+
+		$di->setShared('db', function () use ($di) {
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
+        });
+        
+        // Clear database
+        $testDBManager = new Mocks\TestDatabaseManager($di);
+        //$testDBManager->cleanUpApacsStructure();
+        $testDBManager->cleanUpBurialStructure();
+    }
 
     public function setUp($di = null) : void
     {
@@ -40,15 +92,14 @@ class DeleteSolrDataTest extends \IntegrationTestCase {
         $solrResponse = $this->solr->request('GET', 'select?q=id:' . $responseData['solr_id'] . '&wt=json');
         $solrData = json_decode((string) $solrResponse->getBody(), true);
         $this->assertEquals(1, $solrData['response']['numFound']);
-
+    
         $deleteResponse = $this->http->request('DELETE', 'posts/' . $responseData['post_id']);
         $this->assertEquals(200, $deleteResponse->getStatusCode());
-        
+        $this->assertEquals("Post Deleted", $deleteResponse->getReasonPhrase());
+
         $checkerResponse = $this->solr->request('GET', 'select?q=id:' . $responseData['solr_id'] . '&wt=json');
         $checkerData = json_decode((string) $checkerResponse->getBody(), true);
 
         $this->assertEquals(0, $checkerData['response']['numFound']);
-
-
     }
 }
