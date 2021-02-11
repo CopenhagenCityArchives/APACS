@@ -14,6 +14,8 @@
         "ageWeeks": null,
         "ageDays": null,
         "ageHours": null,
+        "addresses_id": 8544,
+        "burials_id": 9132,
         "id": 9718,
         "deathcauses": [
             {
@@ -37,16 +39,14 @@
             "letter": null,
             "floor": null,
             "institution": null,
-            "id": 8544,
-            "persons_id": 9718
+            "id": 8544
         },
         "burials": {
             "chapel": "Garnison, Kapel",
             "parish": "Sankt Johannes",
             "cemetary": "Garnisons (Garnisons Kirkegård)",
             "number": 3097,
-            "id": 9132,
-            "persons_id": 9718
+            "id": 9132
         }
     },
     "post": {

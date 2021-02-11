@@ -12,6 +12,7 @@ class ConfigurationEntity implements IEntity {
 	public $type;
 	public $required;
 	public $includeInSOLR;
+	public $description;
 
 	private $validationMessages;
 
@@ -29,6 +30,7 @@ class ConfigurationEntity implements IEntity {
 		$this->includeInSOLR = isset($entity['includeInSOLR']) ? $entity['includeInSOLR'] : 0;
 		$this->setFields($entity['fields']);
 		$this->setEntities($entity['entities']);
+		$this->description = $entity['description'];
 
 		$this->array = $entity;		
 
@@ -97,9 +99,20 @@ class ConfigurationEntity implements IEntity {
 		return $isValid;
 	}
 
-	public function AllEntityFieldsAreEmpty(array $entityData){
+	/**
+	 * Check if the data from a user entry for this entity is all empty.
+	 * 
+	 * @return boolean false if any field or sub-entity has a value, true otherwise.
+	 */
+	public function UserEntryIsEmpty(Array $data) {
 		foreach ($this->getFields() as $field) {
-			if (isset($entityData[$field->getRealFieldName()]) && !is_null($entityData[$field->getRealFieldName()])) {
+			if (isset($data[$field->getRealFieldName()]) && !is_null($data[$field->getRealFieldName()])) {
+				return false;
+			}
+		}
+
+		foreach ($this->getChildren() as $child) {
+			if (isset($data[$child->name]) && !is_null($data[$child->name])) {
 				return false;
 			}
 		}
@@ -162,7 +175,7 @@ class ConfigurationEntity implements IEntity {
 		}
 	}
 
-	public function getDenormalizedData($data){
+	public function getDenormalizedData(Array $data): Array {
 		$denormalizedData = [];
 
 		if ($this->includeInSOLR == 1) {
@@ -178,7 +191,6 @@ class ConfigurationEntity implements IEntity {
 		if (isset($data[$field->GetRealFieldName()])) {
 			if ($field->formFieldType == 'date') {
 				return date('Y-m-d\TH:i:s.000\Z', strtotime($data[$field->GetRealFieldName()]));
-				//return date('d-m-Y', strtotime($data[//Fields::GetRealFieldNameFromField($field)]));
 			}
 
 			if($field->fieldName == 'ageWeeks' || $field->fieldName == 'ageDays' || $field->fieldName == 'ageHours' || $field->fieldName == 'ageMonth' || $field->fieldName == 'ageYears'){
@@ -204,7 +216,11 @@ class ConfigurationEntity implements IEntity {
 		$this->fields = new ConfigurationFieldsHolder($fields);
 	}
 
-	public function getEntities(){
+	public function getChildren() {
+		if (is_null($this->entities)) {
+			return [];
+		}
+		
 		return $this->entities;
 	}
 
@@ -218,7 +234,29 @@ class ConfigurationEntity implements IEntity {
 		}
 	}
 
-	public function GetValidationStatus(){
+	public function GetValidationStatus(): string {
 		return implode(' ',$this->validationMessages);
 	}
+
+	/**
+	 * Traverses through the Entity tree depth first, and finds the entity by
+	 * the given name, if it exists.
+	 * 
+	 * @return IEntity The first entity with the given name, or NULL if none
+	 *                 is found.
+	 */
+	public function getEntityByName(string $name) {
+        if ($this->name == $name){
+            return $this;
+        }
+
+        foreach ($this->getChildren() as $childEntity){
+            $result = $childEntity->getEntityByName($name);
+            if (!is_null($result)){
+                return $result;
+            }
+        }
+
+        return null;
+    }
 }	

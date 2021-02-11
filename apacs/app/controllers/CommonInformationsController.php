@@ -1,4 +1,7 @@
 <?php
+// ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(E_ERROR);
 
 class CommonInformationsController extends MainController {
 
@@ -105,32 +108,21 @@ class CommonInformationsController extends MainController {
 			return;
 		}
 
-		$taskconfigLoader = new TaskConfigurationLoader2();
-		$taskConf = $taskconfigLoader->getConfig($taskId);
-		$entitiesCollection = new EntitiesCollection($taskConf);
-
-		$mapper = new EntitiesCollectionToTaskSchemaMapper($entitiesCollection);
-		$schema = $mapper->getSchema($taskConf['name'],$taskConf['description'], $taskConf['steps']);
+		$taskConfigLoader = new TaskConfigurationLoader();
+		$taskConf = $taskConfigLoader->getConfig($taskId);
+		$entity = new ConfigurationEntity($taskConf['entity']);
+		$schema = TaskSchemaMapping::createTaskSchema($entity, $taskConf['name'], $taskConf['description'], $taskConf['steps']);
 
 		$this->response->setHeader("Cache-Control", "max-age=600");
 		$this->response->setJsonContent($schema);
-
-		/*$task = Tasks::find(['conditions' => 'id = ' . $taskId])[0];
-
-		$this->response->setHeader("Cache-Control", "max-age=600");
-		$this->response->setJsonContent($task->GetTaskSchema($taskId));*/
 	}
-	//
-	public function GetErrorReportConfig()
-	{
-		//$this->response->setHeader("Cache-Control", "max-age=600");
+
+	public function GetErrorReportConfig() {
 		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
 		$this->response->setJsonContent(ErrorReports::GetConfig());
 	}
 
-	public function GetSearchConfig()
-	{
-		//$this->response->setHeader("Cache-Control", "max-age=600");
+	public function GetSearchConfig() {
 		$this->response->setHeader("Content-Type", "application/json; charset=utf-8");
 		$this->response->setContent(file_get_contents('../../app/config/search.json'));
 	}
@@ -470,7 +462,8 @@ class CommonInformationsController extends MainController {
 	//New hard Delete
 	public function DeletePost($id) {
 		$this->RequireAccessControl();
-				
+		$taskconfigLoader = new TaskConfigurationLoader();
+
 		try {
 			$entries = Entries::find('posts_id = ' . $id);
 
@@ -482,30 +475,32 @@ class CommonInformationsController extends MainController {
 			$errorReports = ErrorReports::find(['conditions' => 'posts_id = ' . $id . ' AND tasks_id = ' . $entries[0]->tasks_id . ' AND deleted = 0'])->toArray();
 			$entry_num = [];
 			$postData = [];
+
 			foreach ($entries as $entry) {
-
-				//Loading entities for entry
-				$taskconfigLoader = new TaskConfigurationLoader2();
+				// Loading entities for entry
 				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
-				$entitiesCollection = new EntitiesCollection($taskConf);
-
-				//Loading concrete entry
+				$entityTree = new ConfigurationEntity($taskConf['entity']);
+				
+				// Loading concrete entry
 				$concreteEntry = new ConcreteEntries($this->getDI());
-				$entry_info = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
-				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entry_info, $entry->id));
+				$entry_info = $concreteEntry->LoadEntry($entityTree, $entry->concrete_entries_id);
+				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entityTree, $entry_info[$entityTree->name], $entry->id));
+				$data = $entry_info[$entityTree->name];
+				if (is_null($data)) {
+					continue;
+				}
+				$concreteEntry->DeleteSingleEntry($entityTree, $data);
 			}
-			
 
-			//Get values for SQL calls
+			// Get values for SQL calls
 			$metadata = $entries[0]->GetContext();
 			$tasks_id = $entries[0]->tasks_id;
-			$p_id = $entry_info['persons']['id'];
 			$e_id = $metadata['entry_id'];
 			$t_id = $metadata['task_id'];
 			$solrId = $metadata['collection_id'] . '-' . $entry->concrete_entries_id;
 
-			//Create and save event
-			$backup = json_encode($response, JSON_UNESCAPED_UNICODE);
+			// Create and save event
+			$backup = json_encode($postData, JSON_UNESCAPED_UNICODE);
 
 			$event = new Events();
 			$event->users_id = $this->auth->GetUserId();
@@ -517,8 +512,8 @@ class CommonInformationsController extends MainController {
 			$event->collections_id = $metadata['collection_id'];
 			$event->event_type = Events::TypeDeletePost;
 			$event->backup = $backup;
-			
-			if(!$event->save()){
+
+			if (!$event->save()){
 				$this->response->setStatusCode('500', 'could not save event');
 				$this->response->setJsonContent(implode(', ', $event->getMessages()));
 				return;
@@ -531,15 +526,6 @@ class CommonInformationsController extends MainController {
 			//Run Delete on post relations
 			$deleteEntry	= $this->getDI()->get('db')->query('DELETE FROM apacs_entries WHERE posts_id = :id', ['id' => $id]);
 			$deleteErrorRepo= $this->getDI()->get('db')->query('DELETE FROM apacs_errorreports WHERE posts_id = :id', ['id' => $id]);
-
-			// TODO: Find correct concrete entity query, and further futureproof for new tasks
-			if ($tasks_id == 1 || $tasks_id == 3) {
-				$this->getDI()->get('db')->query('DELETE FROM burial_persons WHERE id = :id', ['id' => $p_id]);
-				$this->getDI()->get('db')->query('DELETE FROM burial_persons_deathcauses WHERE persons_id = :id', ['id' => $p_id]);
-				$this->getDI()->get('db')->query('DELETE FROM burial_persons_positions WHERE persons_id = :id', ['id' => $p_id]);
-				$this->getDI()->get('db')->query('DELETE FROM burial_addresses WHERE persons_id = :id', ['id' => $p_id]);
-				$this->getDI()->get('db')->query('DELETE FROM burial_burials WHERE persons_id = :id', ['id' => $p_id]);
-			}
 
 			//data for the response
 			$response['metadata'] = $metadata;
@@ -554,13 +540,14 @@ class CommonInformationsController extends MainController {
 					'type' => 'event_delete_solr_error',
 					'details' => json_encode(['exception' => $e->getMessage(), 'post_id' => $id, 'entry_id' => $e_id]),
 				]);
+				$this->error("Could not delete from solr :" . $e->getMessage());
+				return;
 			}
 		} catch(Exception $e) {
-			$this->response->setStatusCode('500', 'could not delete post');
+			$this->response->setStatusCode('500', 'could not delete post ' . $e->getMessage());
 			return;
 		}
 
-		
 		$this->response->setJsonContent($response, JSON_NUMERIC_CHECK);
 		$this->response->setStatusCode(200, 'Post Deleted');
 	}
@@ -608,12 +595,12 @@ class CommonInformationsController extends MainController {
 			throw new InvalidArgumentException('entry with id ' . $id . ' not found');
 		}
 
-		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskconfigLoader = new TaskConfigurationLoader();
 		$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
-		$entitiesCollection = new EntitiesCollection($taskConf);
+		$entityTree = new ConfigurationEntity($taskConf['entity']);
 
 		$concreteEntry = new ConcreteEntries($this->getDI());
-		$entryData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id, true);
+		$entryData = $concreteEntry->LoadEntry($entityTree, $entry->concrete_entries_id, true);
 
 		$entryData['post'] = Posts::findFirst(['conditions' => 'id = :id:', 'columns' => 'id,x,y,width,height, pages_id as page_id', 'bind' => ['id' => $entry->posts_id]]);
 		$entryData['task_id'] = $entry->tasks_id;
@@ -646,17 +633,13 @@ class CommonInformationsController extends MainController {
 		}
 	}
 
+	// TODO: What is the point of this?
+	// It is used in the front end ONLY to take the entry_id
+	// to then call the API 
 	public function GetPostEntries($id) {
 		$response = [];
 
-		/*$post = Posts::findFirstById($id);
-
-			if (!$post) {
-				$this->error('no post found');
-				return;
-			}
-		*/
-		try{
+		try {
 			$entries = Entries::find('posts_id = ' . $id);
 
 			if (count($entries) == 0) {
@@ -666,15 +649,15 @@ class CommonInformationsController extends MainController {
 
 			$postData = [];
 			foreach ($entries as $entry) {
-				//Loading entities for entry
-				$taskconfigLoader = new TaskConfigurationLoader2();
+				// Loading entities for entry
+				$taskconfigLoader = new TaskConfigurationLoader();
 				$taskConf = $taskconfigLoader->getConfig($entry->tasks_id);
-				$entitiesCollection = new EntitiesCollection($taskConf);
+				$entity = new ConfigurationEntity($taskConf['entity']);
 
-				//Loading concrete entry
+				// Loading concrete entry
 				$concreteEntry = new ConcreteEntries($this->getDI());
-				$entryData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id);
-				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entitiesCollection, $entryData, $entry->id));
+				$entryData = $concreteEntry->LoadEntry($entity, $entry->concrete_entries_id);
+				$postData = array_merge($postData, $concreteEntry->ConcatEntitiesAndData($entity, $entryData[$entity->name], $entry->id));
 			}
 
 			$metadata = $entries[0]->GetContext();

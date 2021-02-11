@@ -14,14 +14,11 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
 
     // Save
 	public function test_SaveEntries_SimpleEntity_CallCrudSave() {
-
         //Set entity mock and data
-        $entity = EntitiesTestData::getSimpleEntity();
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entity = new ConfigurationEntity($entityData);
 
-        $inputData = [ $entity['name'] => ['field1' => 'value1']];
+        $inputData = [ $entityData['name'] => ['field1' => 'value1']];
         $saveData = ['field1' => 'value1']; 
         
         // Create a stub for the CrudMock class.
@@ -36,40 +33,33 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
         $crudMock->expects($this->once())
             ->method('save')
             ->with(
-                $this->equalTo($entity['primaryTableName']), 
+                $this->equalTo($entityData['primaryTableName']), 
                 $this->equalTo($saveData),
                 null
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
 
     public function test_SaveEntries_WithSecondaryEntry_CallCrudSaveTwice(){
         //Set entity mock and data
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
-
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
-        
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entity = new ConfigurationEntity($entityData);
 
         $inputData = [ 
-            $entity['name'] => [
+            $entityData['name'] => [
                 'field1' => 'value1',
-                $entity['entities'][0]['name'] => [
-                    'field2' => 'value2',
-                    'parentEntityReferenceField' => 'sd'
+                $entityData['entities'][0]['name'] => [
+                    'field2' => '2',
                 ]
             ]
         ];
 
-        $saveReturnId = 1;
-
         $saveData = [
-            ['field1' => 'value1'],
-            ['field2' => 'value2', 'parentEntityReferenceField' => $saveReturnId]
+            ['field2' => '2'],
+            ['field1' => 'value1', 'parentEntityReferenceField' => "1"]
         ];
 
 
@@ -78,55 +68,50 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
 
         // The save method will return an id.
         $crudMock->method('save')
-            ->willReturn($saveReturnId);
+            ->willReturn(1);
 
         // We expect the save method to call crud->save with the table name,
         //and data corresponding to the input
         $crudMock->expects($this->exactly(2))
             ->method('save')
             ->withConsecutive([
-                $this->equalTo($entity['primaryTableName']), 
+                $this->equalTo($entityData['entities'][0]['primaryTableName']), 
                 $this->equalTo($saveData[0]),
                 null
-            ],[
-                $this->equalTo($entity['entities'][0]['primaryTableName']), 
+            ], [
+                $this->equalTo($entityData['primaryTableName']), 
                 $this->equalTo($saveData[1]),
                 null
-        ]);
+            ]);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);   
+        $entry->SaveEntriesForTask($entity, $inputData);   
     }
 
      //Delete secondary empty object entries on save
      public function test_SaveSecondaryObjectEntity_WithNoDataButId_RemoveEntity(){
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
-        $entity['entities'][0]['AllEntityFieldsAreEmpty'] = true;
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
 
-        //Return true to test empty data
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entity = new ConfigurationEntity($entityData);
    
         $idToDelete = 45;
 
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 'field1' => 'value1',
-                $entity['entities'][0]['name'] => [
+                $entityData['entities'][0]['name'] => [
                     'id' => $idToDelete
                 ]
             ]
         ];
-        
         
         $crudMock = $this->createMock(Mocks\CrudMock::class);
 
         $crudMock->expects($this->once())
             ->method('delete')
             ->with(
-                $this->equalTo($entity['primaryTableName']), 
+                $this->equalTo($entityData['entities'][0]['primaryTableName']), 
                 $idToDelete
             );
 
@@ -135,30 +120,26 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
 
     //Dont delete or save secondary empty array entries on save
     public function test_SaveSecondaryArrayEntity_WithNoDataButId_SkipEntity(){
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getSimpleSecondaryEntity();
         
         //Return true to test empty data
-        $entity['entities'][0]['AllEntityFieldsAreEmpty'] = true;
-        $entity['entities'][0]['type'] = 'array';
+        $entityData['entities'][0]['UserEntryIsEmpty'] = true;
+        $entityData['entities'][0]['type'] = 'array';
 
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
-       
+        $entity = new ConfigurationEntity($entityData);
 
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 'field1' => 'value1',
-                $entity['entities'][0]['name'] => []
+                $entityData['entities'][0]['name'] => []
             ]
         ];
-        
         
         $crudMock = $this->createMock(Mocks\CrudMock::class);
 
@@ -170,6 +151,6 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entitiesCollection, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData);
     }
 }

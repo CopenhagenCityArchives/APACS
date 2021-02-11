@@ -7,7 +7,7 @@ class TaskConfigLoaderTest extends \UnitTestCase {
 		parent::setUp();
 		$testConfigPath = dirname(__DIR__) . '/TaskConfigLoader';
 
-		$this->loader = new TaskConfigurationLoader2($testConfigPath);
+		$this->loader = new TaskConfigurationLoader($testConfigPath);
 	}
 
 	public function tearDown() : void {

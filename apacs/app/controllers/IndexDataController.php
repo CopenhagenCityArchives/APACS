@@ -168,13 +168,13 @@ class IndexDataController extends MainController {
 			}
 
 
-			$taskconfigLoader = new TaskConfigurationLoader2();
+			$taskconfigLoader = new TaskConfigurationLoader();
 			$taskConf = $taskconfigLoader->getConfig($jsonData['task_id']);
-			$entitiesCollection = new EntitiesCollection($taskConf);
+			$mainEntity = new ConfigurationEntity($taskConf['entity']);
 
-			$entity = $entitiesCollection->getEntityByName(explode('.', $jsonData['entity'])[0]);
+			$entity = $mainEntity->getEntityByName(explode('.', $jsonData['entity'])[0]);
 
-			if(!$entity){
+			if (!$entity) {
 				throw new Exception("Could not find entity with name " . explode('.', $jsonData['entity'])[0]);
 			}
 
@@ -297,6 +297,7 @@ class IndexDataController extends MainController {
 
 		$this->RequireAccessControl();
 
+
 		//This is incomming data!
 		$jsonData = $this->GetAndValidateJsonPostData();
 
@@ -307,12 +308,12 @@ class IndexDataController extends MainController {
 		$this->db = $this->getDI()->get('db');
 
 
-		$taskconfigLoader = new TaskConfigurationLoader2();
+		$taskconfigLoader = new TaskConfigurationLoader();
 		$taskConf = $taskconfigLoader->getConfig($jsonData['task_id']);
-		$entitiesCollection = new EntitiesCollection($taskConf);
+		$mainEntity = new ConfigurationEntity($taskConf['entity']);
 
-
-		//If the post already have an entry, get the id of the entry, so the existing entry will be updated, instead of a new one created
+		// If the post already has an entry, get the id of that entry to update
+		// it instead of creating a new entry
 		if (!is_null($entryId)) {
 			$existingEntry = Entries::findFirst(['conditions' => 'posts_id = :postId:', 'bind' => ['postId' => $jsonData['post_id']]]);
 			if ($existingEntry) {
@@ -348,20 +349,15 @@ class IndexDataController extends MainController {
 					return;
 				}
 
-				$oldData = $concreteEntry->LoadEntry($entitiesCollection, $entry->concrete_entries_id, true);
-				$newData = $jsonData;
+				$oldEntry = $concreteEntry->LoadEntry($mainEntity, $entry->concrete_entries_id, true);
+				$newEntry = $jsonData;
 
-				$concreteEntry->removeAdditionalDataFromNewData($oldData, $newData);
-
-				$concreteEntry->deleteConcreteEntries($oldData, $newData);
-
-				//TODO: Hardcoded!
-				$jsonData['persons'] = $newData['persons'];
-				//var_dump($jsonData);
+				$concreteEntry->DeleteRemovedSubentries($mainEntity, $oldEntry, $newEntry);
+				$jsonData[$mainEntity->name] = $newEntry[$mainEntity->name];
 			}
 
 			//Saving the concrete entry
-			$concreteId = $concreteEntry->SaveEntriesForTask($entitiesCollection, $jsonData);
+			$concreteId = $concreteEntry->SaveEntriesForTask($mainEntity, $jsonData);
 
 			//Saving the meta entry, holding information about the concrete entry
 			$entry->tasks_id = $jsonData['task_id'];
@@ -372,14 +368,14 @@ class IndexDataController extends MainController {
 			$entry->complete = 0;
 
 			if (!$entry->save()) {
-				throw new RuntimeException('could not save entry information' . $entry->getMessages()[0]);
+				throw new RuntimeException('Could not save entry information' . $entry->getMessages()[0]);
 			}
 
 			$context = $entry->GetContext();
 
 			$solrData = ConcreteEntries::GetSolrDataFromEntryContext($context, $jsonData['task_id']);
 			$solrId = $solrData['collection_id'] . '-' . $entry->concrete_entries_id;
-			$conEnData = $concreteEntry->GetSolrData($entitiesCollection, $jsonData);
+			$conEnData = $concreteEntry->GetSolrData($mainEntity, $jsonData);
 
 			$solrJsonObj = array_merge($context, $jsonData['persons'],['id' => $solrId, 'task_id' => $jsonData['task_id']]);
 			//TODO: Hardcoded! By some unknown reason, streets field is not added when running contreteEntries->GetSolrData. It may be the combination of a field where solrfieldname and decodedfieldname is not the same, and

@@ -1,6 +1,6 @@
 <?php
 
-class TaskConfigurationLoader2 {
+class TaskConfigurationLoader {
     private $configPath;
     private $loadedConfig;
 

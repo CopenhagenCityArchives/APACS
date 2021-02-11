@@ -8,7 +8,7 @@ class EntitiesTestData{
         $field['decodeTable'] = null;
         $field['codeAllowNewValue'] = false;
         $field['validationErrorMessage'] = 'error in input';
-        $field['validationRegularExpression'] = '/^\d{1}$/';
+        $field['validationRegularExpression'] = '/^value\d{1}$/';
         $field['isRequired'] = 1;
 
         $entity = [
@@ -34,7 +34,7 @@ class EntitiesTestData{
 
         $entity = [
             'name' => 'simpleSecondaryEntity',
-            'primaryTableName' => 'primaryTableName',
+            'primaryTableName' => 'secondaryTableName',
             'isPrimaryEntity' => 0,
             'entityKeyName'=> 'parentEntityReferenceField',
             'type' => 'object',

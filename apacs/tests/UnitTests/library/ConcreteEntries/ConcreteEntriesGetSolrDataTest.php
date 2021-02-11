@@ -14,17 +14,15 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
 	public function test_GetSolrData_SimpleEntityIncludeFields_ReturnFieldValuesWithSolrFieldNames() {
 
         // Set entity mock and data
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['includeInSOLR'] = 0;
-        $entity['fields'][0]['includeInSOLR'] = 1;
-        $entity['fields'][0]['SOLRFieldName'] = 'SolrFieldName';
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['includeInSOLR'] = 0;
+        $entityData['fields'][0]['includeInSOLR'] = 1;
+        $entityData['fields'][0]['SOLRFieldName'] = 'SolrFieldName';
+        $entity = new ConfigurationEntity($entityData);
 
         // Input is an array of data related to en entity
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 'id' => 10, 
                 'field1' => 'value1'
             ]
@@ -37,7 +35,7 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         ];
 
         $entry = new ConcreteEntries($this->getDI(), null);
-        $concattedData = $entry->GetSolrData($entitiesCollection, $inputData);
+        $concattedData = $entry->GetSolrData($entity, $inputData);
         
         $this->assertEquals($expectedData, $concattedData);
     }
@@ -46,29 +44,27 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
 	public function test_GetSolrData_TwoEntitiesIncludeFields_ReturnFieldValuesWithSolrFieldNames() {
 
         // Set entity mock and data
-        $entity = EntitiesTestData::getSimpleEntity();
-        $entity['includeInSOLR'] = 0;
-        $entity['fields'][0]['includeInSOLR'] = 1;
-        $entity['fields'][0]['SOLRFieldName'] = 'SolrFieldName';
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['includeInSOLR'] = 0;
+        $entityData['fields'][0]['includeInSOLR'] = 1;
+        $entityData['fields'][0]['SOLRFieldName'] = 'SolrFieldName';
         
-        $secondaryEntity = EntitiesTestData::getSimpleSecondaryEntity();
-        $secondaryEntity['includeInSOLR'] = 0;
-        $secondaryEntity['type'] = 'array';
-        $secondaryEntity['fields'][0]['includeInSOLR'] = 1;
-        $secondaryEntity['fields'][0]['SOLRFieldName'] = 'field2';
+        $secondaryEntityData = EntitiesTestData::getSimpleSecondaryEntity();
+        $secondaryEntityData['includeInSOLR'] = 0;
+        $secondaryEntityData['type'] = 'array';
+        $secondaryEntityData['fields'][0]['includeInSOLR'] = 1;
+        $secondaryEntityData['fields'][0]['SOLRFieldName'] = 'field2';
 
-        $entity['entities'][] = $secondaryEntity;
+        $entityData['entities'][] = $secondaryEntityData;
 
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entity = new ConfigurationEntity($entityData);
 
         // Input is an array of data related to the entities
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 'id' => 10, 
                 'field1' => 'value1',
-                $secondaryEntity['name'] => [
+                $secondaryEntityData['name'] => [
                     [
                         'field2' => 'value2'
                     ]
@@ -81,11 +77,11 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         // Array entities should be returned as arrays
         $expectedData = [
             'SolrFieldName' => 'value1',
-            'field2' => ['value2']       
+            'field2' => ['value2']
         ];
 
         $entry = new ConcreteEntries($this->getDI(), null);
-        $concattedData = $entry->GetSolrData($entitiesCollection, $inputData);
+        $concattedData = $entry->GetSolrData($entity, $inputData);
         
         $this->assertEquals($expectedData, $concattedData);
     }
@@ -94,20 +90,18 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
 	public function test_GetSolrData_SimpleEntityIncludeEntity_ReturnConcattedFieldValues() {
 
         // Set entity mock and data
-        $entity = EntitiesTestData::getObjectEntityWithTwoFields();
-        $entity['includeInSOLR'] = 1;
-        $entity['type'] = 'object';
-        $entity['fields'][0]['includeInSOLR'] = 1;
-        $entity['fields'][0]['SOLRFieldName'] = 'SolrFieldName1';
-        $entity['fields'][1]['includeInSOLR'] = 1;
-        $entity['fields'][1]['SOLRFieldName'] = 'SolrFieldName2';
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entityData = EntitiesTestData::getObjectEntityWithTwoFields();
+        $entityData['includeInSOLR'] = 1;
+        $entityData['type'] = 'object';
+        $entityData['fields'][0]['includeInSOLR'] = 1;
+        $entityData['fields'][0]['SOLRFieldName'] = 'SolrFieldName1';
+        $entityData['fields'][1]['includeInSOLR'] = 1;
+        $entityData['fields'][1]['SOLRFieldName'] = 'SolrFieldName2';
+        $entity = new ConfigurationEntity($entityData);
 
         // Input is an array of data related to en entity
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 'id' => 10, 
                 'field1' => 'value1',
                 'field2' => 'value2'
@@ -119,11 +113,11 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         $expectedData = [
             'SolrFieldName1' => 'value1',
             'SolrFieldName2' => 'value2',
-            $entity['name'] => 'value1 value2'      
+            $entityData['name'] => 'value1 value2'      
         ];
 
         $entry = new ConcreteEntries($this->getDI(), null);
-        $concattedData = $entry->GetSolrData($entitiesCollection, $inputData);
+        $concattedData = $entry->GetSolrData($entity, $inputData);
         
         $this->assertEquals($expectedData, $concattedData);
     }
@@ -131,20 +125,18 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
     public function test_GetSolrData_ArrayEntityIncludeEntity_ReturnConcattedFieldValues() {
 
         // Set entity mock and data
-        $entity = EntitiesTestData::getObjectEntityWithTwoFields();
-        $entity['includeInSOLR'] = 1;
-        $entity['type'] = 'array';
-        $entity['fields'][0]['includeInSOLR'] = 1;
-        $entity['fields'][0]['SOLRFieldName'] = 'SolrFieldName1';
-        $entity['fields'][1]['includeInSOLR'] = 1;
-        $entity['fields'][1]['SOLRFieldName'] = 'SolrFieldName2';
-        $taskConfig = [];
-        $taskConfig['entity'] = $entity;
-        $entitiesCollection = new Mocks\EntitiesCollectionStub($taskConfig);
+        $entityData = EntitiesTestData::getObjectEntityWithTwoFields();
+        $entityData['includeInSOLR'] = 1;
+        $entityData['type'] = 'array';
+        $entityData['fields'][0]['includeInSOLR'] = 1;
+        $entityData['fields'][0]['SOLRFieldName'] = 'SolrFieldName1';
+        $entityData['fields'][1]['includeInSOLR'] = 1;
+        $entityData['fields'][1]['SOLRFieldName'] = 'SolrFieldName2';
+        $entity = new ConfigurationEntity($entityData);
 
         // Input is an array of data related to en entity
         $inputData = [
-            $entity['name'] => [
+            $entityData['name'] => [
                 [
                     'id' => 10, 
                     'field1' => 'value1.1',
@@ -163,11 +155,11 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         $expectedData = [
             'SolrFieldName1' => ['value1.1', 'value2.1'],
             'SolrFieldName2' => ['value1.2', 'value2.2'],
-            $entity['name'] => ['value1.1 value1.2', 'value2.1 value2.2']     
+            $entityData['name'] => ['value1.1 value1.2', 'value2.1 value2.2']     
         ];
 
         $entry = new ConcreteEntries($this->getDI(), null);
-        $concattedData = $entry->GetSolrData($entitiesCollection, $inputData);
+        $concattedData = $entry->GetSolrData($entity, $inputData);
         
         $this->assertEquals($expectedData, $concattedData);
     }

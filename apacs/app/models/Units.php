@@ -10,7 +10,7 @@ class Units extends \Phalcon\Mvc\Model {
 	const OPERATION_TYPE_CREATE = 'create';
 	const OPERATION_TYPE_UPDATE = 'update';
 
-	public function getSource() {
+	public function getSource(): string {
 		return 'apacs_units';
 	}
 
