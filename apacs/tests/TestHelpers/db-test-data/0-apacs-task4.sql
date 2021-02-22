@@ -25,7 +25,21 @@ INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `incl
   ('19', 'resolutions_units', 'SELECT id, description, CASE WHEN collections_id = 555 AND description LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM apacs_units ORDER BY prio DESC, description LIMIT 75;', NULL, 'description', '0', 'description', '1'),
   ('20', 'person_sexes', 'SELECT id, sex, CASE WHEN sex LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_sexes ORDER BY prio DESC, sex LIMIT 75;', NULL, 'sex', '0', 'sex', '1'),
   ('21', 'person_relations', 'SELECT id, relation, CASE WHEN relation LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_relations ORDER BY prio DESC, relation LIMIT 75;', NULL, 'relation', '0', 'relation', '1'),
-  ('22', 'person_role_types', 'SELECT id, role_type, CASE WHEN role_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_role_types ORDER BY prio DESC, role_type LIMIT 75;', NULL, 'role_type', '0', 'role_type', '1');
+  ('22', 'person_roles', 'SELECT id, role, CASE WHEN role LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_roles ORDER BY prio DESC, role LIMIT 75;', NULL, 'role', '0', 'role', '1'),
+  ('23', 'complaint_verbs', 'SELECT id, verb, CASE WHEN verb LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_verbs ORDER BY prio DESC, verb LIMIT 75;', NULL, 'verb', '0', 'verb', '1'),
+  ('24', 'complaint_subjects', 'SELECT id, subject, CASE WHEN subject LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subjects ORDER BY prio DESC, subject LIMIT 75;', NULL, 'subject', '0', 'subject', '1'),
+  ('25', 'complaint_subject_cats', 'SELECT id, subject_category, CASE WHEN subject_category LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subject_categories ORDER BY prio DESC, subject_category LIMIT 75;', NULL, 'subject_category', '0', 'subject_category', '1'),
+  ('26', 'complaint_purposes', 'SELECT id, purpose, CASE WHEN purpose LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_purposes ORDER BY prio DESC, purpose LIMIT 75;', NULL, 'purpose', '0', 'purpose', '1'),
+  ('27', 'occupation_types', 'SELECT id, occupation_type, CASE WHEN occupation_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_types ORDER BY prio DESC, occupation_type LIMIT 75;', NULL, 'occupation_type', '0', 'occupation_type', '1'),
+  ('28', 'occupation_relations', 'SELECT id, relation, CASE WHEN relation LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_relations ORDER BY prio DESC, relation LIMIT 75;', NULL, 'relation', '0', 'relation', '1'),
+  ('29', 'occupation_categories', 'SELECT id, category, CASE WHEN category LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_categories ORDER BY prio DESC, category LIMIT 75;', NULL, 'category', '0', 'category', '1'),
+  ('30', 'magistrate_actions', 'SELECT id, magistrate_action, CASE WHEN magistrate_action LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_resolution_magistrate_actions ORDER BY prio DESC, magistrate_action LIMIT 75;', NULL, 'magistrate_action', '0', 'magistrate_action', '1'),
+  ('31', 'party_reactions', 'SELECT id, party_reaction, CASE WHEN party_reaction LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_resolution_party_reactions ORDER BY prio DESC, party_reaction LIMIT 75;', NULL, 'party_reaction', '0', 'party_reaction', '1'),
+  ('32', 'resolution_types', 'SELECT id, resolution_type, CASE WHEN resolution_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_resolution_types ORDER BY prio DESC, resolution_type LIMIT 75;', NULL, 'resolution_type', '0', 'resolution_type', '1'),
+  ('33', 'comment_types', 'SELECT id, comment_type, CASE WHEN comment_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_comment_types ORDER BY prio DESC, comment_type LIMIT 75;', NULL, 'comment_type', '0', 'comment_type', '1'),
+  ('34', 'resolution_hoods', 'SELECT id, neighbourhood, CASE WHEN neighbourhood LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_place_neighbourhoods ORDER BY prio DESC, neighbourhood LIMIT 75;', NULL, 'neighbourhood', '0', 'neighbourhood', '1'),
+  ('35', 'place_type', 'SELECT id, place_type, CASE WHEN place_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_place_types ORDER BY prio DESC, place_type LIMIT 75;', NULL, 'place_type', '0', 'place_type', '1');
+
 
 /* data structure */
 CREATE TABLE `resolutions_cases` (
@@ -124,16 +138,17 @@ CREATE TABLE `resolutions_person_occupation_relations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `resolutions_persons_occupations` (
+CREATE TABLE `resolutions_person_occupations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `persons_id` int(11) NOT NULL,
   `person_occupation_relations_id` int(11) NOT NULL,
   `person_occupation_types_id` int(11) NOT NULL,
   `person_occupation_categories_id` int(11) NOT NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `resolutions_person_occupation_type` (
+CREATE TABLE `resolutions_person_occupation_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `occupation_type` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
@@ -147,14 +162,7 @@ CREATE TABLE `resolutions_person_relations` (
 
 CREATE TABLE `resolutions_person_roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `persons_id` int(11) NOT NULL,
-  `person_role_types_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `resolutions_person_role_types` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `role_type` varchar(45) NOT NULL,
+  `role` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -163,6 +171,7 @@ CREATE TABLE `resolutions_persons` (
   `name` varchar(96) NOT NULL,
   `person_sexes_id` int(11) NOT NULL,
   `person_relations_id` int(11) NOT NULL,
+  `person_roles_id` int(11) NOT NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -181,7 +190,7 @@ CREATE TABLE `resolutions_place_neighbourhoods` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `resolutions_places` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `place` varchar(256) NOT NULL,
   `place_neighbourhoods_id` int(11) NOT NULL,
   `cases_id` int(11) NOT NULL,
@@ -193,6 +202,7 @@ CREATE TABLE `resolutions_places_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `places_id` int(11) NOT NULL,
   `place_types_id` int(11) NOT NULL,
+  `order` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -232,7 +242,7 @@ CREATE TABLE `resolutions_resolutions` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-CREATE TABLE `resolutions_resolution_magistate_actions` (
+CREATE TABLE `resolutions_resolution_magistrate_actions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `magistrate_action` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
