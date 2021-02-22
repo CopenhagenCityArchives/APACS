@@ -1,5 +1,8 @@
 <?php
 
+// TODO: What is the purpose of this class? It contains no state/information.
+// Almost all methods take an IEntity as argument -> should likely be methods on
+// the entity class instead.
 class ConcreteEntries {
 
 	private $id;
@@ -36,8 +39,20 @@ class ConcreteEntries {
 		return $this->di;
 	}
 
-	private function HandleEntry(IEntity $entity, Array $entry) {
+	/**
+	 * Handles a loaded entry for a given entity, transform certain fields, and load sub-entities.
+	 * 
+	 * @param IEntity $entity The entity to load an entry for.
+	 * @param Array $entry The concrete entry data for the entity.
+	 * 
+	 * @return Array The modified entry data.
+	 */
+	private function HandleLoadedEntry(IEntity $entity, Array $entry) {
 		foreach ($entity->getFields() as $field) {
+			if ($field->formFieldType == 'boolean' && isset($entry[$field->fieldName])) {
+				$entry[$field->fieldName] = $entry[$field->fieldName] ? true : false;
+			}
+
 			if ($field->formFieldType == 'date' && isset($entry[$field->fieldName])) {
 				$entry[$field->fieldName] = date('d-m-Y', strtotime($entry[$field->fieldName]));
 			}
@@ -77,7 +92,7 @@ class ConcreteEntries {
 		
 		$values = [];
 		foreach ($entries as $entry) {
-			$values[] = $this->HandleEntry($entity, $entry);
+			$values[] = $this->HandleLoadedEntry($entity, $entry);
 		}
 
 		return $values;
@@ -100,7 +115,7 @@ class ConcreteEntries {
 			return null;
 		}
 		
-		return $this->HandleEntry($entity, $entries[0]);
+		return $this->HandleLoadedEntry($entity, $entries[0]);
 	}
 
 	private function buildJoins(IEntity $entity) {
@@ -406,7 +421,7 @@ class ConcreteEntries {
 		}
 
 		// Get the data to save from the Entity fields
-		$saveData = $this->GetFieldsValuesArray($fields, $data);
+		$saveData = $this->CreateFieldValueAssociativeArray($fields, $data);
 
 		// Add the ids of the depended (1-1) entities to the save data
 		foreach ($dependedsSaved as $dependedSaved) {
@@ -453,46 +468,65 @@ class ConcreteEntries {
 		return $newId;
 	}
 
-	private function GetFieldsValuesArray($fields, $data) {
-		$fieldsAndData = [];
+	/**
+	 * Creates an associative array with keys corresponding to the field names in the
+	 * given fields, and appropriately transformed values taken from the given data.
+	 * 
+	 * @param Array $fields The fields to take data from.
+	 * @param Array $data The data for the fields.
+	 * 
+	 * @return Array An associative array of the transformed data, with the field names 
+	 * 				 as keys.
+	 */
+	private function CreateFieldValueAssociativeArray(Array $fields, Array $data) {
+		$result = [];
+		
 		foreach ($fields as $field) {
-			if(!isset($field['fieldName'])){
+			if (!isset($field['fieldName'])) {
 				throw new Exception("fieldName not set in field.");
 			}
-			if (isset($data[$field['fieldName']])) {
 
-				if (trim($data[$field['fieldName']]) == '') {
-					$fieldsAndData[$field['fieldName']] = null;
-				} else {
-					$fieldsAndData[$field['fieldName']] = $data[$field['fieldName']];
-				}
-				//Converting danish date to english (for database)
-				//TODO: This should be implemented elsewhere...
-				if ($field['formFieldType'] == 'date') {
-					$fieldsAndData[$field['fieldName']] = date('Y-m-d', strtotime($fieldsAndData[$field['fieldName']]));
-				}
+			$fieldName = $field['fieldName'];
 
-				/*if($field['formFieldType'] == 'decimal'){
-					$fieldsAndData[$field['fieldName']] = str_replace(',', '.', $fieldsAndData[$field['fieldName']]);
-				}*/
-				//TODO: Hardcoded! Fix when form supports decimal data types
-				if($field['fieldName'] == 'ageWeeks' || $field['fieldName'] == 'ageDays' || $field['fieldName'] == 'ageHours' || $field['fieldName'] == 'ageMonth' || $field['fieldName'] == 'ageYears'){
-					$fieldsAndData[$field['fieldName']] = str_replace(',', '.', $fieldsAndData[$field['fieldName']]);
-				}
-			} else {
+			// The value is not defined, 
+			if (!isset($data[$fieldName])) {
 				if ($field['includeInForm'] == 1) {
-					$fieldsAndData[$field['fieldName']] = null;
+					$assoc[$fieldName] = null;
 				}
+				continue;
+			}
+
+			$value = $data[$fieldName];
+
+			if (is_string($value) && trim($value) == '') {
+				$result[$fieldName] = null;
+			} else {
+				$result[$fieldName] = $value;
+			}
+
+			// Transform boolean values into integers [0, 1]
+			if (is_bool($value)) {
+				$value = $value ? 1 : 0;
+			}
+
+			//Converting danish date to english (for database)
+			//TODO: This should be implemented elsewhere...
+			if ($field['formFieldType'] == 'date') {
+				$result[$fieldName] = date('Y-m-d', strtotime($result[$fieldName]));
+			}
+
+			//TODO: Hardcoded! Fix when form supports decimal data types
+			if ($fieldName == 'ageWeeks' || $fieldName == 'ageDays' || $fieldName == 'ageHours' || $fieldName == 'ageMonth' || $fieldName == 'ageYears') {
+				$result[$fieldName] = str_replace(',', '.', $result[$fieldName]);
 			}
 		}
 
 		//TODO: HARDCODED calculation!
 		if (isset($data['dateOfDeath']) && isset($data['ageYears'])) {
-
-			$fieldsAndData['yearOfBirth'] = date('Y', strtotime($data['dateOfDeath'])) - $data['ageYears'];
+			$result['yearOfBirth'] = date('Y', strtotime($data['dateOfDeath'])) - $data['ageYears'];
 		}
 
-		return $fieldsAndData;
+		return $result;
 	}
 
 	public function startTransaction() {
@@ -527,11 +561,10 @@ class ConcreteEntries {
 	 * @param Array $data 	    The data to save
 	 * @throws InvalidArgumentException if data is not set, or is not valid
 	 * @throws RuntimeException if data could not be saved to the database
+	 * 
+	 * @return int The primary key id of the primary entry.
 	 */
 	public function SaveEntriesForTask(IEntity $entity, $data) {
-		$dbCon = ORM::get_db();
-
-		// Saving main entity
 		if (!isset($data[$entity->name])) {
 			$this->rollbackTransaction();
 			throw new InvalidArgumentException('Could not save entry: No data given for ' . $entity->name);

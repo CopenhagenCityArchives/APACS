@@ -153,4 +153,50 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
         $entry->SaveEntriesForTask($entity, $inputData);
     }
+
+    public function test_SaveSecondaryArrayEntity_WithAFalseBooleanValue(){
+        $entityData = EntitiesTestData::getSimpleEntity();
+        $entityData['entities'][] = EntitiesTestData::getObjectEntityWithTwoFields();
+        
+        //Return true to test empty data
+        $entityData['entities'][0]['isPrimaryEntity'] = 0;
+        $entityData['entities'][0]['type'] = 'array';
+        $entittyData['entities'][0]['fields']['formFieldType'] = 'boolean';
+
+        $entity = new ConfigurationEntity($entityData);
+
+        $inputData = [
+            $entityData['name'] => [
+                'field1' => 'value1',
+                $entityData['entities'][0]['name'] => [
+                    [
+                        'field1' => false,
+                        'field2' => "value2"
+                    ]
+                ]
+            ]
+        ];
+
+        
+        $crudMock = $this->createMock(Mocks\CrudMock::class);
+
+        $crudMock->expects($this->exactly(2))
+            ->method('save')
+            ->withConsecutive([
+                $this->equalTo($entityData['primaryTableName']), 
+                $this->equalTo([ 'field1' => 'value1' ])
+            ], [
+                $this->equalTo($entityData['entities'][0]['primaryTableName']), 
+                $this->equalTo([
+                    'parentEntityReferenceField' => 1,
+                    'field1' => false,
+                    'field2' => 'value2',
+                    'order' => 1
+                ])
+            ])
+            ->willReturnOnConsecutiveCalls(1, 2); // mock crud->save returning with ids 1 and 2
+
+        $entry = new ConcreteEntries($this->getDI(), $crudMock);
+        $entry->SaveEntriesForTask($entity, $inputData);
+    }
 }
