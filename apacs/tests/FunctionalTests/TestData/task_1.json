@@ -1,31 +1,25 @@
 {
-    "name": "Begravelsesprotokoller",
-    "id": 1,
+    "name": "Begravelser",
+    "description": "Indtastning af begravelsesprotokoller",
     "parentTask": null,
     "entity": {
-        "id": 1,
-        "task_id": 1,
         "name": "persons",
         "isPrimaryEntity": 1,
-        "entityKeyName": null,
+        "entityKeyName": "id",
         "type": "object",
         "required": 1,
-        "countPerEntry": "1",
+        "countPerEntry": 1,
         "guiName": "Person",
         "primaryTableName": "burial_persons",
         "includeInSOLR": 0,
         "viewOrder": 1,
         "parent_id": null,
-        
         "fieldRelatingToParent": null,
         "allowNewValues": 1,
         "typeOfRelationToParent": "connection",
         "saveOrderAccordingToParent": "after",
-        "fields": [
-            {
-                "id": 7,
-                "entities_id": 1,
-                "steps_id": 2,
+        "fields": {
+            "1": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "firstnames",
@@ -42,17 +36,13 @@
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
-                "validationErrorMessage": "Feltet skal udfyldes. Du kan evt. skrive 'ukendt' eller 'udøbt'. Se vejledningen. Erstat bogstaver med ?, hvis de ikke kan læses.",
+                "validationMessage": "Feltet skal udfyldes. Du kan evt. skrive 'ukendt' eller 'udøbt'. Se vejledningen. Erstat bogstaver med ?, hvis de ikke kan læses.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "firstnames",
                 "SOLRFacet": 0,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 9,
-                "entities_id": 1,
-                "steps_id": 2,
+            "2": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "lastname",
@@ -69,17 +59,13 @@
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
-                "validationErrorMessage": "Feltet skal udfyldes. Erstat bogstaver med ?, hvis de ikke kan læses.",
+                "validationMessage": "Feltet skal udfyldes. Erstat bogstaver med ?, hvis de ikke kan læses.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "lastname",
                 "SOLRFacet": 1,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 16,
-                "entities_id": 1,
-                "steps_id": 3,
+            "3": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "adressOutsideCph",
@@ -96,17 +82,13 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "Du skal kun udfylde dette felt, hvis adressen ikke er i København, Frederiksberg eller Gentofte.",
+                "validationMessage": "Du skal kun udfylde dette felt, hvis adressen ikke er i København, Frederiksberg eller Gentofte.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "adressOutsideCph",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 18,
-                "entities_id": 1,
-                "steps_id": 2,
+            "4": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageYears",
@@ -123,17 +105,13 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/^\\d{1,3}$/",
-                "validationErrorMessage": "Du kan kun skrive hele tal i feltet. Brug månedsfeltet, hvis du vil taste et halvt år.",
+                "validationMessage": "Du kan kun skrive hele tal i feltet. Brug månedsfeltet, hvis du vil taste et halvt år.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "ageYears",
                 "SOLRFacet": 1,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 19,
-                "entities_id": 1,
-                "steps_id": 2,
+            "5": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageMonth",
@@ -145,22 +123,18 @@
                 "formName": "Alder - måneder",
                 "formFieldType": "string",
                 "formFieldOrder": 6,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal måneder. 3/12 tastes som 3",
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/^[0-9]+(\\,[0-9]{1,2})?$/",
-                "validationErrorMessage": "Du skal skrive antal måneder. Halve måneder tastes også fx 0,5",
+                "validationMessage": "Du skal skrive antal måneder. Halve måneder tastes også fx 0,5",
                 "includeInSOLR": 0,
                 "SOLRFieldName": "ageMonth",
                 "SOLRFacet": 0,
-                "SOLRResult": 1,
-                "name": "no_given"
+                "SOLRResult": 1
             },
-            {
-                "id": 20,
-                "entities_id": 1,
-                "steps_id": 4,
+            "6": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "dateOfDeath",
@@ -176,18 +150,15 @@
                 "helpText": "Skrives dd-mm-åååå. Er dag eller måned ikke oplyst skriv i stedet 01, hvor oplysningen mangler, fx 01-01-1899, hvor kun årstallet kendes.",
                 "placeholder": null,
                 "isRequired": 0,
-                "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-]\\d{4}$/",
-                "validationErrorMessage": "Du skal bruge formatet dd-mm-åååå. Er dag eller måned ikke oplyst så skriv i stedet 01.",
+                "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](18|19)\\d{2}$/",
+                "validationMessage": "Skriv datoen således: dd-mm-åååå",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "dateOfDeath",
                 "SOLRFacet": 1,
                 "SOLRResult": 1,
                 "name": "dateOfDeath"
             },
-            {
-                "id": 21,
-                "entities_id": 1,
-                "steps_id": -1,
+            "7": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "yearOfBirth",
@@ -204,17 +175,13 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\d{4}/",
-                "validationErrorMessage": "Du skal skrive fødselsåret. Træk alderen fra dødsåret. Skrives åååå.",
+                "validationMessage": "Du skal skrive fødselsåret. Træk alderen fra dødsåret. Skrives åååå.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "yearOfBirth",
                 "SOLRFacet": 1,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 22,
-                "entities_id": 1,
-                "steps_id": 4,
+            "8": {
                 "datasources_id": 5,
                 "tableName": "burial_persons",
                 "fieldName": "civilstatuses_id",
@@ -231,17 +198,13 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "Du skal vælge civilstand fra listen. Enten markeret ved at under- eller overstregning af den fortryk",
+                "validationMessage": "Du skal vælge civilstand fra listen. Enten markeret ved at under- eller overstregning af den fortryk",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "civilstatus",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 26,
-                "entities_id": 1,
-                "steps_id": 5,
+            "9": {
                 "datasources_id": 8,
                 "tableName": "burial_persons",
                 "fieldName": "deathplaces_id",
@@ -258,17 +221,13 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "Du skal vælge en værdi fra listen.",
+                "validationMessage": "Du skal vælge en værdi fra listen.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "deathplace",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 28,
-                "entities_id": 1,
-                "steps_id": 2,
+            "10": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "birthname",
@@ -285,17 +244,13 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "Du skal  skrive et fødenavn.",
+                "validationMessage": "Du skal  skrive et fødenavn.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "birthname",
                 "SOLRFacet": 1,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             },
-            {
-                "id": 92,
-                "entities_id": 1,
-                "steps_id": 2,
+            "11": {
                 "datasources_id": 12,
                 "tableName": "burial_persons",
                 "fieldName": "sex_id",
@@ -312,17 +267,14 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "Du skal vælge køn fra listen.",
+                "validationMessage": "Du skal vælge køn fra listen.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "sex",
                 "SOLRFacet": 0,
                 "SOLRResult": 1,
                 "name": "sex"
             },
-            {
-                "id": 100,
-                "entities_id": 1,
-                "steps_id": 5,
+            "12": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "comment",
@@ -339,17 +291,14 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "Du må kun skrive bogstaver.",
+                "validationMessage": "Du må kun skrive bogstaver.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "comments",
                 "SOLRFacet": 0,
                 "SOLRResult": 0,
                 "name": "comment"
             },
-            {
-                "id": 107,
-                "entities_id": 1,
-                "steps_id": 2,
+            "13": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageWeeks",
@@ -361,22 +310,19 @@
                 "formName": "Alder - uger",
                 "formFieldType": "string",
                 "formFieldOrder": 61,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal uger",
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/^[0-9]+(\\,[0-9]{1,2})?$/",
-                "validationErrorMessage": "Du skal skrive antal uger. Halve uger tastes også fx 0,5",
+                "validationMessage": "Du skal skrive antal uger. Halve uger tastes også fx 0,5",
                 "includeInSOLR": 0,
                 "SOLRFieldName": "ageWeeks",
                 "SOLRFacet": 0,
                 "SOLRResult": 1,
                 "name": "ageWeeks"
             },
-            {
-                "id": 109,
-                "entities_id": 1,
-                "steps_id": 2,
+            "14": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageDays",
@@ -388,22 +334,19 @@
                 "formName": "Alder - dage",
                 "formFieldType": "string",
                 "formFieldOrder": 62,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal dage",
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/^[0-9]+(\\,[0-9]{1,2})?$/",
-                "validationErrorMessage": "Du skal skrive antal dage. Halve dage taste fx 0,5",
+                "validationMessage": "Du skal skrive antal dage. Halve dage taste fx 0,5",
                 "includeInSOLR": 0,
                 "SOLRFieldName": "ageDays",
                 "SOLRFacet": 0,
                 "SOLRResult": 1,
                 "name": "ageDays"
             },
-            {
-                "id": 111,
-                "entities_id": 1,
-                "steps_id": 2,
+            "15": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "ageHours",
@@ -415,22 +358,19 @@
                 "formName": "Alder - timer",
                 "formFieldType": "string",
                 "formFieldOrder": 63,
-                "defaultValue": "0",
+                "defaultValue": 0,
                 "helpText": "Antal timer",
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/^\\d{1,3}$/",
-                "validationErrorMessage": "Du skal skrive en hel time.",
+                "validationMessage": "Du skal skrive en hel time.",
                 "includeInSOLR": 0,
                 "SOLRFieldName": "ageHours",
                 "SOLRFacet": 0,
                 "SOLRResult": 1,
                 "name": "ageHours"
             },
-            {
-                "id": 113,
-                "entities_id": 1,
-                "steps_id": 2,
+            "16": {
                 "datasources_id": null,
                 "tableName": "burial_persons",
                 "fieldName": "freetext_store",
@@ -447,39 +387,32 @@
                 "placeholder": null,
                 "isRequired": 0,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationErrorMessage": "",
+                "validationMessage": "",
                 "includeInSOLR": 0,
                 "SOLRFieldName": "freetext_store",
                 "SOLRFacet": 0,
-                "SOLRResult": 0,
-                "name": "no_given"
+                "SOLRResult": 0
             }
-        ],
+        },
         "entities": [
             {
-                "id": 2,
-                "task_id": 1,
                 "name": "deathcauses",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "persons_id",
                 "type": "array",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Dødsårsag",
                 "primaryTableName": "burial_persons_deathcauses",
                 "includeInSOLR": 0,
                 "viewOrder": 3,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 10,
-                        "entities_id": 2,
-                        "steps_id": 5,
                         "datasources_id": 2,
                         "tableName": "burial_persons_deathcauses",
                         "fieldName": "deathcauses_id",
@@ -496,40 +429,33 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Du skal vælge en dødsårsag fra listen. Hvis ingen af valgmulighederne matcher, så vælg *skal oprettes",
+                        "validationMessage": "Du skal vælge en dødsårsag fra listen. Hvis ingen af valgmulighederne matcher, så vælg *skal oprettes",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "deathcauses",
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     }
                 ],
                 "entities": null
             },
             {
-                "id": 3,
-                "task_id": 1,
                 "name": "positions",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "persons_id",
                 "type": "array",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Erhverv",
                 "primaryTableName": "burial_persons_positions",
                 "includeInSOLR": 0,
                 "viewOrder": 2,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 11,
-                        "entities_id": 3,
-                        "steps_id": 4,
                         "datasources_id": 1,
                         "tableName": "burial_persons_positions",
                         "fieldName": "positions_id",
@@ -546,17 +472,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Du skal vælge et erhverv fra listen. Findes erhvervet ikke på listen, så vælg *skal oprettes.",
+                        "validationMessage": "Du skal vælge et erhverv fra listen. Findes erhvervet ikke på listen, så vælg *skal oprettes.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "positions",
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 12,
-                        "entities_id": 3,
-                        "steps_id": 4,
                         "datasources_id": 11,
                         "tableName": "burial_persons_positions",
                         "fieldName": "relationtypes_id",
@@ -573,17 +495,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Skal udfyldes, hvis erhverv er udfyldt.",
+                        "validationMessage": "Skal udfyldes, hvis erhverv er udfyldt.",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 102,
-                        "entities_id": 3,
-                        "steps_id": 4,
                         "datasources_id": 14,
                         "tableName": "burial_persons_positions",
                         "fieldName": "workplaces_id",
@@ -600,7 +518,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Kan udfyldes, hvis erhverv er udfyldt.",
+                        "validationMessage": "Kan udfyldes, hvis erhverv er udfyldt.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "workplace",
                         "SOLRFacet": 0,
@@ -611,29 +529,23 @@
                 "entities": null
             },
             {
-                "id": 4,
-                "task_id": 1,
                 "name": "addresses",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "addresses_id",
                 "type": "object",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Adresse",
                 "primaryTableName": "burial_addresses",
                 "includeInSOLR": 1,
                 "viewOrder": 4,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 13,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": 3,
                         "tableName": "burial_addresses",
                         "fieldName": "streets_id",
@@ -650,17 +562,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Du skal vælge en gade fra listen. Hvis gaden ikke er på listen, så vælges *skal oprettes.",
+                        "validationMessage": "Du skal vælge en gade fra listen. Hvis gaden ikke er på listen, så vælges *skal oprettes.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "streets",
                         "SOLRFacet": 1,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 14,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": null,
                         "tableName": "burial_addresses",
                         "fieldName": "number",
@@ -677,17 +585,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^\\d{1,3}$/",
-                        "validationErrorMessage": "Du skal skrive et tal. Bogstavangivelser i forbindelse med husnummeret skrives i feltet nedenfor.",
+                        "validationMessage": "Du skal skrive et tal. Bogstavangivelser i forbindelse med husnummeret skrives i feltet nedenfor.",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 15,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": null,
                         "tableName": "burial_addresses",
                         "fieldName": "letter",
@@ -704,17 +608,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^[a-zA-ZæøåÆØÅ]{1}$/",
-                        "validationErrorMessage": "Du skal skrive et bogstav.",
+                        "validationMessage": "Du skal skrive et bogstav.",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 17,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": 4,
                         "tableName": "burial_addresses",
                         "fieldName": "floors_id",
@@ -731,17 +631,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
-                        "validationErrorMessage": "Du skal vælge en etage fra listen.",
+                        "validationMessage": "Du skal vælge en etage fra listen.",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
-                        "SOLRResult": 0,
-                        "name": "no_given"
+                        "SOLRResult": 0
                     },
                     {
-                        "id": 96,
-                        "entities_id": 4,
-                        "steps_id": 3,
                         "datasources_id": 13,
                         "tableName": "burial_addresses",
                         "fieldName": "institutions_id",
@@ -758,7 +654,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Du skal vælge en institution eller sted fra listen.",
+                        "validationMessage": "Du skal vælge en institution eller sted fra listen.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "institutions",
                         "SOLRFacet": 0,
@@ -769,29 +665,23 @@
                 "entities": null
             },
             {
-                "id": 5,
-                "task_id": 1,
                 "name": "burials",
                 "isPrimaryEntity": 0,
                 "entityKeyName": "burials_id",
                 "type": "object",
                 "required": 0,
-                "countPerEntry": "1",
+                "countPerEntry": 1,
                 "guiName": "Begravelse",
                 "primaryTableName": "burial_burials",
                 "includeInSOLR": 0,
                 "viewOrder": 5,
                 "parent_id": null,
-                
                 "fieldRelatingToParent": null,
                 "allowNewValues": 1,
                 "typeOfRelationToParent": "connection",
                 "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
-                        "id": 23,
-                        "entities_id": 5,
-                        "steps_id": 5,
                         "datasources_id": 6,
                         "tableName": "burial_burials",
                         "fieldName": "chapels_id",
@@ -808,17 +698,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Du skal vælge et sted fra listen. Hvis ingen af valgmulighederne matcher, så vælg *skal oprettes.",
+                        "validationMessage": "Du skal vælge et sted fra listen. Hvis ingen af valgmulighederne matcher, så vælg *skal oprettes.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "chapel",
                         "SOLRFacet": 0,
-                        "SOLRResult": 1,
-                        "name": "no_given"
+                        "SOLRResult": 1
                     },
                     {
-                        "id": 24,
-                        "entities_id": 5,
-                        "steps_id": 5,
                         "datasources_id": 10,
                         "tableName": "burial_burials",
                         "fieldName": "parishes_id",
@@ -835,17 +721,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Du skal vælge et sogn fra listen. Findes sognet ikke på listen skal du vælge *skal oprettes.",
+                        "validationMessage": "Du skal vælge et sogn fra listen. Findes sognet ikke på listen skal du vælge *skal oprettes.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "parish",
                         "SOLRFacet": 0,
-                        "SOLRResult": 1,
-                        "name": "no_given"
+                        "SOLRResult": 1
                     },
                     {
-                        "id": 25,
-                        "entities_id": 5,
-                        "steps_id": 5,
                         "datasources_id": 7,
                         "tableName": "burial_burials",
                         "fieldName": "cemetaries_id",
@@ -862,17 +744,13 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/\\w{1,}/",
-                        "validationErrorMessage": "Den indtastede kirkegård står ikke på listen. Vælg *skal oprettes.",
+                        "validationMessage": "Den indtastede kirkegård står ikke på listen. Vælg *skal oprettes.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "cemetary",
                         "SOLRFacet": 0,
-                        "SOLRResult": 1,
-                        "name": "no_given"
+                        "SOLRResult": 1
                     },
                     {
-                        "id": 94,
-                        "entities_id": 5,
-                        "steps_id": 2,
                         "datasources_id": null,
                         "tableName": "burial_burials",
                         "fieldName": "number",
@@ -889,7 +767,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^\\d{1,5}$/",
-                        "validationErrorMessage": "Du må kun skrive tal.",
+                        "validationMessage": "Du må kun skrive tal.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "record_number",
                         "SOLRFacet": 0,
@@ -900,5 +778,111 @@
                 "entities": null
             }
         ]
-    }
+    },
+    "steps": [
+        {
+            "name": "Løbenummer, Navn, Køn, og Alder",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.burials.number"
+                },
+                {
+                    "key": "persons.firstnames"
+                },
+                {
+                    "key": "persons.freetext_store"
+                },
+                {
+                    "key": "persons.lastname"
+                },
+                {
+                    "key": "persons.birthname"
+                },
+                {
+                    "key": "persons.sex"
+                },
+                {
+                    "key": "persons.ageYears"
+                },
+                {
+                    "key": "persons.ageMonth"
+                },
+                {
+                    "key": "persons.ageWeeks"
+                },
+                {
+                    "key": "persons.ageDays"
+                },
+                {
+                    "key": "persons.ageHours"
+                }
+            ]
+        },
+        {
+            "name": "Bopæl",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.addresses.streetAndHood"
+                },
+                {
+                    "key": "persons.addresses.number"
+                },
+                {
+                    "key": "persons.addresses.letter"
+                },
+                {
+                    "key": "persons.addresses.floor"
+                },
+                {
+                    "key": "persons.addresses.institution"
+                },
+                {
+                    "key": "persons.adressOutsideCph"
+                }
+            ]
+        },
+        {
+            "name": "Erhverv, Civilstand og Dødsdato",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.positions",
+                    "add": "Tilføj"
+                },
+                {
+                    "key": "persons.civilstatus"
+                },
+                {
+                    "key": "persons.dateOfDeath"
+                }
+            ]
+        },
+        {
+            "name": "Dødsårsag, Dødssted, Fra, Sogn og Kirkegård",
+            "description": "",
+            "fields": [
+                {
+                    "key": "persons.deathcauses",
+                    "add": "Tilføj"
+                },
+                {
+                    "key": "persons.deathplace"
+                },
+                {
+                    "key": "persons.burials.chapel"
+                },
+                {
+                    "key": "persons.burials.parish"
+                },
+                {
+                    "key": "persons.burials.cemetary"
+                },
+                {
+                    "key": "persons.comment"
+                }
+            ]
+        }
+    ]
 }
