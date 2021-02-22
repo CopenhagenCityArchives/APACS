@@ -14,7 +14,7 @@ class ConfigurationEntityTest extends \UnitTestCase {
 		parent::tearDown();
 	}
 
-	public function test_AllEntityFieldsEmpty_EmptyDataStructure_ReturnTrue() {
+	public function test_UserEntryIsEmpty_TypeObject_EmptyDataStructure_ReturnTrue() {
         $entityConf = EntitiesTestData::getSimpleEntity();
         $entity = new ConfigurationEntity($entityConf);
 
@@ -23,6 +23,113 @@ class ConfigurationEntityTest extends \UnitTestCase {
         ];
 
         $this->assertTrue($entity->UserEntryIsEmpty($emptyData));
+    }
+
+    public function test_UserEntryIsEmpty_TypeObject_WithContent_ReturnFalse() {
+        $entityConf = EntitiesTestData::getSimpleEntity();
+        $entity = new ConfigurationEntity($entityConf);
+
+        $emptyData = [
+            'field1' => "value5"
+        ];
+
+        $this->assertFalse($entity->UserEntryIsEmpty($emptyData));
+    }
+
+    public function test_UserEntryIsEmpty_TypeArray_EmptyDataStructure_ReturnTrue() {
+        $entityConf = EntitiesTestData::getSimpleEntity();
+        $entityConf['type'] = "array";
+        $entity = new ConfigurationEntity($entityConf);
+
+        $emptyData = [[
+            'field1' => null
+        ]];
+
+        $this->assertTrue($entity->UserEntryIsEmpty($emptyData));
+    }
+
+    public function test_UserEntryIsEmpty_TypeArray_EmptyDataStructure_WithSubArray_ReturnTrue() {
+        $entityConf = EntitiesTestData::getSimpleEntity();
+        $entityConf['type'] = "array";
+        $secondaryEntityConf = EntitiesTestData::getSimpleSecondaryEntity();
+        $secondaryEntityConf['type'] = "array";
+        $entityConf['entities'] = [$secondaryEntityConf];
+        
+        $entity = new ConfigurationEntity($entityConf);
+
+        $emptyData = [
+            [
+                'field1' => null,
+                'simpleSecondaryEntity' => [
+                    [ 'field2' => null ],
+                    [ 'field2' => null ]
+                ],
+            ],
+            [
+                'field1' => null,
+                'simpleSecondaryEntity' => [
+                    [ 'field2' => null ]
+                ]
+            ]
+        ];
+
+        $this->assertTrue($entity->UserEntryIsEmpty($emptyData));
+    }
+
+    public function test_UserEntryIsEmpty_TypeArray_FirstItemOneFieldSet_WithSubArray_ReturnFalse() {
+        $entityConf = EntitiesTestData::getSimpleEntity();
+        $entityConf['type'] = "array";
+        $secondaryEntityConf = EntitiesTestData::getSimpleSecondaryEntity();
+        $secondaryEntityConf['type'] = "array";
+        $entityConf['entities'] = [$secondaryEntityConf];
+        
+        $entity = new ConfigurationEntity($entityConf);
+
+        $emptyData = [
+            [
+                'field1' => 'value1',
+                'simpleSecondaryEntity' => [
+                    [ 'field2' => null ],
+                    [ 'field2' => null ]
+                ],
+            ],
+            [
+                'field1' => null,
+                'simpleSecondaryEntity' => [
+                    [ 'field2' => null ]
+                ]
+            ]
+        ];
+
+        $this->assertFalse($entity->UserEntryIsEmpty($emptyData));
+    }
+
+    public function test_UserEntryIsEmpty_TypeArray_SecondItemSet_WithSubArray_ReturnFalse() {
+        $entityConf = EntitiesTestData::getSimpleEntity();
+        $entityConf['type'] = "array";
+        $secondaryEntityConf = EntitiesTestData::getSimpleSecondaryEntity();
+        $secondaryEntityConf['type'] = "array";
+        $entityConf['entities'] = [$secondaryEntityConf];
+        
+        $entity = new ConfigurationEntity($entityConf);
+
+        $emptyData = [
+            [
+                'field1' => null,
+                'simpleSecondaryEntity' => [
+                    [ 'field2' => null ],
+                    [ 'field2' => null ]
+                ],
+            ],
+            [
+                'field1' => 'value1',
+                'simpleSecondaryEntity' => [
+                    [ 'field2' => 'value2' ]
+                ]
+            ]
+        ];
+
+        $this->assertFalse($entity->UserEntryIsEmpty($emptyData));
     }
     
     public function test_isDataValid_InvalidData_ReturnFalse(){
