@@ -434,7 +434,7 @@ class ConcreteEntries {
 			$i = 0;
 			// Save each item of the array
 			foreach ($data[$dependingEntity->name] as $item) {
-				if ($dependingEntity->UserEntryIsEmpty($item)) {
+				if ($dependingEntity->UserEntryItemIsEmpty($item)) {
 					continue;
 				}
 

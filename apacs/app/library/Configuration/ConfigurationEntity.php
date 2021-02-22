@@ -102,17 +102,43 @@ class ConfigurationEntity implements IEntity {
 	/**
 	 * Check if the data from a user entry for this entity is all empty.
 	 * 
-	 * @return boolean false if any field or sub-entity has a value, true otherwise.
+	 * @return boolean false if any field or sub-entity has a value in any item, true otherwise.
 	 */
 	public function UserEntryIsEmpty(Array $data) {
+		if ($this->type == 'array') {
+			// Check each item of the entry data
+			foreach ($data as $item) {
+				if (!$this->UserEntryItemIsEmpty($item)) {
+					return false;
+				}
+			}
+		} else if (!$this->UserEntryItemIsEmpty($data)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if the data from a single entry item for this entity is all empty.
+	 * 
+	 * @param Array $item The specific item to check if it is empty according to the
+	 * 				entity. This is always a single item, even for array entities
+	 * 
+	 * @return boolean false if any field or sub-entity has a value, true otherwise.
+	 * 
+	 */
+	public function UserEntryItemIsEmpty(Array $item) {
+		// Check the entry data for each field of the entity
 		foreach ($this->getFields() as $field) {
-			if (isset($data[$field->getRealFieldName()]) && !is_null($data[$field->getRealFieldName()])) {
+			if (isset($item[$field->getRealFieldName()]) && !is_null($item[$field->getRealFieldName()])) {
 				return false;
 			}
 		}
 
+		// Check the entry data for the child entities
 		foreach ($this->getChildren() as $child) {
-			if (isset($data[$child->name]) && !is_null($data[$child->name])) {
+			if (isset($item[$child->name]) && !is_null($item[$child->name]) && !$child->UserEntryIsEmpty($item[$child->name])) {
 				return false;
 			}
 		}
