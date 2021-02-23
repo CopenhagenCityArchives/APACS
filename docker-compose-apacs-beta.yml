@@ -5,12 +5,8 @@ services:
     image: 282251075226.dkr.ecr.eu-west-1.amazonaws.com/apacs:{image-tag}
     container_name: apacs
     depends_on:
-      - composer
       - mysql
       - solr
-    volumes:
-      - ./apacs:/code
-      - composer-vendor:/code/vendor
     environment:
       - APACS_ACCESS_CTRL_NAME=FakeAccessController
 
@@ -34,15 +30,6 @@ services:
       - SOLR_PASSWORD=6nXSaEJBH7
       
       - SOLR_TIMEOUT=10
-  
-  composer:
-    container_name: composer
-    image: composer:latest
-    command: install
-    restart: 'no'
-    volumes:
-      - ./apacs:/app
-      - composer-vendor:/app/vendor
 
   mysql:
     image: mysql:5.7
@@ -81,8 +68,6 @@ services:
       - /opt/solr/server/solr/configsets/solr_conf/apacs_core
     volumes:
         - ./infrastructure/solr/solr_conf:/opt/solr/server/solr/configsets/solr_conf
-volumes:
-  composer-vendor:
 
 networks:
   default:

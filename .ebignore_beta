@@ -1,12 +1,8 @@
 .env
 node_modules
 .git
-apacs
-apacs/tests
-apacs/tests_api
 infrastructure/db
 infrastructure/indexing
-infrastructure/solr
 infrastructure/composer
 infrastructure/php-fpm-phalcon
 infrastructure/nginx/Dockerfile_prod
