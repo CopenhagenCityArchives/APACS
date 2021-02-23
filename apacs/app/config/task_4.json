@@ -11,11 +11,8 @@
         "countPerEntry": 1,
         "guiName": "Sag",
         "primaryTableName": "resolutions_cases",
-        "includeInSOLR": 0,
-        "fieldRelatingToParent": null,
+        "includeInSOLR": 1,
         "allowNewValues": 1,
-        "typeOfRelationToParent": "connection",
-        "saveOrderAccordingToParent": "after",
         "fields": {
             "1": {
                 "datasources_id": 15,
@@ -82,7 +79,7 @@
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
                 "validationMessage": "",
-                "includeInSOLR": 0,
+                "includeInSOLR": 1,
                 "SOLRFieldName": "start_page",
                 "SOLRFacet": 1,
                 "SOLRResult": 1,
@@ -99,11 +96,8 @@
                 "countPerEntry": 1,
                 "guiName": "Transkription",
                 "primaryTableName": "resolutions_transcriptions",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 16,
@@ -123,8 +117,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "transcription_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "transcription_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -146,8 +140,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "transcription",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "transcriptions",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -163,11 +157,8 @@
                 "countPerEntry": 1,
                 "guiName": "Klagen",
                 "primaryTableName": "resolutions_complaints",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 23,
@@ -187,7 +178,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_verb",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -210,7 +201,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_subject",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -233,7 +224,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_subject_category",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -256,7 +247,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/(\\w+)( \\w+)*/",
                         "validationMessage": "Må kun være med mellemrum.",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_subject_category",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -279,7 +270,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_witnesses",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -302,7 +293,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_attachments_mentioned",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -319,11 +310,8 @@
                 "countPerEntry": 1,
                 "guiName": "Bilag",
                 "primaryTableName": "resolutions_attachments",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 17,
@@ -343,8 +331,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "attachment_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "attachment_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -366,8 +354,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "attachment_references",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -390,7 +378,7 @@
                         "validationRegularExpression": "/^[1-9][0-9]*$/",
                         "validationMessage": "??",
                         "includeInSOLR": 0,
-                        "SOLRFieldName": "reference",
+                        "SOLRFieldName": null,
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -406,11 +394,8 @@
                 "countPerEntry": 1,
                 "guiName": "Henvisninger",
                 "primaryTableName": "resolutions_references",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 18,
@@ -430,8 +415,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "reference_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -453,8 +438,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference_forward",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "reference_forwards",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -476,8 +461,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference_forward",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "reference_backwards",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -500,7 +485,7 @@
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
                         "includeInSOLR": 0,
-                        "SOLRFieldName": "referenced_unit_id",
+                        "SOLRFieldName": null,
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -516,11 +501,8 @@
                 "countPerEntry": 1,
                 "guiName": "Personer",
                 "primaryTableName": "resolutions_persons",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": null,
@@ -540,8 +522,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
                         "validationMessage": "Navnet må kun bestå af bogstaver og mellemrum.",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "full_name",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_names",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -563,8 +545,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Du skal vælge et køn fra listen",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "sex",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_sexes",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -586,8 +568,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "person_relation",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_relations",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -609,8 +591,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Du skal vælge en rolle fra listen",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "sex",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_roles",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -625,11 +607,8 @@
                         "countPerEntry": 1,
                         "guiName": "Erhverv",
                         "primaryTableName": "resolutions_person_occupations",
-                        "includeInSOLR": 0,
-                        "fieldRelatingToParent": null,
+                        "includeInSOLR": 1,
                         "allowNewValues": 1,
-                        "typeOfRelationToParent": "connection",
-                        "saveOrderAccordingToParent": "after",
                         "fields": [
                             {
                                 "datasources_id": 27,
@@ -649,8 +628,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "person_occupation",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "case_person_occupation_types",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             },
@@ -672,8 +651,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "person_occupation_relation",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "case_person_occupation_relations",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             },
@@ -695,8 +674,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "person_occupation_category",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "case_person_occupation_categories",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             }
@@ -714,11 +693,8 @@
                 "countPerEntry": 1,
                 "guiName": "Resolutioner",
                 "primaryTableName": "resolutions_resolutions",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 30,
@@ -738,8 +714,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_magistrate_action",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_magistrate_actions",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -761,8 +737,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_party_reacton",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_party_reactons",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -784,8 +760,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -807,8 +783,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](17|18|19)\\d{2}$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_date",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_dates",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -830,7 +806,7 @@
                         "isRequired": 0,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "resolution_case_reopened",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -847,11 +823,8 @@
                 "countPerEntry": 1,
                 "guiName": "Kommentarer",
                 "primaryTableName": "resolutions_comments",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": null,
@@ -871,8 +844,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_comments",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "comments",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -894,8 +867,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_comment_types",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "comment_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -912,11 +885,8 @@
                 "countPerEntry": 1,
                 "guiName": "Steder",
                 "primaryTableName": "resolutions_places",
-                "includeInSOLR": 0,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": null,
@@ -936,8 +906,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "place",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "places",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -959,8 +929,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_comment_types",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "neighbourhoods",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -976,11 +946,8 @@
                         "countPerEntry": 1,
                         "guiName": "Stedtyper",
                         "primaryTableName": "resolutions_places_types",
-                        "includeInSOLR": 0,
-                        "fieldRelatingToParent": null,
+                        "includeInSOLR": 1,
                         "allowNewValues": 1,
-                        "typeOfRelationToParent": "connection",
-                        "saveOrderAccordingToParent": "after",
                         "fields": [
                             {
                                 "datasources_id": 35,
@@ -1000,8 +967,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "resolution_place_types",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "place_types",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             }
