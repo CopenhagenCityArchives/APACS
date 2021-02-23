@@ -144,6 +144,48 @@
   <!-- SKOLEPROTOKOLLER -->
   <field name="schoolName" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
 
+  <!-- MAGISTRATENS RESOLUTIONER -->
+  <field name="case_type" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="case_date" type="tdate" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="start_page" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="transcription_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="transcriptions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="complaint_verb" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_subject" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_subject_category" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_purpose" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_witnesses" type="boolean" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_attachments_mentioned" type="boolean" indexed="true" stored="true" required="false" multiValued="false" />
+
+  <field name="attachment_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="attachment_references" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="reference_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="reference_forwards" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="reference_backwards" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="case_person_names" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="case_person_sexes" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="case_person_relations" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="case_person_roles" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="case_person_occupation_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="case_person_occupation_relations" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="case_person_occupation_categories" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="resolution_magistrate_actions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="resolution_party_reactons" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="resolution_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="resolution_date" type="tdate" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="resolution_case_reopened" type="boolean" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="comment_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="neighbourhoods" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
+  <field name="place_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+
   <!-- Free text search is performed in these fields -->
   <copyField source="firstnames" dest="freetext_store"/>
   <copyField source="lastname" dest="freetext_store"/>
@@ -172,6 +214,7 @@
   <copyField source="erindring_document_text" dest="freetext_store"/>
   <copyField source="comments" dest="freetext_store"/>
   <copyField source="schoolName" dest="freetext_store"/>
+  <copyFIeld source="case_person_names" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />
