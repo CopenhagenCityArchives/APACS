@@ -5,8 +5,8 @@ INSERT INTO `apacs_collections` (`id`,`name`) VALUES (555,'resolutions collectio
 
 INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (5551, 555, 'test unit for resolutions', 2);
 INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`filename`,`filename_converted`,`relative_filename`,`relative_filename_converted`,`found`,`image_url`,`md5`,`s3`) VALUES 
-    (55511,NULL,5551,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'http://localhost:8080/test-assets/resolution_1.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0),
-    (55512,NULL,5551,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'http://localhost:8080/test-assets/resolution_2.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0);
+    (55511,NULL,5551,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://api-beta.kbharkiv.dk/test-assets/resolution_1.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0),
+    (55512,NULL,5551,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://api-beta.kbharkiv.dk/test-assets/resolution_2.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0);
 INSERT INTO `apacs_tasks_pages` (`id`,`tasks_id`,`pages_id`,`units_id`,`is_done`,`last_activity`) VALUES
     (55511,4,55511,5551,0,NULL),
     (55512,4,55512,5551,0,NULL);
