@@ -47,6 +47,7 @@ script:
     if [ "${TRAVIS_BRANCH}" = "resolutions" ]; then
       rm Dockerrun.aws.json
       sed "s/{image-tag}/${IMAGE_TAG}/g" docker-compose-apacs-beta.yml > docker-compose.yml
+      mv .ebignore_beta .ebignore
     fi
 
 
