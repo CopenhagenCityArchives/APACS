@@ -147,73 +147,69 @@ class ConfigurationEntity implements IEntity {
 	}
 
 	/**
-	 * Returns a concatted string or an array of of all field values for fields where includeInSOLR = 1 (return type depending on entity type)
-	 * @param Array $data The data to concat
+	 * Get the denormalizes version of the given data, corresponding to this entity tree,
+	 * where all values in arrays or descendants of an array will be stored in arrays, and
+	 * all fields in the root or in object typed children are stored flat (except in the case)
+	 * of nested arrays in an object typed child.
+	 * 
+	 * @param Array $data The data to be denormalized according to this entity tree.
+	 * @return Array The denormalized data.
 	 */
-	public function ConcatDataByEntity($data) {
-		$concat = '';
-
-		if ($this->type == 'array') {
-			$concat = [];
-			$concatStr = '';
-			foreach ($data as $row) {
-				foreach (array_filter($this->getFields(), function ($el) {return $el->includeInSOLR == '1';}) as $field) {
-					$fieldName = $field->GetRealFieldName();
-
-					$concatStr .= $row[$fieldName] . ' ';
-				}
-				$concat[] = trim($concatStr);
-				$concatStr = '';
-			}
-			return $concat;
-		} else {
-			$concatStr = '';
-
-			foreach (array_filter($this->getFields(), function ($el) { return $el->includeInSOLR == '1';}) as $field) {
-				if (isset($data[$field->GetRealFieldName()])) {
-					$concatStr .= $data[$field->GetRealFieldName()] . ' ';
-				}
-
-			}
-			return trim($concatStr);
-		}
-	}
-
-	/**
-	 * Returns an array of concatted field data ordered by field type
-	 * @param Array $data The data to concat
-	 */
-	public function ConcatDataByField($data) {
-		$concat = [];
-
-		if ($this->type == 'array') {
-			foreach (array_filter($this->getFields(), function ($el) {return $el->includeInSOLR == '1';}) as $field) {
-				foreach ($data as $row) {
-					$concat[$field->SOLRFieldName][] = $this->getFieldData($field, $row);
-				}
-			}
-			return $concat;
-		} else {
-			foreach (array_filter($this->getFields(), function ($el) { return $el->includeInSOLR == '1';}) as $field) {
-				$concat[$field->SOLRFieldName] = $this->getFieldData($field, $data);
-			}
-			return $concat;
-		}
-	}
-
 	public function getDenormalizedData(Array $data): Array {
-		$denormalizedData = [];
+		$result = [];
 
 		if ($this->includeInSOLR == 1) {
-			$denormalizedData[$this->name] = $this->ConcatDataByEntity($data);
+			$entityConcat = "";
+			foreach ($this->getFields() as $field) {
+				if (isset($data[$field->GetRealFieldName()])) {
+					$entityConcat .= $data[$field->GetRealFieldName()] . ' ';
+				}
+			}
+			$entityConcat = trim($entityConcat);
+			$result[$this->name] = $entityConcat;
+		}
+		
+
+		foreach ($this->getFields() as $field) {
+			if ($field->includeInSOLR != 1) {
+				continue;
+			}
+
+			$result[$field->SOLRFieldName] = $this->transformSolrValue($field, $data);
 		}
 
-		$denormalizedData = array_merge($denormalizedData, $this->ConcatDataByField($data));
+		foreach ($this->getChildren() as $childEntity) {
+			// Skip children without data
+			if (!isset($data[$childEntity->name])) {
+				continue;
+			}
 
-		return $denormalizedData;
+			if ($childEntity->type == 'array') {
+				foreach ($data[$childEntity->name] as $item) {
+					foreach ($childEntity->getDenormalizedData($item) as $key => $value) {
+						if (is_array($value)) {
+							// if the denormalized data already contains an array, we
+							// add the individual subvalues to prevent nested arrays
+							foreach ($value as $subvalue) {
+								$result[$key][] = $subvalue;
+							}
+						} else {
+							$result[$key][] = $value;
+						}
+					}
+				}
+			} else {
+				$childData = $childEntity->getDenormalizedData($data[$childEntity->name]);
+				foreach ($childData as $key => $value) {
+					$result[$key] = $value;
+				}
+			}
+		}
+
+		return $result;
 	}
 
-	private function getFieldData($field, $data) {
+	private function transformSolrValue($field, $data) {
 		if (isset($data[$field->GetRealFieldName()])) {
 			if ($field->formFieldType == 'date') {
 				return date('Y-m-d\TH:i:s.000\Z', strtotime($data[$field->GetRealFieldName()]));

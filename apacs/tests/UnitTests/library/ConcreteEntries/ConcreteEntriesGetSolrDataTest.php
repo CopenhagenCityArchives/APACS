@@ -1,6 +1,6 @@
 <?php
 
-class ConcreteEntriesGetSolrTest extends \UnitTestCase {
+class ConcreteEntriesGetSolrDataTest extends \UnitTestCase {
 
 	public function setUp($di = null) : void {
         parent::setUp();
@@ -125,6 +125,7 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
     public function test_GetSolrData_ArrayEntityIncludeEntity_ReturnConcattedFieldValues() {
 
         // Set entity mock and data
+        $parentEntityData = EntitiesTestData::getSimpleEntity();
         $entityData = EntitiesTestData::getObjectEntityWithTwoFields();
         $entityData['includeInSOLR'] = 1;
         $entityData['type'] = 'array';
@@ -132,20 +133,23 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         $entityData['fields'][0]['SOLRFieldName'] = 'SolrFieldName1';
         $entityData['fields'][1]['includeInSOLR'] = 1;
         $entityData['fields'][1]['SOLRFieldName'] = 'SolrFieldName2';
-        $entity = new ConfigurationEntity($entityData);
+        $parentEntityData['entities'] = [$entityData];
+        $entity = new ConfigurationEntity($parentEntityData);
 
-        // Input is an array of data related to en entity
+        // Input contains the parent enttiy with a single property, the array of the nested entity
         $inputData = [
-            $entityData['name'] => [
-                [
-                    'id' => 10, 
-                    'field1' => 'value1.1',
-                    'field2' => 'value1.2'
-                ],
-                [
-                    'id' => 11, 
-                    'field1' => 'value2.1',
-                    'field2' => 'value2.2'
+            $parentEntityData['name'] => [
+                $entityData['name'] => [
+                    [
+                        'id' => 10, 
+                        'field1' => 'value1.1',
+                        'field2' => 'value1.2'
+                    ],
+                    [
+                        'id' => 11, 
+                        'field1' => 'value2.1',
+                        'field2' => 'value2.2'
+                    ]
                 ]
             ]
         ];
@@ -162,5 +166,199 @@ class ConcreteEntriesGetSolrTest extends \UnitTestCase {
         $concattedData = $entry->GetSolrData($entity, $inputData);
         
         $this->assertEquals($expectedData, $concattedData);
+    }
+
+    public function test_GetSolrData_DeepEntityStructure() {
+        $entityConfig = [
+            'name' => 'RootEntity',
+            'primaryTableName' => 'root_entity_table',
+            'isPrimaryEntity' => 1,
+            'entityKeyName'=> 'root_entity_id',
+            'type' => 'object',
+            'fieldObjects' => [],
+            'includeInSOLR' => 0,
+            'fields' => [
+                [
+                    'fieldName' => 'root_field_1',
+                    'decodeField' => null,
+                    'hasDecode' => null,
+                    'decodeTable' => null,
+                    'codeAllowNewValue' => false,
+                    'includeInSOLR' => 1,
+                    'SOLRFieldName' => 'solr_field_1'
+                ]
+            ],
+            'entities' => [
+                [
+                    'name' => 'SecondEntity',
+                    'primaryTableName' => 'second_entity_table',
+                    'isPrimaryEntity' => 0,
+                    'entityKeyName'=> 'second_entity_id',
+                    'type' => 'array',
+                    'fieldObjects' => [],
+                    'fields' => [
+                        [
+                            'fieldName' => 'second_field_1',
+                            'decodeField' => null,
+                            'hasDecode' => null,
+                            'decodeTable' => null,
+                            'codeAllowNewValue' => false,
+                            'includeInSOLR' => 1,
+                            'SOLRFieldName' => 'solr_field_2'
+                        ]
+                    ],
+                    'entities' => [
+                        [
+                            'name' => 'ThirdEntity',
+                            'primaryTableName' => 'third_entity_table',
+                            'isPrimaryEntity' => 0,
+                            'entityKeyName'=> 'third_entity_id',
+                            'type' => 'array',
+                            'fieldObjects' => [],
+                            'fields' => [
+                                [
+                                    'fieldName' => 'third_field_1',
+                                    'decodeField' => null,
+                                    'hasDecode' => null,
+                                    'decodeTable' => null,
+                                    'codeAllowNewValue' => false,
+                                    'includeInSOLR' => 1,
+                                    'SOLRFieldName' => 'solr_field_3'
+                                ],
+                                [
+                                    'fieldName' => 'third_field_2',
+                                    'decodeField' => null,
+                                    'hasDecode' => null,
+                                    'decodeTable' => null,
+                                    'codeAllowNewValue' => false,
+                                    'includeInSOLR' => 1,
+                                    'SOLRFieldName' => 'solr_field_4'
+                                ]
+                            ],
+                            'entities' => [
+                                [
+                                    'name' => 'FourthEntity',
+                                    'primaryTableName' => 'fourth_entity_table',
+                                    'isPrimaryEntity' => 0,
+                                    'entityKeyName'=> 'fourth_entity_id',
+                                    'type' => 'array',
+                                    'fieldObjects' => [],
+                                    'fields' => [
+                                        [
+                                            'fieldName' => 'fourth_field_1',
+                                            'decodeField' => null,
+                                            'hasDecode' => null,
+                                            'decodeTable' => null,
+                                            'codeAllowNewValue' => false,
+                                            'includeInSOLR' => 1,
+                                            'SOLRFieldName' => 'solr_field_5'
+                                        ]
+                                    ],
+                                    'entities' => []
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'name' => 'FifthEntity',
+                    'primaryTableName' => 'fifth_entity_table',
+                    'isPrimaryEntity' => 0,
+                    'entityKeyName'=> 'fifth_entity_id',
+                    'type' => 'object',
+                    'fieldObjects' => [],
+                    'fields' => [
+                        [
+                            'fieldName' => 'fifth_field_1',
+                            'decodeField' => null,
+                            'hasDecode' => null,
+                            'decodeTable' => null,
+                            'codeAllowNewValue' => false,
+                            'includeInSOLR' => 1,
+                            'SOLRFieldName' => 'solr_field_6'
+                        ]
+                    ],
+                    'entities' => []
+                ]
+            ]
+        ];
+
+        $entry = new ConcreteEntries($this->getDI(), null);
+        $inputData = [
+            'RootEntity' => [
+                'root_field_1' => 'value1',
+                'SecondEntity' => [
+                    [
+                        'second_field_1' => 'value2',
+                        'ThirdEntity' => []
+                    ],
+                    [
+                        'second_field_1' => 'value3',
+                        'ThirdEntity' => [
+                            [
+                                'third_field_1' => 'value4',
+                                'third_field_2' => 'value5',
+                                'FourthEntity' => [
+                                    [ 'fourth_field_1' => 'value6' ],
+                                    [ 'fourth_field_1' => 'value7' ]
+                                ]
+                            ],
+                            [
+                                'third_field_1' => 'value8',
+                                'third_field_2' => 'value9',
+                                'FourthEntity' => []
+                            ],
+                        ]
+                    ],
+                    [
+                        'second_field_1' => 'value10',
+                        'ThirdEntity' => [
+                            [
+                                'third_field_1' => 'value11',
+                                'third_field_2' => 'value12',
+                                'FourthEntity' => [
+                                    [ 'fourth_field_1' => 'value13' ]
+                                ]
+                            ],
+                        ]
+                    ]
+                ],
+                "FifthEntity" => [
+                    "fifth_field_1" => "value14"
+                ]
+            ]
+        ];
+
+        $this->assertEquals(
+            [
+                'solr_field_1' => 'value1',
+                'solr_field_2' => ['value2', 'value3', 'value10'],
+                'solr_field_3' => ['value4', 'value8', 'value11'],
+                'solr_field_4' => ['value5', 'value9', 'value12'],
+                'solr_field_5' => ['value6', 'value7', 'value13'],
+                'solr_field_6' => 'value14'
+            ],
+            $entry->GetSolrData(new ConfigurationEntity($entityConfig), $inputData),
+            "Values are flattened"
+        );
+
+        $entityConfig['entities'][0]['entities'][0]['includeInSOLR'] = 1;
+        $entityConfig['entities'][0]['entities'][0]['entities'][0]['includeInSOLR'] = 1;
+        $entityConfig['entities'][1]['includeInSOLR'] = 1;
+        $this->assertEquals(
+            [
+                'solr_field_1' => 'value1',
+                'solr_field_2' => ['value2', 'value3', 'value10'],
+                'solr_field_3' => ['value4', 'value8', 'value11'],
+                'solr_field_4' => ['value5', 'value9', 'value12'],
+                'solr_field_5' => ['value6', 'value7', 'value13'],
+                'solr_field_6' => 'value14',
+                'FourthEntity' => ['value6', 'value7', 'value13'],
+                'ThirdEntity' => ['value4 value5', 'value8 value9', 'value11 value12'],
+                'FifthEntity' => 'value14'
+            ],
+            $entry->GetSolrData(new ConfigurationEntity($entityConfig), $inputData),
+            "Included entities have only fields (not subentities) flattened/concatted."
+        );
     }
 }

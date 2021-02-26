@@ -710,13 +710,6 @@ class ConcreteEntries {
 
 		$solrData = $entity->getDenormalizedData($data[$entity->name]);
 
-		foreach ($entity->getChildren() as $childEntity) {
-			if (isset($data[$entity->name][$childEntity->name]) && count($data[$entity->name][$childEntity->name]) > 0){
-				$solrData = array_merge($solrData, $childEntity->getDenormalizedData($data[$entity->name][$childEntity->name]));
-				
-			}
-		}
-
 		return $solrData;
 	}
 }
