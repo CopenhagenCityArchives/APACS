@@ -377,11 +377,16 @@ class IndexDataController extends MainController {
 			$solrId = $solrData['collection_id'] . '-' . $entry->concrete_entries_id;
 			$conEnData = $concreteEntry->GetSolrData($mainEntity, $jsonData);
 
-			$solrJsonObj = array_merge($context, $jsonData['persons'],['id' => $solrId, 'task_id' => $jsonData['task_id']]);
+			$solrJsonObj = array_merge($context, $jsonData[$mainEntity->name],['id' => $solrId, 'task_id' => $jsonData['task_id']]);
+
+			//TODO: The below strange hack is probably "needed" because the
+			//      street field in task_1.json is named "streetAndHood", and
+			//      NOT "street" or "streets", however the SOLRFieldName for
+			//      "streetAndHood" is "streets".
 			//TODO: Hardcoded! By some unknown reason, streets field is not added when running contreteEntries->GetSolrData. It may be the combination of a field where solrfieldname and decodedfieldname is not the same, and
 			//the entity in which streets belong is included in Solr. It the only field behaving that way, and the only field in which these conditions exist.
 			//This query will find it: SELECT * FROM kbharkiv.apacs_fields join apacs_entities on apacs_fields.entities_id = apacs_entities.id where entities_id < 8 and solrfieldname != decodefield and apacs_entities.includeInSOLR = 1
-			if(isset($conEnData['streets'])){
+			if (isset($conEnData['streets'])) {
 				$solrJsonObj['addresses']['street'] = $conEnData['streets'];
 			}
 
