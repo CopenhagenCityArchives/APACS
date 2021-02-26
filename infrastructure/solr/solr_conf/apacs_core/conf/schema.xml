@@ -145,7 +145,7 @@
   <field name="schoolName" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
 
   <!-- MAGISTRATENS RESOLUTIONER -->
-  <field name="case_type" type="int" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="case_type" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="case_date" type="tdate" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="start_page" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="transcription_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
