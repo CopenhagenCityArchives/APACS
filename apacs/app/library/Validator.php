@@ -30,12 +30,16 @@ class Validator {
 		}
 
 		if ($this->_validationRule->required == '1' || $this->_validationRule->required == true) {
+			if ($this->_validationRule->type == 'boolean' && $dataToValidate === false) {
+				return true;
+			}
+
 			if (!isset($dataToValidate) || $dataToValidate === NULL || $dataToValidate === null || trim($dataToValidate) == "") {
 				return false;
 			}
 		}
 
-		if ($this->_validationRule->regularExpression == false) {
+		if ($this->_validationRule->regularExpression == false || $this->_validationRule->regularExpression == null) {
 			return true;
 		}
 

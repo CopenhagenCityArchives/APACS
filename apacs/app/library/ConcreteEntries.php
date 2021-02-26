@@ -320,7 +320,7 @@ class ConcreteEntries {
 	 */
 	public function Save(IEntity $entity, Array $data) {
 		if (!$entity->isDataValid($data)) {
-			throw new InvalidArgumentException('Could validate data for entity ' . $entity->name . '. Validation Error: ' . $entity->GetValidationStatus());
+			throw new InvalidArgumentException('Could not validate data for entity ' . $entity->name . '. Validation Error: ' . $entity->GetValidationStatus());
 		}
 
 		// Child entities that have a 1-1 relationship with the current entity.
