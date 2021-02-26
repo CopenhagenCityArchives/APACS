@@ -82,13 +82,14 @@ class ConfigurationEntity implements IEntity {
 
 	public function isDataValid(array $entityData){
 		$isValid = true;
+		
 		if ($this->required == '1' && $entityData == null) {
 			$this->validationMessages[] = 'No data given for entity ' . $this->name;
 			return false;
 		}
+
 		foreach ($this->getFields() as $field) {
-			
-			$validator = new Validator(new ValidationRuleSet($field->validationRegularExpression, $field->isRequired, $field->validationErrorMessage));
+			$validator = new Validator(new ValidationRuleSet($field->validationRegularExpression, $field->isRequired, $field->validationErrorMessage, $field->formFieldType));
 			
 			if (!$validator->IsValid($entityData, $field->GetRealFieldName())) {
 				$this->validationMessages[] = $field->GetRealFieldName() . ': ' . $validator->GetErrorMessage();
