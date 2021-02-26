@@ -11,7 +11,7 @@
         "countPerEntry": 1,
         "guiName": "Sag",
         "primaryTableName": "resolutions_cases",
-        "includeInSOLR": 1,
+        "includeInSOLR": 0,
         "allowNewValues": 1,
         "fields": {
             "1": {
@@ -284,7 +284,7 @@
                         "decodeField": null,
                         "codeAllowNewValue": 0,
                         "includeInForm": 1,
-                        "formName": "Er der nævnte bilag?",
+                        "formName": "Nævnte bilag?",
                         "formFieldType": "boolean",
                         "formFieldOrder": 1,
                         "defaultValue": null,
@@ -310,7 +310,7 @@
                 "countPerEntry": 1,
                 "guiName": "Bilag",
                 "primaryTableName": "resolutions_attachments",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -394,7 +394,7 @@
                 "countPerEntry": 1,
                 "guiName": "Henvisninger",
                 "primaryTableName": "resolutions_references",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -501,7 +501,7 @@
                 "countPerEntry": 1,
                 "guiName": "Personer",
                 "primaryTableName": "resolutions_persons",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -607,7 +607,7 @@
                         "countPerEntry": 1,
                         "guiName": "Erhverv",
                         "primaryTableName": "resolutions_person_occupations",
-                        "includeInSOLR": 1,
+                        "includeInSOLR": 0,
                         "allowNewValues": 1,
                         "fields": [
                             {
@@ -693,7 +693,7 @@
                 "countPerEntry": 1,
                 "guiName": "Resolutioner",
                 "primaryTableName": "resolutions_resolutions",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -751,11 +751,11 @@
                         "decodeField": "resolution_type",
                         "codeAllowNewValue": 1,
                         "includeInForm": 1,
-                        "formName": "Erhvervs overgruppe",
+                        "formName": "Resolution",
                         "formFieldType": "typeahead",
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Erhvervets overgruppe",
+                        "helpText": null,
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -823,7 +823,7 @@
                 "countPerEntry": 1,
                 "guiName": "Kommentarer",
                 "primaryTableName": "resolutions_comments",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -885,7 +885,7 @@
                 "countPerEntry": 1,
                 "guiName": "Steder",
                 "primaryTableName": "resolutions_places",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -946,7 +946,7 @@
                         "countPerEntry": 1,
                         "guiName": "Stedtyper",
                         "primaryTableName": "resolutions_places_types",
-                        "includeInSOLR": 1,
+                        "includeInSOLR": 0,
                         "allowNewValues": 1,
                         "fields": [
                             {
@@ -981,8 +981,8 @@
     },
     "steps": [
         {
-            "name": "Information om sagen",
-            "description": "",
+            "name": "Sagen",
+            "description": "Sagens grundlæggende oplysninger",
             "fields": [
                 {
                     "key": "cases.case_type"
@@ -1000,15 +1000,69 @@
                 {
                     "key": "cases.references",
                     "add": "Tilføj"
-                },
+                }
+            ]
+        },
+        {
+            "name": "Transkription",
+            "description": "Kildetro transkriptioner",
+            "fields": [
+                {
+                    "key": "cases.transcriptions",
+                    "items": [
+                        "cases.transcriptions[].transcription_type",
+                        {
+                            "key": "cases.transcriptions[].transcription",
+                            "type": "textarea"
+                        }
+                    ],
+                    "add": "Tilføj"
+                }
+            ]
+        },
+        {
+            "name": "Personer",
+            "description": "Personer involveret i sagen",
+            "fields": [
                 {
                     "key": "cases.persons",
+                    "items": [
+                        "cases.persons[].name",
+                        "cases.persons[].sex",
+                        "cases.persons[].relation",
+                        "cases.persons[].role",
+                        {
+                            "key": "cases.persons[].person_occupations",
+                            "add": "Tilføj"
+                        }
+                    ],
+
                     "add": "Tilføj"
-                },
+                }
+            ]
+        },
+        {
+            "name": "Steder",
+            "description": "Steder involveret i sagen",
+            "fields": [
                 {
                     "key": "cases.places",
+                    "items": [
+                        "cases.places[].place",
+                        "cases.places[].neighbourhood",
+                        {
+                            "key": "cases.places[].place_types",
+                            "add": "Tilføj"
+                        }
+                    ],
                     "add": "Tilføj"
-                },
+                }
+            ]
+        },
+        {
+            "name": "Klagen",
+            "description": "Den klage der har udløst sagen",
+            "fields": [                
                 {
                     "key": "cases.complaint",
                     "items": [
@@ -1033,11 +1087,17 @@
                             ]
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "name": "Resolution",
+            "description": "Resolutioner af sagen",
+            "fields": [
                 {
                     "key": "cases.resolutions",
                     "items": [
-                        "cases.resolutions[].magistrate_actions",
+                        "cases.resolutions[].magistrate_action",
                         "cases.resolutions[].party_reaction",
                         "cases.resolutions[].resolution_type",
                         "cases.resolutions[].date",
@@ -1051,19 +1111,22 @@
                         }
                     ],
                     "add": "Tilføj"
-                },
-                {
-                    "key": "cases.comments",
-                    "add": "Tilføj"
                 }
             ]
         },
         {
-            "name": "Transkription af klagen",
-            "description": "",
+            "name": "Kommentar",
+            "description": "Indtasters kommentarer",
             "fields": [
                 {
-                    "key": "cases.transcriptions",
+                    "key": "cases.comments",
+                    "items": [
+                        "cases.comments[].comment_type",
+                        {
+                            "key": "cases.comments[].comment",
+                            "type": "textarea"
+                        }
+                    ],
                     "add": "Tilføj"
                 }
             ]
