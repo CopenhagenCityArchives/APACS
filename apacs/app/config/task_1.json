@@ -781,8 +781,7 @@
     },
     "steps": [
         {
-            "name": "Løbenummer, Navn, Køn, og Alder",
-            "description": "",
+            "description": "Løbenummer, Navn, Køn, og Alder",
             "fields": [
                 {
                     "key": "persons.burials.number"
@@ -820,8 +819,7 @@
             ]
         },
         {
-            "name": "Bopæl",
-            "description": "",
+            "description": "Bopæl",
             "fields": [
                 {
                     "key": "persons.addresses.streetAndHood"
@@ -844,8 +842,7 @@
             ]
         },
         {
-            "name": "Erhverv, Civilstand og Dødsdato",
-            "description": "",
+            "description": "Erhverv, Civilstand og Dødsdato",
             "fields": [
                 {
                     "key": "persons.positions",
@@ -860,8 +857,7 @@
             ]
         },
         {
-            "name": "Dødsårsag, Dødssted, Fra, Sogn og Kirkegård",
-            "description": "",
+            "description": "Dødsårsag, Dødssted, Fra, Sogn og Kirkegård",
             "fields": [
                 {
                     "key": "persons.deathcauses",
