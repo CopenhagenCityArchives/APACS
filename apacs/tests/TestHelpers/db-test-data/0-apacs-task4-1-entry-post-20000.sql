@@ -26,7 +26,7 @@ INSERT INTO `resolutions_transcription_types` VALUES (1,'Resolution'), (2,'Henve
 INSERT INTO `resolutions_person_sexes` VALUES (1,'Kvinde'), (2,'Mand'), (3,'Uoplyst'), (4,'Andet');
 INSERT INTO `resolutions_references` VALUES (2,'Næste protokol',NULL,2,NULL,100,1);
 INSERT INTO `resolutions_reference_types` VALUES (1, 'Klagen'), (2,'Resolutionen'), (3, 'Andet');
-INSERT INTO `resolutions_cases` VALUES (100,1,'1777-05-17','Side 1',10,0);
+INSERT INTO `resolutions_cases` VALUES (100,1,'1777-05-17','Side 1','1 side',10,0);
 INSERT INTO `resolutions_case_types` VALUES (1,'Klage'), (2,'Ikke-klage');
 INSERT INTO `resolutions_person_relations` VALUES (1,'Familie'), (2,'Nabo'), (3,'Ægtefælle'), (4,'Kollega');
 INSERT INTO `resolutions_persons` VALUES (2,'Jens Nielsen',2,4,1,100,1);
