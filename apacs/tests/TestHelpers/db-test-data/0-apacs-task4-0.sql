@@ -60,7 +60,7 @@ CREATE TABLE `resolutions_cases` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `case_types_id` int(11) NOT NULL,
   `date` date NOT NULL,
-  `start_page` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `start_page` varchar(50) COLLATE utf8_danish_ci DEFAULT NULL,
   `extent` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   `complaints_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
@@ -70,7 +70,7 @@ CREATE TABLE `resolutions_cases` (
 CREATE TABLE `resolutions_attachments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `attachment_types_id` int(11) NOT NULL,
-  `reference` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `reference` varchar(100) COLLATE utf8_danish_ci DEFAULT NULL,
   `starbas_id` int(11) DEFAULT NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
@@ -79,14 +79,14 @@ CREATE TABLE `resolutions_attachments` (
 
 CREATE TABLE `resolutions_attachment_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `attachment_type` varchar(32) COLLATE utf8_danish_ci NOT NULL,
+  `attachment_type` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 
 CREATE TABLE `resolutions_case_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `case_type` varchar(32) COLLATE utf8_danish_ci NOT NULL,
+  `case_type` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `case_type_UNIQUE` (`case_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
@@ -102,13 +102,13 @@ CREATE TABLE `resolutions_comments` (
 
 CREATE TABLE `resolutions_comment_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `comment_type` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `comment_type` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_purposes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `purpose` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `purpose` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
@@ -125,31 +125,31 @@ CREATE TABLE `resolutions_complaints` (
 
 CREATE TABLE `resolutions_complaint_subject_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subject_category` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `subject_category` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_subjects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subject` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `subject` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_verbs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `verb` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `verb` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_person_occupation_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `category` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `category` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_person_occupation_relations` (
   `id` int(11) NOT NULL,
-  `relation` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `relation` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
@@ -165,25 +165,25 @@ CREATE TABLE `resolutions_person_occupations` (
 
 CREATE TABLE `resolutions_person_occupation_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `occupation_type` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `occupation_type` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_person_relations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `relation` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `relation` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_person_roles` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `role` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `role` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_persons` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(96) COLLATE utf8_danish_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   `person_sexes_id` int(11) NOT NULL,
   `person_relations_id` int(11) NOT NULL,
   `person_roles_id` int(11) NOT NULL,
@@ -194,19 +194,19 @@ CREATE TABLE `resolutions_persons` (
 
 CREATE TABLE `resolutions_person_sexes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `sex` varchar(10) COLLATE utf8_danish_ci NOT NULL,
+  `sex` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_place_neighbourhoods` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `neighbourhood` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `neighbourhood` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_places` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `place` varchar(256) COLLATE utf8_danish_ci NOT NULL,
+  `place` varchar(255) COLLATE utf8_danish_ci NOT NULL,
   `place_neighbourhoods_id` int(11) NOT NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
@@ -223,14 +223,14 @@ CREATE TABLE `resolutions_places_types` (
 
 CREATE TABLE `resolutions_place_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `place_type` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `place_type` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_references` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `forward` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
-  `backward` varchar(45) COLLATE utf8_danish_ci DEFAULT NULL,
+  `forward` varchar(50) COLLATE utf8_danish_ci DEFAULT NULL,
+  `backward` varchar(50) COLLATE utf8_danish_ci DEFAULT NULL,
   `reference_types_id` int(11) NOT NULL,
   `referenced_unit_id` int(11) DEFAULT NULL,
   `cases_id` int(11) NOT NULL,
@@ -240,7 +240,7 @@ CREATE TABLE `resolutions_references` (
 
 CREATE TABLE `resolutions_reference_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `reference_type` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `reference_type` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `reference_type_UNIQUE` (`reference_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
@@ -259,19 +259,19 @@ CREATE TABLE `resolutions_resolutions` (
 
 CREATE TABLE `resolutions_resolution_magistrate_actions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `magistrate_action` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `magistrate_action` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_resolution_party_reactions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `party_reaction` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `party_reaction` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_resolution_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `resolution_type` varchar(45) COLLATE utf8_danish_ci  NOT NULL,
+  `resolution_type` varchar(50) COLLATE utf8_danish_ci  NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
@@ -286,7 +286,7 @@ CREATE TABLE `resolutions_transcriptions` (
 
 CREATE TABLE `resolutions_transcription_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `transcription_type` varchar(45) COLLATE utf8_danish_ci NOT NULL,
+  `transcription_type` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `transcription_type_UNIQUE` (`transcription_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
