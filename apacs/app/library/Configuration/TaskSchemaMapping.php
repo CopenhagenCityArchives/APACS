@@ -27,7 +27,6 @@ class TaskSchemaMapping {
 		$schema['title'] = $schema['guiName'];
 		$schema['fields'] = TaskSchemaMapping::GetFieldsAsAssocArray($schema['fields']);
 
-		$iterateFields = $schema['fields'];
 		foreach ($schema['fields'] as $key => $field) {
 			// Remove fields not included in form (includeInForm = 0)
 			if ($field['includeInForm'] == 0) {

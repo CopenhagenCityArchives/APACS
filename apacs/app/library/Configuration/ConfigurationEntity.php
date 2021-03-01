@@ -71,7 +71,7 @@ class ConfigurationEntity implements IEntity {
 		return $flattened;
 	}
 
-	public function toArray(){
+	public function toArray(): Array {
 		return $this->array;
 	}
 
