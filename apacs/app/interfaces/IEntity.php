@@ -11,4 +11,5 @@ interface IEntity {
 	public function isDataValid(Array $data);
 	public function GetValidationStatus(): string;
 	public function getDenormalizedData(Array $data): Array;
+	public function toArray(): Array;
 }
