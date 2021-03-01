@@ -84,6 +84,31 @@
                 "SOLRFacet": 1,
                 "SOLRResult": 1,
                 "name": "start_page"
+            },
+            "4": {
+                "datasources_id": null,
+                "tableName": "resolutions_cases",
+                "fieldName": "extent",
+                "hasDecode": 0,
+                "decodeTable": null,
+                "decodeField": null,
+                "codeAllowNewValue": 1,
+                "includeInForm": 1,
+                "formName": "Omfang",
+                "formFieldType": "string",
+                "maxLength": 25,
+                "formFieldOrder": 3,
+                "defaultValue": null,
+                "helpText": "Paginering.",
+                "placeholder": null,
+                "isRequired": 1,
+                "validationRegularExpression": "/^.+$/",
+                "validationMessage": "",
+                "includeInSOLR": 1,
+                "SOLRFieldName": "case_extent",
+                "SOLRFacet": 1,
+                "SOLRResult": 1,
+                "name": "extent"
             }
         },
         "entities": [
@@ -992,6 +1017,9 @@
                 },
                 {
                     "key": "cases.start_page"
+                },
+                {
+                    "key": "cases.extent"
                 },
                 {
                     "key": "cases.attachments",
