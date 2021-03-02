@@ -35,6 +35,7 @@ INSERT INTO `resolutions_attachment_types` VALUES (1,'Bilag'), (2, 'Kopibog'), (
 INSERT INTO `resolutions_attachments` VALUES (1,2,'Ligegyldig vedhæftning',NULL,100,1);
 INSERT INTO `resolutions_person_occupation_types` VALUES (1,'Tjeneste'), (2, 'Håndværk'), (3, 'Administration'), (4, 'Handel');
 INSERT INTO `resolutions_person_occupation_relations` VALUES (1,'Eget erhverv'), (2, 'Ægtefælles erhverv');
+INSERT INTO `resolutions_place_types` VALUES (1, 'Trappe'), (2, 'Baggård'), (3, 'På gaden');
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
