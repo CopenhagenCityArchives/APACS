@@ -12,12 +12,7 @@
         "guiName": "Sag",
         "primaryTableName": "resolutions_cases",
         "includeInSOLR": 0,
-        "viewOrder": 1,
-        "parent_id": null,
-        "fieldRelatingToParent": null,
         "allowNewValues": 1,
-        "typeOfRelationToParent": "connection",
-        "saveOrderAccordingToParent": "after",
         "fields": {
             "1": {
                 "datasources_id": 15,
@@ -30,6 +25,7 @@
                 "includeInForm": 1,
                 "formName": "Sagstype",
                 "formFieldType": "typeahead",
+                "maxLength": 25,
                 "formFieldOrder": 1,
                 "defaultValue": null,
                 "helpText": "Begynd at skrive, for at vælge sagstypen fra listen, eller tilføje en ny værdi.",
@@ -77,6 +73,7 @@
                 "includeInForm": 1,
                 "formName": "Side start",
                 "formFieldType": "string",
+                "maxLength": 50,
                 "formFieldOrder": 3,
                 "defaultValue": null,
                 "helpText": "Paginering.",
@@ -84,11 +81,36 @@
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
                 "validationMessage": "",
-                "includeInSOLR": 0,
+                "includeInSOLR": 1,
                 "SOLRFieldName": "start_page",
                 "SOLRFacet": 1,
                 "SOLRResult": 1,
                 "name": "start_page"
+            },
+            "4": {
+                "datasources_id": null,
+                "tableName": "resolutions_cases",
+                "fieldName": "extent",
+                "hasDecode": 0,
+                "decodeTable": null,
+                "decodeField": null,
+                "codeAllowNewValue": 1,
+                "includeInForm": 1,
+                "formName": "Omfang",
+                "formFieldType": "string",
+                "maxLength": 25,
+                "formFieldOrder": 3,
+                "defaultValue": null,
+                "helpText": "Paginering.",
+                "placeholder": null,
+                "isRequired": 1,
+                "validationRegularExpression": "/^.+$/",
+                "validationMessage": "",
+                "includeInSOLR": 1,
+                "SOLRFieldName": "case_extent",
+                "SOLRFacet": 1,
+                "SOLRResult": 1,
+                "name": "extent"
             }
         },
         "entities": [
@@ -101,13 +123,8 @@
                 "countPerEntry": 1,
                 "guiName": "Transkription",
                 "primaryTableName": "resolutions_transcriptions",
-                "includeInSOLR": 0,
-                "viewOrder": 2,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 16,
@@ -120,6 +137,7 @@
                         "includeInForm": 1,
                         "formName": "Transkriptionstype",
                         "formFieldType": "typeahead",
+                        "maxLength": 25,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -127,8 +145,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "transcription_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "transcription_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -150,8 +168,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "transcription",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "transcriptions",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -167,13 +185,8 @@
                 "countPerEntry": 1,
                 "guiName": "Klagen",
                 "primaryTableName": "resolutions_complaints",
-                "includeInSOLR": 0,
-                "viewOrder": 2,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
+                "includeInSOLR": 1,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 23,
@@ -186,6 +199,7 @@
                         "includeInForm": 1,
                         "formName": "Verbum",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -193,7 +207,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_verb",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -209,6 +223,7 @@
                         "includeInForm": 1,
                         "formName": "Emne",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -216,7 +231,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_subject",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -232,6 +247,7 @@
                         "includeInForm": 1,
                         "formName": "Emne-kategori",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -239,7 +255,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_subject_category",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -255,6 +271,7 @@
                         "includeInForm": 1,
                         "formName": "Formål med klagen",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -262,7 +279,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/(\\w+)( \\w+)*/",
                         "validationMessage": "Må kun være med mellemrum.",
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_subject_category",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -285,7 +302,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_witnesses",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -299,7 +316,7 @@
                         "decodeField": null,
                         "codeAllowNewValue": 0,
                         "includeInForm": 1,
-                        "formName": "Er der nævnte bilag?",
+                        "formName": "Nævnte bilag?",
                         "formFieldType": "boolean",
                         "formFieldOrder": 1,
                         "defaultValue": null,
@@ -308,7 +325,7 @@
                         "isRequired": 1,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "complaint_attachments_mentioned",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -326,12 +343,7 @@
                 "guiName": "Bilag",
                 "primaryTableName": "resolutions_attachments",
                 "includeInSOLR": 0,
-                "viewOrder": 3,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 17,
@@ -344,6 +356,7 @@
                         "includeInForm": 1,
                         "formName": "Fysisk bilag",
                         "formFieldType": "typeahead",
+                        "maxLength": 25,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -351,8 +364,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "attachment_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "attachment_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -367,6 +380,7 @@
                         "includeInForm": 1,
                         "formName": "Henvisning",
                         "formFieldType": "string",
+                        "maxLength": 100,
                         "formFieldOrder": 2,
                         "defaultValue": null,
                         "helpText": "Selve henvisningen",
@@ -374,8 +388,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "attachment_references",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -398,7 +412,7 @@
                         "validationRegularExpression": "/^[1-9][0-9]*$/",
                         "validationMessage": "??",
                         "includeInSOLR": 0,
-                        "SOLRFieldName": "reference",
+                        "SOLRFieldName": null,
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -415,12 +429,7 @@
                 "guiName": "Henvisninger",
                 "primaryTableName": "resolutions_references",
                 "includeInSOLR": 0,
-                "viewOrder": 4,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 18,
@@ -433,6 +442,7 @@
                         "includeInForm": 1,
                         "formName": "Henvisningstype",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -440,8 +450,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "reference_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -456,6 +466,7 @@
                         "includeInForm": 1,
                         "formName": "Henvisning frem",
                         "formFieldType": "string",
+                        "maxLength": 100,
                         "formFieldOrder": 2,
                         "defaultValue": null,
                         "helpText": "Henvisning frem",
@@ -463,8 +474,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference_forward",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "reference_forwards",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -479,6 +490,7 @@
                         "includeInForm": 1,
                         "formName": "Henvisning tilbage",
                         "formFieldType": "string",
+                        "maxLength": 100,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "Henvisning frem",
@@ -486,8 +498,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "reference_forward",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "reference_backwards",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -510,7 +522,7 @@
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
                         "includeInSOLR": 0,
-                        "SOLRFieldName": "referenced_unit_id",
+                        "SOLRFieldName": null,
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -527,12 +539,7 @@
                 "guiName": "Personer",
                 "primaryTableName": "resolutions_persons",
                 "includeInSOLR": 0,
-                "viewOrder": 5,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": null,
@@ -545,6 +552,7 @@
                         "includeInForm": 1,
                         "formName": "Fulde navn",
                         "formFieldType": "string",
+                        "maxLength": 50,
                         "formFieldOrder": 1,
                         "defaultValue": null,
                         "helpText": "Personens fulde navn",
@@ -552,8 +560,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/[A-Za-zåøæÅØÆ? \\.]{1,}/",
                         "validationMessage": "Navnet må kun bestå af bogstaver og mellemrum.",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "full_name",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_names",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -568,6 +576,7 @@
                         "includeInForm": 1,
                         "formName": "Køn",
                         "formFieldType": "typeahead",
+                        "maxLength": 25,
                         "formFieldOrder": 2,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -575,8 +584,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Du skal vælge et køn fra listen",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "sex",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_sexes",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -591,6 +600,7 @@
                         "includeInForm": 1,
                         "formName": "Personrelation",
                         "formFieldType": "typeahead",
+                        "maxLength": 25,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "Personens relation til sagen",
@@ -598,8 +608,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "person_relation",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_relations",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -614,6 +624,7 @@
                         "includeInForm": 1,
                         "formName": "Rolle",
                         "formFieldType": "typeahead",
+                        "maxLength": 25,
                         "formFieldOrder": 2,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
@@ -621,8 +632,8 @@
                         "isRequired": 1,
                         "validationRegularExpression": "/\\w{1,}/",
                         "validationMessage": "Du skal vælge en rolle fra listen",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "sex",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "case_person_roles",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -638,12 +649,7 @@
                         "guiName": "Erhverv",
                         "primaryTableName": "resolutions_person_occupations",
                         "includeInSOLR": 0,
-                        "viewOrder": 5,
-                        "parent_id": null,
-                        "fieldRelatingToParent": null,
                         "allowNewValues": 1,
-                        "typeOfRelationToParent": "connection",
-                        "saveOrderAccordingToParent": "after",
                         "fields": [
                             {
                                 "datasources_id": 27,
@@ -656,6 +662,7 @@
                                 "includeInForm": 1,
                                 "formName": "Erhvervstype",
                                 "formFieldType": "typeahead",
+                                "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
                                 "helpText": "Erhvervets type",
@@ -663,8 +670,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "person_occupation",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "case_person_occupation_types",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             },
@@ -679,6 +686,7 @@
                                 "includeInForm": 1,
                                 "formName": "Erhvervsrelation",
                                 "formFieldType": "typeahead",
+                                "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
                                 "helpText": "Personens relation til sagen erhvervet",
@@ -686,8 +694,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "person_occupation_relation",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "case_person_occupation_relations",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             },
@@ -702,6 +710,7 @@
                                 "includeInForm": 1,
                                 "formName": "Erhvervs overgruppe",
                                 "formFieldType": "typeahead",
+                                "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
                                 "helpText": "Erhvervets overgruppe",
@@ -709,8 +718,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "person_occupation_category",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "case_person_occupation_categories",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             }
@@ -729,12 +738,7 @@
                 "guiName": "Resolutioner",
                 "primaryTableName": "resolutions_resolutions",
                 "includeInSOLR": 0,
-                "viewOrder": 5,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": 30,
@@ -747,6 +751,7 @@
                         "includeInForm": 1,
                         "formName": "Magistratens handling",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive, for at vælge handlingen fra listen, eller tilføje en ny værdi.",
@@ -754,8 +759,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_magistrate_action",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_magistrate_actions",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -770,6 +775,7 @@
                         "includeInForm": 1,
                         "formName": "Parternes reaktion",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive, for at vælge reaktionen fra listen, eller tilføje en ny værdi.",
@@ -777,8 +783,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_party_reacton",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_party_reactons",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -791,17 +797,18 @@
                         "decodeField": "resolution_type",
                         "codeAllowNewValue": 1,
                         "includeInForm": 1,
-                        "formName": "Erhvervs overgruppe",
+                        "formName": "Resolution",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Erhvervets overgruppe",
+                        "helpText": null,
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_type",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -823,8 +830,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](17|18|19)\\d{2}$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_date",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "resolution_dates",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -846,7 +853,7 @@
                         "isRequired": 0,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
+                        "includeInSOLR": 1,
                         "SOLRFieldName": "resolution_case_reopened",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
@@ -864,12 +871,7 @@
                 "guiName": "Kommentarer",
                 "primaryTableName": "resolutions_comments",
                 "includeInSOLR": 0,
-                "viewOrder": 5,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": null,
@@ -889,8 +891,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_comments",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "comments",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -905,6 +907,7 @@
                         "includeInForm": 1,
                         "formName": "Kommentartype",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive, for at vælge kommentartypen fra listen, eller tilføje en ny værdi.",
@@ -912,8 +915,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_comment_types",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "comment_types",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -931,12 +934,7 @@
                 "guiName": "Steder",
                 "primaryTableName": "resolutions_places",
                 "includeInSOLR": 0,
-                "viewOrder": 5,
-                "parent_id": null,
-                "fieldRelatingToParent": null,
                 "allowNewValues": 1,
-                "typeOfRelationToParent": "connection",
-                "saveOrderAccordingToParent": "after",
                 "fields": [
                     {
                         "datasources_id": null,
@@ -949,6 +947,7 @@
                         "includeInForm": 1,
                         "formName": "Stedet",
                         "formFieldType": "string",
+                        "maxLength": 255,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "",
@@ -956,8 +955,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": null,
                         "validationMessage": null,
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "place",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "places",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     },
@@ -972,6 +971,7 @@
                         "includeInForm": 1,
                         "formName": "Kvarter",
                         "formFieldType": "typeahead",
+                        "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
                         "helpText": "Begynd at skrive, for at vælge kvarteret fra listen, eller tilføje en ny værdi.",
@@ -979,8 +979,8 @@
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
                         "validationMessage": "??",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "resolution_comment_types",
+                        "includeInSOLR": 1,
+                        "SOLRFieldName": "neighbourhoods",
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
@@ -997,12 +997,7 @@
                         "guiName": "Stedtyper",
                         "primaryTableName": "resolutions_places_types",
                         "includeInSOLR": 0,
-                        "viewOrder": 5,
-                        "parent_id": null,
-                        "fieldRelatingToParent": null,
                         "allowNewValues": 1,
-                        "typeOfRelationToParent": "connection",
-                        "saveOrderAccordingToParent": "after",
                         "fields": [
                             {
                                 "datasources_id": 35,
@@ -1015,6 +1010,7 @@
                                 "includeInForm": 1,
                                 "formName": "Stedtype",
                                 "formFieldType": "typeahead",
+                                "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
                                 "helpText": "Begynd at skrive, for at vælge stedtypen fra listen, eller tilføje en ny værdi.",
@@ -1022,8 +1018,8 @@
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
                                 "validationMessage": "??",
-                                "includeInSOLR": 0,
-                                "SOLRFieldName": "resolution_place_types",
+                                "includeInSOLR": 1,
+                                "SOLRFieldName": "place_types",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             }
@@ -1036,8 +1032,8 @@
     },
     "steps": [
         {
-            "name": "Information om sagen",
-            "description": "",
+            "name": "Sagen",
+            "description": "Sagens grundlæggende oplysninger",
             "fields": [
                 {
                     "key": "cases.case_type"
@@ -1049,40 +1045,141 @@
                     "key": "cases.start_page"
                 },
                 {
+                    "key": "cases.extent"
+                },
+                {
                     "key": "cases.attachments",
                     "add": "Tilføj"
                 },
                 {
                     "key": "cases.references",
                     "add": "Tilføj"
-                },
+                }
+            ]
+        },
+        {
+            "name": "Transkription",
+            "description": "Kildetro transkriptioner",
+            "fields": [
                 {
-                    "key": "cases.persons",
-                    "add": "Tilføj"
-                },
-                {
-                    "key": "cases.places",
-                    "add": "Tilføj"
-                },
-                {
-                    "key": "cases.complaint"
-                },
-                {
-                    "key": "cases.resolutions",
-                    "add": "Tilføj"
-                },
-                {
-                    "key": "cases.comments",
+                    "key": "cases.transcriptions",
+                    "items": [
+                        "cases.transcriptions[].transcription_type",
+                        {
+                            "key": "cases.transcriptions[].transcription",
+                            "type": "textarea"
+                        }
+                    ],
                     "add": "Tilføj"
                 }
             ]
         },
         {
-            "name": "Transkription af klagen",
-            "description": "",
+            "name": "Personer",
+            "description": "Personer involveret i sagen",
             "fields": [
                 {
-                    "key": "cases.transcriptions",
+                    "key": "cases.persons",
+                    "items": [
+                        "cases.persons[].name",
+                        "cases.persons[].sex",
+                        "cases.persons[].relation",
+                        "cases.persons[].role",
+                        {
+                            "key": "cases.persons[].person_occupations",
+                            "add": "Tilføj"
+                        }
+                    ],
+
+                    "add": "Tilføj"
+                }
+            ]
+        },
+        {
+            "name": "Steder",
+            "description": "Steder involveret i sagen",
+            "fields": [
+                {
+                    "key": "cases.places",
+                    "items": [
+                        "cases.places[].place",
+                        "cases.places[].neighbourhood",
+                        {
+                            "key": "cases.places[].place_types"
+                        }
+                    ],
+                    "add": "Tilføj"
+                }
+            ]
+        },
+        {
+            "name": "Klagen",
+            "description": "Den klage der har udløst sagen",
+            "fields": [                
+                {
+                    "key": "cases.complaint",
+                    "items": [
+                        "cases.complaint.verb",
+                        "cases.complaint.subject",
+                        "cases.complaint.subject_category",
+                        "cases.complaint.purpose",
+                        {
+                            "key": "cases.complaint.witnesses",
+                            "type": "radios",
+                            "titleMap": [
+                              { "value": true, "name": "Ja" },
+                              { "value": false, "name": "Nej" }
+                            ]
+                        },
+                        {
+                            "key": "cases.complaint.attachments_mentioned",
+                            "type": "radios",
+                            "titleMap": [
+                              { "value": true, "name": "Ja" },
+                              { "value": false, "name": "Nej" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Resolution",
+            "description": "Resolutioner af sagen",
+            "fields": [
+                {
+                    "key": "cases.resolutions",
+                    "items": [
+                        "cases.resolutions[].magistrate_action",
+                        "cases.resolutions[].party_reaction",
+                        "cases.resolutions[].resolution_type",
+                        "cases.resolutions[].date",
+                        { 
+                            "key": "cases.resolutions[].case_reopened",
+                            "type": "radios",
+                            "titleMap": [
+                              { "value": true, "name": "Ja" },
+                              { "value": false, "name": "Nej" }
+                            ]
+                        }
+                    ],
+                    "add": "Tilføj"
+                }
+            ]
+        },
+        {
+            "name": "Kommentar",
+            "description": "Indtasters kommentarer",
+            "fields": [
+                {
+                    "key": "cases.comments",
+                    "items": [
+                        "cases.comments[].comment_type",
+                        {
+                            "key": "cases.comments[].comment",
+                            "type": "textarea"
+                        }
+                    ],
                     "add": "Tilføj"
                 }
             ]
