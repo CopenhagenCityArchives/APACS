@@ -72,6 +72,7 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
                 "case_type" => "Sagstype1",
                 "date" => "10-10-1755",
                 "start_page" => "1",
+                "extent" => "1 side",
                 "transcriptions" => [
                     [
                         "transcription_type" => "Vigtig transkription",
@@ -108,6 +109,7 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
         $this->assertEquals("Sagstype1", $case["case_type"]);
         $this->assertEquals("10-10-1755", $case["date"]);
         $this->assertEquals("1", $case["start_page"]);
+        $this->assertEquals("1 side", $case["extent"]);
 
         // Check subentities
         unset($case['complaint']['id']);
