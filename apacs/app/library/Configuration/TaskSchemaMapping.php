@@ -116,10 +116,10 @@ class TaskSchemaMapping {
 
 			// Use decodeField as field name if it's defined
 			$requiredFieldKey = is_null($field['decodeField']) ? $field['fieldName'] : $field['decodeField'];
-			if ($schema['type'] == 'object') {
-				$schema['required'][] = $requiredFieldKey;
-			} else {
+			if ($schema['type'] == 'array') {
 				$schema['items']['required'][] = $requiredFieldKey;
+			} else {
+				$schema['required'][] = $requiredFieldKey;
 			}
 		}
         
