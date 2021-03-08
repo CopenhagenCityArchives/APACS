@@ -28,12 +28,12 @@
                 "maxLength": 25,
                 "formFieldOrder": 1,
                 "defaultValue": null,
-                "helpText": "Begynd at skrive, for at vælge sagstypen fra listen, eller tilføje en ny værdi.",
+                "helpText": "Begynd at skrive for at vælge sagstypen fra listen, eller tilføje en ny værdi.",
                 "minimumInputLength": 0,
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationMessage": "Du skal vælge en værdi fra listen.",
+                "validationMessage": "Skal udfyldes. Du skal vælge en værdi fra listen, eller indtaste en ny.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "case_type",
                 "SOLRFacet": 0,
@@ -56,7 +56,7 @@
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](17|18|19)\\d{2}$/",
-                "validationMessage": "Skriv datoen således: dd-mm-åååå",
+                "validationMessage": "Skal udfyldes. Skriv datoen således: dd-mm-åååå.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "case_date",
                 "SOLRFacet": 1,
@@ -77,11 +77,11 @@
                 "maxLength": 50,
                 "formFieldOrder": 3,
                 "defaultValue": null,
-                "helpText": "Paginering.",
+                "helpText": "Paginering - fritekst.",
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
-                "validationMessage": "",
+                "validationMessage": "Skal udfyldes. Skriv sagens startside.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "start_page",
                 "SOLRFacet": 1,
@@ -102,11 +102,11 @@
                 "maxLength": 25,
                 "formFieldOrder": 3,
                 "defaultValue": null,
-                "helpText": "Paginering.",
+                "helpText": "Skriv antallet af sider sagen omfanger. Fritekst.",
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
-                "validationMessage": "",
+                "validationMessage": "Skal udfyldes. Skriv sagens omfang.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "case_extent",
                 "SOLRFacet": 1,
@@ -165,7 +165,7 @@
                         "formFieldType": "string",
                         "formFieldOrder": 2,
                         "defaultValue": null,
-                        "helpText": "Skriv kildetro transkription",
+                        "helpText": "Skriv en kildetro transkription.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
@@ -187,7 +187,7 @@
                 "countPerEntry": 1,
                 "guiName": "Klagen",
                 "primaryTableName": "resolutions_complaints",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -303,7 +303,7 @@
                         "formFieldType": "boolean",
                         "formFieldOrder": 1,
                         "defaultValue": null,
-                        "helpText": "Sæt kryds, hvis der er vidner.",
+                        "helpText": "Vælg ja, hvis der er vidner, vælg nej hvis der ikke er vidner. Lad være tom hvis det er uvist.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
@@ -770,7 +770,7 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge handlingen fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge handlingen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -795,7 +795,7 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge reaktionen fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge reaktionen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -820,7 +820,7 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": null,
+                        "helpText": "Begynd at skrive for at vælge resolutionen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -866,7 +866,7 @@
                         "formFieldType": "boolean",
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Afkryds hvis ja.",
+                        "helpText": "Vælg ja, hvis sagen er genoptaget, vælg nej hvis sagen ikke er genoptaget. Lad være tom hvis det er uvist.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
@@ -929,7 +929,7 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge kommentartypen fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge kommentartypen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -969,7 +969,7 @@
                         "maxLength": 255,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "",
+                        "helpText": "Skriv stedet. Fritekst.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
@@ -994,7 +994,7 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge kvarteret fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge kvarteret fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -1034,7 +1034,7 @@
                                 "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
-                                "helpText": "Begynd at skrive, for at vælge stedtypen fra listen, eller tilføje en ny værdi.",
+                                "helpText": "Begynd at skrive for at vælge stedtypen fra listen, eller tilføje en ny værdi.",
                                 "placeholder": null,
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
@@ -1070,11 +1070,11 @@
                 },
                 {
                     "key": "cases.attachments",
-                    "add": "Tilføj"
+                    "add": "Tilføj bilag"
                 },
                 {
                     "key": "cases.references",
-                    "add": "Tilføj"
+                    "add": "Tilføj henvisning"
                 }
             ]
         },
@@ -1088,10 +1088,11 @@
                         "cases.transcriptions[].transcription_type",
                         {
                             "key": "cases.transcriptions[].transcription",
-                            "type": "textarea"
+                            "type": "textarea",
+                            "fieldHtmlClass": "large-textarea"
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj transkription"
                 }
             ]
         },
@@ -1108,11 +1109,11 @@
                         "cases.persons[].role",
                         {
                             "key": "cases.persons[].person_occupations",
-                            "add": "Tilføj"
+                            "add": "Tilføj erhverv"
                         }
                     ],
 
-                    "add": "Tilføj"
+                    "add": "Tilføj person"
                 }
             ]
         },
@@ -1127,10 +1128,10 @@
                         "cases.places[].neighbourhood",
                         {
                             "key": "cases.places[].place_types",
-                            "add": "Tilføj"
+                            "add": "Tilføj stedtype"
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj sted"
                 }
             ]
         },
@@ -1185,7 +1186,7 @@
                             ]
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj resolution"
                 }
             ]
         },
@@ -1202,7 +1203,7 @@
                             "type": "textarea"
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj kommentar"
                 }
             ]
         }
