@@ -28,12 +28,12 @@
                 "maxLength": 25,
                 "formFieldOrder": 1,
                 "defaultValue": null,
-                "helpText": "Begynd at skrive, for at vælge sagstypen fra listen, eller tilføje en ny værdi.",
+                "helpText": "Begynd at skrive for at vælge sagstypen fra listen, eller tilføje en ny værdi.",
                 "minimumInputLength": 0,
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/\\w{1,}/",
-                "validationMessage": "Du skal vælge en værdi fra listen.",
+                "validationMessage": "Skal udfyldes. Du skal vælge en værdi fra listen, eller indtaste en ny.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "case_type",
                 "SOLRFacet": 0,
@@ -56,7 +56,7 @@
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](17|18|19)\\d{2}$/",
-                "validationMessage": "Skriv datoen således: dd-mm-åååå",
+                "validationMessage": "Skal udfyldes. Skriv datoen således: dd-mm-åååå.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "case_date",
                 "SOLRFacet": 1,
@@ -77,11 +77,11 @@
                 "maxLength": 50,
                 "formFieldOrder": 3,
                 "defaultValue": null,
-                "helpText": "Paginering.",
+                "helpText": "Paginering - fritekst.",
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
-                "validationMessage": "",
+                "validationMessage": "Skal udfyldes. Skriv sagens startside.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "start_page",
                 "SOLRFacet": 1,
@@ -102,11 +102,11 @@
                 "maxLength": 25,
                 "formFieldOrder": 3,
                 "defaultValue": null,
-                "helpText": "Paginering.",
+                "helpText": "Skriv antallet af sider sagen omfanger. Fritekst.",
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
-                "validationMessage": "",
+                "validationMessage": "Skal udfyldes. Skriv sagens omfang.",
                 "includeInSOLR": 1,
                 "SOLRFieldName": "case_extent",
                 "SOLRFacet": 1,
@@ -165,11 +165,11 @@
                         "formFieldType": "string",
                         "formFieldOrder": 2,
                         "defaultValue": null,
-                        "helpText": "Skriv kildetro transkription",
+                        "helpText": "Skriv en kildetro transkription.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "transcriptions",
                         "SOLRFacet": 0,
@@ -187,7 +187,7 @@
                 "countPerEntry": 1,
                 "guiName": "Klagen",
                 "primaryTableName": "resolutions_complaints",
-                "includeInSOLR": 1,
+                "includeInSOLR": 0,
                 "allowNewValues": 1,
                 "fields": [
                     {
@@ -303,7 +303,7 @@
                         "formFieldType": "boolean",
                         "formFieldOrder": 1,
                         "defaultValue": null,
-                        "helpText": "Sæt kryds, hvis der er vidner.",
+                        "helpText": "Vælg ja, hvis der er vidner, vælg nej hvis der ikke er vidner. Lad være tom hvis det er uvist.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
@@ -394,7 +394,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "attachment_references",
                         "SOLRFacet": 0,
@@ -417,7 +417,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^[1-9][0-9]*$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
@@ -481,7 +481,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "reference_forwards",
                         "SOLRFacet": 0,
@@ -505,7 +505,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "reference_backwards",
                         "SOLRFacet": 0,
@@ -529,7 +529,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
@@ -618,7 +618,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "case_person_relations",
                         "SOLRFacet": 0,
@@ -674,7 +674,7 @@
                                 "includeInForm": 1,
                                 "formName": "Erhverv",
                                 "formFieldType": "typeahead",
-                        "minimumInputLength": 0,
+                                "minimumInputLength": 0,
                                 "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
@@ -682,7 +682,7 @@
                                 "placeholder": null,
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
-                                "validationMessage": "??",
+                                "validationMessage": "",
                                 "includeInSOLR": 1,
                                 "SOLRFieldName": "case_person_occupation_types",
                                 "SOLRFacet": 0,
@@ -707,7 +707,7 @@
                                 "placeholder": null,
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
-                                "validationMessage": "??",
+                                "validationMessage": "",
                                 "includeInSOLR": 1,
                                 "SOLRFieldName": "case_person_occupation_relations",
                                 "SOLRFacet": 0,
@@ -732,7 +732,7 @@
                                 "placeholder": null,
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
-                                "validationMessage": "??",
+                                "validationMessage": "",
                                 "includeInSOLR": 1,
                                 "SOLRFieldName": "case_person_occupation_categories",
                                 "SOLRFacet": 0,
@@ -770,11 +770,11 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge handlingen fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge handlingen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "resolution_magistrate_actions",
                         "SOLRFacet": 0,
@@ -795,11 +795,11 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge reaktionen fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge reaktionen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "resolution_party_reactons",
                         "SOLRFacet": 0,
@@ -820,11 +820,11 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": null,
+                        "helpText": "Begynd at skrive for at vælge resolutionen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "resolution_types",
                         "SOLRFacet": 0,
@@ -847,7 +847,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])[\\/\\-](0?[1-9]|1[012])[\\/\\-](17|18|19)\\d{2}$/",
-                        "validationMessage": "??",
+                        "validationMessage": "Skal udfyldes. Skriv datoen således: dd-mm-åååå.",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "resolution_dates",
                         "SOLRFacet": 0,
@@ -866,7 +866,7 @@
                         "formFieldType": "boolean",
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Afkryds hvis ja.",
+                        "helpText": "Vælg ja, hvis sagen er genoptaget, vælg nej hvis sagen ikke er genoptaget. Lad være tom hvis det er uvist.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
@@ -929,11 +929,11 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge kommentartypen fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge kommentartypen fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "comment_types",
                         "SOLRFacet": 0,
@@ -969,7 +969,7 @@
                         "maxLength": 255,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "",
+                        "helpText": "Skriv stedet. Fritekst.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": null,
@@ -994,11 +994,11 @@
                         "maxLength": 50,
                         "formFieldOrder": 3,
                         "defaultValue": null,
-                        "helpText": "Begynd at skrive, for at vælge kvarteret fra listen, eller tilføje en ny værdi.",
+                        "helpText": "Begynd at skrive for at vælge kvarteret fra listen, eller tilføje en ny værdi.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
-                        "validationMessage": "??",
+                        "validationMessage": "",
                         "includeInSOLR": 1,
                         "SOLRFieldName": "neighbourhoods",
                         "SOLRFacet": 0,
@@ -1034,11 +1034,11 @@
                                 "maxLength": 50,
                                 "formFieldOrder": 3,
                                 "defaultValue": null,
-                                "helpText": "Begynd at skrive, for at vælge stedtypen fra listen, eller tilføje en ny værdi.",
+                                "helpText": "Begynd at skrive for at vælge stedtypen fra listen, eller tilføje en ny værdi.",
                                 "placeholder": null,
                                 "isRequired": 0,
                                 "validationRegularExpression": "/^.+$/",
-                                "validationMessage": "??",
+                                "validationMessage": "",
                                 "includeInSOLR": 1,
                                 "SOLRFieldName": "place_types",
                                 "SOLRFacet": 0,
@@ -1070,11 +1070,11 @@
                 },
                 {
                     "key": "cases.attachments",
-                    "add": "Tilføj"
+                    "add": "Tilføj bilag"
                 },
                 {
                     "key": "cases.references",
-                    "add": "Tilføj"
+                    "add": "Tilføj henvisning"
                 }
             ]
         },
@@ -1088,10 +1088,11 @@
                         "cases.transcriptions[].transcription_type",
                         {
                             "key": "cases.transcriptions[].transcription",
-                            "type": "textarea"
+                            "type": "textarea",
+                            "fieldHtmlClass": "large-textarea"
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj transkription"
                 }
             ]
         },
@@ -1108,11 +1109,11 @@
                         "cases.persons[].role",
                         {
                             "key": "cases.persons[].person_occupations",
-                            "add": "Tilføj"
+                            "add": "Tilføj erhverv"
                         }
                     ],
 
-                    "add": "Tilføj"
+                    "add": "Tilføj person"
                 }
             ]
         },
@@ -1127,10 +1128,10 @@
                         "cases.places[].neighbourhood",
                         {
                             "key": "cases.places[].place_types",
-                            "add": "Tilføj"
+                            "add": "Tilføj stedtype"
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj sted"
                 }
             ]
         },
@@ -1185,7 +1186,7 @@
                             ]
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj resolution"
                 }
             ]
         },
@@ -1202,7 +1203,7 @@
                             "type": "textarea"
                         }
                     ],
-                    "add": "Tilføj"
+                    "add": "Tilføj kommentar"
                 }
             ]
         }
