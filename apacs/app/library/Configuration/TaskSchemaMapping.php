@@ -109,17 +109,17 @@ class TaskSchemaMapping {
     public static function setRequiredFields(Array $schema) {
         $schema['required'] = [];
 
-		$requiredFields = array_filter($schema['fields'], function ($el) {return $el['isRequired'] == '1';});
 		foreach ($schema['fields'] as $field) {
 			if ($field['isRequired'] != '1') {
 				continue;
 			}
 
 			// Use decodeField as field name if it's defined
-			if (is_null($field['decodeField'])) {
-				$schema['required'][] = $field['fieldName'];
+			$requiredFieldKey = is_null($field['decodeField']) ? $field['fieldName'] : $field['decodeField'];
+			if ($schema['type'] == 'object') {
+				$schema['required'][] = $requiredFieldKey;
 			} else {
-				$schema['required'][] = $field['decodeField'];
+				$schema['items']['required'][] = $requiredFieldKey;
 			}
 		}
         
