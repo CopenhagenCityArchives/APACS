@@ -69,7 +69,7 @@ CREATE TABLE `resolutions_cases` (
 
 CREATE TABLE `resolutions_attachments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `attachment_types_id` int(11) NOT NULL,
+  `attachment_types_id` int(11) NULL,
   `reference` varchar(100) COLLATE utf8_danish_ci DEFAULT NULL,
   `starbas_id` int(11) DEFAULT NULL,
   `cases_id` int(11) NOT NULL,
@@ -93,8 +93,8 @@ CREATE TABLE `resolutions_case_types` (
 
 CREATE TABLE `resolutions_comments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `comment` text COLLATE utf8_danish_ci NOT NULL,
-  `comment_types_id` int(11) NOT NULL,
+  `comment` text COLLATE utf8_danish_ci NULL,
+  `comment_types_id` int(11) NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -114,12 +114,12 @@ CREATE TABLE `resolutions_complaint_purposes` (
 
 CREATE TABLE `resolutions_complaints` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `complaint_verbs_id` int(11) NOT NULL,
-  `complaint_subjects_id` int(11) NOT NULL,
-  `complaint_subject_categories_id` int(11) NOT NULL,
-  `complaint_purposes_id` int(11) NOT NULL,
-  `witnesses` bit(1) NOT NULL,
-  `attachments_mentioned` bit(1) NOT NULL,
+  `complaint_verbs_id` int(11) NULL,
+  `complaint_subjects_id` int(11) NULL,
+  `complaint_subject_categories_id` int(11) NULL,
+  `complaint_purposes_id` int(11) NULL,
+  `witnesses` bit(1) NULL,
+  `attachments_mentioned` bit(1) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
@@ -156,9 +156,9 @@ CREATE TABLE `resolutions_person_occupation_relations` (
 CREATE TABLE `resolutions_person_occupations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `persons_id` int(11) NOT NULL,
-  `person_occupation_relations_id` int(11) NOT NULL,
-  `person_occupation_types_id` int(11) NOT NULL,
-  `person_occupation_categories_id` int(11) NOT NULL,
+  `person_occupation_relations_id` int(11) NULL,
+  `person_occupation_types_id` int(11) NULL,
+  `person_occupation_categories_id` int(11) NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
@@ -183,10 +183,10 @@ CREATE TABLE `resolutions_person_roles` (
 
 CREATE TABLE `resolutions_persons` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8_danish_ci NOT NULL,
-  `person_sexes_id` int(11) NOT NULL,
-  `person_relations_id` int(11) NOT NULL,
-  `person_roles_id` int(11) NOT NULL,
+  `name` varchar(50) COLLATE utf8_danish_ci NULL,
+  `person_sexes_id` int(11) NULL,
+  `person_relations_id` int(11) NULL,
+  `person_roles_id` int(11) NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -206,8 +206,8 @@ CREATE TABLE `resolutions_place_neighbourhoods` (
 
 CREATE TABLE `resolutions_places` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `place` varchar(255) COLLATE utf8_danish_ci NOT NULL,
-  `place_neighbourhoods_id` int(11) NOT NULL,
+  `place` varchar(255) COLLATE utf8_danish_ci NULL,
+  `place_neighbourhoods_id` int(11) NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -231,7 +231,7 @@ CREATE TABLE `resolutions_references` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `forward` varchar(50) COLLATE utf8_danish_ci DEFAULT NULL,
   `backward` varchar(50) COLLATE utf8_danish_ci DEFAULT NULL,
-  `reference_types_id` int(11) NOT NULL,
+  `reference_types_id` int(11) NULL,
   `referenced_unit_id` int(11) DEFAULT NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
@@ -247,11 +247,11 @@ CREATE TABLE `resolutions_reference_types` (
 
 CREATE TABLE `resolutions_resolutions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `resolution_magistrate_actions_id` int(11) NOT NULL,
-  `resolution_party_reactions_id` int(11) NOT NULL,
-  `resolution_types_id` int(11) NOT NULL,
-  `case_reopened` bit(1) NOT NULL,
-  `date` date NOT NULL,
+  `resolution_magistrate_actions_id` int(11) NULL,
+  `resolution_party_reactions_id` int(11) NULL,
+  `resolution_types_id` int(11) NULL,
+  `case_reopened` bit(1) NULL,
+  `date` date NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
@@ -278,7 +278,7 @@ CREATE TABLE `resolutions_resolution_types` (
 CREATE TABLE `resolutions_transcriptions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `transcription_types_id` int(11) DEFAULT NULL,
-  `transcription` text COLLATE utf8_danish_ci NOT NULL,
+  `transcription` text COLLATE utf8_danish_ci NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
