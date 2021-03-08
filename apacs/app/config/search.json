@@ -15,6 +15,10 @@
         "19": {
             "name": "Politiets Efterretninger",
             "id": 19
+        },
+        "555": {
+            "name": "Magistratens Resolutioner",
+            "id": 555
         }
     },
     "fields": {
@@ -576,7 +580,8 @@
                 17,
                 18,
                 19,
-                100
+                100,
+                555
             ],
             "name": "freetext_store",
             "searchable": true,
@@ -671,6 +676,20 @@
             "sortable": true,
             "type": "typeahead",
             "view_name": "Protokol"
+        },
+        "case_type": {
+            "collections": [
+                555
+            ],
+            "datasource": {
+                "field": "case_type",
+                "url": "datasource/15?q="
+            },
+            "name": "case_type",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "view_name": "Sagstype"
         }
     },
     "types": {
