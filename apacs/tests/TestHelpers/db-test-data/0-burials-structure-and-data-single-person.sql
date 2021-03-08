@@ -1895,7 +1895,8 @@ LOCK TABLES `burial_deathcauses` WRITE;
 INSERT INTO `burial_deathcauses` (`id`,`deathcause`,`deathcause_danish`,`priority`) VALUES (15,'Alderdomssvaghed','Alderdomssvaghed',2),
 (16,'Ulykkestilfælde','Ulykkestilfælde',2),
 (17,'Afkræftelse','Afkræftelse',2),
-(18,'Absces (Abscessus)','Absces (Abscessus)',2);
+(18,'Absces (Abscessus)','Absces (Abscessus)',2),
+(19, 'Ascites', 'Ascites', 2);
 /*!40000 ALTER TABLE `burial_deathcauses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2937,7 +2938,8 @@ LOCK TABLES `burial_positions` WRITE;
 /*!40000 ALTER TABLE `burial_positions` DISABLE KEYS */;
 INSERT INTO `burial_positions` (`id`,`position`,`priority`) VALUES (1718,'Værtshusholder (Wærtshuusholder)',2),
 (1719,'Grosserer',2),
-(1720,'Handelsagent',2);
+(1720,'Handelsagent',2),
+(1721,'Skibsfører',2);
 /*!40000 ALTER TABLE `burial_positions` ENABLE KEYS */;
 UNLOCK TABLES;
 
