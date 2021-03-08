@@ -249,7 +249,7 @@
                         "decodeField": "subject_category",
                         "codeAllowNewValue": 1,
                         "includeInForm": 1,
-                        "formName": "Emne-kategori",
+                        "formName": "Emne overgruppe",
                         "formFieldType": "typeahead",
                         "minimumInputLength": 0,
                         "maxLength": 50,
