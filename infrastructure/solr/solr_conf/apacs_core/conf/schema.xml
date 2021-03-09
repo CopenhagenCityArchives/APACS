@@ -215,7 +215,8 @@
   <copyField source="erindring_document_text" dest="freetext_store"/>
   <copyField source="comments" dest="freetext_store"/>
   <copyField source="schoolName" dest="freetext_store"/>
-  <copyFIeld source="case_person_names" dest="freetext_store"/>
+  <copyField source="case_person_names" dest="freetext_store"/>
+  <copyField source="transcriptions" dest="freetext_store"/>
 
   <!-- Field to search when performing free text searches -->
   <field name="freetext_store" type="text_general" indexed="true" stored="false" required="false" multiValued="true" />
