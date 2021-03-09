@@ -1,7 +1,7 @@
 <?php
 
 use \Phalcon\Di;
-class DeleteSolrDataTest extends \IntegrationTest {
+class DeleteSolrDataTest extends \IntegrationTestCase {
 
     private $solr;
     private $http;

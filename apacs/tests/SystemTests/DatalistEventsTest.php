@@ -4,7 +4,7 @@ use \Phalcon\Di;
 use \Phalcon\Mvc\Model\Manager;
 use \Phalcon\Mvc\Model\MetaData\Memory;
 
-class DatalistEventsTest extends \IntegrationTest {
+class DatalistEventsTest extends \IntegrationTestCase {
 
     private $http;
 

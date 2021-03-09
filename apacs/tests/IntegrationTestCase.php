@@ -1,6 +1,6 @@
 <?php
 use \Phalcon\Di;
-class IntegrationTest extends \UnitTestCase
+class IntegrationTestCase extends \UnitTestCase
 {
     protected $testDBManager;
 
@@ -12,7 +12,6 @@ class IntegrationTest extends \UnitTestCase
         $testDBManager->createApacsMetadataForEntryPost10000Task1();
         $testDBManager->createBurialDataForEntryPost1000Task1();
         $testDBManager->createEventEntries();
-
     }
        
     public static function tearDownAfterClass() : void {

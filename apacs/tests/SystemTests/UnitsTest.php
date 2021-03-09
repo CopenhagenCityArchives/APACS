@@ -1,7 +1,7 @@
 <?php
 
 use \Phalcon\Di;
-class UnitsTest extends \IntegrationTest {
+class UnitsTest extends \IntegrationTestCase {
 
     private $http;
 

@@ -1,6 +1,6 @@
 <?php
 use \Phalcon\Di;
-class EventsTest extends \IntegrationTest
+class EventsTest extends \IntegrationTestCase
 {
     private $http;
 
