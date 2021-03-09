@@ -2,9 +2,7 @@
 
 class Units extends \Phalcon\Mvc\Model {
 
-	protected $id;
-	protected $numOfPages;
-	protected $collectionId;
+	public $id;
 
 	private $status = [];
 	static $publicFields = ['id', 'collection_id', 'pages', 'description'];
