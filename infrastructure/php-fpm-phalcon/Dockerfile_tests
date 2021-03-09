@@ -20,7 +20,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-di
 RUN docker-php-ext-install -j$(nproc) gd
 RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 
-RUN apk add --no-cache git openssh composer && composer global require hirak/prestissimo
+RUN apk add --no-cache git openssh composer
 COPY ./apacs /code
 WORKDIR /code
 RUN composer install
