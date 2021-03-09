@@ -97,7 +97,7 @@ Remember to reload the core in Solr admin.
 PHPUnit and phpunit-watcher are installed with Composer during docker-compose up.
 
 Run the test in the docker container:
-* ``docker exec -it phalcon /bin/bash``
+* ``docker exec -it apacs /bin/bash``
 * To run a single test run: ``/code/vendor/bin/phpunit --testdox``
 * To watch for changes use phpunit-watcher: ``/code/vendor/bin/phpunit-watcher watch --testdox``
 
