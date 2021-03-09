@@ -188,6 +188,7 @@ CREATE TABLE `apacs_units` (
   `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_public` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_starbas_id` (`starbas_id`),
   KEY `FK_units.collections_id_to_collections.id_idx` (`collections_id`),
   KEY `level_value` (`level1_value`,`level2_value`,`level3_value`),
   KEY `level_order` (`level1_order`,`level2_order`,`level3_order`),
