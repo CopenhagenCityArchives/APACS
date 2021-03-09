@@ -9,9 +9,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
 	public function setUp($di = null) : void {
 
-        // We need the modelsManager and therefore FactoryDefault DI to use Phalcons models in the tests
-        $di = new FactoryDefault();    
-        parent::setUp($di);
+        parent::setUp();
 
         // Create database entries for entities and fields        
         $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());

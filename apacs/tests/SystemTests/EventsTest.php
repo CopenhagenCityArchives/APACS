@@ -1,58 +1,8 @@
 <?php
 use \Phalcon\Di;
-class EventsTest extends \UnitTestCase
+class EventsTest extends \IntegrationTest
 {
-    private $testDBManager;
     private $http;
-
-    public static function setUpBeforeClass() : void {
-        // Set config and db in DI
-        $di = new Di();
-        //TODO Hardcoded db credentials for tests
-		$di->setShared('config', function () {
-            return [
-                "host" => "mysql",
-                "username" => "dev",
-                "password" => "123456",
-                "dbname" => "apacs",
-                'charset' => 'utf8',
-            ];
-		});
-
-		$di->setShared('db', function () use ($di) {
-            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-        });
-        
-        // Create database entries for entities and fields        
-        $testDBManager = new Mocks\TestDatabaseManager($di);
-        $testDBManager->cleanUpApacsStructure();
-        $testDBManager->createApacsStructure();
-        $testDBManager->createEventEntries();
-
-    }
-       
-    public static function tearDownAfterClass() : void {
-        // Set config and db in DI
-        $di = new Di();
-        //TODO Hardcoded db credentials for tests
-		$di->setShared('config', function () {
-            return [
-                "host" => "mysql",
-                "username" => "dev",
-                "password" => "123456",
-                "dbname" => "apacs",
-                'charset' => 'utf8',
-            ];
-		});
-
-		$di->setShared('db', function () use ($di) {
-            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-        });
-        
-        // Clear database
-        $testDBManager = new Mocks\TestDatabaseManager($di);
-      //  $testDBManager->cleanUpApacsStructure();
-    }
 
     public function setUp($di = null) : void
     {

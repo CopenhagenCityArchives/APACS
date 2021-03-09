@@ -3,81 +3,28 @@
 use \Phalcon\Di;
 use \Phalcon\Mvc\Model\Manager;
 use \Phalcon\Mvc\Model\MetaData\Memory;
-class DatalistEventsTest extends \UnitTestCase {
 
-    private $testDBManager;
+class DatalistEventsTest extends \IntegrationTest {
+
     private $http;
 
-    public static function setUpBeforeClass() : void {
-        // Set config and db in DI
-        $di = new Di();
-        //TODO Hardcoded db credentials for tests
-		$di->setShared('config', function () {
-            return [
-                "host" => "mysql",
-                "username" => "dev",
-                "password" => "123456",
-                "dbname" => "apacs",
-                'charset' => 'utf8',
-            ];
-        });
-        
-		$di->setShared('db', function () use ($di) {
-            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-        });
-        
-        // Create database entries for entities and fields        
-        $testDBManager = new Mocks\TestDatabaseManager($di);
-        $testDBManager->createApacsStructure();
-        $testDBManager->createEntitiesAndFieldsForTask1();
-        $testDBManager->createApacsMetadataForEntryPost10000Task1();
-        $testDBManager->createBurialDataForEntryPost1000Task1();
-    }
-
 	public function setUp($di = null) : void {
-        if (is_null($di)) {
-            $di = new Di();
-        }
+        parent::setUp();
 
-        $di->set('modelsManager', function() {
+        $this->di->set('modelsManager', function() {
             return new Manager();
         });
 
-        $di->set('modelsMetadata', function() {
+        $this->di->set('modelsMetadata', function() {
             return new Memory();
         });
 
-        parent::setUp($di);
         $this->http = new GuzzleHttp\Client(['base_uri' => 'http://nginx/']);
 	}
 
 	public function tearDown() : void {
         parent::tearDown();
         $this->http = null;
-    }
-    
-    public static function tearDownAfterClass()  : void {
-        // Set config and db in DI
-        $di = new Di();
-        //TODO Hardcoded db credentials for tests
-        $di->setShared('config', function () {
-            return [
-                "host" => "mysql",
-                "username" => "dev",
-                "password" => "123456",
-                "dbname" => "apacs",
-                'charset' => 'utf8',
-            ];
-        });
-        
-        $di->setShared('db', function () use ($di) {
-            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
-        });
-        
-        // Create database entries for entities and fields        
-        $testDBManager = new Mocks\TestDatabaseManager($di);
-        $testDBManager->cleanUpApacsStructure();
-        $testDBManager->cleanUpBurialStructure();        
     }
 
     public function test_createNewEvent(){

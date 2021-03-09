@@ -17,26 +17,20 @@ abstract class UnitTestCase extends TestCase {
 	 */
 	private $_loaded = false;
 
-	private $di;
+	protected $di;
 
 	protected function getDI()
 	{
 		return $this->di;
 	}
 
-	protected function setUp($di = null) : void {
-        parent::setUp();
-		
-		// Use default DI if non given in concrete tests
-		if (is_null($di)) {
-			$this->di = new Di();
-		} else {
-			$this->di = $di;
-		}
-		
+	public static function createDI()
+	{
+		$di = new Di();
+
 		// Set config and db in DI
 		//TODO Hardcoded db credentials for tests
-		$this->di->setShared('config', function () {
+		$di->setShared('config', function () {
             return [
                 "host" => "mysql",
                 "username" => "dev",
@@ -46,9 +40,24 @@ abstract class UnitTestCase extends TestCase {
             ];
 		});
 
-		$this->di->setShared('db', function () {
-            return new \Phalcon\Db\Adapter\Pdo\Mysql($this->get('config'));
+		$di->setShared('db', function () use ($di) {
+            return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 		});
+
+		return $di;
+	}
+
+	protected function setUp($di = null) : void {
+        parent::setUp();
+		
+		// Use default DI if non given in concrete tests
+		if (is_null($di)) {
+			$this->di = $this::createDI();
+		} else {
+			$this->di = $di;
+		}
+		
+
 
 		// Set DI as default (used in Phalcon Models)
 		Di::setDefault($this->di);
