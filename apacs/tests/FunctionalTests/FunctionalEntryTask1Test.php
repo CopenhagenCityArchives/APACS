@@ -43,12 +43,12 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Get entities from database
         //$entities = Entities::find(['conditions' => 'task_id = 1']);
-        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__);
+        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__ . '/TestData');
 		$taskConf = $taskconfigLoader->getConfig(1);
 		$entitiesCollection = new EntitiesCollection($taskConf);
 
         // Input data
-        $inputData = json_decode(file_get_contents(__DIR__ . '/entry_save.json'), true);
+        $inputData = json_decode(file_get_contents(__DIR__ . '/TestData/entry_save.json'), true);
 
         // Setup and save  
         $this->assertTrue($this->concreteEntry->SaveEntriesForTask($entitiesCollection, $inputData)>0);
@@ -66,12 +66,12 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Get entities from database
         //$entities = Entities::find(['conditions' => 'task_id = 1']);
-        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__);
+        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__ . '/TestData');
 		$taskConf = $taskconfigLoader->getConfig(1);
         $entitiesCollection = new EntitiesCollection($taskConf);
 
         // Input data
-        $inputData = json_decode(file_get_contents(__DIR__ . '/entry_save.json'), true);
+        $inputData = json_decode(file_get_contents(__DIR__ . '/TestData/entry_save.json'), true);
 
         // Save concrete entry
         $savedId = $this->concreteEntry->SaveEntriesForTask($entitiesCollection, $inputData);
@@ -103,12 +103,12 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
 
         // Get entities from database
 		//$entities = Entities::find(['conditions' => 'task_id = 1']);
-        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__);
+        $taskconfigLoader = new TaskConfigurationLoader2(__DIR__ . '/TestData');
 		$taskConf = $taskconfigLoader->getConfig(1);
 		$entitiesCollection = new EntitiesCollection($taskConf);
         
         // Input data
-        $inputData = json_decode(file_get_contents(__DIR__ . '/entry_save.json'), true);
+        $inputData = json_decode(file_get_contents(__DIR__ . '/TestData/entry_save.json'), true);
         // Save  
         $savedId = $this->concreteEntry->SaveEntriesForTask($entitiesCollection, $inputData);
 

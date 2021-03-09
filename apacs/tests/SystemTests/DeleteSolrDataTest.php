@@ -19,7 +19,6 @@ class DeleteSolrDataTest extends \IntegrationTest {
         parent::tearDown();
 	}
 	
-
 	public function test_DeleteSolrEntry_GivenValidId() {
         //assert no initial posts in solrdb
         $initResponse = $this->solr->request('GET', 'select?q=*:*&wt=json');
@@ -27,7 +26,7 @@ class DeleteSolrDataTest extends \IntegrationTest {
         $this->assertEquals(0, $initData['response']['numFound']);
 
         //setup a test solr document
-		$entryRequest = file_get_contents(__DIR__ . '/validEntry_task1.json');
+		$entryRequest = file_get_contents(__DIR__ . '/TestData/validEntry_task1.json');
         $request = json_decode($entryRequest,true);
 
         $response = $this->http->request('POST', 'entries', [

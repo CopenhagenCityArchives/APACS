@@ -20,7 +20,7 @@ class SystemTest extends \IntegrationTest
         $response = $this->http->request('GET', 'taskschema?task_id=1');
         $this->assertEquals(200, $response->getStatusCode());
         //var_dump((string) $response->getBody());
-        $validTaskSchema = json_decode(file_get_contents(__DIR__ . '/validTaskSchema_task1.json'),true);
+        $validTaskSchema = json_decode(file_get_contents(__DIR__ . '/TestData/validTaskSchema_task1.json'),true);
     
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
 
@@ -42,7 +42,7 @@ class SystemTest extends \IntegrationTest
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $validPost = json_decode(file_get_contents(__DIR__ . '/validPost_task1.json'),true);
+        $validPost = json_decode(file_get_contents(__DIR__ . '/TestData/validPost_task1.json'),true);
 
         // Note that only data is tested, NOT metadata
         $responseData = json_decode((string) $response->getBody(), true);
@@ -58,7 +58,7 @@ class SystemTest extends \IntegrationTest
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $validResponse = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'),true);
+        $validResponse = json_decode(file_get_contents(__DIR__ . '/TestData/validEntry_task1.json'),true);
         
         $responseData = json_decode((string) $response->getBody(), true);
 
@@ -126,7 +126,7 @@ class SystemTest extends \IntegrationTest
     }
 
     public function test_SaveEntry_ReturnValidEntry(){
-        $entryRequest = file_get_contents(__DIR__ . '/validEntry_task1.json');
+        $entryRequest = file_get_contents(__DIR__ . '/TestData/validEntry_task1.json');
         $request = json_decode($entryRequest,true);
 
         // Send entry data
@@ -303,7 +303,7 @@ class SystemTest extends \IntegrationTest
         $concreteEntryBefore = $this->testDBManager->query('SELECT * FROM `burial_persons` WHERE `id` = ' . $concreteEntryId . ' LIMIT 1')->fetch();
 
         // perform a change
-        $updateRequest = json_decode(file_get_contents(__DIR__ . '/validEntry_task1.json'), true);
+        $updateRequest = json_decode(file_get_contents(__DIR__ . '/TestData/validEntry_task1.json'), true);
         $updateRequest['persons']['firstnames'] = 'Cirkeline';
         $updateResponse = $this->http->request('PUT', 'entries/' . $entryId, [ 'json' => $updateRequest ]);
         $this->assertEquals(200, $updateResponse->getStatusCode());
