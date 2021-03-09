@@ -16,13 +16,26 @@ class CommonInformationsController extends MainController {
 		Creates or updates a new collection in database
 	*/
 	public function CreateOrUpdateCollection() {
-		file_put_contents('create_or_update_collections.log', 'her: ' . $this->request->getRawBody(), FILE_APPEND);
+		//file_put_contents('create_or_update_collections.log', 'her: ' . $this->request->getRawBody(), FILE_APPEND);
 		$data = $this->GetAndValidateJsonPostData();
+
+		$exception = new SystemExceptions();
+		$exception->save([
+			'type' => 'event_starbas_collection_save_debug',
+			'details' => json_encode(['exception' => $data])
+		]);
 
 		if ($data['col_id'] < 50) {
 			$this->response->setStatusCode(500, 'Invalid collection id');
 			$this->response->setJsonContent(['error' => 'The collection id must be greater than 50!']);
-			file_put_contents('create_or_update_collections.log', 'The collection id must be greater than 50!', FILE_APPEND);
+			//file_put_contents('create_or_update_collections.log', 'The collection id must be greater than 50!', FILE_APPEND);
+			
+			$exception = new SystemExceptions();
+			$exception->save([
+				'type' => 'event_starbas_collection_save',
+				'details' => json_encode(['exception' => $data])
+			]);
+
 			return;
 		}
 
@@ -36,7 +49,13 @@ class CommonInformationsController extends MainController {
 		if (!$collection->save($data)) {
 			$this->response->setStatusCode(500, 'Could not create or update collection');
 			$this->response->setJsonContent(['error' => 'Could not create or update collection: ' . implode(', ', $collection->getMessages())]);
-			file_put_contents('create_or_update_collections.log', 'Could not create or update collection: ' . implode(', ', $collection->getMessages()), FILE_APPEND);
+
+			$exception = new SystemExceptions();
+			$exception->save([
+				'type' => 'event_starbas_collection_save',
+				'details' => json_encode(['exception' => $data])
+			]);
+			//file_put_contents('create_or_update_collections.log', 'Could not create or update collection: ' . implode(', ', $collection->getMessages()), FILE_APPEND);
 			return;
 		}
 
@@ -178,9 +197,15 @@ class CommonInformationsController extends MainController {
 
 	public function CreateOrUpdateUnits() {
 		//Save local log for debugging incomming requests
-		file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody(), FILE_APPEND);
+		//file_put_contents('incomming_create_or_update_units.log', $this->request->getRawBody(), FILE_APPEND);
 		
 		$data = $this->GetAndValidateJsonPostData();
+
+		$exception = new SystemExceptions();
+		$exception->save([
+			'type' => 'event_starbas_unit_save_debug',
+			'details' => json_encode(['exception' => $data])
+		]);
 
 		if(!$data){
 			$errorMessage = 'Invalid JSON or no data received, nothing is saved';
