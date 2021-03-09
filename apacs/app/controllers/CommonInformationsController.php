@@ -271,10 +271,10 @@ class CommonInformationsController extends MainController {
 			$unit->level1_value = $row['unit']['level1_value'];
 			$unit->level1_order = $row['unit']['level1_order'];
 			$unit->level2_value = $row['unit']['level2_value'] != '' ? $row['unit']['level2_value'] : null;
-			$unit->level2_order = $row['unit']['level2_order'] != '' ? $row['unit']['level2_order'] : null;;
-			$unit->level3_value = $row['unit']['level3_value'] != '' ? $row['unit']['level3_value'] : null;;
-			$unit->level3_order = $row['unit']['level3_order'] != '' ? $row['unit']['level3_order'] : null;;
-
+			$unit->level2_order = $row['unit']['level2_order'] != '' ? $row['unit']['level2_order'] : null;
+			$unit->level3_value = $row['unit']['level3_value'] != '' ? $row['unit']['level3_value'] : null;
+			$unit->level3_order = $row['unit']['level3_order'] != '' ? $row['unit']['level3_order'] : null;
+			
 			if (!$unit->save()) {
 				$errorDetails = implode(', ', $unit->getMessages());
 
