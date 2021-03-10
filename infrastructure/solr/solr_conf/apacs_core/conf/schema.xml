@@ -153,8 +153,8 @@
   <field name="case_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
 
   <field name="complaint_verb" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="complaint_subject" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
-  <field name="complaint_subject_category" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_subjects" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
+  <field name="complaint_subject_categories" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="complaint_purpose" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="complaint_witnesses" type="boolean" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="complaint_attachments_mentioned" type="boolean" indexed="true" stored="true" required="false" multiValued="false" />

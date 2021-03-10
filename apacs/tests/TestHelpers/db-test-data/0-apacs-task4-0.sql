@@ -41,7 +41,7 @@ INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `incl
   ('21', 'person_relations', 'SELECT id, relation, CASE WHEN relation LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_relations ORDER BY prio DESC, relation LIMIT 75;', NULL, 'relation', '0', 'relation', '1'),
   ('22', 'person_roles', 'SELECT id, role, CASE WHEN role LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_roles ORDER BY prio DESC, role LIMIT 75;', NULL, 'role', '0', 'role', '1'),
   ('23', 'complaint_verbs', 'SELECT id, verb, CASE WHEN verb LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_verbs ORDER BY prio DESC, verb LIMIT 75;', NULL, 'verb', '0', 'verb', '1'),
-  ('24', 'complaint_subjects', 'SELECT id, subject, CASE WHEN subject LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subjects ORDER BY prio DESC, subject LIMIT 75;', NULL, 'subject', '0', 'subject', '1'),
+  ('24', 'complaint_subjects', 'SELECT id, subject_name, CASE WHEN subject_name LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subject_names ORDER BY prio DESC, subject_name LIMIT 75;', NULL, 'subject_name', '0', 'subject_name', '1'),
   ('25', 'complaint_subject_cats', 'SELECT id, subject_category, CASE WHEN subject_category LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subject_categories ORDER BY prio DESC, subject_category LIMIT 75;', NULL, 'subject_category', '0', 'subject_category', '1'),
   ('26', 'complaint_purposes', 'SELECT id, purpose, CASE WHEN purpose LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_purposes ORDER BY prio DESC, purpose LIMIT 75;', NULL, 'purpose', '0', 'purpose', '1'),
   ('27', 'occupation_types', 'SELECT id, occupation_type, CASE WHEN occupation_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_types ORDER BY prio DESC, occupation_type LIMIT 75;', NULL, 'occupation_type', '0', 'occupation_type', '1'),
@@ -83,7 +83,6 @@ CREATE TABLE `resolutions_attachment_types` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-
 CREATE TABLE `resolutions_case_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `case_type` varchar(25) COLLATE utf8_danish_ci NOT NULL,
@@ -115,13 +114,20 @@ CREATE TABLE `resolutions_complaint_purposes` (
 CREATE TABLE `resolutions_complaints` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `complaint_verbs_id` int(11) NULL,
-  `complaint_subjects_id` int(11) NULL,
-  `complaint_subject_categories_id` int(11) NULL,
   `complaint_purposes_id` int(11) NULL,
   `witnesses` bit(1) NULL,
   `attachments_mentioned` bit(1) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+CREATE TABLE `resolutions_complaint_subjects` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `complaints_id` int(11) NOT NULL,
+  `complaint_subject_names_id` int(11) NULL,
+  `complaint_subject_categories_id` int(11) NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_subject_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -129,9 +135,9 @@ CREATE TABLE `resolutions_complaint_subject_categories` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `resolutions_complaint_subjects` (
+CREATE TABLE `resolutions_complaint_subject_names` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `subject` varchar(50) COLLATE utf8_danish_ci NOT NULL,
+  `subject_name` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 

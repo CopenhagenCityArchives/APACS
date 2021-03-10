@@ -8,10 +8,7 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
     private $concreteEntry;
 
 	public function setUp($di = null) : void {
-
-        // We need the modelsManager and therefore FactoryDefault DI to use Phalcons models in the tests
-        $di = new FactoryDefault();    
-        parent::setUp($di);
+        parent::setUp();
 
         // Create database entries for entities and fields        
         $this->testDBManager = new Mocks\TestDatabaseManager($this->getDI());
@@ -24,14 +21,13 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
         $this->concreteEntry->startTransaction();
 	}
 
-	public function tearDown() : void {
-        
+    public function tearDown() : void {
         // Dont save data
         $this->concreteEntry->rollbackTransaction();
 
         // Clear database
         $this->testDBManager->cleanUpApacsStructure();
-        // TODO: How should the database be restored for task4?
+        $this->testDBManager->cleanUpBurialStructure();
 		parent::tearDown();
     }
     
@@ -42,8 +38,12 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
                     "witnesses" => true,
                     "attachments_mentioned" => true,
                     "verb" => "Verbum",
-                    "subject" => "Emne",
-                    "subject_category" => "Emnekategori",
+                    "subjects" => [
+                        [
+                            "subject_name" => "Emne",
+                            "subject_category" => "Emnekategori",
+                        ]
+                    ],
                     "purpose" => "Formål"
                 ],
                 "attachments" => [
@@ -86,7 +86,7 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
         ];
 
         // Load task configuration
-        $taskconfigLoader = new TaskConfigurationLoader(__DIR__);
+        $taskconfigLoader = new TaskConfigurationLoader(__DIR__ . "/TestData");
 		$taskConf = $taskconfigLoader->getConfig(4);
         $entity = new ConfigurationEntity($taskConf['entity']);
         
@@ -113,14 +113,22 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
 
         // Check subentities
         unset($case['complaint']['id']);
+        // Remove subsubentity and test it by itself
+        $complaintSubjects = $case['complaint']['subjects'];
+        unset($complaintSubjects[0]['id']);
+        unset($complaintSubjects[0]['complaints_id']);
+        unset($case['complaint']['subjects']);
         $this->assertEquals([
             "witnesses" => true,
             "attachments_mentioned" => true,
             "verb" => "Verbum",
-            "subject" => "Emne",
-            "subject_category" => "Emnekategori",
             "purpose" => "Formål"
         ], $case['complaint']);
+
+        $this->assertEquals([
+            "subject_name" => "Emne",
+            "subject_category" => "Emnekategori"
+        ], $complaintSubjects[0]);
 
         unset($case['attachments'][0]['id']);
         unset($case['attachments'][0]['cases_id']);

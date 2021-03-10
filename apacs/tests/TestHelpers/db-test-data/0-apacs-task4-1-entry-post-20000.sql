@@ -17,10 +17,11 @@ INSERT INTO `apacs_entries` (`id`,`posts_id`,`tasks_id`,`users_id`,`last_update_
     (21000,20000,4,653,NULL,100,1,'2016-12-31 15:27:26','2016-12-31 15:26:26',6);
 
 INSERT INTO `resolutions_complaint_verbs` VALUES (1,'Klager'), (2, 'Foredrager');
-INSERT INTO `resolutions_complaint_subjects` VALUES (1,'Dokumentation');
+INSERT INTO `resolutions_complaint_subjects` VALUES (1,10,1,2,1);
+INSERT INTO `resolutions_complaint_subject_names` VALUES (1,'Dokumentation');
 INSERT INTO `resolutions_complaint_subject_categories` VALUES (1,'Byrum'), (2, 'Lav'), (3, 'Sociale relationer');
 INSERT INTO `resolutions_complaint_purposes` VALUES (1,'Genoprettelse af orden');
-INSERT INTO `resolutions_complaints` VALUES (10,2,1,2,1,1,0);
+INSERT INTO `resolutions_complaints` VALUES (10,2,1,1,0);
 INSERT INTO `resolutions_transcriptions` VALUES (1,2,'Jens Nielsen, konsulent, brokker sig over mangel på dokumentation af APACS.',100,1);
 INSERT INTO `resolutions_transcription_types` VALUES (1,'Resolution'), (2,'Henvendelse');
 INSERT INTO `resolutions_person_sexes` VALUES (1,'Kvinde'), (2,'Mand'), (3,'Uoplyst'), (4,'Andet');
