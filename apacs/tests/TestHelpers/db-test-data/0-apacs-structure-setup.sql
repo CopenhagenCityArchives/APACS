@@ -149,6 +149,23 @@ CREATE TABLE `apacs_posts` (
   KEY `FK_posts.pages_id_to_pages.id_idx` (`pages_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=237867 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
+DROP TABLE IF EXISTS `apacs_subposts`;
+CREATE TABLE `apacs_subposts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `posts_id` int(11) NOT NULL,
+  `pages_id` int(11) NOT NULL,
+  `width` decimal(21,18) NOT NULL,
+  `height` decimal(21,18) NOT NULL,
+  `x` decimal(21,18) NOT NULL,
+  `y` decimal(21,18) NOT NULL,
+  `image` blob,
+  `updated` timestamp NULL DEFAULT NULL,
+  `created` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_subposts.pages_id_to_pages.id_idx` (`pages_id`),
+  KEY `FK_subposts.posts_id_to_posts.id_idx` (`posts_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=237867 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 DROP TABLE IF EXISTS `apacs_pages`;
 CREATE TABLE `apacs_pages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

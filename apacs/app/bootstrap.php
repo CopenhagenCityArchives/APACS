@@ -88,9 +88,15 @@ try {
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
 
 	$info->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');
+	$info->get('/posts/{post_id:[0-9]+}/areas', 'GetPostAreas');
+
+	$info->patch('/subpost/{subpost_id:[0-9]+}', 'UpdateSubpost');
+	$info->delete('/subpost/{subpost_id:[0-9]+}', 'DeleteSubpost');
 
 	//Create post
 	$info->post('/posts', 'CreateOrUpdatePost');
+
+	$info->post('/posts/{post_id:[0-9]+}/subposts', 'CreateOrUpdateSubposts');
 
 	//Update post
 	$info->patch('/posts/{id:[0-9]+}', 'CreateOrUpdatePost');

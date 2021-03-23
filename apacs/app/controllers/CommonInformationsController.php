@@ -324,6 +324,29 @@ class CommonInformationsController extends MainController {
 		}
 	}
 
+	public function GetPostAreas($postId) {
+		$this->RequireAccessControl();
+
+		$post = Posts::findFirst([
+			'conditions' => 'id = :postId:',
+			'bind' => ['postId' => $postId],
+			'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y']
+		])->toArray();
+		
+		$subposts = Subposts::find([
+			'conditions' => 'posts_id = :postId:',
+			'bind' => ['postId' => $postId],
+			'columns' => ['id', 'posts_id', 'pages_id', 'width', 'height', 'x', 'y']
+		]);
+		
+		$post['subposts'] = [];
+		foreach ($subposts as $subpost) {
+			$post['subposts'][] = $subpost->toArray();
+		}
+
+		$this->response->setContent(json_encode($post, JSON_NUMERIC_CHECK));
+	}
+
 	public function GetPage($pageId, $page = null) {
 		$this->RequireAccessControl();
 
@@ -355,6 +378,7 @@ class CommonInformationsController extends MainController {
 		$posts = Posts::find(['conditions' => 'pages_id = ' . $pageId . ' AND complete = 1', 'columns' => ['id', 'pages_id', 'width', 'height', 'x', 'y', 'complete']]);
 
 		$result['posts'] = [];
+		$result['subposts'] = [];
 
 		$auth = $this->getDI()->get('AccessController');
 
@@ -368,10 +392,144 @@ class CommonInformationsController extends MainController {
 			} else {
 				$post['user_can_edit'] = false;
 			}
+
+			$subposts = Subposts::find([
+				'conditions' => 'posts_id = :postId:',
+				'bind' => ['postId' => $post['id']],
+				'columns' => ['id', 'posts_id', 'pages_id', 'width', 'height', 'x', 'y']
+			]);
+			$post['subposts'] = [];
+			foreach ($subposts as $subpost) {
+				$post['subposts'][] = $subpost->toArray();
+			}
+
 			$result['posts'][] = $post;
 		}
 
+		$result['subposts'] = [];
+		$subposts = Subposts::find([
+			'conditions' => 'pages_id = :pageId:',
+			'bind' => ['pageId' => $pageId],
+			'columns' => ['id', 'posts_id', 'pages_id', 'width', 'height', 'x', 'y']
+		]);
+		foreach ($subposts as $subpost) {
+			$subpostArray = $subpost->toArray();
+			$subpostEntry = Entries::findFirst('tasks_id = ' . $taskId . ' AND posts_id = ' . $subpost->posts_id);
+
+			if ($subpostEntry !== null) {
+				$subpostArray['user_can_edit'] = $auth->UserCanEdit($postEntry);
+			} else {
+				$subpostArray['user_can_edit'] = false;
+			}
+
+			$result['subposts'][] = $subpostArray;
+		}
+
 		$this->response->setContent(json_encode($result, JSON_NUMERIC_CHECK));
+	}
+
+	public function DeleteSubpost($subpostId) {
+		$this->RequireAccessControl();
+
+		$subpost = Subposts::find($subpostId);
+
+		if ($subpost) {
+			$subpost->delete();
+		}
+
+		$this->response->setStatusCode(200, 'Subpost deleted');
+		$this->response->setContent(json_encode(['subpost_id' => $subpostId], JSON_NUMERIC_CHECK));
+	}
+
+	public function UpdateSubpost($subpostId) {
+		$this->RequireAccessControl();
+		$subpost = Subposts::findFirst($subpostId);
+
+		$data = $this->GetAndValidateJsonPostData();
+		$this->CheckFields($data, ['x', 'y', 'height', 'width', 'pages_id']);
+
+		$subpost->pages_id = $data['pages_id'];
+		$subpost->x = $data['x'];
+		$subpost->y = $data['y'];
+		$subpost->height = $data['height'];
+		$subpost->width = $data['width'];
+
+		if (!$subpost->save()) {
+			$this->error('Could not save subpost. ' . implode('. ', $subpost->getMessages()));
+			return;
+		}
+
+		$this->response->setStatusCode(200, 'Subpost updated');
+		$this->response->setContent(json_encode(['subpost_id' => $subpostId], JSON_NUMERIC_CHECK));
+		return;
+	}
+
+	public function CreateOrUpdateSubposts($parentPostId) {
+		$this->RequireAccessControl();
+
+		$taskId = $this->request->getQuery('task_id', 'int');
+		if (is_null($taskId)) {
+			throw new InvalidArgumentException("task_id required");
+		}
+
+		$subposts = $this->GetAndValidateJsonPostData();
+		$pages = array();
+
+		// Verify subpost data naively
+		foreach ($subposts as $subpost) {
+			if (!array_key_exists('x', $subpost) ||
+				!array_key_exists('y', $subpost) ||
+				!array_key_exists('width', $subpost) ||
+				!array_key_exists('height', $subpost) ||
+				!array_key_exists('pages_id', $subpost)) {
+				$this->error('Missing required data');
+				return;
+			}
+
+			$pages[$subpost['pages_id']] = null;
+		}
+
+		// Populate and verify pages
+		foreach (array_keys($pages) as $pagesId) {
+			if (is_null($pages[$pagesId])) {
+				$pageData = Pages::findFirst($pagesId);
+
+				if ($pageData == false) {
+					throw new InvalidArgumentException("Page " . $pagesId .  " not found");
+				}
+
+				$pages[$pagesId] = $pageData;
+			}
+		}
+
+		$subpostIds = [];
+
+		// Create subposts
+		foreach ($subposts as $subpostData) {
+			$subpost = new Subposts();
+			if (array_key_exists('id', $subpostData)) {
+				$subpost->id = $subpostData['id'];
+			}
+			$subpost->pages_id = $subpostData['pages_id'];
+			$subpost->posts_id = $parentPostId;
+			$subpost->x = $subpostData['x'];
+			$subpost->y = $subpostData['y'];
+			$subpost->height = $subpostData['height'];
+			$subpost->width = $subpostData['width'];
+
+			if (!$subpost->save()) {
+				$exceptionMsg = 'Could not save subpost. ' . implode('. ', $subpost->getMessages());
+				throw new InvalidArgumentException($exceptionMsg);
+			}
+
+			$subpostIds[] = $subpost->id;
+	
+			//Saving the thumb
+			$subpost->SaveThumbImage();
+		}
+
+		$this->response->setStatusCode(200, 'Subposts created');
+		$this->response->setContent(json_encode(['subpost_ids' => $subpostIds], JSON_NUMERIC_CHECK));
 	}
 
 	public function CreateOrUpdatePost($id = null) {

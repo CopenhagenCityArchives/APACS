@@ -38,12 +38,18 @@ class DBConfigurationLoader {
 
 	public function GetTasks() {
 		$tasks = Tasks::find();
-		return $tasks->toArray();
+		$tasksData = [];
+		foreach ($tasks->toArray() as $taskData) {
+			$taskData['multiPost'] = $taskId == 4;
+			$tasksData[] = $taskData;
+		}
 	}
 
 	public function GetTask($taskId) {
 		$task = Tasks::findFirstById($taskId);
-		return $task->toArray();
+		$taskData = $task->toArray();
+		$taskData['multiPost'] = $taskId == 4;
+		return $taskData;
 	}
 
 	public function GetFiltersAndFilterLevels($filterId) {
