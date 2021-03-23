@@ -16,9 +16,9 @@
             "name": "Politiets Efterretninger",
             "id": 19
         },
-        "555": {
+        "147": {
             "name": "Magistratens Resolutioner",
-            "id": 555
+            "id": 147
         }
     },
     "fields": {
@@ -581,7 +581,7 @@
                 18,
                 19,
                 100,
-                555
+                147
             ],
             "name": "freetext_store",
             "searchable": true,
@@ -679,7 +679,7 @@
         },
         "case_type": {
             "collections": [
-                555
+                147
             ],
             "datasource": {
                 "field": "case_type",
