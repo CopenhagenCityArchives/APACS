@@ -13,19 +13,19 @@
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 INSERT INTO `apacs_tasks` (`id`, `name`, `description`, `collection_id`, `primaryEntity_id`) VALUES
-    (4, 'Magistratens Resolutioner', 'Indtastning af magistratens resolutioner', 555, NULL);
+    (4, 'Magistratens Resolutioner', 'Indtastning af magistratens resolutioner', 147, NULL);
 
-INSERT INTO `apacs_collections` (`id`,`name`) VALUES (555,'resolutions collection name');
+INSERT INTO `apacs_collections` (`id`,`name`) VALUES (147,'resolutions collection name');
 
-INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (5551, 555, 'test unit for resolutions', 2);
+INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (1471, 147, 'test unit for resolutions', 2);
 INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`filename`,`filename_converted`,`relative_filename`,`relative_filename_converted`,`found`,`image_url`,`md5`,`s3`) VALUES 
-    (55511,NULL,5551,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://api-beta.kbharkiv.dk/test-assets/resolution_1.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0),
-    (55512,NULL,5551,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://api-beta.kbharkiv.dk/test-assets/resolution_2.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0);
+    (14711,NULL,1471,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015131.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0),
+    (14712,NULL,1471,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015132.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0);
 INSERT INTO `apacs_tasks_pages` (`id`,`tasks_id`,`pages_id`,`units_id`,`is_done`,`last_activity`) VALUES
-    (55511,4,55511,5551,0,NULL),
-    (55512,4,55512,5551,0,NULL);
+    (14711,4,14711,1471,0,NULL),
+    (14712,4,14712,1471,0,NULL);
 
-INSERT INTO `apacs_tasks_units` (`id`,`tasks_id`,`units_id`,`pages_done`,`columns`,`rows`,`index_active`) VALUES (5551,4,5551,0,1,10,1);
+INSERT INTO `apacs_tasks_units` (`id`,`tasks_id`,`units_id`,`pages_done`,`columns`,`rows`,`index_active`) VALUES (1471,4,1471,0,1,10,1);
 
 /* Jens's user */
 INSERT INTO `apacs_users` (`id`, `username`)  VALUES (2385, 'jensfeodor@gmail.com');
@@ -36,7 +36,7 @@ INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `incl
   ('16', 'transcription_types', 'SELECT id, transcription_type, CASE WHEN transcription_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_transcription_types ORDER BY prio DESC, transcription_type LIMIT 75;', NULL, 'transcription_type', '0', 'resolutions_transcription_types', '1'),
   ('17', 'attachment_types', 'SELECT id, attachment_type, CASE WHEN attachment_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_attachment_types ORDER BY prio DESC, attachment_type LIMIT 75;', NULL, 'attachment_type', '0', 'resolutions_attachment_types', '1'),
   ('18', 'reference_types', 'SELECT id, reference_type, CASE WHEN reference_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_reference_types ORDER BY prio DESC, reference_type LIMIT 75;', NULL, 'reference_type', '0', 'resolutions_reference_types', '1'),
-  ('19', 'resolutions_units', 'SELECT id, description, CASE WHEN description LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM apacs_units WHERE collections_id = 555 ORDER BY prio DESC, description LIMIT 75;', NULL, 'description', '0', 'description', '1'),
+  ('19', 'resolutions_units', 'SELECT id, description, CASE WHEN description LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM apacs_units WHERE collections_id = 147 ORDER BY prio DESC, description LIMIT 75;', NULL, 'description', '0', 'description', '1'),
   ('20', 'person_sexes', 'SELECT id, sex, CASE WHEN sex LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_sexes ORDER BY prio DESC, sex LIMIT 75;', NULL, 'sex', '0', 'sex', '1'),
   ('21', 'person_relations', 'SELECT id, relation, CASE WHEN relation LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_relations ORDER BY prio DESC, relation LIMIT 75;', NULL, 'relation', '0', 'relation', '1'),
   ('22', 'person_roles', 'SELECT id, role, CASE WHEN role LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_roles ORDER BY prio DESC, role LIMIT 75;', NULL, 'role', '0', 'role', '1'),
