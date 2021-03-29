@@ -358,7 +358,7 @@ class ConcreteEntries {
 		foreach ($dependedEntities as $dependedEntity) {
 			// Skip or throw exception if data is missing
 			if ($dependedEntity->required == '1' && (!isset($data[$dependedEntity->name]) || $dependedEntity->UserEntryIsEmpty($data[$dependedEntity->name]))) {
-				throw new InvalidArgumentException('Entity data not set: ' . $entity->name);
+				throw new InvalidArgumentException('Entity data not set: ' . $dependedEntity->name);
 			}
 
 			// If entity data is not defined, it can be skipped
