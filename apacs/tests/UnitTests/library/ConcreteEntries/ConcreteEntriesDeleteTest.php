@@ -128,7 +128,7 @@ class ConcreteEntriesDeleteTest extends \UnitTestCase {
 
         $concreteEntries = new ConcreteEntries($this->getDI(), $crudMock);
 
-        $crudMock->expects($this->exactly(8))
+        $crudMock->expects($this->exactly(10))
             ->method('delete')
             ->withConsecutive(
                 ["secondaryTable", 123],
@@ -203,15 +203,15 @@ class ConcreteEntriesDeleteTest extends \UnitTestCase {
             ] 
         ], []);
 
-        // // Parent entity is removed
-        // $concreteEntries->DeleteRemovedSubentries($entity, [
-        //     'PrimaryEntity' => [
-        //         'id' => 12,
-        //         'TertiaryEntity' => [
-        //             'id' => 22,
-        //             'field2' => 'value2'
-        //         ]
-        //     ] 
-        // ], []);
+        // Parent entity is removed
+        $concreteEntries->DeleteRemovedSubentries($entity, [
+            'PrimaryEntity' => [
+                'id' => 12,
+                'TertiaryEntity' => [
+                    'id' => 22,
+                    'field2' => 'value2'
+                ]
+            ] 
+        ], []);
     }
 }
