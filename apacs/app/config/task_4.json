@@ -200,7 +200,7 @@
                 "isPrimaryEntity": 0,
                 "entityKeyName": "complaints_id",
                 "type": "object",
-                "required": 1,
+                "required": 0,
                 "countPerEntry": 1,
                 "guiName": "Klagen",
                 "primaryTableName": "resolutions_complaints",
