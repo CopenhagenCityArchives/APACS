@@ -62,7 +62,7 @@ CREATE TABLE `resolutions_cases` (
   `date` date NOT NULL,
   `start_page` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   `extent` varchar(25) COLLATE utf8_danish_ci NOT NULL,
-  `journal_number` VARCHAR(16) COLLATE utf8_danish_ci NOT NULL,
+  `journal_number` VARCHAR(16) COLLATE utf8_danish_ci DEFAULT NULL,
   `complaints_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
