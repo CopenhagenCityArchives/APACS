@@ -442,7 +442,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^[1-9][0-9]*$/",
-                        "validationMessage": "",
+                        "validationMessage": "Skal være et tal.",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
