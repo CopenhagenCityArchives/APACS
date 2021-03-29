@@ -254,7 +254,7 @@ class ConcreteEntries {
 	public function DeleteSingleEntry(IEntity $entity, Array $entry) {
 		// First delete entries of child entities that depend on this entity
 		foreach ($entity->getChildren() as $child) {
-			if ($child->type != "array") {
+			if ($child->type != "array" || !isset($entry[$child->name])) {
 				continue;
 			}
 
