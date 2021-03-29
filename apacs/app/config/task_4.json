@@ -108,6 +108,29 @@
                 "SOLRFacet": 1,
                 "SOLRResult": 1,
                 "name": "extent"
+            },
+            "5": {
+                "datasources_id": null,
+                "tableName": "resolutions_cases",
+                "fieldName": "journal_number",
+                "hasDecode": 0,
+                "decodeTable": null,
+                "decodeField": null,
+                "codeAllowNewValue": 1,
+                "includeInForm": 1,
+                "formName": "Journalnummer",
+                "formFieldType": "string",
+                "maxLength": 16,
+                "formFieldOrder": 3,
+                "helpText": "Skriv sagens journalnummer.",
+                "placeholder": null,
+                "isRequired": 0,
+                "validationRegularExpression": "/^.+$/",
+                "includeInSOLR": 1,
+                "SOLRFieldName": "case_journal_number",
+                "SOLRFacet": 1,
+                "SOLRResult": 1,
+                "name": "journal_number"
             }
         },
         "entities": [
@@ -1049,6 +1072,9 @@
                 },
                 {
                     "key": "cases.extent"
+                },
+                {
+                    "key": "cases.journal_number"
                 },
                 {
                     "key": "cases.attachments",

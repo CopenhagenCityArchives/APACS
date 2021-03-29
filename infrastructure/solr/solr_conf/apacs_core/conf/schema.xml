@@ -151,6 +151,7 @@
   <field name="transcription_types" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
   <field name="transcriptions" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
   <field name="case_extent" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
+  <field name="case_journal_number" type="string_ci" indexed="true" stored="true" required="false" multiValued="true" />
 
   <field name="complaint_verb" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
   <field name="complaint_subjects" type="string_ci" indexed="true" stored="true" required="false" multiValued="false" />
