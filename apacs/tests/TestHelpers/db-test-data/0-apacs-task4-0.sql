@@ -64,7 +64,9 @@ CREATE TABLE `resolutions_cases` (
   `extent` varchar(25) COLLATE utf8_danish_ci NOT NULL,
   `complaints_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`case_types_id`),
+  INDEX (`complaints_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_attachments` (
@@ -74,7 +76,9 @@ CREATE TABLE `resolutions_attachments` (
   `starbas_id` int(11) DEFAULT NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`cases_id`),
+  INDEX (`attachment_types_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_attachment_types` (
@@ -96,7 +100,9 @@ CREATE TABLE `resolutions_comments` (
   `comment_types_id` int(11) NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`cases_id`),
+  INDEX (`comment_types_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_comment_types` (
@@ -117,7 +123,9 @@ CREATE TABLE `resolutions_complaints` (
   `complaint_purposes_id` int(11) NULL,
   `witnesses` bit(1) NULL,
   `attachments_mentioned` bit(1) NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`complaint_verbs_id`),
+  INDEX (`complaint_purposes_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_subjects` (
@@ -126,7 +134,10 @@ CREATE TABLE `resolutions_complaint_subjects` (
   `complaint_subject_names_id` int(11) NULL,
   `complaint_subject_categories_id` int(11) NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`complaints_id`),
+  INDEX (`complaint_subject_names_id`),
+  INDEX (`complaint_subject_categories_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_subject_categories` (
@@ -166,7 +177,11 @@ CREATE TABLE `resolutions_person_occupations` (
   `person_occupation_types_id` int(11) NULL,
   `person_occupation_categories_id` int(11) NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`persons_id`),
+  INDEX (`person_occupation_relations_id`),
+  INDEX (`person_occupation_types_id`),
+  INDEX (`person_occupation_categories_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_person_occupation_types` (
@@ -195,7 +210,11 @@ CREATE TABLE `resolutions_persons` (
   `person_roles_id` int(11) NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`person_sexes_id`),
+  INDEX (`person_relations_id`),
+  INDEX (`person_roles_id`),
+  INDEX (`cases_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_person_sexes` (
@@ -216,7 +235,9 @@ CREATE TABLE `resolutions_places` (
   `place_neighbourhoods_id` int(11) NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`cases_id`),
+  INDEX (`place_neighbourhoods_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_places_types` (
@@ -241,7 +262,10 @@ CREATE TABLE `resolutions_references` (
   `referenced_unit_id` int(11) DEFAULT NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`cases_id`),
+  INDEX (`reference_types_id`),
+  INDEX (`referenced_unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_reference_types` (
@@ -260,7 +284,11 @@ CREATE TABLE `resolutions_resolutions` (
   `date` date NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`cases_id`),
+  INDEX (`resolution_magistrate_actions_id`),
+  INDEX (`resolution_party_reactions_id`),
+  INDEX (`resolution_types_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_resolution_magistrate_actions` (
@@ -287,7 +315,9 @@ CREATE TABLE `resolutions_transcriptions` (
   `transcription` text COLLATE utf8_danish_ci NULL,
   `cases_id` int(11) NOT NULL,
   `order` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  INDEX (`cases_id`),
+  INDEX (`transcription_types_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_transcription_types` (
