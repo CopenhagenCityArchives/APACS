@@ -253,9 +253,12 @@ class ConcreteEntries {
 	 */
 	public function DeleteSingleEntry(IEntity $entity, Array $entry) {
 		// First delete entries of child entities that depend on this entity
-		foreach (array_filter($entity->getChildren(), function ($child) { return $child->type == "array"; }) as $childEntity) {
-			$childEntries = $entry[$childEntity->name];
-			$this->DeleteArrayEntries($childEntity, $childEntries);
+		foreach ($entity->getChildren() as $child) {
+			if ($child->type != "array") {
+				continue;
+			}
+
+			$this->DeleteArrayEntries($child, $entry[$child->name]);
 		}
 
 		// Delete the entry of the entity itself
@@ -265,10 +268,12 @@ class ConcreteEntries {
 		$this->crud->delete($entity->primaryTableName, $entry['id']);
 
 		// Delete entries that this entry was depending on
-		foreach (array_filter($entity->getChildren(), function ($child) { return $child->type == "object"; }) as $childEntity) {
-			$childEntry = $entry[$childEntity->name];
+		foreach ($entity->getChildren() as $child) {
+			if ($child->type != 'object' || !isset($entry[$child->name])) {
+				continue;
+			}
 
-			$this->DeleteSingleEntry($childEntity, $childEntry);
+			$this->DeleteSingleEntry($child, $entry[$child->name]);
 		}
 	}
 
@@ -277,34 +282,53 @@ class ConcreteEntries {
 	 * subentries that have been removed from the old to the new.
 	 */
 	public function DeleteRemovedSubentries(IEntity $entity, Array $old, Array $new) {
-		foreach ($entity->getChildren() as $child) {
-			if ($child->type == 'object') {
-				// We only care about children that were there before the update
-				if (isset($old[$child->name])) {
-
-					if (!isset($new[$child->name])) {
-						// It was removed, so we delete it.
-						$this->DeleteSingleEntry($child, $old[$child->name]);
-					} else {
-						// Not deleted, recurse to check children of children
-						$this->DeleteRemovedSubentries($child, $old[$child->name], $new[$child->name]);
+		if ($entity->type == 'object') {
+			if (isset($old[$entity->name])) {
+				if (!isset($new[$entity->name])) {
+					$this->DeleteSingleEntry($entity, $old[$entity->name]);
+				} else {
+					foreach ($entity->getChildren() as $child) {
+						$this->DeleteRemovedSubentries($child, $old[$entity->name], $new[$entity->name]);
 					}
 				}
-			} else if ($child->type == 'array') {
-				// We only care about children that were there before the update
-				if (isset($old[$child->name])) {
-
-					if (!isset($new[$child->name])) {
-						// It was removed, so we delete it.
-						$this->DeleteSingleEntry($child, $old[$child->name]);
-					} else {
-						// Not deleted, recurse to check children of children
-						$this->DeleteRemovedSubentries($child, $old[$child->name], $new[$child->name]);
-					}
-				}
-			} else {
-				throw new RuntimeException('Unexpected entity type ' . $child->type);
 			}
+		} else if ($entity->type == 'array') {
+			if (isset($old[$entity->name])) {
+				if (!isset($new[$entity->name])) {
+					$this->DeleteArrayEntries($entity, $old[$entity->name]);
+				} else {
+					$deletedEntries = [];
+					$keptEntries = [];
+					foreach ($old[$entity->name] as $oldEntry) {
+						$oldKept = false;
+						$keptNew = null;
+
+						foreach ($new[$entity->name] as $newEntry) {
+							if (isset($newEntry['id']) && $newEntry['id'] == $oldEntry['id']) {
+								$oldKept = true;
+								$keptNew = $newEntry;
+								break;
+							}
+						}
+
+						if (!$oldKept) {
+							$deletedEntries[] = $oldEntry;
+						} else {
+							$keptEntries[] = [ 'old' => $oldEntry, 'new' => $keptNew ];
+						}
+					}
+					
+					$this->DeleteArrayEntries($entity, $deletedEntries);
+
+					foreach ($keptEntries as $keptEntry) {
+						foreach ($entity->getChildren() as $child) {
+							$this->DeleteRemovedSubentries($child, $keptEntry['old'], $keptEntry['new']);
+						}
+					}
+				}
+			}
+		} else {
+			throw new RuntimeException('Unexpected entity type ' . $entity->type);
 		}
 	}
 
