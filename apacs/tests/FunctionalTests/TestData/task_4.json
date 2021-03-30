@@ -74,7 +74,7 @@
                 "formFieldType": "string",
                 "maxLength": 50,
                 "formFieldOrder": 3,
-                "helpText": "Paginering - fritekst.",
+                "helpText": "Paginering. Fritekst.",
                 "placeholder": null,
                 "isRequired": 1,
                 "validationRegularExpression": "/^.+$/",
@@ -108,6 +108,29 @@
                 "SOLRFacet": 1,
                 "SOLRResult": 1,
                 "name": "extent"
+            },
+            "5": {
+                "datasources_id": null,
+                "tableName": "resolutions_cases",
+                "fieldName": "journal_number",
+                "hasDecode": 0,
+                "decodeTable": null,
+                "decodeField": null,
+                "codeAllowNewValue": 1,
+                "includeInForm": 1,
+                "formName": "Journalnummer",
+                "formFieldType": "string",
+                "maxLength": 16,
+                "formFieldOrder": 3,
+                "helpText": "Skriv sagens journalnummer.",
+                "placeholder": null,
+                "isRequired": 0,
+                "validationRegularExpression": "/^.+$/",
+                "includeInSOLR": 1,
+                "SOLRFieldName": "case_journal_number",
+                "SOLRFacet": 1,
+                "SOLRResult": 1,
+                "name": "journal_number"
             }
         },
         "entities": [
@@ -177,7 +200,7 @@
                 "isPrimaryEntity": 0,
                 "entityKeyName": "complaints_id",
                 "type": "object",
-                "required": 1,
+                "required": 0,
                 "countPerEntry": 1,
                 "guiName": "Klagen",
                 "primaryTableName": "resolutions_complaints",
@@ -419,7 +442,7 @@
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^[1-9][0-9]*$/",
-                        "validationMessage": "",
+                        "validationMessage": "Skal være et tal, der ikke starter med 0.",
                         "includeInSOLR": 0,
                         "SOLRFieldName": null,
                         "SOLRFacet": 0,
@@ -477,7 +500,7 @@
                         "formFieldType": "string",
                         "maxLength": 100,
                         "formFieldOrder": 2,
-                        "helpText": "Henvisning frem",
+                        "helpText": "Henvisning frem. Fritekst.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
@@ -500,7 +523,7 @@
                         "formFieldType": "string",
                         "maxLength": 100,
                         "formFieldOrder": 3,
-                        "helpText": "Henvisning frem",
+                        "helpText": "Henvisning tilbage. Fritekst.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/.*/",
@@ -523,7 +546,7 @@
                         "formFieldType": "typeahead",
                         "minimumInputLength": 0,
                         "formFieldOrder": 4,
-                        "helpText": "Starbas ID-nummer for bestillingsenheden der henvises til.",
+                        "helpText": "Bestillingsenheden der henvises til.",
                         "placeholder": null,
                         "isRequired": 0,
                         "validationRegularExpression": "/^.+$/",
@@ -1049,6 +1072,9 @@
                 },
                 {
                     "key": "cases.extent"
+                },
+                {
+                    "key": "cases.journal_number"
                 },
                 {
                     "key": "cases.attachments",
