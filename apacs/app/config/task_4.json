@@ -1083,10 +1083,6 @@
                 {
                     "key": "cases.references",
                     "add": "Tilføj henvisning"
-                },
-                {
-                    "key": "cases.complaint.subjects",
-                    "add": "Tilføj emne"
                 }
             ]
         },
