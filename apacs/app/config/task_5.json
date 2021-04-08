@@ -1,0 +1,105 @@
+{
+    "name": "Politiets Registerblade",
+    "description": "Rettelser i indtastninger af Politiets Registerblade",
+    "parentTask": null,
+    "entity": {
+        "name": "registerblad",
+        "isPrimaryEntity": 1,
+        "entityKeyName": "id",
+        "type": "object",
+        "required": 1,
+        "countPerEntry": 1,
+        "guiName": "Registerblad",
+        "primaryTableName": "PRB_registerblad",
+        "includeInSOLR": 0,
+        "allowNewValues": 1,
+        "fields": {
+            "1": {
+                "tableName": "PRB_registerblad",
+                "fieldName": "saerlige_bemaerkninger",
+                "includeInForm": 1,
+                "formName": "Særlige bemærkninger",
+                "formFieldType": "string",
+                "maxLength": 250,
+                "formFieldOrder": 1,
+                "helpText": "Skriv særlige bemærkninger.",
+                "minimumInputLength": 0,
+                "isRequired": 0,
+                "includeInSOLR": 0
+            }
+        },
+        "entities": [
+            {
+                "name": "personer",
+                "isPrimaryEntity": 0,
+                "entityKeyName": "registerblad_id",
+                "type": "array",
+                "countPerEntry": 1,
+                "guiName": "Personer",
+                "primaryTableName": "PRB_person",
+                "includeInSOLR": 0,
+                "fields": [
+                    {
+                        "datasources_id": null,
+                        "hasDecode": 0,
+                        "decodeTable": null,
+                        "decodeField": null,
+                        "tableName": "PRB_person",
+                        "fieldName": "fornavne",
+                        "includeInForm": 1,
+                        "formName": "Fornavne",
+                        "formFieldType": "string",
+                        "maxLength": 80,
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv alle personens fornavne.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord",
+                        "includeInSOLR": 0,
+                        "SOLRFieldName": null,
+                        "SOLRFacet": 0,
+                        "SOLRResult": 0
+                    },
+                    {
+                        "datasources_id": null,
+                        "hasDecode": 0,
+                        "decodeTable": null,
+                        "decodeField": null,
+                        "tableName": "PRB_person",
+                        "fieldName": "efternavn",
+                        "includeInForm": 1,
+                        "formName": "Efternavne",
+                        "formFieldType": "string",
+                        "maxLength": 80,
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv personens efternavn.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord",
+                        "includeInSOLR": 0,
+                        "SOLRFieldName": null,
+                        "SOLRFacet": 0,
+                        "SOLRResult": 0
+                    }
+                ],
+                "entities": null
+            }
+        ]
+    },
+    "steps": [
+        {
+            "name": "Personer",
+            "description": "De registrerede personer",
+            "fields": [
+                {
+                    "key": "registerblad.personer",
+                    "items": [
+                        "registerblad.personer[].fornavne",
+                        "registerblad.personer[].efternavn",
+                    ],
+                    "add": "Tilføj person"
+                }
+            ]
+        }
+    ]
+}
