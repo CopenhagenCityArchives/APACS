@@ -42,7 +42,7 @@ services:
     build:
       context: ./infrastructure/composer/
       dockerfile: Dockerfile
-    command: install
+    command: install --ignore-platform-reqs
     restart: 'no'
     volumes:
       - ./apacs:/app
