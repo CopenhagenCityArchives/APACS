@@ -141,6 +141,14 @@ try {
 
 	$app->mount($info);
 
+	$files = new MicroCollection();
+	$files->setHandler(new GetFileController());
+	
+	$files->get('/file/{id:[0-9]+}', 'GetFileById');
+	$files->get('/file', 'GetFileByPath'); // /file?path={pathToFile}
+
+	$app->mount($files);
+	
 	$users = new MicroCollection();
 	$users->setHandler(new UsersController());
 		

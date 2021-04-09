@@ -4,7 +4,7 @@ use Aws\S3\S3Client;
 
 class GetFileController extends MainController {
 
-	public function GetFileID($fileId) {
+	public function GetFileById($fileId) {
 		$starttime = microtime(true);
 
 		$page = Pages::findFirstById($fileId);
