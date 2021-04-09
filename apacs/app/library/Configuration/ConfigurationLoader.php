@@ -114,7 +114,7 @@ class ConfigurationLoader {
 
 		$conf['objects_query'] = 'select apacs_pages.id as id, apacs_collections.name, apacs_units.id as units_id, apacs_units.level1_value, apacs_units.level2_value, apacs_units.level3_value, 
 			
-			IF(s3 = 1, apacs_pages.image_url, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id)) as imageURL,
+			IF(s3 = 1, apacs_pages.image_url, CONCAT(\'https://api.kbharkiv.dk/file/\', apacs_pages.id)) as imageURL,
 			
 			apacs_units.id as starbas_id, apacs_pages.s3
 
