@@ -13,4 +13,4 @@ INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (
 INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (1, 1, 'test unit 1',1000);
 INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (2, 1, 'test unit 2',1000);
 INSERT INTO `apacs_tasks_units` (`id`,`tasks_id`,`units_id`,`pages_done`,`columns`,`rows`,`index_active`) VALUES (124,1,123,678,2,3,1);
-INSERT INTO `apacs_users` (`id`,`username`,`auth0_user_id`) VALUES (653,'testuser1',NULL),(619,'testuser2',NULL),(2348, 'test@test.com','auth0|5ea72fe6c10da20c1a8c88f3');
+INSERT INTO `apacs_users` (`id`,`username`,`auth0_user_id`) VALUES (1,'testuser',NULL),(653,'testuser1',NULL),(619,'testuser2',NULL),(2348, 'test@test.com','auth0|5ea72fe6c10da20c1a8c88f3');

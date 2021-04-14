@@ -33,6 +33,11 @@ class TestDatabaseManager {
 		}
 
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-apacs-task1-config.sql'));
+		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/99-extra-burial-extra-test-data.sql'));
+	}
+
+	public function createTask3Configuration() {
+		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-apacs-task3.sql'));
 	}
 
 	public function createApacsMetadataForEntryPost10000Task1(){
@@ -56,7 +61,6 @@ class TestDatabaseManager {
 	
 	public function createDataListEventsStructure() {
 		$this->di->get('db')->query(file_get_contents(__DIR__ . '/db-test-data/0-Datalist-Events-structure.sql'));
-
 	}
 
 	public function createEventEntries() {
