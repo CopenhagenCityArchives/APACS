@@ -19,7 +19,7 @@ LIMIT 0, 400
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 
-INSERT INTO `PRB_station` (`station_id`,`nummer`,`navn`,`beskrivelse`) VALUES
+INSERT INTO `PRB_station` (`id`,`nummer`,`navn`,`beskrivelse`) VALUES
     (1,4,'4 (Amager) - her kan tastes','station 4 (Amager)'),
     (11,11,'Dødeblade (indeholder afdøde i perioden) - færdigt','registerblade indeholdende afdøde'),
     (32,8,'8 (Ydre Nørrebro og Brønshøj-Husum) - fejlrettes','station 8 (Ydre Nørrebro og Brønshøj-Husum)');

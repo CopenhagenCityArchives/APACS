@@ -18,7 +18,7 @@ LIMIT 0, 400
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 
-INSERT INTO `PRB_filmrulle` (`filmrulle_id`,`nummer`,`note`,`station_id`,`registerblade`,`grundregistreringer`,`komplette_registreringer`) VALUES
+INSERT INTO `PRB_filmrulle` (`id`,`nummer`,`note`,`station_id`,`registerblade`,`grundregistreringer`,`komplette_registreringer`) VALUES
     (1,'0024','Stinson-Sø, Svendsen (A-V), Sørensen (Aa-X) Thomsen (Aa-C) samt div',1,4536,4527,4536),
     (13,'0025','Vikkelsøe-Vaa, Ut-Ub, Tø-Taa, Thomsen (V-D) samt div. Bemærk filmrullen går baglæns',1,3741,3720,3741),
     (775,'0005','Christensen (Juul - Øjvind); Christiansen; Ebbesen - Eitved.',32,3717,3707,3717),

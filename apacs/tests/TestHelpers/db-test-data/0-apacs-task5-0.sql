@@ -198,23 +198,23 @@ CREATE TABLE `PRB_registerblad` (
 ) ENGINE=InnoDB AUTO_INCREMENT=3468260 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `PRB_station` (
-  `station_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `nummer` tinyint(4) NOT NULL,
   `navn` char(50) NOT NULL,
   `beskrivelse` char(60) NOT NULL,
-  PRIMARY KEY (`station_id`),
+  PRIMARY KEY (`id`),
   KEY `nummer` (`nummer`)
 ) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `PRB_filmrulle` (
-  `filmrulle_id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `nummer` char(6) NOT NULL,
   `note` char(120) NOT NULL,
   `station_id` mediumint(9) NOT NULL,
   `registerblade` mediumint(9) NOT NULL DEFAULT '0',
   `grundregistreringer` mediumint(9) NOT NULL DEFAULT '0',
   `komplette_registreringer` mediumint(9) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`filmrulle_id`),
+  PRIMARY KEY (`id`),
   KEY `station_id` (`station_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=853 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
