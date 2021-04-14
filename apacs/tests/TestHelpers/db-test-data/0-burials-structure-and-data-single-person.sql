@@ -1896,7 +1896,9 @@ INSERT INTO `burial_deathcauses` (`id`,`deathcause`,`deathcause_danish`,`priorit
 (16,'Ulykkestilfælde','Ulykkestilfælde',2),
 (17,'Afkræftelse','Afkræftelse',2),
 (18,'Absces (Abscessus)','Absces (Abscessus)',2),
-(19, 'Ascites', 'Ascites', 2);
+(19,'Ascites','Ascites',2),
+(20,'Slag','Slag',2),
+(21,'Furunkler','Furunkler',2);
 /*!40000 ALTER TABLE `burial_deathcauses` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1923,7 +1925,9 @@ CREATE TABLE `burial_deathplaces` (
 
 LOCK TABLES `burial_deathplaces` WRITE;
 /*!40000 ALTER TABLE `burial_deathplaces` DISABLE KEYS */;
-INSERT INTO `burial_deathplaces` (`deathplace`) VALUES ('Københavns Amtssygehus Lyngby');
+INSERT INTO `burial_deathplaces` (`deathplace`) VALUES
+  ('Københavns Amtssygehus Lyngby'),
+  ('Gasværkshavnen');
 /*!40000 ALTER TABLE `burial_deathplaces` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -2939,7 +2943,10 @@ LOCK TABLES `burial_positions` WRITE;
 INSERT INTO `burial_positions` (`id`,`position`,`priority`) VALUES (1718,'Værtshusholder (Wærtshuusholder)',2),
 (1719,'Grosserer',2),
 (1720,'Handelsagent',2),
-(1721,'Skibsfører',2);
+(1721,'Skibsfører',2),
+(1722,'Skibskok',2),
+(1723,'Fabrikant',2),
+(1724,'Barnepige',2);
 /*!40000 ALTER TABLE `burial_positions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -3017,7 +3024,9 @@ CREATE TABLE `burial_streets` (
 LOCK TABLES `burial_streets` WRITE;
 /*!40000 ALTER TABLE `burial_streets` DISABLE KEYS */;
 INSERT INTO `burial_streets` (`id`,`street`,`code`,`hoods_id`,`hood`,`streetAndHood`,`priority`) VALUES (7782,'Ryesgade','6040',11,'Nørrebro','Ryesgade',2),
-(7783,'testgade','6041',11,'Nørrebro','Falkoner Allé',2);
+(7783,'testgade','6041',11,'Nørrebro','Falkoner Allé',2),
+(7784,'testgade','6041',14,'Vesterbro','Vesterbrogade',2),
+(7785,'tesgade','6041',9,'Indre by','Købmagergade',2);
 /*!40000 ALTER TABLE `burial_streets` ENABLE KEYS */;
 UNLOCK TABLES;
 
