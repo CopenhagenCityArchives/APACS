@@ -83,10 +83,73 @@
                     }
                 ],
                 "entities": null
+            },
+            {
+                "name": "adresser",
+                "isPrimaryEntity": 0,
+                "entityKeyName": "registerblad_id",
+                "type": "array",
+                "guiName": "Adresser",
+                "primaryTableName": "PRB_adresse",
+                "fields": [
+                    {
+                        "datasources_id": 37,
+                        "hasDecode": 1,
+                        "decodeTable": "PRB_vej",
+                        "decodeField": "navn",
+                        "codeAllowNewValue": 0,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "vej_id",
+                        "includeInForm": 1,
+                        "formName": "Vej",
+                        "formFieldType": "typeahead",
+                        "maxLength": 65,
+                        "formFieldOrder": 1,
+                        "helpText": "Begynd at skrive for at vælge vejen fra listen.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord",
+                        "includeInSOLR": 0,
+                        "SOLRFieldName": null,
+                        "SOLRFacet": 0,
+                        "SOLRResult": 0
+                    },
+                    {
+                        "formName": "Vejnummer",
+                        "hasDecode": 0,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "vejnummer",
+                        "formFieldType": "string",
+                        "validationRegularExpression": "/^[1-9]+[0-9]*$/",
+                        "validationMessage": "Skal være et tal",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Vejnummerbogstav",
+                        "hasDecode": 0,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "vejnummerbogstav",
+                        "formFieldType": "string",
+                        "validationRegularExpression": "/^[a-zA-Z.\\-½æøåÆØÅ]$/",
+                        "validationMessage": "Må indeholde bogstaver, punktummer, og ½.",
+                        "includeInSOLR": 0
+                    }
+                ],
+                "entities": null
             }
         ]
     },
     "steps": [
+        {
+            "name": "Registerbladet",
+            "description": "Selve registerbladet",
+            "fields": [
+                {
+                    "key": "registerblad.saerlige_bemaerkninger",
+                    "type": "textarea"
+                }
+            ]
+        },
         {
             "name": "Personer",
             "description": "De registrerede personer",
@@ -95,9 +158,24 @@
                     "key": "registerblad.personer",
                     "items": [
                         "registerblad.personer[].fornavne",
-                        "registerblad.personer[].efternavn",
+                        "registerblad.personer[].efternavn"
                     ],
                     "add": "Tilføj person"
+                }
+            ]
+        },
+        {
+            "name": "Adresser",
+            "description": "De registrerede adresser",
+            "fields": [
+                {
+                    "key": "registerblad.adresser",
+                    "items": [
+                        "registerblad.adresser[].navn",
+                        "registerblad.adresser[].vejnummer",
+                        "registerblad.adresser[].vejnummerbogstav"
+                    ],
+                    "add": "Tilføj adresse"
                 }
             ]
         }

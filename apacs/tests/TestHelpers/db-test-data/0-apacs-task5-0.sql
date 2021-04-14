@@ -13,8 +13,9 @@
 /*!40101 SET character_set_client = utf8 */;
 
 
--- INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `includeValuesInForm`, `dbTableName`, `isPublicEditable`) VALUES
---   ('36', 'case_types', 'SELECT id, case_type, CASE WHEN case_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_case_types ORDER BY prio DESC, case_type LIMIT 75;', NULL, 'case_type', '0', 'resolutions_case_types', '1');
+INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `includeValuesInForm`, `dbTableName`, `isPublicEditable`) VALUES
+  ('37', 'prb_vej', 'SELECT id, navn, CASE WHEN navn LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM PRB_vej ORDER BY prio DESC, navn LIMIT 75;', NULL, 'navn', '0', 'PRB_vej', '0');
+
 INSERT INTO `apacs_tasks` (`id`, `name`, `description`, `collection_id`, `primaryEntity_id`) VALUES
     (5, 'Politiets Registerblade', 'Rettelse af Politiets Registerblade', 76, NULL);
 
