@@ -92,3 +92,10 @@ $di->setShared('AccessController', function () use ($di) {
 
 	return new $className($di);
 });
+
+$di->setShared('s3Config', function () {
+	return [
+		'region' => 'eu-west-1',
+		// credentials are automatically loaded from environment
+	];
+});
