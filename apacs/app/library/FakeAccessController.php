@@ -29,7 +29,7 @@ class FakeAccessController implements IAccessController {
 		return true;
 	}
 
-	public function IsSuperUser() {
+	public function IsSuperUser($taskId) {
 		return true;
 	}
 

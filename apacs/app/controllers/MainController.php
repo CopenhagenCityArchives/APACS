@@ -19,11 +19,22 @@ class MainController extends \Phalcon\Mvc\Controller {
 	 * Checks if the user is logged in.
 	 * Dies if authentication is required when the user is not logged in
 	 * @param boolean $authenticationRequired Is authentication required?
+	 * @param mixed $superUserTaskId A task id that the user is required to be super user for. Null for any, false for not required.
 	 */
-	public function RequireAccessControl($authenticationRequired = true) {
+	public function RequireAccessControl($authenticationRequired = true, $superUserTaskId = false) {
+		// Check that the user is authenticated
 		if (!$this->auth->AuthenticateUser() && $authenticationRequired == true) {
 			$this->response->setStatusCode(401, 'Unauthorized access');
 			$this->response->setJsonContent(['message' => $this->auth->GetMessage()]);
+			$this->response->send();
+			die();
+		}
+
+		// If a super user task id is given, check if the user is super user for that task
+		// or if null, for any task
+		if ($superUserTaskId != false && !$this->auth->isSuperUser($superUserTaskId)) {
+			$this->response->setStatusCode(401, 'Unauthorized access');
+			$this->response->setJsonContent(['message' => 'Must be super user.']);
 			$this->response->send();
 			die();
 		}

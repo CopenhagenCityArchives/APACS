@@ -12,7 +12,7 @@ class IndexDataController extends MainController {
 		$this->RequireAccessControl(true);
 
 		try{
-			if(!$this->auth->IsSuperUser()){
+			if(!$this->auth->IsSuperUser(null)){
 				throw new Exception("Only superusers are allowed to change datasource values");
 			}
 
@@ -63,7 +63,7 @@ class IndexDataController extends MainController {
 		$this->RequireAccessControl(true);
 
 		try{
-			if(!$this->auth->IsSuperUser()){
+			if(!$this->auth->IsSuperUser(null)){
 				throw new Exception("Only superusers are allowed to change datasource values");
 			}
 
@@ -294,16 +294,13 @@ class IndexDataController extends MainController {
 	 * @param int $entryId The id of the entry to update. If not given, a new Entry is created
 	 */
 	public function SaveEntry($entryId = null) {
-
-		$this->RequireAccessControl();
-
-
-		//This is incomming data!
 		$jsonData = $this->GetAndValidateJsonPostData();
 
 		if (!isset($jsonData['task_id']) || !isset($jsonData['post_id'])) {
 			throw new Exception('task_id and post_id are required');
 		}
+
+		$this->RequireAccessControl(true, $jsonData['task_id'] == 4 ? 4 : false);
 
 		$this->db = $this->getDI()->get('db');
 
