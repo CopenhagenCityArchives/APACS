@@ -117,6 +117,7 @@
                     {
                         "formName": "Vejnummer",
                         "hasDecode": 0,
+                        "includeInForm": 1,
                         "tableName": "PRB_adresse",
                         "fieldName": "vejnummer",
                         "formFieldType": "string",
@@ -127,10 +128,11 @@
                     {
                         "formName": "Vejnummerbogstav",
                         "hasDecode": 0,
+                        "includeInForm": 1,
                         "tableName": "PRB_adresse",
                         "fieldName": "vejnummerbogstav",
                         "formFieldType": "string",
-                        "validationRegularExpression": "/^[a-zA-Z.\\-½æøåÆØÅ]$/",
+                        "validationRegularExpression": "/^[a-zA-Z.\\-½æøåÆØÅ]+$/",
                         "validationMessage": "Må indeholde bogstaver, punktummer, og ½.",
                         "includeInSOLR": 0
                     }
