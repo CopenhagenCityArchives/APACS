@@ -533,12 +533,14 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function CreateOrUpdatePost($id = null) {
-		$this->RequireAccessControl();
-
 		$taskId = $this->request->getQuery('task_id', 'int');
 		if (is_null($taskId)) {
 			throw new InvalidArgumentException("task_id required");
 		}
+
+		// TODO: More finely grained permission system, to prevent hard-coding
+		//       Require super user for task_id 4
+		$this->RequireAccessControl(true, $taskId == 4 ? 4 : false);
 
 		$input = $this->GetAndValidateJsonPostData();
 
@@ -619,7 +621,9 @@ class CommonInformationsController extends MainController {
 
 	//New hard Delete
 	public function DeletePost($id) {
-		$this->RequireAccessControl();
+		// Requires super user privileges for any task (therefore null)
+		// TODO: Should require super user for the tasks the entries belong to
+		$this->RequireAccessControl(true, null);
 		$taskconfigLoader = new TaskConfigurationLoader();
 
 		try {

@@ -14,5 +14,5 @@ interface IAccessController {
 
 	public function UserCanEdit($entry); //: bool;
 
-	public function IsSuperUser(); //: bool;
+	public function IsSuperUser($taskId); //: bool;
 }
