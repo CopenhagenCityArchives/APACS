@@ -40,7 +40,8 @@ class DBConfigurationLoader {
 		$tasks = Tasks::find();
 		$tasksData = [];
 		foreach ($tasks->toArray() as $taskData) {
-			$taskData['multiPost'] = $taskData['id'] == 4;
+			$taskId = $taskData['id'];
+			$taskData['multiPost'] = $taskId == 4 || $taskId == 5;
 			$tasksData[] = $taskData;
 		}
 		return $tasksData;
@@ -49,7 +50,7 @@ class DBConfigurationLoader {
 	public function GetTask($taskId) {
 		$task = Tasks::findFirstById($taskId);
 		$taskData = $task->toArray();
-		$taskData['multiPost'] = $taskId == 4;
+		$taskData['multiPost'] = $taskId == 4 || $taskId == 5;
 		return $taskData;
 	}
 
