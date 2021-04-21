@@ -325,8 +325,6 @@ class CommonInformationsController extends MainController {
 	}
 
 	public function GetPostAreas($postId) {
-		$this->RequireAccessControl();
-
 		$post = Posts::findFirst([
 			'conditions' => 'id = :postId:',
 			'bind' => ['postId' => $postId],
