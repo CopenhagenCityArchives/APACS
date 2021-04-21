@@ -50,7 +50,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $inputData = json_decode(file_get_contents(__DIR__ . '/TestData/entry_save.json'), true);
 
         // Setup and save  
-        $this->assertTrue($this->concreteEntry->SaveEntriesForTask($entity, $inputData)>0);
+        $this->assertTrue($this->concreteEntry->SaveEntriesForTask($entity, $inputData, null)>0);
     }
 
     public function test_LoadEntry_ReturnEntry(){
@@ -72,7 +72,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $inputData = json_decode(file_get_contents(__DIR__ . '/TestData/entry_save.json'), true);
 
         // Save concrete entry
-        $savedId = $this->concreteEntry->SaveEntriesForTask($entity, $inputData);
+        $savedId = $this->concreteEntry->SaveEntriesForTask($entity, $inputData, null);
 
         // Load  
         $loadedEntry = $this->concreteEntry->LoadEntry($entity, $savedId, true); 
@@ -108,7 +108,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         // Input data
         $inputData = json_decode(file_get_contents(__DIR__ . '/TestData/entry_save.json'), true);
         // Save  
-        $savedId = $this->concreteEntry->SaveEntriesForTask($entity, $inputData);
+        $savedId = $this->concreteEntry->SaveEntriesForTask($entity, $inputData, null);
 
         // Load and modify entry
         $loadedEntry = $this->concreteEntry->LoadEntry($entity, $savedId, true); 
@@ -118,7 +118,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $modifiedEntry['persons']['deathcauses'][0]['deathcause'] = 'Absces (Abscessus)';
 
         //  Update entry
-        $updatedId = $this->concreteEntry->SaveEntriesForTask($entity, $modifiedEntry);
+        $updatedId = $this->concreteEntry->SaveEntriesForTask($entity, $modifiedEntry, null);
 
         //  Should keep id
         $this->assertEquals($savedId, $updatedId);

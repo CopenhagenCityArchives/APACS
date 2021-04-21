@@ -389,10 +389,15 @@ class BurialTestCasesTest extends \UnitTestCase
         $getEntriesResponseData['persons']['deathcauses'] = [
             0 => [ 'deathcause' => 'Furunkler' ]
         ];
+
+        // simulate burial deleted by removing all fields
+        $getEntriesResponseData['persons']['burials'] = [ 'id' => $getEntriesResponseData['persons']['burials']['id'] ];
+
         $putEntriesEditResponse = $this->http->request('PUT', 'entries/' . $entryId, [
             'json' => $getEntriesResponseData
         ]);
         $this->assertEquals(200, $putEntriesEditResponse->getStatusCode());
+
         $putEntriesEditResponseData = json_decode((string)$putEntriesEditResponse->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertArrayHasKey('solr_id', $putEntriesEditResponseData);
@@ -405,7 +410,9 @@ class BurialTestCasesTest extends \UnitTestCase
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $expectedComment = 'Gosmer Kirke tjente som gravkirke for herskaberne på herregårdene Rathlousdal og Gersdorffslund. På tårnets nordside lå der indtil 1866 et gravkapel, som anvendtes af slægten Holstein-Rathlou. Kisterne her blev dog 1857 overført til et nyopført gravkapel i lystskoven ved Rathlousdal. // Se KB: https://www.sa.dk/ao-soegesider/billedviser?bsid=167458#167458,28115873, har også navnet Emil';;
         $this->assertEquals($expectedComment, $getEditedEntriesResponseData['persons']['comment']);
+        $this->assertCount(1, $getEditedEntriesResponseData['persons']['deathcauses']);
         $this->assertEquals('Furunkler', $getEditedEntriesResponseData['persons']['deathcauses'][0]['deathcause']);
+        $this->assertNotContains('burials', $getEditedEntriesResponseData['persons']);
     }
 
     public function test_SaveLoadSearchEditErrorReport_1c_2_3c_5() {
@@ -542,10 +549,15 @@ class BurialTestCasesTest extends \UnitTestCase
 
         /* Edit the post */
         $getEntriesResponseData['persons']['firstnames'] = 'Test';
+
+        // simulate burial deleted completely
+        $getEntriesResponseData['persons']['burials'] = null;
+
         $putEntriesEditResponse = $this->http->request('PUT', 'entries/' . $entryId, [
             'json' => $getEntriesResponseData
         ]);
         $this->assertEquals(200, $putEntriesEditResponse->getStatusCode());
+
         $putEntriesEditResponseData = json_decode((string)$putEntriesEditResponse->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertArrayHasKey('solr_id', $putEntriesEditResponseData);
@@ -557,6 +569,7 @@ class BurialTestCasesTest extends \UnitTestCase
         $getEditedEntriesResponseData = json_decode((string)$getEditedEntriesResponse->getBody(), true);
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");
         $this->assertEquals('Test', $getEditedEntriesResponseData['persons']['firstnames']);
+        $this->assertNotContains('burials', $getEditedEntriesResponseData['persons']);
 
         /* Create an error report */
         $reportData = [

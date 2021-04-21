@@ -281,54 +281,40 @@ class ConcreteEntries {
 	 * Traverses the old entry data and new entry data simultaneously, finding the
 	 * subentries that have been removed from the old to the new.
 	 */
-	public function DeleteRemovedSubentries(IEntity $entity, Array $old, Array $new) {
-		if ($entity->type == 'object') {
-			if (isset($old[$entity->name])) {
-				if (!isset($new[$entity->name])) {
-					$this->DeleteSingleEntry($entity, $old[$entity->name]);
-				} else {
-					foreach ($entity->getChildren() as $child) {
-						$this->DeleteRemovedSubentries($child, $old[$entity->name], $new[$entity->name]);
-					}
-				}
-			}
-		} else if ($entity->type == 'array') {
-			if (isset($old[$entity->name])) {
-				if (!isset($new[$entity->name])) {
-					$this->DeleteArrayEntries($entity, $old[$entity->name]);
-				} else {
-					$deletedEntries = [];
-					$keptEntries = [];
-					foreach ($old[$entity->name] as $oldEntry) {
-						$oldKept = false;
-						$keptNew = null;
-
-						foreach ($new[$entity->name] as $newEntry) {
-							if (isset($newEntry['id']) && $newEntry['id'] == $oldEntry['id']) {
-								$oldKept = true;
-								$keptNew = $newEntry;
-								break;
-							}
-						}
-
-						if (!$oldKept) {
-							$deletedEntries[] = $oldEntry;
-						} else {
-							$keptEntries[] = [ 'old' => $oldEntry, 'new' => $keptNew ];
-						}
-					}
-					
-					$this->DeleteArrayEntries($entity, $deletedEntries);
-
-					foreach ($keptEntries as $keptEntry) {
-						foreach ($entity->getChildren() as $child) {
-							$this->DeleteRemovedSubentries($child, $keptEntry['old'], $keptEntry['new']);
-						}
-					}
-				}
-			}
-		} else {
+	public function DeleteRemovedArrayItems(IEntity $entity, Array $old, $new) {
+		if ($entity->type != 'array') {
 			throw new RuntimeException('Unexpected entity type ' . $entity->type);
+		}
+
+		if (!isset($new)) {
+			$this->DeleteArrayEntries($entity, $old);
+		} else {
+			$deletedEntries = [];
+			foreach ($old as $oldEntry) {
+				$oldKept = false;
+				$newCorresponding = null;
+
+				foreach ($new as $newEntry) {
+					if (isset($newEntry['id']) && $newEntry['id'] == $oldEntry['id']) {
+						$oldKept = true;
+						$newCorresponding = $newEntry;
+						break;
+					}
+				}
+
+				if (!$oldKept) {
+					$deletedEntries[] = $oldEntry;
+				} else {
+					foreach ($entity->getChildren() as $childEntity) {
+						if ($childEntity->type != 'array' || !isset($oldEntry[$childEntity->name])) {
+							continue;
+						}
+
+						$this->DeleteRemovedArrayItems($childEntity, $oldEntry[$childEntity->name], $newCorresponding[$childEntity->name]);
+					}
+				}
+			}
+			$this->DeleteArrayEntries($entity, $deletedEntries);
 		}
 	}
 
@@ -342,7 +328,7 @@ class ConcreteEntries {
 	 * 
 	 * @return int The primary key id of the created entry.
 	 */
-	public function Save(IEntity $entity, Array $data) {
+	public function Save(IEntity $entity, Array $data, $oldData) {
 		if (!$entity->isDataValid($data)) {
 			throw new InvalidArgumentException('Could not validate data for entity ' . $entity->name . '. Validation Error: ' . $entity->GetValidationStatus());
 		}
@@ -355,26 +341,19 @@ class ConcreteEntries {
 
 		// Save the child entities that must be saved before this one.
 		$dependedsSaved = [];
+		$dependedsToDelete = [];
 		foreach ($dependedEntities as $dependedEntity) {
 			// Skip or throw exception if data is missing
 			if ($dependedEntity->required == '1' && (!isset($data[$dependedEntity->name]) || $dependedEntity->UserEntryIsEmpty($data[$dependedEntity->name]))) {
 				throw new InvalidArgumentException('Entity data not set: ' . $dependedEntity->name);
 			}
 
-			// If entity data is not defined, it can be skipped
-			if (!isset($data[$dependedEntity->name])) {
-				continue;
-			}
-
-			// If the user entry is empty, delete the entry for the depended on entity, and continue
-			if ($dependedEntity->UserEntryIsEmpty($data[$dependedEntity->name])) {
-				// Delete entity id empty but id is set
-				if (isset($data[$dependedEntity->name]['id'])){
-					if ($dependedEntity->type == 'array') {
-						$this->DeleteArrayEntries($dependedEntity, $data[$dependedEntity->name]);
-					} else {
-						$this->DeleteSingleEntry($dependedEntity, $data[$dependedEntity->name]);
-					}
+			if (!isset($data[$dependedEntity->name]) || $dependedEntity->UserEntryIsEmpty($data[$dependedEntity->name])) {
+				if (isset($oldData[$dependedEntity->name])) {
+					$dependedsToDelete[] = [
+						'entity' => $dependedEntity,
+						'entry' => $oldData[$dependedEntity->name]
+					];
 				}
 
 				continue;
@@ -382,11 +361,19 @@ class ConcreteEntries {
 
 			$dependedData = $data[$dependedEntity->name];
 			$dependedsSaved[] = [
-				'id' => $this->Save($dependedEntity, $dependedData),
+				'id' => $this->Save($dependedEntity, $dependedData, null),
 				'entity' => $dependedEntity
 			];
 		}
-		
+
+		// Delete removed array items recursively
+		if (!is_null($oldData)) {
+			foreach ($dependingEntities as $dependingEntity) {
+				if (isset($oldData[$dependingEntity->name])) {
+					$this->DeleteRemovedArrayItems($dependingEntity, $oldData[$dependingEntity->name], $data[$dependingEntity->name]);
+				}
+			}
+		}
 
 		// Decoding and saving code values
 		foreach ($entity->getFields() as $field) {
@@ -447,6 +434,11 @@ class ConcreteEntries {
 		// Get the data to save from the Entity fields
 		$saveData = $this->CreateFieldValueAssociativeArray($fields, $data);
 
+		// Remove the ids of the depended (1-1) entities that are to be deleted
+		foreach ($dependedsToDelete as $dependedToDelete) {
+			$saveData[$dependedToDelete['entity']->entityKeyName] = null;
+		}
+
 		// Add the ids of the depended (1-1) entities to the save data
 		foreach ($dependedsSaved as $dependedSaved) {
 			$saveData[$dependedSaved['entity']->entityKeyName] = $dependedSaved['id'];
@@ -482,11 +474,16 @@ class ConcreteEntries {
 				// Set the identifier of the parent entity
 				$item[$dependingEntity->entityKeyName] = $newId;
 
-				//TODO: Hardcoded ordering based on the order of the  rows in the array
+				//TODO: Hardcoded ordering based on the order of the rows in the array
 				$item['order'] = $i;
 
-				$this->Save($dependingEntity, $item);
+				$this->Save($dependingEntity, $item, $oldData[$dependingEntity->name]);
 			}
+		}
+
+		// Remove deleted children that were depended by this object (but not anymore after id's were removed)
+		foreach ($dependedsToDelete as $dependedToDelete) {
+			$this->DeleteSingleEntry($dependedToDelete['entity'], $dependedToDelete['entry']);
 		}
 		
 		return $newId;
@@ -588,14 +585,14 @@ class ConcreteEntries {
 	 * 
 	 * @return int The primary key id of the primary entry.
 	 */
-	public function SaveEntriesForTask(IEntity $entity, $data) {
+	public function SaveEntriesForTask(IEntity $entity, Array $data, $oldData) {
 		if (!isset($data[$entity->name])) {
 			$this->rollbackTransaction();
 			throw new InvalidArgumentException('Could not save entry: No data given for ' . $entity->name);
 		}
 
 		try {
-			$primaryId = $this->Save($entity, $data[$entity->name]);
+			$primaryId = $this->Save($entity, $data[$entity->name], $oldData[$entity->name]);
 		} catch (Exception $e) {
 			$this->rollbackTransaction();
 			throw $e;

@@ -54,7 +54,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $dataToSave);
+        $entry->save($entity, $dataToSave, null);
     }
     
     // Update
@@ -87,7 +87,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $dataToSaveWithId);
+        $entry->save($entity, $dataToSaveWithId, null);
     }
 
     // Decode
@@ -122,7 +122,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $dataToSave);
+        $entry->save($entity, $dataToSave, null);
     }
 
     // Decode, new value
@@ -163,7 +163,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
             ));
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $inputData);
+        $entry->save($entity, $inputData, null);
     }
 
     //ordering
@@ -188,6 +188,211 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
          ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $inputData);
+        $entry->save($entity, $inputData, null);
+    }
+
+    public function test_Save_Deletes_ObjectWithArray() {
+        $entity = new ConfigurationEntity([
+            'name' => 'PrimaryEntity',
+            'primaryTableName' => 'primaryTable',
+            'isPrimaryEntity' => 1,
+            'entityKeyName' => 'referenceField',
+            'type' => 'object',
+            'fields' => [],
+            'entities' => [
+                [
+                    'name' => 'SecondaryEntity',
+                    'primaryTableName' => 'secondaryTable',
+                    'entityKeyName' => 'referenceField',
+                    'type' => 'array',
+                    'fields' => [
+                        [ 'fieldName' => 'field1' ]
+                    ]
+                ],
+                [
+                    'name' => 'TertiaryEntity',
+                    'primaryTableName' => 'tertiaryTable',
+                    'entityKeyName' => 'referenceField',
+                    'type' => 'object',
+                    'fields' => [
+                        [ 'fieldName' => 'field2' ]
+                    ]
+                ]
+            ]
+        ]);
+
+        // Create a stub for the CrudMock class.
+        $crudMock = $this->createMock(Mocks\CrudMock::class);
+
+        $concreteEntries = new ConcreteEntries($this->getDI(), $crudMock);
+
+        $crudMock->expects($this->exactly(6))
+            ->method('save')
+            ->willReturnOnConsecutiveCalls(12, 12, 12, 123, 12, 12);
+
+        $crudMock->expects($this->exactly(8))
+            ->method('delete')
+            ->withConsecutive(
+                ["secondaryTable", 123],
+
+                ["secondaryTable", 123],
+
+                ["secondaryTable", 124],
+                ["secondaryTable", 125],
+
+                ["secondaryTable", 123],
+                ["secondaryTable", 124],
+                ["secondaryTable", 125],
+
+                ["tertiaryTable", 22]
+            );
+        
+        // Array empty in new
+        $concreteEntries->Save($entity, [
+            'SecondaryEntity' => []
+        ], [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [ 'id' => 123, 'field1' => 'value1' ]
+            ]
+        ]);
+
+        // Array undefined in new
+        $concreteEntries->Save($entity, [], [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [ 'id' => 123, 'field1' => 'value1' ]
+            ]
+        ]);
+
+        // New array with 2 removed items and 1 kept item
+        $concreteEntries->Save($entity, [
+            'SecondaryEntity' => [
+                [ 'id' => 123, 'field1' => 'new_value1' ]
+            ]
+        ], [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [ 'id' => 123, 'field1' => 'value1' ],
+                [ 'id' => 124, 'field1' => 'value1' ],
+                [ 'id' => 125, 'field1' => 'value1' ]
+            ]
+        ]);
+
+        // Array entity is removed
+        $concreteEntries->Save($entity, [], [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [ 'id' => 123, 'field1' => 'value1' ],
+                [ 'id' => 124, 'field1' => 'value1' ],
+                [ 'id' => 125, 'field1' => 'value1' ]
+            ]
+        ]);
+
+        // Object entity is removed
+        $concreteEntries->Save($entity, [], [
+                'id' => 12,
+                'TertiaryEntity' => [
+                    'id' => 22,
+                    'field2' => 'value2'
+                ]
+        ]);
+    }
+
+
+    public function test_Save_Deletes_ObjectWithNestedArrays() {
+        $entity = new ConfigurationEntity([
+            'name' => 'PrimaryEntity',
+            'primaryTableName' => 'primaryTable',
+            'isPrimaryEntity' => 1,
+            'entityKeyName' => 'referenceField',
+            'type' => 'object',
+            'fields' => [],
+            'entities' => [
+                [
+                    'name' => 'SecondaryEntity',
+                    'primaryTableName' => 'secondaryTable',
+                    'entityKeyName' => 'referenceField',
+                    'type' => 'array',
+                    'fields' => [
+                        [ 'fieldName' => 'field1' ]
+                    ],
+                    'entities' => [
+                        [
+                            'name' => 'TertiaryEntity',
+                            'primaryTableName' => 'tertiaryTable',
+                            'entityKeyName' => 'referenceField',
+                            'type' => 'array',
+                            'fields' => [
+                                [ 'fieldName' => 'field2' ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        // Create a stub for the CrudMock class.
+        $crudMock = $this->createMock(Mocks\CrudMock::class);
+
+        $concreteEntries = new ConcreteEntries($this->getDI(), $crudMock);
+
+        $crudMock->expects($this->exactly(3))
+            ->method('save')
+            ->willReturnOnConsecutiveCalls(12, 123, 12);
+
+        $crudMock->expects($this->exactly(3))
+            ->method('delete')
+            ->withConsecutive(
+                ["tertiaryTable", 1234],
+
+                ["tertiaryTable", 1234],
+                ["secondaryTable", 123]
+            );
+        
+        // Nested array empty in new
+        $concreteEntries->Save($entity, [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [
+                    'id' => 123,
+                    'field1' => 'value1'
+                ]
+            ]
+        ], [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [
+                    'id' => 123,
+                    'field1' => 'value1',
+                    'TertiaryEntity' => [
+                        [
+                            'id' => 1234,
+                            'field2' => 'value2'
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        // Top array empty in new
+        $concreteEntries->Save($entity, [
+            'id' => 12,
+            'SecondaryEntity' => []
+        ], [
+            'id' => 12,
+            'SecondaryEntity' => [
+                [
+                    'id' => 123,
+                    'field1' => 'value1',
+                    'TertiaryEntity' => [
+                        [
+                            'id' => 1234,
+                            'field2' => 'value2'
+                        ]
+                    ]
+                ]
+            ]
+        ]);
     }
 }

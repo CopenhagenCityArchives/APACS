@@ -19,7 +19,6 @@ class SystemTest extends \IntegrationTestCase
 
         $response = $this->http->request('GET', 'taskschema?task_id=1');
         $this->assertEquals(200, $response->getStatusCode());
-        //var_dump((string) $response->getBody());
         $validTaskSchema = json_decode(file_get_contents(__DIR__ . '/TestData/validTaskSchema_task1.json'),true);
     
         $this->assertTrue(json_last_error() === JSON_ERROR_NONE, "should be parsable JSON");

@@ -91,7 +91,7 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
         $entity = new ConfigurationEntity($taskConf['entity']);
         
         // Save the entry
-        $concreteEntryID = $this->concreteEntry->SaveEntriesForTask($entity, $saveData);
+        $concreteEntryID = $this->concreteEntry->SaveEntriesForTask($entity, $saveData, null);
         $this->assertGreaterThan(0, $concreteEntryID);
         
         // Load the entry

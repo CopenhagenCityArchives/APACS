@@ -39,7 +39,7 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             );
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 
     public function test_SaveEntries_WithSecondaryEntry_CallCrudSaveTwice(){
@@ -85,7 +85,7 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ]);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);   
+        $entry->SaveEntriesForTask($entity, $inputData, null);   
     }
 
      //Delete secondary empty object entries on save
@@ -105,6 +105,16 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
                 ]
             ]
         ];
+
+        $oldData = [
+            $entityData['name'] => [
+                'field1' => 'value1',
+                $entityData['entities'][0]['name'] => [
+                    'id' => $idToDelete,
+                    'field2' => 'value2'
+                ]
+            ]
+        ];
         
         $crudMock = $this->createMock(Mocks\CrudMock::class);
 
@@ -120,7 +130,7 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, $oldData);
     }
 
     //Dont delete or save secondary empty array entries on save
@@ -151,7 +161,7 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 
     public function test_SaveSecondaryArrayEntity_WithAFalseBooleanValue(){
@@ -197,6 +207,6 @@ class ConcreteEntriesSaveLogicTest extends \UnitTestCase {
             ->willReturnOnConsecutiveCalls(1, 2); // mock crud->save returning with ids 1 and 2
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 }

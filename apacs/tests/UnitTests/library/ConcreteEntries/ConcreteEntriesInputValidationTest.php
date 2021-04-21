@@ -26,7 +26,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->save($entity, $inputData);
+        $entry->save($entity, $inputData, null);
     }
 
     
@@ -43,7 +43,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
     
     public function test_SavePrimaryEntity_WithInvalidData_ThrowException(){
@@ -66,7 +66,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 
     //Invalid data for primary entity 
@@ -95,7 +95,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 
     public function test_SaveSecondaryEntityArray_WithInvalidData_ThrowException(){
@@ -128,7 +128,7 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
         $this->expectException(InvalidArgumentException::class);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 
     public function test_SaveSecondaryEntityArray_WithNoData_Ignore(){
@@ -156,6 +156,6 @@ class ConcreteEntriesInputValdationTest extends \UnitTestCase {
             ->willReturn(1);
 
         $entry = new ConcreteEntries($this->getDI(), $crudMock);
-        $entry->SaveEntriesForTask($entity, $inputData);
+        $entry->SaveEntriesForTask($entity, $inputData, null);
     }
 }

@@ -324,6 +324,7 @@ class IndexDataController extends MainController {
 			$concreteEntry = new ConcreteEntries($this->getDI());
 			$concreteEntry->startTransaction();
 
+			$oldEntry = null;
 			if (is_null($entryId)) {
 				//New entry
 				$userId = $this->auth->GetUserId();
@@ -347,14 +348,10 @@ class IndexDataController extends MainController {
 				}
 
 				$oldEntry = $concreteEntry->LoadEntry($mainEntity, $entry->concrete_entries_id, true);
-				$newEntry = $jsonData;
-
-				$concreteEntry->DeleteRemovedSubentries($mainEntity, $oldEntry, $newEntry);
-				$jsonData[$mainEntity->name] = $newEntry[$mainEntity->name];
 			}
 
 			//Saving the concrete entry
-			$concreteId = $concreteEntry->SaveEntriesForTask($mainEntity, $jsonData);
+			$concreteId = $concreteEntry->SaveEntriesForTask($mainEntity, $jsonData, $oldEntry);
 
 			//Saving the meta entry, holding information about the concrete entry
 			$entry->tasks_id = $jsonData['task_id'];
