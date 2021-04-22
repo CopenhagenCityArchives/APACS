@@ -85,6 +85,7 @@ try {
 
 	$info->get('/pages', 'GetPages');
 	$info->get('/pages/{page:[0-9]+}', 'GetPage');
+	$info->get('/pages/unit/{unit_id:[0-9]+}/number/{page_number:[0-9]+}', 'GetPageFromNumber');
 	$info->get('/pages/nextavailable', 'GetNextAvailablePage');
 
 	$info->get('/posts/{post_id:[0-9]+}', 'GetPostEntries');

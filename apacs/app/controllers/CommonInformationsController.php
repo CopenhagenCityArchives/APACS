@@ -345,6 +345,23 @@ class CommonInformationsController extends MainController {
 		$this->response->setContent(json_encode($post, JSON_NUMERIC_CHECK));
 	}
 
+	public function GetPageFromNumber($unitId, $pageNumber) {
+		$page = Pages::findFirst([
+			'conditions' => 'unit_id = :unitId: AND page_number = :pageNumber:',
+			'bind' => [
+				'unitId' => $unitId,
+				'pageNumber' => $pageNumber
+			],
+		]);
+
+		if (!$page) {
+			$this->returnError(404, "Page not found", "Could not find a page with the page number " . $pageNumber . " in unit " . $unitId);
+			return;
+		}
+
+		$this->response->setContent(json_encode($page, JSON_NUMERIC_CHECK));
+	}
+
 	public function GetPage($pageId, $page = null) {
 		$this->RequireAccessControl();
 
