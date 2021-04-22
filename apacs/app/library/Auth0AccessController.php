@@ -51,8 +51,21 @@ class Auth0AccessController implements IAccessController {
 
 		if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == '401') {
 			$this->message = 'Invalid token (401 from auth server)';
-			return false;
+			curl_close($ch);
+            return false;
 		}
+
+        if (curl_getinfo($ch, CURLINFO_HTTP_CODE) == '429') {
+			$this->message = 'Too many requests (429 from auth server)';
+			curl_close($ch);
+            return false;
+		}
+
+        if(curl_getinfo($ch, CURLINFO_HTTP_CODE) != '200'){
+            $this->message = "Could not get data from auth server. HTTP code: " . curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            return false;
+        }
 
 		curl_close($ch);
 
@@ -82,6 +95,10 @@ class Auth0AccessController implements IAccessController {
             // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
             $auth0_userinfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
             
+            if($auth0_userinfo == false){
+                throw new Exception("Could not get userinfo from auth server: " . $this->message);
+            }
+
             // Set userInfo
             $this->userInfo = [];
 
