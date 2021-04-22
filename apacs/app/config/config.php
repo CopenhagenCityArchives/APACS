@@ -79,6 +79,7 @@ $di->setShared('auth0Config', function () {
 		'jwks_uri' => getenv('AUTH0_JWKS_URI'),
 		'cacheLocation' => getenv('AUTH0_CACHE_LOCATION'),
 		'cacheDuration' => getenv('AUTH0_CACHE_DURATION'),
+		'tokenSalt' => getenv('AUTH0_TOKEN_SALT')
 	];
 });
 
