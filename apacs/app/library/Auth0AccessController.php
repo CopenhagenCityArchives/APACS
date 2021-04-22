@@ -167,7 +167,7 @@ class Auth0AccessController implements IAccessController {
         $token->save();
     }
 
-    private function GetUserInforFromAuth0(){
+    private function GetUserInfoFromAuth0(){
         // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
         $auth0_userinfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
 
