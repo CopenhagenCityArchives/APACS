@@ -182,9 +182,9 @@ class Auth0AccessController implements IAccessController {
         }
 
         // Map Auth0 nickname to APACS username
-        $this->userInfo['username'] = $auth0_userinfo['username'];
+        $this->userInfo['username'] = $auth0_userinfo['nickname'];
         // Auth0 user id comes from "sub"
-        $this->userInfo['auth0_user_id'] = $auth0_userinfo['auth0_user_id'];
+        $this->userInfo['auth0_user_id'] = $auth0_userinfo['sub'];
 
         return true;
     }
