@@ -22,6 +22,12 @@ class Auth0AccessController implements IAccessController {
 	public function __construct($di) {
         $this->request = $di->get('request');
         $this->config = $di->get('auth0Config');
+
+        if(!isset($this->config['tokenSalt'])){
+            throw new Exception("tokenSalt not set in aut0Config. Cannot continue.");
+        }
+
+        $this->userInfo = [];
     }
 
     private function getWebPage($url) {
@@ -91,44 +97,6 @@ class Auth0AccessController implements IAccessController {
         try {
             $this->tokenInfo = $tokenVerifier->verify($accessToken);
             $this->token = $accessToken;
-            
-            // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
-            $auth0_userinfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
-            
-            if($auth0_userinfo == false){
-                throw new Exception("Could not get userinfo from auth server: " . $this->message);
-            }
-
-            // Set userInfo
-            $this->userInfo = [];
-
-            // Auth0 user id comes from "sub"
-            $this->userInfo['auth0_user_id'] = $auth0_userinfo['sub'];
-            
-            // Map Auth0 nickname to APACS username
-            $this->userInfo['username'] = $auth0_userinfo['nickname'];
-
-            $auth0_userinfo = null;
-            
-            // Find APACS user based on AUTH0 user id
-            $apacsUser = Users::findFirst([
-				'conditions' => 'auth0_user_id = :sub:',
-				'bind' => ['sub' => $this->userInfo['auth0_user_id']]
-            ]);
-            
-            if (!$apacsUser){
-                throw new Exception("Couldn't find user in APACS users table");
-            }
-
-            // Use APACS user id as user id
-            $this->userInfo['id'] = $apacsUser->id;
-
-            // If Auth0 and APACS username does not match, syncronise APACS info
-            if($apacsUser->username !== $this->userInfo['username']){
-                $this->SyncronizeUser();
-            }
-
-            return true;
         }
         catch(InvalidTokenException $e) {
             $this->message = 'Access denied: ' . $e->getMessage();
@@ -138,6 +106,87 @@ class Auth0AccessController implements IAccessController {
             $this->message = 'Access denied: ' . $exp->getMessage();
             return false;
         }
+
+        if(!$this->GetUserInfoFromDB()){
+            if(!$this->GetUserInfoFromAuth0()){
+                return false;
+            }
+            else{
+                $this->SaveUserInfoInDB();
+            }
+        }
+        
+        // Find APACS user based on AUTH0 user id
+        $apacsUser = Users::findFirst([
+            'conditions' => 'auth0_user_id = :sub:',
+            'bind' => ['sub' => $this->userInfo['auth0_user_id']]
+        ]);
+        
+        if (!$apacsUser){
+            throw new Exception("Couldn't find user in APACS users table");
+        }
+
+        // Use APACS user id as user id
+        $this->userInfo['id'] = $apacsUser->id;
+
+        // If Auth0 and APACS username does not match, syncronise APACS info
+        if($apacsUser->username !== $this->userInfo['username']){
+            $this->SyncronizeUser();
+        }
+
+        return true;
+    }
+
+    private function GetUserInfoFromDB(){
+        $encrypted_token =  crypt($this->token, $this->config['tokenSalt']);
+
+        // Validate token in db
+        $dbToken = Tokens::findFirst(['conditions' => 'expires > ' . time() . ' AND token = \'' . $encrypted_token . '\'']);
+        
+        if($dbToken){
+            // Map Auth0 nickname to APACS username
+            $this->userInfo['username'] = $dbToken->username;
+            // Auth0 user id comes from "sub"
+            $this->userInfo['auth0_user_id'] = $dbToken->auth0_user_id;
+            return true;
+        }
+
+        $this->message = 'No token found in database';
+
+        return false;
+    }
+
+    private function SaveUserInfoInDB(){
+        $token = new Tokens();
+        $token->token = crypt($this->token, $this->config['tokenSalt']);
+        $token->username = $this->userInfo['username'];
+        $token->auth0_user_id = $this->userInfo['auth0_user_id'];
+        // Let user info expire after 1 hour
+        $token->expires = time() + 60 * 60;
+		
+        $token->save();
+    }
+
+    private function GetUserInforFromAuth0(){
+        // Get userinfo (id_token) with access token from /userinfo endpoint at Auth0
+        $auth0_userinfo = json_decode($this->getWebPage('https://kbharkiv.eu.auth0.com/userinfo'), true);
+
+        if($auth0_userinfo == false){
+            $this->message = 'Could not get userinfo from auth server: ' . $this->message;
+            return false;
+        }
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->message = 'Could not decode response from auth server';
+            return false;
+        }
+
+        // Map Auth0 nickname to APACS username
+        $this->userInfo['username'] = $auth0_userinfo['username'];
+        // Auth0 user id comes from "sub"
+        $this->userInfo['auth0_user_id'] = $auth0_userinfo['auth0_user_id'];
+
+        return true;
     }
 
     private function SyncronizeUser() {
