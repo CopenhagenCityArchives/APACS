@@ -107,12 +107,14 @@ class Auth0AccessController implements IAccessController {
             return false;
         }
 
+        $synchronizeUser = false;
         if(!$this->GetUserInfoFromDB()){
-            if(!$this->GetUserInfoFromAuth0()){
-                return false;
+            if($this->GetUserInfoFromAuth0()){
+                $synchronizeUser = true;
+                $this->SaveUserInfoInDB();
             }
             else{
-                $this->SaveUserInfoInDB();
+                return false; 
             }
         }
         
@@ -130,22 +132,27 @@ class Auth0AccessController implements IAccessController {
         $this->userInfo['id'] = $apacsUser->id;
 
         // If Auth0 and APACS username does not match, syncronise APACS info
-        if($apacsUser->username !== $this->userInfo['username']){
+        if($apacsUser->username !== $this->userInfo['username'] && $synchronizeUser){
             $this->SyncronizeUser();
         }
-
+        
         return true;
     }
 
+    private function hashToken($token)
+    {
+        return hash('sha256',$token);
+    }
+
     private function GetUserInfoFromDB(){
-        $encrypted_token =  crypt($this->token, $this->config['tokenSalt']);
+        $encrypted_token = $this->hashToken($this->token);
 
         // Validate token in db
         $dbToken = Tokens::findFirst(['conditions' => 'expires > ' . time() . ' AND token = \'' . $encrypted_token . '\'']);
         
         if($dbToken){
             // Map Auth0 nickname to APACS username
-            $this->userInfo['username'] = $dbToken->username;
+            $this->userInfo['username'] = $dbToken->user_name;
             // Auth0 user id comes from "sub"
             $this->userInfo['auth0_user_id'] = $dbToken->auth0_user_id;
             return true;
@@ -158,8 +165,8 @@ class Auth0AccessController implements IAccessController {
 
     private function SaveUserInfoInDB(){
         $token = new Tokens();
-        $token->token = crypt($this->token, $this->config['tokenSalt']);
-        $token->username = $this->userInfo['username'];
+        $token->token = $this->hashToken($this->token);
+        $token->user_name = $this->userInfo['username'];
         $token->auth0_user_id = $this->userInfo['auth0_user_id'];
         // Let user info expire after 1 hour
         $token->expires = time() + 60 * 60;
