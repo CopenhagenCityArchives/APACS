@@ -96,7 +96,7 @@ class Events extends \Phalcon\Mvc\Model {
 		return $result;
 	}
 
-	public function GetNumEventsForUsers($event_type, $unix_time) {
+	public function GetNumEventsForUsers($event_type, $unix_time, array $task_ids) {
 
 		if ($event_type == null) {
 			$event_type = "create";
@@ -104,10 +104,15 @@ class Events extends \Phalcon\Mvc\Model {
 		if ($unix_time == null) {
 			$unix_time = strtotime("-1 week");
 		}
+
+		$task_condition = '';
+		if (count($task_ids) > 0) {
+			$task_condition = 'AND tasks_id IN (' . implode(',', $task_ids) . ')';
+		}
 		
 		$sql = 'SELECT users_id, count(users_id) AS count, User.username
 		        FROM apacs_events join apacs_users User ON apacs_events.users_id = User.id
-				WHERE event_type = :event_type AND apacs_events.timestamp > from_unixtime(:unix_time)
+				WHERE event_type = :event_type AND apacs_events.timestamp > from_unixtime(:unix_time) ' . $task_condition . '
 				GROUP BY users_id ORDER BY count DESC, username ASC';
 
 		$resultSet = $this->getDI()->get('db')->query($sql, ['event_type' => $event_type, 'unix_time' => $unix_time]);

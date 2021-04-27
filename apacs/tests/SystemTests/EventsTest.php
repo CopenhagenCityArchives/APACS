@@ -21,7 +21,7 @@ class EventsTest extends \IntegrationTestCase
         $responseData = json_decode((string) $response->getBody(), true);
         $this->assertNotNull($responseData);
         $this->assertEquals(797, $responseData[0]['users_id']);
-        $this->assertEquals(2, $responseData[0]['count']);
+        $this->assertEquals(3, $responseData[0]['count']);
         $this->assertEquals(798, $responseData[1]['users_id']);
         $this->assertEquals(1, $responseData[1]['count']);
 
@@ -35,7 +35,7 @@ class EventsTest extends \IntegrationTestCase
         $this->assertNotNull($responseData);
         $this->assertEquals('User_1', $responseData[0]['username']);
         $this->assertEquals('User_4', $responseData[1]['username']);
-        $this->assertEquals(2, $responseData[0]['count']);
+        $this->assertEquals(3, $responseData[0]['count']);
         $this->assertEquals(800, $responseData[1]['users_id']);
         $this->assertEquals(2, $responseData[1]['count']);
     }

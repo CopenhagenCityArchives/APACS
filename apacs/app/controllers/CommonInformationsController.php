@@ -927,11 +927,21 @@ class CommonInformationsController extends MainController {
 
 	public function GetEventEntriesForLastWeek() {
 		$events = new Events();
-		$this->response->setJsonContent($events->GetNumEventsForUsers(null, null));
+		$this->response->setJsonContent($events->GetNumEventsForUsers(null, null, []));
 	}
 	public function GetEventEntries($event_type, $unix_time) {
+		$taskIdsParam = $this->request->getQuery('task_ids', 'string');
+		$taskIds = [];
+		if (!is_null($taskIdsParam)) {
+			foreach (explode(',', $taskIdsParam) as $taskId) {
+				if (is_numeric($taskId)) {
+					$taskIds[] = (int)$taskId;
+				}
+			}
+		}
+
 		$events = new Events();
-		$this->response->setJsonContent($events->GetNumEventsForUsers($event_type, $unix_time));
+		$this->response->setJsonContent($events->GetNumEventsForUsers($event_type, $unix_time, $taskIds));
 	}
 
 	public function GetSystemExceptions() {
