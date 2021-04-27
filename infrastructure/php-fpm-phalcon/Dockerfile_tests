@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.4-fpm-alpine
 
 # install make tools, clone phalcon, build it and remove tmp folders and packages
 RUN \
@@ -21,6 +21,8 @@ RUN docker-php-ext-install -j$(nproc) gd
 RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 
 RUN apk add --no-cache git openssh composer
+COPY ./infrastructure/php-fpm-phalcon/php-override.ini.dev /usr/local/etc/php/conf.d/php-ini-overrides.ini
 COPY ./apacs /code
 WORKDIR /code
+
 RUN composer install

@@ -1,13 +1,6 @@
 FROM php:7.3-fpm-alpine
 
 # install make tools, clone phalcon, build it and remove tmp folders and packages
-
-
-
-# enable pdo_mysql extension
-RUN docker-php-ext-install pdo pdo_mysql
-
-# download, build and install Phalcon
 RUN \
     apk add git autoconf file g++ gcc libc-dev make pkgconf re2c libtool \
     check check-dev cyrus-sasl-dev libsodium-dev libssh2-dev imagemagick-dev yaml-dev --no-cache && \
@@ -18,6 +11,9 @@ RUN \
     rm -rf ~/cphalcon && \
     apk del git autoconf make m4 perl g++ gcc \
     musl-dev libc-dev check-dev cyrus-sasl-dev libsodium-dev libssh2-dev yaml-dev openssl-dev imagemagick-dev zlib-dev
+
+# enable pdo_mysql extension
+RUN docker-php-ext-install pdo pdo_mysql
 
 # add libpng to enable image manipulation with PHP
 RUN apk add --no-cache libpng libpng-dev libjpeg-turbo libjpeg-turbo-dev freetype freetype-dev
@@ -33,22 +29,5 @@ RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 #    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
 #    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
+COPY ./infrastructure/php-fpm-phalcon/php-override.ini.dev /usr/local/etc/php/conf.d/php-ini-overrides.ini
 WORKDIR /code
-
-#ENV MAX_EXECUTION_TIME=90
-
-# Set Max execution time
-#RUN sed -i "s@^max_execution_time = .*@max_execution_time = $MAX_EXECUTION_TIME@" /etc/php5/apache2/php.ini
-#RUN sed -i "s@^output_buffering = .*@output_buffering = Off@" /etc/php5/apache2/php.ini
-
-#RUN echo 'xdebug.remote_enable = 1 \n\
-#xdebug.remote_host = 192.168.10.124 \n\
-#xdebug.remote_port = 9000 \n\
-#xdebug.remote_autostart=1 \n\
-#xdebug.remote_handler = dbgp \n\
-#xdebug.remote_mode = req \n\
-#xdebug.profiler_enable=0 \n\
-#xdebug.remote_log="/tmp/xdebug.log" \n\
-#xdebug.profiler_enable_trigger=1 \n\
-#xdebug.idekey="xdebug" \n\
-#xdebug.profiler_output_dir = "/var/www/html"' >> /etc/php5/apache2/php.ini
