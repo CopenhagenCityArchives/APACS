@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine
+FROM php:7.3-fpm-alpine
 
 # install make tools, clone phalcon, build it and remove tmp folders and packages
 RUN \
