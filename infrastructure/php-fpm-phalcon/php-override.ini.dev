@@ -1,6 +1,9 @@
 max_execution_time = 90
 memory_limit = 256M
 
+display_errors = on
+error_reporting = E_ALL
+
 output_buffering = Off
 
 xdebug.remote_enable = 1
