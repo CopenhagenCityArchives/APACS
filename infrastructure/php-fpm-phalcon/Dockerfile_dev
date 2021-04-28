@@ -29,5 +29,4 @@ RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 #    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
 #    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini
 
-COPY ./infrastructure/php-fpm-phalcon/php-override.ini.dev /usr/local/etc/php/conf.d/php-ini-overrides.ini
 WORKDIR /code

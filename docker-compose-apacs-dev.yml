@@ -12,6 +12,7 @@ services:
       - solr
     volumes:
       - ./apacs:/code
+      - ./infrastructure/php-fpm-phalcon/php-override.ini.dev:/usr/local/etc/php/conf.d/php-ini-overrides.ini
       - composer-vendor:/code/vendor
     environment:
       - APACS_ACCESS_CTRL_NAME=FakeAccessController
@@ -53,7 +54,7 @@ services:
     container_name: mysql
     volumes:
       - ./apacs/tests/TestHelpers/db-test-data:/docker-entrypoint-initdb.d
-      - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf
+      - ./infrastructure/db/config/my_dev.cnf:/etc/mysql/conf.d/my_dev.cnf:ro
     ports:
       - "3306:3306"
     environment:
