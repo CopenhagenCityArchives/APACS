@@ -39,7 +39,7 @@ abstract class UnitTestCase extends TestCase {
                 'charset' => 'utf8',
             ];
 		});
-
+		
 		$di->setShared('db', function () use ($di) {
             return new \Phalcon\Db\Adapter\Pdo\Mysql($di->get('config'));
 		});
@@ -57,8 +57,6 @@ abstract class UnitTestCase extends TestCase {
 			$this->di = $di;
 		}
 		
-
-
 		// Set DI as default (used in Phalcon Models)
 		Di::setDefault($this->di);
 
@@ -68,8 +66,6 @@ abstract class UnitTestCase extends TestCase {
 		ORM::configure('username', $this->getDI()->get('config')['username']);
 		ORM::configure('password', $this->getDI()->get('config')['password']);
 		ORM::configure('id_column', 'id');
-		
-		$this->_config = $config;
 
         $this->_loaded = true;
 	}
