@@ -195,7 +195,7 @@ class SystemTest extends \IntegrationTestCase
 
         $newQuery = $this->getDI()->get('db')->query('SELECT COUNT(*) as cnt FROM burial_addresses WHERE id = 9132');
         $newPerson = $newQuery->fetch();
-        $this->assertNull($newPerson['cemetaries_id']);
+        $this->assertArrayNotHasKey('cemetaries_id',$newPerson);
     }
 
     public function test_DeletedPostBurialDeathcauses() {
