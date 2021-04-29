@@ -47,21 +47,21 @@ class CumulusAssetController extends \Phalcon\Mvc\Controller {
 
 			$headers[strtolower(trim($header[0]))][] = trim($header[1]);
 
+			if(isset($headers['content-type'])){
+				header('Content-Type: ' . $headers['content-type'][0]);
+				header("Access-Control-Allow-Origin: *");
+			}
+			else{
+				header('Content-Type: application/pdf');
+				header("Access-Control-Allow-Origin: *");
+			}
+
 			return $len;
 		});
 
 		curl_exec($ch);
 
 		$this->response->setStatusCode(curl_getinfo($ch, CURLINFO_HTTP_CODE), "");
-
-		if(isset($headers['content-type'])){
-			header('Content-Type: ' . $headers['content-type'][0]);
-			header("Access-Control-Allow-Origin: *");
-		}
-		else{
-			header('Content-Type: application/pdf');
-			header("Access-Control-Allow-Origin: *");
-		}
 		
 		curl_close($ch);
 	}
