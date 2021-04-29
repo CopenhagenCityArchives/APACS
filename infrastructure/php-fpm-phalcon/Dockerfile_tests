@@ -21,7 +21,7 @@ RUN docker-php-ext-install -j$(nproc) gd
 RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
 
 RUN apk add --no-cache git openssh composer
-COPY ./infrastructure/php-fpm-phalcon/php-override.ini.dev /usr/local/etc/php/conf.d/php-ini-overrides.ini
+COPY ./infrastructure/php-fpm-phalcon/php-override.ini.prod /usr/local/etc/php/conf.d/php-ini-overrides.ini
 COPY ./apacs /code
 WORKDIR /code
 
