@@ -34,3 +34,4 @@ apacs/composer.lock
 .env_dev
 .vscode/
 indexing/env.cfg
+apacs/.phpunit.result.cache
