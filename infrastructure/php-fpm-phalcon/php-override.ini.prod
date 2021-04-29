@@ -1,2 +1,2 @@
 max_execution_time = 300
-memory_limit = 256M
+memory_limit = 512M
