@@ -14,7 +14,9 @@
 
 
 INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `includeValuesInForm`, `dbTableName`, `isPublicEditable`) VALUES
-  ('37', 'prb_vej', 'SELECT id, navn, CASE WHEN navn LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM PRB_vej ORDER BY prio DESC, navn LIMIT 75;', NULL, 'navn', '0', 'PRB_vej', '0');
+  ('37', 'prb_vej', 'SELECT id, navn, CASE WHEN navn LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM PRB_vej ORDER BY prio DESC, navn LIMIT 75;', NULL, 'navn', '0', 'PRB_vej', '0'),
+  ('38', 'prb_fødested', 'SELECT id, foedested, CASE WHEN foedested LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM PRB_foedested ORDER BY prio DESC, foedested LIMIT 75;', NULL, 'foedested', '0', 'PRB_foedested', '0'),
+  ('39', 'prb_stilling', 'SELECT id, stilling, CASE WHEN stilling LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM PRB_stilling ORDER BY prio DESC, stilling LIMIT 75;', NULL, 'stilling', '0', 'PRB_stilling', '0');
 
 INSERT INTO `apacs_tasks` (`id`, `name`, `description`, `collection_id`, `primaryEntity_id`) VALUES
     (5, 'Politiets Registerblade', 'Rettelse af Politiets Registerblade', 76, NULL);
@@ -37,15 +39,15 @@ CREATE TABLE `PRB_adresse` (
   `adresse_aar` smallint(4) DEFAULT NULL,
   `vejnummer` char(10) DEFAULT NULL,
   `vejnummerbogstav` char(3) DEFAULT NULL,
-  `etage` char(10) NOT NULL,
-  `sideangivelse` char(3) NOT NULL,
+  `etage` char(10) DEFAULT NULL,
+  `sideangivelse` char(3) DEFAULT NULL,
   `sted` char(90) DEFAULT NULL,
-  `tjenesteLogerendeHos` char(255) NOT NULL,
-  `fra_note` char(100) NOT NULL,
-  `til_note` char(100) NOT NULL,
+  `tjenesteLogerendeHos` char(255) DEFAULT NULL,
+  `fra_note` char(100) DEFAULT NULL,
+  `til_note` char(100) DEFAULT NULL,
   `frameldt` tinyint(1) NOT NULL DEFAULT '0',
   `adresse_dato` int(11) DEFAULT NULL,
-  `opgang` char(50) NOT NULL,
+  `opgang` char(50) DEFAULT NULL,
   `koordinat_id` int(11) DEFAULT NULL,
   `order` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -61,19 +63,19 @@ CREATE TABLE `PRB_adresse` (
 CREATE TABLE `PRB_person` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `registerblad_id` mediumint(9) NOT NULL,
-  `fornavne` char(80) NOT NULL,
-  `efternavn` char(50) NOT NULL,
+  `fornavne` char(80) DEFAULT NULL,
+  `efternavn` char(50) DEFAULT NULL,
   `koen` tinyint(1) DEFAULT '3' COMMENT '1 = mand, 2 = kvinde og 3 = ukendt',
   `foedselsdag` tinyint(2) DEFAULT NULL,
   `foedselsmaaned` tinyint(2) DEFAULT NULL,
   `foedselsaar` smallint(4) DEFAULT NULL,
   `foedested_id` mediumint(9) DEFAULT NULL,
-  `pigenavn` char(50) NOT NULL,
-  `gift` tinyint(1) NOT NULL,
+  `pigenavn` char(50) DEFAULT NULL,
+  `gift` tinyint(1) DEFAULT 0,
   `afdoed_dag` tinyint(2) DEFAULT NULL,
   `afdoed_maaned` tinyint(2) DEFAULT NULL,
   `afdoed_aar` smallint(4) DEFAULT NULL,
-  `person_type` tinyint(4) NOT NULL,
+  `person_type` tinyint(4) NOT NULL DEFAULT 1,
   `foedselsdato` int(11) DEFAULT NULL,
   `afdoed_dato` int(11) DEFAULT NULL,
   `last_changed` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -94,10 +96,27 @@ CREATE TABLE `PRB_person` (
   KEY `koen` (`koen`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2103679 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
+CREATE TABLE `PRB_kommentar` (
+  `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+  `registerblad_id` mediumint(9) DEFAULT NULL,
+  `person_id` mediumint(9) DEFAULT NULL,
+  `adresse_id` mediumint(9) DEFAULT NULL,
+  `bruger_id` mediumint(9) DEFAULT NULL,
+  `dato` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `kommentar` mediumtext NOT NULL,
+  `order` mediumint(9) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `registerblad_id` (`registerblad_id`),
+  KEY `bruger_id` (`bruger_id`),
+  KEY `person_id` (`person_id`),
+  KEY `adresse_id` (`adresse_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 CREATE TABLE `PRB_person_stilling` (
   `id` mediumint(9) NOT NULL AUTO_INCREMENT,
   `person_id` mediumint(9) NOT NULL,
   `stilling_id` mediumint(9) NOT NULL,
+  `order` mediumint(9) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `person_id` (`person_id`),
   KEY `stilling_id` (`stilling_id`)
@@ -184,7 +203,7 @@ CREATE TABLE `PRB_registerblad` (
   `registreringsstatus` tinyint(4) NOT NULL DEFAULT '0',
   `filnavn` char(10) NOT NULL,
   `filnavn2` char(10) NOT NULL,
-  `saerlige_bemaerkninger` char(250) NOT NULL,
+  `saerlige_bemaerkninger` char(250) DEFAULT NULL,
   `udfyldelse_dato` int(11) DEFAULT NULL,
   `fler_opl` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Felt til at markere om der findes opl fra efter 1924',
   `approved` tinyint(1) NOT NULL DEFAULT '0',
