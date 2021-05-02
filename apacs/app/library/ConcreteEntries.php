@@ -512,7 +512,7 @@ class ConcreteEntries {
 			// The value is not defined, 
 			if (!isset($data[$fieldName])) {
 				if ($field['includeInForm'] == 1) {
-					$assoc[$fieldName] = null;
+					$result[$fieldName] = null;
 				}
 				continue;
 			}
