@@ -787,7 +787,7 @@ class CommonInformationsController extends MainController {
 		//TODO: Hardcoded solr collection id
 		$entryData['solr_id'] = '1-' . $entry->concrete_entries_id;
 
-		$this->response->setJsonContent($entryData, JSON_NUMERIC_CHECK);
+		$this->response->setJsonContent($entryData);
 	}
 
 	public function GetEntries() {
