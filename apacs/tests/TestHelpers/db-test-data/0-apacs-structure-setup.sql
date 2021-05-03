@@ -334,7 +334,7 @@ CREATE TABLE `apacs_superusers` (
 
 CREATE TABLE `apacs_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `token` char(40) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `token` char(64) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
   `user_name` int(11) DEFAULT NULL,
   `auth0_user_id` char(150) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
   `expires` int(11) DEFAULT NULL,
