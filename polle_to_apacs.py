@@ -16,6 +16,7 @@ class UnitInfo:
         self.description = description
         self.filmrulle_id = filmrulle_id
         self.unit_id = None
+        self.pages = 0
     
     def insert(self, mysql):
         if self.unit_id is not None:
@@ -24,6 +25,10 @@ class UnitInfo:
         with mysql.cursor() as cursor:
             cursor.execute(f"INSERT INTO `apacs_units` (`collections_id`, `description`) VALUES ('{self.collection_id}', '{self.description}');")
             self.unit_id = cursor.lastrowid
+    
+    def update(self, mysql):
+        with mysql.cursor() as cursor:
+            cursor.execute(f"UPDATE `apacs_units` SET `pages` = '{self.pages}' WHERE id = '{self.unit_id}'")
 
 
 class PageInfo:
@@ -192,6 +197,7 @@ def generate_apacs_items(mysql, task_id, unit):
 
                 subpost = SubPostInfo(post, back)
                 yield subpost
+    unit.pages = page_number
 
 
 def main(task_id, collection_id, mysql):
@@ -200,10 +206,11 @@ def main(task_id, collection_id, mysql):
         unit.insert(mysql)
         print(f"Unit (filmrulle id {unit.filmrulle_id}) - {unit.unit_id}", flush=True, end="\r")
         for i, item in enumerate(generate_apacs_items(mysql, task_id, unit)):
+            if i % 1000 == 0:
+                mysql.commit()
             item.insert(mysql)
             print(f"Unit (filmrulle id {unit.filmrulle_id}) - {unit.unit_id} - {i}", flush=True, end="\r")
-            if i > 1000:
-                break
+        unit.update(mysql)
         print()
         mysql.commit()
     print()
