@@ -266,7 +266,7 @@
                         "includeInForm": 1,
                         "formName": "Er der vidner?",
                         "default": null,
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean", "null"],
                         "formFieldOrder": 1,
                         "helpText": "Vælg ja, hvis der er vidner, vælg nej hvis der ikke er vidner. Lad være tom hvis det er uvist.",
                         "placeholder": null,
@@ -289,7 +289,7 @@
                         "includeInForm": 1,
                         "formName": "Nævnte bilag?",
                         "default": null,
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean", "null"],
                         "formFieldOrder": 1,
                         "helpText": "Vælg ja, hvis der er nævnte bilag, vælg nej hvis der ikke er. Lad være tom hvis det er uvist.",
                         "placeholder": null,
@@ -874,7 +874,7 @@
                         "includeInForm": 1,
                         "default": null,
                         "formName": "Er sagen genoptaget?",
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean", "null"],
                         "formFieldOrder": 3,
                         "helpText": "Vælg ja, hvis sagen er genoptaget, vælg nej hvis sagen ikke er genoptaget. Lad være tom hvis det er uvist.",
                         "placeholder": null,
@@ -947,7 +947,6 @@
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
-                    
                 ],
                 "entities": null
             },
@@ -1010,7 +1009,6 @@
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
-                    
                 ],
                 "entities": [
                     {
@@ -1120,7 +1118,6 @@
                             "add": "Tilføj erhverv"
                         }
                     ],
-
                     "add": "Tilføj person"
                 }
             ]
@@ -1146,7 +1143,7 @@
         {
             "name": "Klagen",
             "description": "Den klage der har udløst sagen",
-            "fields": [                
+            "fields": [
                 {
                     "key": "cases.complaint",
                     "items": [
@@ -1160,16 +1157,36 @@
                             "key": "cases.complaint.witnesses",
                             "type": "radios",
                             "titleMap": [
-                              { "value": true, "name": "Ja" },
-                              { "value": false, "name": "Nej" }
+                                {
+                                    "value": null,
+                                    "name": "Ikke udfyldt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
                             ]
                         },
                         {
                             "key": "cases.complaint.attachments_mentioned",
                             "type": "radios",
                             "titleMap": [
-                              { "value": true, "name": "Ja" },
-                              { "value": false, "name": "Nej" }
+                                {
+                                    "value": null,
+                                    "name": "Ikke udfyldt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
                             ]
                         }
                     ]
@@ -1187,12 +1204,22 @@
                         "cases.resolutions[].party_reaction",
                         "cases.resolutions[].resolution_type",
                         "cases.resolutions[].date",
-                        { 
+                        {
                             "key": "cases.resolutions[].case_reopened",
                             "type": "radios",
                             "titleMap": [
-                              { "value": true, "name": "Ja" },
-                              { "value": false, "name": "Nej" }
+                                {
+                                    "value": null,
+                                    "name": "Ikke udfyldt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
                             ]
                         }
                     ],
