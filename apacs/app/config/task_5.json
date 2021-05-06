@@ -601,7 +601,7 @@
                                     "key": "registerblad.personer[].stillinger[].stilling"
                                 }
                             ],
-                            "add": "Tilføj kommentar"
+                            "add": "Tilføj stilling"
                         },
                         {
                             "key": "registerblad.personer[].kommentarer",
