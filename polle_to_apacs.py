@@ -27,6 +27,9 @@ class UnitInfo:
             self.unit_id = cursor.lastrowid
     
     def update(self, mysql):
+        if self.unit_id is None:
+            raise Exception("Unit has not been inserted")
+
         with mysql.cursor() as cursor:
             cursor.execute(f"UPDATE `apacs_units` SET `pages` = '{self.pages}' WHERE id = '{self.unit_id}'")
 
@@ -57,6 +60,7 @@ class TaskUnitInfo:
         self.task_unit_id = None
         self.task_id = task_id
         self.unit = unit
+        self.pages_done = 0
     
     def insert(self, mysql):
         if self.task_unit_id is not None:
@@ -67,7 +71,14 @@ class TaskUnitInfo:
         
         with mysql.cursor() as cursor:
             cursor.execute(f"INSERT INTO `apacs_tasks_units` (`tasks_id`,`units_id`,`index_active`) VALUES ({self.task_id},{self.unit.unit_id},1);")
+            self.task_unit_id = cursor.lastrowid
+    
+    def update(self, mysql):
+        if self.task_unit_id is None:
+            raise Exception("Task unit relation has not been inserted")
 
+        with mysql.cursor() as cursor:
+            cursor.execute(f"UPDATE `apacs_tasks_units` SET `pages_done` = '{self.pages_done}' WHERE id = '{self.task_unit_id}'")
 
 class TaskPageInfo:
 
@@ -161,13 +172,13 @@ def generate_units(mysql, collection_id):
 
 
 def generate_apacs_items(mysql, task_id, unit):
-    """
-    """
+    """Generate all the needed APACS metadata items for the given unit in the task identified by the task_id."""
 
     if unit.unit_id is None:
         raise Exception("Invalid unit info")
 
-    yield TaskUnitInfo(unit, task_id)
+    task_unit = TaskUnitInfo(unit, task_id)
+    yield task_unit
 
     page_number = 1
     with mysql.cursor(pymysql.cursors.DictCursor) as cursor:
@@ -197,7 +208,11 @@ def generate_apacs_items(mysql, task_id, unit):
 
                 subpost = SubPostInfo(post, back)
                 yield subpost
+                
     unit.pages = page_number
+    
+    task_unit.pages_done = page_number
+    task_unit.update(mysql)
 
 
 def main(task_id, collection_id, mysql):
