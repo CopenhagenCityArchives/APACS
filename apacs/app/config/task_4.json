@@ -208,30 +208,6 @@
                 "allowNewValues": 1,
                 "fields": [
                     {
-                        "datasources_id": 23,
-                        "tableName": "resolutions_complaints",
-                        "fieldName": "complaint_verbs_id",
-                        "hasDecode": 1,
-                        "decodeTable": "resolutions_complaint_verbs",
-                        "decodeField": "verb",
-                        "codeAllowNewValue": 1,
-                        "includeInForm": 1,
-                        "formName": "Verbum",
-                        "formFieldType": "typeahead",
-                        "minimumInputLength": 0,
-                        "maxLength": 50,
-                        "formFieldOrder": 1,
-                        "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
-                        "placeholder": null,
-                        "isRequired": 0,
-                        "validationRegularExpression": "/\\w{1,}/",
-                        "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "complaint_verb",
-                        "SOLRFacet": 0,
-                        "SOLRResult": 0
-                    },
-                    {
                         "datasources_id": null,
                         "tableName": "resolutions_complaints",
                         "fieldName": "witnesses",
@@ -353,7 +329,7 @@
                         "fields": [
                             {
                                 "datasources_id": 26,
-                                "tableName": "resolutions_complaints",
+                                "tableName": "resolutions_complaint_purposes",
                                 "fieldName": "complaint_purpose_types_id",
                                 "hasDecode": 1,
                                 "decodeTable": "resolutions_complaint_purpose_types",
@@ -372,6 +348,43 @@
                                 "validationMessage": "Må kun være med mellemrum.",
                                 "includeInSOLR": 0,
                                 "SOLRFieldName": "complaint_subject_category",
+                                "SOLRFacet": 0,
+                                "SOLRResult": 0
+                            }
+                        ]
+                    },
+                    {
+                        "name": "verbs",
+                        "isPrimaryEntity": 0,
+                        "entityKeyName": "complaints_id",
+                        "type": "array",
+                        "required": 0,
+                        "countPerEntry": 1,
+                        "guiName": "Verber",
+                        "primaryTableName": "resolutions_complaint_verbs",
+                        "includeInSOLR": 0,
+                        "fields": [
+                            {
+                                "datasources_id": 23,
+                                "tableName": "resolutions_complaint_verbs",
+                                "fieldName": "complaint_verb_types_id",
+                                "hasDecode": 1,
+                                "decodeTable": "resolutions_complaint_verb_types",
+                                "decodeField": "verb",
+                                "codeAllowNewValue": 1,
+                                "includeInForm": 1,
+                                "formName": "Verbum",
+                                "formFieldType": "typeahead",
+                                "minimumInputLength": 0,
+                                "maxLength": 50,
+                                "formFieldOrder": 1,
+                                "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
+                                "placeholder": null,
+                                "isRequired": 0,
+                                "validationRegularExpression": "/\\w{1,}/",
+                                "validationMessage": "Skal være ét ord",
+                                "includeInSOLR": 0,
+                                "SOLRFieldName": "complaint_verb",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             }
@@ -1159,7 +1172,10 @@
                 {
                     "key": "cases.complaint",
                     "items": [
-                        "cases.complaint.verb",
+                        {
+                            "key":  "cases.complaint.verbs",
+                            "add": "Tilføj verbum"
+                        },
                         {
                             "key": "cases.complaint.subjects",
                             "add": "Tilføj emne"
