@@ -432,7 +432,7 @@ class CommonInformationsController extends MainController {
 			$subpostEntry = Entries::findFirst('tasks_id = ' . $taskId . ' AND posts_id = ' . $subpost->posts_id);
 
 			if ($subpostEntry !== null) {
-				$subpostArray['user_can_edit'] = $auth->UserCanEdit($postEntry);
+				$subpostArray['user_can_edit'] = $auth->UserCanEdit($subpostEntry);
 			} else {
 				$subpostArray['user_can_edit'] = false;
 			}
