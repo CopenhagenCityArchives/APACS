@@ -945,9 +945,6 @@
                     "key": "persons.firstnames"
                 },
                 {
-                    "key": "persons.freetext_store"
-                },
-                {
                     "key": "persons.lastname"
                 },
                 {
