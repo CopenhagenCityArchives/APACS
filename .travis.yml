@@ -33,6 +33,7 @@ script:
   - sleep 30
   - docker-compose -f docker-compose-ci-apacs-tests.yml exec apacs /code/vendor/bin/phpunit
 
+before_deploy:
   # Add tag in Dockerrun.aws.json
   - sed -i "s/{image-tag}/${IMAGE_TAG}/g" Dockerrun.aws.json
 
@@ -49,7 +50,6 @@ script:
       sed "s/{image-tag}/${IMAGE_TAG}/g" docker-compose-apacs-beta.yml > docker-compose.yml
       mv .ebignore_beta .ebignore
     fi
-
 
 deploy:
   - provider: elasticbeanstalk
