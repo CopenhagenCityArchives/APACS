@@ -49,8 +49,16 @@ class ConcreteEntries {
 	 */
 	private function HandleLoadedEntry(IEntity $entity, Array $entry) {
 		foreach ($entity->getFields() as $field) {
-			if ($field->formFieldType == 'boolean' && isset($entry[$field->fieldName])) {
+			if ((is_array($field->formFieldType) && count(array_filter($field->formFieldType, function ($formFieldType) { return $formFieldType == 'boolean'; })) > 0 || $field->formFieldType == 'boolean') && isset($entry[$field->fieldName])) {
 				$entry[$field->fieldName] = $entry[$field->fieldName] ? true : false;
+			}
+
+			if ((is_array($field->formFieldType) && count(array_filter($field->formFieldType, function ($formFieldType) { return $formFieldType == 'number'; })) > 0 || $field->formFieldType == 'number')) {
+				if (is_numeric($entry[$field->fieldName])) {
+					$entry[$field->fieldName] = intval($entry[$field->fieldName]);
+				} else if (is_float($entry[$field->fieldName])) {
+					$entry[$field->fieldName] = floatval($entry[$field->fieldName]);
+				}
 			}
 
 			if ($field->formFieldType == 'date' && isset($entry[$field->fieldName])) {
