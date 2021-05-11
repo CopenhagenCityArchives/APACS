@@ -403,7 +403,7 @@
                         "includeInForm": 1,
                         "tableName": "PRB_adresse",
                         "fieldName": "frameldt",
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean",  "null"],
                         "includeInSOLR": 0
                     },
                     {
@@ -642,6 +642,10 @@
                             "key": "registerblad.adresser[].frameldt",
                             "type": "radios",
                             "titleMap": [
+                                {
+                                    "value": null,
+                                    "name": "Ukendt"
+                                },
                                 {
                                     "value": true,
                                     "name": "Ja"
