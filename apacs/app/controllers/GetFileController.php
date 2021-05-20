@@ -17,6 +17,7 @@ class GetFileController extends MainController {
 			if ($page->s3 == 1) {
 				$s3Client = new S3Client($this->getDI()->get('s3Config'));
 
+				// TODO: might have to use streamWrapper if this is too slow / memory-consuming
 				$result = $s3Client->getObject([
 					'Bucket' => $page->s3_bucket,
 					'Key' => $page->s3_key

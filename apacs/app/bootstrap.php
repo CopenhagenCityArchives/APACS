@@ -145,7 +145,7 @@ try {
 	$files->setHandler(new GetFileController());
 	
 	$files->get('/file/{id:[0-9]+}', 'GetFileById');
-	$files->get('/file', 'GetFileByPath'); // /file?path={pathToFile}
+	$files->get('/file', 'GetFileByPath'); // example: /file?path={pathToFile}
 
 	$app->mount($files);
 	
