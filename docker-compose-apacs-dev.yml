@@ -27,6 +27,8 @@ services:
       - APACS_IMAGE_PATH=/code/tests/test-assets/
       - APACS_IMAGE_PROTOCOL=file
 
+      - API_URL=http://localhost:8080
+
       - ENVIRONMENT=DEVELOPMENT
       
       - SOLR_SCHEME=http
