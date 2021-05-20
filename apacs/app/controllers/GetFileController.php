@@ -22,6 +22,7 @@ class GetFileController extends MainController {
 					'Bucket' => $page->s3_bucket,
 					'Key' => $page->s3_key
 				]);
+
 				if ($result['StatusCode'] == 200) {
 					$this->response->setMimeType($result['ContentType']);
 					$this->response->setBody($result['Body']);
@@ -39,21 +40,29 @@ class GetFileController extends MainController {
 		}
 	}
 
-	// TODO remove when old collections have been migrated
+	// TODO: remove when old collections have been migrated
 	public function GetFileByPath() {
 		$starttime = microtime(true);
 		
-		$filePath = $this->request->getQuery('path', 'str');
-		
-		if ($filePath == NULL) {
-			$this->addStat('error_no_path_requested', null, $starttime, null);
-			$this->response->setStatusCode(404);
-			$this->response->setJsonContent(['error' => 'No path requested']);
-		} else {
-			$url = 'https://www.kbhkilder.dk/collections/' . $filePath;
-			$response->redirect($url, true);
-			$this->addStat(null, $url, $starttime, null);
+		$filePath = $this->request->getQuery('path', 'str', null);
+
+		if(is_null($filePath)){
+			$this->addStat('error_no_result', null, $starttime, null);
+			$this->response->setStatusCode(400);
+			$this->response->setJsonContent(['error' => 'path is required']);
+			return;
 		}
+		
+		$page = Pages::findFirst(['conditions' => 's3_key = ' . $filePath]);
+
+		if ($page == NULL) {
+			$this->addStat('error_no_result', null, $starttime, null);
+			$this->response->setStatusCode(404);
+			$this->response->setJsonContent(['error' => 'No file found for path ' . $filePath]);
+			return;
+		}
+
+		$this->GetFileById($page->id);
 	}
 
 	private function addStat($collection, $file, $starttime, $fileId = 'NULL') {
