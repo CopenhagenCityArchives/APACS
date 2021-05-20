@@ -215,32 +215,31 @@ CREATE TABLE `apacs_units` (
 DROP TABLE IF EXISTS `apacs_collections`;
 CREATE TABLE `apacs_collections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` char(250) COLLATE utf8_danish_ci NOT NULL,
-  `description` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `url` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `concreteImagesTableName` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `info` text COLLATE utf8_danish_ci,
+  `name` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci NOT NULL,
+  `description` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `url` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `info` text CHARACTER SET utf8 COLLATE utf8_danish_ci,
   `status` int(11) NOT NULL DEFAULT '0',
   `num_of_filters` int(11) DEFAULT '0',
-  `level1_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level1_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level1_example_value` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level2_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level2_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level2_example_value` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level3_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level3_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level3_example_value` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `link` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `link_text` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `link_mouse_over` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `level1_name` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level1_info` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level1_example_value` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_name` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_info` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_example_value` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_name` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_info` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_example_value` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `link` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `link_text` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `link_mouse_over` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
   `date_create` timestamp NULL DEFAULT NULL,
   `date_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_public` timestamp NULL DEFAULT NULL,
-  `image_url` char(100) COLLATE utf8_danish_ci DEFAULT 'http://www.kbhkilder.dk',
-  `solr_base_query` text COLLATE utf8_danish_ci,
+  `archive_id` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=147 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 
 DROP TABLE IF EXISTS `apacs_tasks`;
 CREATE TABLE `apacs_tasks` (
