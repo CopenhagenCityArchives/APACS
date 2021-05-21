@@ -38,7 +38,7 @@ try {
 	//Setup the configuration service
 	$di->setShared('collectionsConfiguration', function () use ($di) {
 		//Loading the almighty configuration array
-		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
+		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php', $di);
 	});
 
 	//Setup the database service

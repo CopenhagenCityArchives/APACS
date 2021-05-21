@@ -99,3 +99,10 @@ $di->setShared('s3Config', function () {
 		// credentials are automatically loaded from environment
 	];
 });
+
+$di->setShared('apiUrl', function () {
+	$protocol = strpos($_SERVER['HTTP_HOST'], 'localhost') === 0 ? 'http://' : 'https://';
+	$subDir = str_replace('public/', '', str_replace('index.php', '', $_SERVER['PHP_SELF']));
+
+	return $protocol . $_SERVER['HTTP_HOST'] . $subDir;
+});
