@@ -26,7 +26,7 @@ class ConfigurationEntity implements IEntity {
 		$this->name = $entity['name'];
 		$this->guiName = $entity['guiName'] ?? null;
 		$this->type = $entity['type'];
-		$this->required = $entity['required'];
+		$this->required = $entity['required'] ?? null;
 		$this->includeInSOLR = $entity['includeInSOLR'] ?? 0;
 
 		$this->setFields($entity['fields']);
