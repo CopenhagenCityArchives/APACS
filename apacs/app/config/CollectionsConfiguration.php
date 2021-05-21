@@ -60,6 +60,7 @@ $collectionsSettings = array(
 				'required_levels' => array('name', 'year'),
 				'gui_hide_name' => true,
 				'required' => false,
+				'example_value' => 'maj'
 			),
 			array(
 				'order' => 2,
@@ -75,6 +76,7 @@ $collectionsSettings = array(
 				'required' => false,
 				'searchable' => true,
 				'required_levels' => array('name'),
+				'example_value' => '1871'
 			),
 			array(
 				'order' => 1,
@@ -91,6 +93,7 @@ $collectionsSettings = array(
 				'required' => true,
 				'searchable' => true,
 				'required_levels' => false, //array('streetname')
+				'example_value' => 'Adelgade'
 			),
 		),
 		'error_intro' => 'Har du opdaget, at et billede er registreret forkert eller ikke passer ind, kan du give os besked. Når du fejlmelder et billede, fejlmelder du hele mandtallet. Tak for hjælpen.',
