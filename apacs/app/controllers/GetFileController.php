@@ -26,23 +26,19 @@ class GetFileController extends MainController {
 		$filePath = $this->request->getQuery('path', 'string', null);
 
 		if(is_null($filePath)){
-			$this->addStat('error_no_result', null, $starttime, null);
+			$this->addStat('error_path_not_set', null, $starttime, null);
 			$this->response->setStatusCode(400);
 			$this->response->setJsonContent(['error' => 'path is required']);
 			return;
 		}
 		
-		$page = Pages::findFirst([
-			'conditions' => 's3_key = :filePath:',
-			'bind' => ['filePath' => $filePath]
-		]);
-
-		if ($page == NULL) {
-			$this->addStat('error_no_result', $filePath, $starttime, null);
-			$this->response->setStatusCode(404);
-			$this->response->setJsonContent(['error' => 'No file found for file with path ' . $filePath]);
-			return;
-		}
+		// Create artifical page object, as collections with paths does not have 
+		// a representation in apacs_pages
+		$page = new Pages();
+		$page->id = null;
+		$page->s3 = 1;
+		$page->s3_bucket = 'kbhkilder';
+		$page->s3_key = $filePath;
 
 		$this->OutputS3Page($page, $starttime);
 	}
