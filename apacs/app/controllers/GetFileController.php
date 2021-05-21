@@ -60,7 +60,7 @@ class GetFileController extends MainController {
 				]);
 				$this->response->setContentType($result['ContentType']);
 				$this->response->setContent($result['Body']);
-				$this->addStat(null, '/' . $page->relative_filename_converted, $starttime, $page->id);
+				$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
 
 			}
 			catch(AwsException $e){
