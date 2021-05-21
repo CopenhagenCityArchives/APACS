@@ -287,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `apacs_users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=608 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `Stats` (
+CREATE TABLE IF NOT EXISTS `stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collection` char(25) DEFAULT NULL,
   `file` char(200) DEFAULT NULL,
