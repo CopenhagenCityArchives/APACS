@@ -1,0 +1,8 @@
+# get first page in every collection, save to CSV file:
+mysql --login-path=apacs apacs -e 'select volume_id, min(id) from apacs_pages group by volume_id;' > test_pages_script.csv
+
+# generate curl commands for every line in CSV and save to test script:
+awk -F'\t' '{print "curl -D "$2".headers -O https://api-staging.kbharkiv.dk/file/"$2" # collection id: "$1}' < test_pages_script.csv > test_pages_script.sh
+
+# run test script and log results:
+bash test_pages_script.sh 2>&1 | tee test_pages_script.log
