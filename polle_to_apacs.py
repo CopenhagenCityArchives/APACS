@@ -229,9 +229,14 @@ def generate_apacs_items(mysql, task_id, unit):
     task_unit.update(mysql)
 
 
-def main(task_id, collection_id, start_unit_id, mysql):
+def main(task_id, collection_id, start_unit_id, exclude_film, include_film, mysql):
     for unit in generate_units(mysql, collection_id, unit_id_generator(start_unit_id)):
-        print(f"Unit (filmrulle id {unit.filmrulle_id})", flush=True, end="\r")
+        if unit.filmrulle_id in exclude_film:
+            print(f"Unit (filmrulle id {unit.filmrulle_id}) - {unit.unit_id} - skipped - excluded", flush=True)
+            continue
+        if bool(include_film) and unit.filmrulle_id not in include_film:
+            print(f"Unit (filmrulle id {unit.filmrulle_id}) - {unit.unit_id} - skipped - not included", flush=True)
+            continue
         unit.insert(mysql)
         print(f"Unit (filmrulle id {unit.filmrulle_id}) - {unit.unit_id}", flush=True, end="\r")
         entries = []
@@ -281,9 +286,10 @@ if __name__ == "__main__":
     parser.add_argument('--user', '-u', type=str, default="root")
     parser.add_argument('--password', '-p', type=str, nargs='?', const=None, default=False)
     parser.add_argument('--start-unit-id', type=int, default=False)
+    parser.add_argument('--exclude-film', type=lambda s: set(map(lambda fid: int(fid.strip()), s.split(','))), default=set())
+    parser.add_argument('--include-film', type=lambda s: set(map(lambda fid: int(fid.strip()), s.split(','))), default=set())
 
     namespace = parser.parse_args()
-
     if namespace.password is None:
         namespace.password = getpass.getpass()
     
@@ -299,4 +305,4 @@ if __name__ == "__main__":
         db=namespace.db,
         charset='utf8'
     ) as mysql:
-        main(namespace.task_id, namespace.collection_id, namespace.start_unit_id, mysql)
+        main(namespace.task_id, namespace.collection_id, namespace.start_unit_id, namespace.exclude_film, namespace.include_film, mysql)
