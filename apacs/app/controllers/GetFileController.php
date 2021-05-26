@@ -45,37 +45,30 @@ class GetFileController extends MainController {
 
 	private function OutputS3Page(Pages $page, $starttime){
 		
-		if ($page->s3 == 1) {
-			$s3Client = new S3Client($this->getDI()->get('s3Config'));
+		$s3Client = new S3Client($this->getDI()->get('s3Config'));
 
-			// TODO: might have to use streamWrapper if this is too slow / memory-consuming
-			try {
-				$result = $s3Client->getObject([
-					'Bucket' => $page->s3_bucket,
-					'Key' => $page->s3_key
-				]);
-				$this->response->setContentType($result['ContentType']);
-				$this->response->setContent($result['Body']);
-				$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
+		// TODO: might have to use streamWrapper if this is too slow / memory-consuming
+		try {
+			$result = $s3Client->getObject([
+				'Bucket' => $page->s3_bucket,
+				'Key' => $page->s3_key
+			]);
+			$this->response->setContentType($result['ContentType']);
+			$this->response->setContent($result['Body']);
+			$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
 
-			}
-			catch(AwsException $e){
-				$this->response->setStatusCode(404);
-				$this->response->setJsonContent(['error' => 'S3 returned status code ' . $e->getAwsErrorCode() . ' for fileId ' . $page->id]);
-				$this->addStat('error_s3_status_' . $e->getAwsErrorCode() , null, $starttime, $page->id);
-			} 
-			catch (Exception $e) {
-				$this->response->setStatusCode(404);
-				$this->response->setJsonContent(['error' => 'General exception: '. $e->getMessage()]);
-				$this->addStat('error_no_result', null, $starttime, $page->id);
-			}
-		} else {
-			$this->response->setStatusCode(404);
-			$this->response->setJsonContent(['error' => 'Object not marked for S3: ' . $page->id]);
-			$this->addStat('error_file_not_marked_s3', null, $starttime, $page->id);
 		}
-		
-	}
+		catch(AwsException $e){
+			$this->response->setStatusCode(404);
+			$this->response->setJsonContent(['error' => 'S3 returned status code ' . $e->getAwsErrorCode() . ' for fileId ' . $page->id]);
+			$this->addStat('error_s3_status_' . $e->getAwsErrorCode() , null, $starttime, $page->id);
+		} 
+		catch (Exception $e) {
+			$this->response->setStatusCode(404);
+			$this->response->setJsonContent(['error' => 'General exception: '. $e->getMessage()]);
+			$this->addStat('error_no_result', null, $starttime, $page->id);
+		}
+	}		
 
 	private function addStat($collection, $file, $starttime, $fileId = 'NULL') {
 		$loadTime = microtime(true) - $starttime;
