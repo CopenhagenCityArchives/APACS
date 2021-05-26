@@ -38,7 +38,7 @@ $collectionsSettings = array(
 		'long_name' => 'Politiets Mandtal for København 1866 - 1923',
 		'gui_required_fields_text' => 'Vælg minimum gade og år',
 		//How to link the data level objects to images
-		'objects_query' => "select files.id, CONCAT('$cdnUrl', 'collections/mandtal/',path) as imageURL, year, month, name FROM files LEFT JOIN volumes ON files.volume_id = volumes.id LEFT JOIN streets on volumes.street_id = streets.id WHERE :query ORDER BY year, month, files.id",
+		'objects_query' => "select files.id, CONCAT('$cdnUrl', 'collections/mandtal',path) as imageURL, year, month, name FROM files LEFT JOIN volumes ON files.volume_id = volumes.id LEFT JOIN streets on volumes.street_id = streets.id WHERE :query ORDER BY year, month, files.id",
 		'primary_table_name' => 'files',
 		'starbas_field_name' => false,
 		'levels_type' => 'hierarchy',
