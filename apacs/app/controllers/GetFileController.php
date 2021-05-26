@@ -55,18 +55,16 @@ class GetFileController extends MainController {
 			$BucketPath = 's3://' . $page->s3_bucket . '/' . $page->s3_key;
 
 			// Open a stream in read-only mode
-			if ($stream = file_get_contents($BucketPath)) {
+			if ($stream = fopen($BucketPath, 'r')) {
 				header('Content-Type: image/jpeg');
 				header('Access-Control-Allow-Origin: *');
 				// While the stream is still open
 				while (!feof($stream)) {
-					// Read 1024 bytes from the stream
+					// Read 1,024 bytes from the stream
 					echo fread($stream, 1024);
 				}
 				// Be sure to close the stream resource when you're done with it
 				fclose($stream);
-				$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
-				die();
 			}
 			else{
 				$this->response->setStatusCode(404);
@@ -85,6 +83,9 @@ class GetFileController extends MainController {
 			$this->response->setJsonContent(['error' => 'General exception: '. $e->getMessage()]);
 			$this->addStat('error_no_result', null, $starttime, $page->id);
 		}
+
+		$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
+		die();
 	}		
 
 	private function addStat($collection, $file, $starttime, $fileId = 'NULL') {
