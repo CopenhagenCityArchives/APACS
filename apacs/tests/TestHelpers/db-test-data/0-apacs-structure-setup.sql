@@ -173,19 +173,25 @@ CREATE TABLE `apacs_pages` (
   `unit_id` int(11) NOT NULL DEFAULT '0',
   `page_number` int(11) NOT NULL DEFAULT '1',
   `starbas_id` int(11) DEFAULT NULL,
-  `filename` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
-  `filename_converted` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
-  `relative_filename` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
-  `relative_filename_converted` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
-  `found` varchar(255) COLLATE utf8_danish_ci DEFAULT NULL,
-  `image_url` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `md5` char(50) COLLATE utf8_danish_ci DEFAULT NULL,
+  `filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `filename_converted` varchar(255) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `relative_filename` varchar(255) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `relative_filename_converted` varchar(255) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `found` varchar(255) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `image_url` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `md5` char(50) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
   `s3` tinyint(1) NOT NULL DEFAULT '0',
+  `s3_bucket` char(25) COLLATE utf8_danish_ci DEFAULT NULL,
+  `s3_key` text COLLATE utf8_danish_ci,
   PRIMARY KEY (`id`),
   KEY `volume_id` (`volume_id`),
   KEY `unit_id` (`unit_id`),
-  KEY `starbas_id` (`starbas_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1605091 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+  KEY `starbas_id` (`starbas_id`),
+  KEY `s3` (`s3`) /*!80000 INVISIBLE */,
+  KEY `s3_bucket` (`s3_bucket`),
+  KEY `s3_key` (`s3_key`(255))
+) ENGINE=InnoDB AUTO_INCREMENT=3144124 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
 
 DROP TABLE IF EXISTS `apacs_units`;
 CREATE TABLE `apacs_units` (
