@@ -40,9 +40,9 @@ class UnitInfo:
 
 class PageInfo:
 
-    def __init__(self, unit, page_number, image_url):
+    def __init__(self, unit, page_number, s3_key):
         self.unit = unit
-        self.image_url = image_url
+        self.s3_key = s3_key
         self.page_id = None
         self.page_number = page_number
     
@@ -54,7 +54,7 @@ class PageInfo:
             raise Exception("Must save unit before page")
 
         with mysql.cursor() as cursor:
-            cursor.execute(f"INSERT INTO `apacs_pages` (`unit_id`, `page_number`, `image_url`) VALUES ('{self.unit.unit_id}', '{self.page_number}', '{self.image_url}');")
+            cursor.execute(f"INSERT INTO `apacs_pages` (`unit_id`, `page_number`, `s3`, `s3_key`, `s3_bucket`) VALUES ('{self.unit.unit_id}', '{self.page_number}', '1', '{self.s3_key}', 'kbhkilder');")
             self.page_id = cursor.lastrowid
     
 
