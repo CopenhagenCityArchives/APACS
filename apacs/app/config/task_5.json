@@ -27,7 +27,7 @@
                 "formName": "Færdigmeldt",
                 "hasDecode": 0,
                 "includeInForm": 1,
-                "tableName": "PRB_adresse",
+                "tableName": "PRB_registerblad",
                 "fieldName": "complete",
                 "formFieldType": "boolean",
                 "includeInSOLR": 0
