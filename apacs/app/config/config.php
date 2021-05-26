@@ -96,8 +96,12 @@ $di->setShared('AccessController', function () use ($di) {
 $di->setShared('s3Config', function () {
 	return [
 		'region' => 'eu-west-1',
-		'version' => '2006-03-01'
-		// credentials are automatically loaded from environment
+		'version' => '2006-03-01',
+		// credentials are loaded from environment
+		'credentials' => [
+			'key'    => getenv('AWS_ACCESS_KEY_ID'),
+			'secret' => getenv('AWS_SECRET_ACCESS_KEY')
+		],
 	];
 });
 
