@@ -143,9 +143,10 @@ class SubPostInfo:
 
     @staticmethod
     def insertmany(mysql, subposts):
-        with mysql.cursor() as cursor:
-            values = ",".join(map(lambda s: f'({s.page.page_id}, {s.post.post_id}, 1, 1, 0, 0)', subposts))
-            cursor.execute(f"INSERT INTO `apacs_subposts` (`pages_id`, `posts_id`, `width`, `height`, `x`, `y`) VALUES {values};")
+        if subposts:
+            with mysql.cursor() as cursor:
+                values = ",".join(map(lambda s: f'({s.page.page_id}, {s.post.post_id}, 1, 1, 0, 0)', subposts))
+                cursor.execute(f"INSERT INTO `apacs_subposts` (`pages_id`, `posts_id`, `width`, `height`, `x`, `y`) VALUES {values};")
 
 class EntryInfo:
 
@@ -165,9 +166,10 @@ class EntryInfo:
 
     @staticmethod
     def insertmany(mysql, entries):
-        with mysql.cursor() as cursor:
-            values = ",".join(map(lambda e: f'({e.task_id}, {e.post.post_id}, 0, {e.concrete_entry_id}, 1)', entries))
-            cursor.execute(f"INSERT INTO `apacs_entries` (`tasks_id`, `posts_id`, `users_id`, `concrete_entries_id`, `complete`) VALUES {values};")
+        if entries:
+            with mysql.cursor() as cursor:
+                values = ",".join(map(lambda e: f'({e.task_id}, {e.post.post_id}, 0, {e.concrete_entry_id}, 1)', entries))
+                cursor.execute(f"INSERT INTO `apacs_entries` (`tasks_id`, `posts_id`, `users_id`, `concrete_entries_id`, `complete`) VALUES {values};")
 
 def generate_units(mysql, collection_id, unit_id_generator):
     with mysql.cursor(pymysql.cursors.DictCursor) as cursor:
