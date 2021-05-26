@@ -47,16 +47,33 @@ class GetFileController extends MainController {
 		
 		$s3Client = new S3Client($this->getDI()->get('s3Config'));
 
-		// TODO: might have to use streamWrapper if this is too slow / memory-consuming
-		try {
-			$result = $s3Client->getObject([
-				'Bucket' => $page->s3_bucket,
-				'Key' => $page->s3_key
-			]);
-			$this->response->setContentType($result['ContentType']);
-			$this->response->setContent($result['Body']);
-			$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
+		// Register the stream wrapper from an S3Client object
+		$s3Client->registerStreamWrapper();
 
+		// TODO: might have to use streamWrapper if this is too slow / memory-consuming
+		try {	
+			$BucketPath = 's3://' . $page->s3_bucket . '/' . $page->s3_key;
+
+			// Open a stream in read-only mode
+			if ($stream = file_get_contents($BucketPath)) {
+				header('Content-Type: image/jpeg');
+				header('Access-Control-Allow-Origin: *');
+				// While the stream is still open
+				while (!feof($stream)) {
+					// Read 1024 bytes from the stream
+					echo fread($stream, 1024);
+				}
+				// Be sure to close the stream resource when you're done with it
+				fclose($stream);
+				$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
+				die();
+			}
+			else{
+				$this->response->setStatusCode(404);
+				$this->response->setJsonContent(['error' => 'General exception: Could not open stream with path ' . $BucketPath]);
+				$this->addStat('error_no_result', null, $starttime, $page->id);
+				return;
+			}
 		}
 		catch(AwsException $e){
 			$this->response->setStatusCode(404);
