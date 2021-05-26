@@ -12,10 +12,9 @@ class ConfigurationLoader {
 
 	public function __construct($filePath, $di) {
 		$this->_configFileLocation = $filePath;
+
+		$this->_apiUrl = $di->get('apiUrl');
 		
-		//$url variable is needed to set apiUrl in config. See CollectionsConfiguration.php line 25 for details
-		$url = $this->_apiUrl = $di->get('apiUrl');
-		//die($url);
 		$this->loadConfig(require ($filePath));
 	}
 
