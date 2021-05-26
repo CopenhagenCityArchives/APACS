@@ -119,7 +119,7 @@ class ConfigurationLoader {
 
 		$conf['objects_query'] = 'select apacs_pages.id as id, apacs_collections.name, apacs_units.id as units_id, apacs_units.level1_value, apacs_units.level2_value, apacs_units.level3_value, 
 
-			CONCAT(\'https://kilder.kbharkiv.dk/\', apacs_pages.id) as imageURL,
+			CONCAT(\'https://\', apacs_pages.s3_bucket , \'.kbharkiv.dk/\', apacs_pages.s3_key) as imageURL,
 			
 			apacs_units.id as starbas_id, apacs_pages.s3
 
