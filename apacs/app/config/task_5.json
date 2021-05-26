@@ -15,6 +15,24 @@
         "allowNewValues": 1,
         "fields": [
             {
+                "formName": "Korrekturlæst",
+                "hasDecode": 0,
+                "includeInForm": 1,
+                "tableName": "PRB_registerblad",
+                "fieldName": "approved",
+                "formFieldType": "boolean",
+                "includeInSOLR": 0
+            },
+            {
+                "formName": "Færdigmeldt",
+                "hasDecode": 0,
+                "includeInForm": 1,
+                "tableName": "PRB_adresse",
+                "fieldName": "complete",
+                "formFieldType": "boolean",
+                "includeInSOLR": 0
+            },
+            {
                 "tableName": "PRB_registerblad",
                 "fieldName": "saerlige_bemaerkninger",
                 "includeInForm": 1,
@@ -398,7 +416,7 @@
                         "includeInSOLR": 0
                     },
                     {
-                        "formName": "Fremeldt",
+                        "formName": "Frameldt",
                         "hasDecode": 0,
                         "includeInForm": 1,
                         "tableName": "PRB_adresse",
@@ -500,6 +518,32 @@
             "name": "Registerbladet",
             "description": "Selve registerbladet",
             "fields": [
+                {
+                    "key": "registerblad.approved",
+                    "items": [
+                        {
+                            "value": true,
+                            "name": "Ja"
+                        },
+                        {
+                            "value": false,
+                            "name": "Nej"
+                        }
+                    ]
+                },
+                {
+                    "key": "registerblad.complete",
+                    "items": [
+                        {
+                            "value": true,
+                            "name": "Ja"
+                        },
+                        {
+                            "value": false,
+                            "name": "Nej"
+                        }
+                    ]
+                },
                 {
                     "key": "registerblad.udfyldelse_dag"
                 },
