@@ -53,27 +53,27 @@
         "error_reports": [
             {
                 "label": "Navn (hovedperson)",
-                "entity": "name"
+                "entity": "registerblad.personer"
             },
             {
                 "label": "Adresser (hovedperson)",
-                "entity": "address"
+                "entity": "registerblad.adresser"
             },
             {
                 "label": "Andet, fx erhverv, fødested, fødselsdato (hovedperson)",
-                "entity": "other"
+                "entity": "registerblad.personer"
             },
             {
                 "label": "Navn (biperson)",
-                "entity": "name_relative"
+                "entity": "registerblad.personer"
             },
             {
                 "label": "Andet, fx erhverv, fødested (biperson)",
-                "entity": "position_relative"
+                "entity": "registerblad.personer"
             },
             {
                 "label": "Om registerbladet",
-                "entity": "about"
+                "entity": "registerblad"
             }
         ]
     },
