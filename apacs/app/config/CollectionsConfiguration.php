@@ -344,7 +344,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'' . $api_url . '\',file/\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'' . $api_url . '\',\'file/\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
@@ -425,7 +425,7 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'' . $api_url . '\',file/\', apacs_pages.id) as imageURL
+		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'' . $api_url . '\',\'file/\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
@@ -522,7 +522,7 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'' . $api_url . '\',file/\', apacs_pages.id) as imageURL
+		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'' . $api_url . '\',\'file/\', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         WHERE volumetype_id = 4 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
