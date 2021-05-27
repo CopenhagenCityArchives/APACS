@@ -4,11 +4,6 @@ import argparse
 import getpass
 
 
-def image_url(station_number, filmrulle_number, filename):
-    """Construct the URL for a page."""
-    return f"https://superbruger.politietsregisterblade.dk/registerblade/{station_number}/{filmrulle_number}/{filename}.jpg"
-
-
 class UnitInfo:
 
     def __init__(self, collection_id, description, filmrulle_id, unit_id=None):
@@ -206,7 +201,11 @@ def generate_apacs_items(mysql, task_id, unit):
         """)
 
         for row in cursor.fetchall():
-            front = PageInfo(unit, page_number, image_url(row['station_nummer'], row['filmrulle_nummer'], row['filnavn']))
+            front = PageInfo(unit, page_number,
+                             "collections/registerblade"
+                             f"/{row['station_nummer']}"
+                             f"/{row['filmrulle_nummer']}"
+                             f"/{row['filnavn']}")
             page_number += 1
             yield front
             yield TaskPageInfo(front, task_id)
@@ -217,7 +216,11 @@ def generate_apacs_items(mysql, task_id, unit):
             yield EntryInfo(task_id, post, row['id'])
 
             if row['filnavn2']:
-                back = PageInfo(unit, page_number, image_url(row['station_nummer'], row['filmrulle_nummer'], row['filnavn2']))
+                back = PageInfo(unit, page_number,
+                                "collections/registerblade"
+                                f"/{row['station_nummer']}"
+                                f"/{row['filmrulle_nummer']}"
+                                f"/{row['filnavn2']}")
                 page_number += 1
                 yield back
                 yield TaskPageInfo(back, task_id)
