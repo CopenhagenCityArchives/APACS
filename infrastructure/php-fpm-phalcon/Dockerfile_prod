@@ -1,27 +1,5 @@
-FROM php:7.3-fpm-alpine
+FROM 282251075226.dkr.ecr.eu-west-1.amazonaws.com/phalcon-base:latest
 
-# install make tools, clone phalcon, build it and remove tmp folders and packages
-RUN \
-    apk add git autoconf file g++ gcc libc-dev make pkgconf re2c libtool \
-    check check-dev cyrus-sasl-dev libsodium-dev libssh2-dev imagemagick-dev yaml-dev --no-cache && \
-    cd ~ && git clone https://github.com/phalcon/cphalcon.git && \
-    cd ~/cphalcon && git checkout v3.4.5 && \
-    cd ~/cphalcon/build && ./install && \
-    docker-php-ext-enable phalcon && \
-    rm -rf ~/cphalcon && \
-    apk del git autoconf make m4 perl g++ gcc \
-    musl-dev libc-dev check-dev cyrus-sasl-dev libsodium-dev libssh2-dev yaml-dev openssl-dev imagemagick-dev zlib-dev
-
-# enable pdo_mysql extension
-RUN docker-php-ext-install pdo pdo_mysql
-
-# add libpng to enable image manipulation with PHP
-RUN apk add --no-cache libpng libpng-dev libjpeg-turbo libjpeg-turbo-dev freetype freetype-dev
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
-RUN docker-php-ext-install -j$(nproc) gd
-RUN apk del libpng-dev libjpeg-turbo-dev freetype-dev
-
-RUN apk add --no-cache git openssh composer
 COPY ./infrastructure/php-fpm-phalcon/php-override.ini.prod /usr/local/etc/php/conf.d/php-ini-overrides.ini
 COPY ./apacs /code
 WORKDIR /code
