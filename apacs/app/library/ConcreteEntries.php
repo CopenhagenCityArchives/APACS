@@ -318,7 +318,12 @@ class ConcreteEntries {
 							continue;
 						}
 
-						$this->DeleteRemovedArrayItems($childEntity, $oldEntry[$childEntity->name], $newCorresponding[$childEntity->name]);
+						$newValues = [];
+						if (array_key_exists($childEntity->name, $newCorresponding)) {
+							$newValues = $newCorresponding[$childEntity->name];
+						}
+
+						$this->DeleteRemovedArrayItems($childEntity, $oldEntry[$childEntity->name], $newValues);
 					}
 				}
 			}
@@ -378,7 +383,11 @@ class ConcreteEntries {
 		if (!is_null($oldData)) {
 			foreach ($dependingEntities as $dependingEntity) {
 				if (isset($oldData[$dependingEntity->name])) {
-					$this->DeleteRemovedArrayItems($dependingEntity, $oldData[$dependingEntity->name], $data[$dependingEntity->name]);
+					$newData = null;
+					if (array_key_exists($dependingEntity->name, $data)) {
+						$newData = $data[$dependingEntity->name];
+					}
+					$this->DeleteRemovedArrayItems($dependingEntity, $oldData[$dependingEntity->name], $newData);
 				}
 			}
 		}
