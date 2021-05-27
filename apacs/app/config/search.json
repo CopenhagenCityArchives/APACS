@@ -711,6 +711,26 @@
                 }
             ],
             "view_name": "Færdigmeldt"
+        },
+        "prb_station": {
+            "collections": [
+                17
+            ],
+            "name": "prb_station",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Stationsnummer"
+        },
+        "prb_filmrulle": {
+            "collections": [
+                17
+            ],
+            "name": "prb_filmrulle",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Filmrullenummer"
         }
     },
     "types": {
