@@ -14,31 +14,8 @@ services:
       - ./apacs:/code
       - ./infrastructure/php-fpm-phalcon/php-override.ini.dev:/usr/local/etc/php/conf.d/php-ini-overrides.ini
       - composer-vendor:/code/vendor
-    environment:
-      - APACS_ACCESS_CTRL_NAME=FakeAccessController
-
-      - APACS_DB_CHARSET=utf8
-      - APACS_DB_DATABASE=apacs
-      - APACS_DB_HOST=mysql
-      - APACS_DB_PASSWORD=123456
-      - APACS_DB_PORT=3306
-      - APACS_DB_USER=dev
-
-      - APACS_IMAGE_PATH=/code/tests/test-assets/
-      - APACS_IMAGE_PROTOCOL=file
-
-      - API_URL=http://localhost:8080
-
-      - ENVIRONMENT=DEVELOPMENT
-      
-      - SOLR_SCHEME=http
-      - SOLR_HOST=solr
-      - SOLR_PORT=8983
-      - SOLR_PATH=/solr/apacs_core
-      - SOLR_USERNAME=kbharkiv
-      - SOLR_PASSWORD=6nXSaEJBH7
-      
-      - SOLR_TIMEOUT=10
+    env_file:
+      - .env_dev
   
   composer:
     container_name: composer
