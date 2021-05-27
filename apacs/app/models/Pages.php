@@ -48,7 +48,7 @@ class Pages extends \Phalcon\Mvc\Model {
 			throw Exception('S3 returned status code ' . $e->getAwsErrorCode() . ' for fileId ' . $page->id);
 		} 
 		catch (Exception $e) {
-			throw Exception("Could not get image object from S3: " . $e);
+			throw new Exception("Could not get image object from S3: " . $e);
 		}
 	}
 
