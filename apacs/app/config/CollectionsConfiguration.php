@@ -25,8 +25,8 @@
 if(!isset($url)){
 	throw new Exception("url is not set, cannot set collection settings!");
 }
-$cdnUrlId = $url . '/file/';
-$cdnUrlPath = $url . '/file?path=/';
+$cdnUrlId = $url . 'file/';
+$cdnUrlPath = $url . 'file?path=/';
 
 $collectionsSettings = array(
 
