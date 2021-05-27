@@ -85,8 +85,8 @@ $di->setShared('s3Config', function () {
 		'version' => '2006-03-01',
 		// credentials are loaded from environment
 		'credentials' => [
-			'key'    => getenv('AWS_ACCESS_KEY_ID'),
-			'secret' => getenv('AWS_SECRET_ACCESS_KEY')
+			'key'    => getenv('AWS_S3_ACCESS_KEY_ID'),
+			'secret' => getenv('AWS_S3_SECRET_ACCESS_KEY')
 		],
 	];
 });
