@@ -19,8 +19,8 @@ services:
       - APACS_DB_PORT=3306
       - APACS_DB_USER=dev
 
-      - APACS_IMAGE_PATH=/code/tests/test-assets/
-      - APACS_IMAGE_PROTOCOL=file
+      - AWS_S3_ACCESS_KEY_ID=${AWS_S3_ACCESS_KEY_ID}
+      - AWS_S3_SECRET_ACCESS_KEY=${AWS_S3_SECRET_ACCESS_KEY}
 
       - ENVIRONMENT=DEVELOPMENT
       
@@ -30,7 +30,6 @@ services:
       - SOLR_PATH=/solr/apacs_core
       - SOLR_USERNAME=kbharkiv
       - SOLR_PASSWORD=6nXSaEJBH7
-      
       - SOLR_TIMEOUT=10
 
   mysql:
