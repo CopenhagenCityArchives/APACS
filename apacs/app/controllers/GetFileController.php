@@ -1,7 +1,5 @@
 <?php
 
-use Aws\S3\S3Client;
-
 class GetFileController extends MainController {
 
 	public function GetFileById($fileId) {
@@ -45,17 +43,11 @@ class GetFileController extends MainController {
 
 	private function OutputS3Page(Pages $page, $starttime){
 		
-		$s3Client = new S3Client($this->getDI()->get('s3Config'));
-
-		// Register the stream wrapper from an S3Client object
-		$s3Client->registerStreamWrapper();
-
-		// TODO: might have to use streamWrapper if this is too slow / memory-consuming
 		try {	
-			$BucketPath = 's3://' . $page->s3_bucket . '/' . $page->s3_key;
+			$stream = $page->GetPageImageDataStream();
 
 			// Open a stream in read-only mode
-			if ($stream = fopen($BucketPath, 'r')) {
+			if ($stream) {
 				header('Content-Type: image/jpeg');
 				header('Access-Control-Allow-Origin: *');
 				// While the stream is still open
@@ -65,27 +57,23 @@ class GetFileController extends MainController {
 				}
 				// Be sure to close the stream resource when you're done with it
 				fclose($stream);
+
+				$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
+				return;
 			}
 			else{
 				$this->response->setStatusCode(404);
-				$this->response->setJsonContent(['error' => 'General exception: Could not open stream with path ' . $BucketPath]);
+				$this->response->setJsonContent(['error' => 'General exception: Could not open stream with path ' . $page->GetPageImagePath()]);
 				$this->addStat('error_no_result', null, $starttime, $page->id);
 				return;
 			}
 		}
-		catch(AwsException $e){
-			$this->response->setStatusCode(404);
-			$this->response->setJsonContent(['error' => 'S3 returned status code ' . $e->getAwsErrorCode() . ' for fileId ' . $page->id]);
-			$this->addStat('error_s3_status_' . $e->getAwsErrorCode() , null, $starttime, $page->id);
-		} 
 		catch (Exception $e) {
 			$this->response->setStatusCode(404);
 			$this->response->setJsonContent(['error' => 'General exception: '. $e->getMessage()]);
 			$this->addStat('error_no_result', null, $starttime, $page->id);
+			return;
 		}
-
-		$this->addStat(null, '/' . $page->s3_key, $starttime, $page->id);
-		die();
 	}		
 
 	private function addStat($collection, $file, $starttime, $fileId = 'NULL') {

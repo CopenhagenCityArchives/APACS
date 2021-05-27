@@ -33,19 +33,18 @@ class Posts extends \Phalcon\Mvc\Model {
 	 * Save a snippet of the image to which the post relates.
 	 */
 	public function SaveThumbImage() {
-		$context = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);
-		$imageData = file_get_contents($this->getPages()->GetLocalPathToConcreteImage(), false, $context);
+		$imageData = $this->getPages()->GetPageImageData();
 		$image = imagecreatefromstring($imageData);
 
 		if ($image == FALSE) {
-			throw new RuntimeException('Could not find image located at ' . $this->getPages()->GetLocalPathToConcreteImage());
+			throw new RuntimeException('Could not find image located at ' . $this->getPages()->GetPageImagePath());
 		}
 
 		$imgHeight = imagesy($image);
 		$imgWidth = imagesx($image);
 
 		if ($imgHeight == FALSE || $imgWidth == FALSE) {
-			throw new RuntimeException('Could not read dimensions of image loaded at ' . $this->getPages()->GetLocalPathToConcreteImage());
+			throw new RuntimeException('Could not read dimensions of image loaded at ' . $this->getPages()->GetPageImagePath());
 		}
 
 		$rect = [];

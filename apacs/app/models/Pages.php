@@ -1,4 +1,5 @@
 <?php
+use Aws\S3\S3Client;
 
 class Pages extends \Phalcon\Mvc\Model {
 
@@ -22,16 +23,48 @@ class Pages extends \Phalcon\Mvc\Model {
 		$this->belongsTo('unit_id', 'Units', 'id');
 	}
 
-	public function GetLocalPathToConcreteImage() {
+	public function GetPageImagePath() {
+		return 's3://' . $this->s3_bucket . '/' . $this->s3_key;
+	}
 
-		//Get pageImageLocation to figure out where to get images from
-		$pathInfo = $this->getDI()->get('pageImageLocation');
-
-		if ($pathInfo['type'] == 'http') {
-			return $pathInfo['path'] . $this->id;
+	public function GetPageImageData()
+	{
+		if(is_null($this->s3_bucket) || is_null($this->s3_key)){
+			throw new Exception("Cannot get image data from S3. s3_bucket and s3_key properties are required. Page id: " . $this->id);
 		}
 
-		return $pathInfo['path'] . $this->relative_filename_converted;
+		$s3Client = new S3Client($this->getDI()->get('s3Config'));
+
+		// TODO: might have to use streamWrapper if this is too slow / memory-consuming
+		try {
+			$result = $s3Client->getObject([
+				'Bucket' => $this->s3_bucket,
+				'Key' => $this->s3_key
+			]);
+			
+			return $result['Body'];
+		}
+		catch(AwsException $e){
+			throw Exception('S3 returned status code ' . $e->getAwsErrorCode() . ' for fileId ' . $page->id);
+		} 
+		catch (Exception $e) {
+			throw Exception("Could not get image object from S3: " . $e);
+		}
+	}
+
+	public function GetPageImageDataStream()
+	{
+		if(is_null($this->s3_bucket) || is_null($this->s3_key)){
+			throw new Exception("Cannot get image data stream from S3. s3_bucket and s3_key properties are required. Page id: " . $this->id);
+		}
+
+		$s3Client = new S3Client($this->getDI()->get('s3Config'));
+
+		// Register the stream wrapper from an S3Client object
+		$s3Client->registerStreamWrapper();
+
+		// Open a stream in read-only mode
+		return fopen($this->GetPageImagePath(), 'r');
 	}
 
 	public function GetStatus() {
