@@ -18,9 +18,9 @@ INSERT INTO `apacs_tasks` (`id`, `name`, `description`, `collection_id`, `primar
 INSERT INTO `apacs_collections` (`id`,`name`) VALUES (147,'resolutions collection name');
 
 INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (1471, 147, 'test unit for resolutions', 2);
-INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`filename`,`filename_converted`,`relative_filename`,`relative_filename_converted`,`found`,`image_url`,`md5`,`s3`) VALUES 
-    (14711,NULL,1471,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015131.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0),
-    (14712,NULL,1471,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015132.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0);
+INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`filename`,`filename_converted`,`relative_filename`,`relative_filename_converted`,`found`,`image_url`,`md5`,`s3`,`s3_bucket`,`s3_key`) VALUES 
+    (14711,NULL,1471,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015131.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0,'kbhkilder','10000'),
+    (14712,NULL,1471,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015132.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0,'kbhkilder','10000');
 INSERT INTO `apacs_tasks_pages` (`id`,`tasks_id`,`pages_id`,`units_id`,`is_done`,`last_activity`) VALUES
     (14711,4,14711,1471,0,NULL),
     (14712,4,14712,1471,0,NULL);

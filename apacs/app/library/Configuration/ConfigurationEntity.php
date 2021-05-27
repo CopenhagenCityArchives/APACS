@@ -21,7 +21,7 @@ class ConfigurationEntity implements IEntity {
 
 	public function __construct(Array $entity) {
 		$this->primaryTableName = $entity['primaryTableName'];
-		$this->isPrimaryEntity = $entity['isPrimaryEntity'];
+		$this->isPrimaryEntity = $entity['isPrimaryEntity'] ?? null;
 		$this->entityKeyName = $entity['entityKeyName'] ?? null;
 		$this->name = $entity['name'];
 		$this->guiName = $entity['guiName'] ?? null;

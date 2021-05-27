@@ -1,9 +1,9 @@
 INSERT INTO `apacs_tasks` (`id`, `name`, `description`, `collection_id`, `primaryEntity_id`) VALUES
     (3,'Begravelser - udvidelser','Begravelser 1912 (lb.nr. 1-3858) - 1940 (lb.nr. 4263-9281)',1,NULL);
 
-INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`relative_filename_converted`,`image_url`) VALUES
-    (114579,null,321,157,74716,'testfile.jpg','http://www.kbhkilder.dk/getfile.php?fileId=114579'),
-    (114580,null,321,157,74716,'testfile.jpg','http://www.kbhkilder.dk/getfile.php?fileId=114580');
+INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`relative_filename_converted`,`image_url`,`s3_bucket`,`s3_key`) VALUES
+    (114579,null,321,157,74716,'testfile.jpg','http://www.kbhkilder.dk/getfile.php?fileId=114579','kbhkilder','10000'),
+    (114580,null,321,157,74716,'testfile.jpg','http://www.kbhkilder.dk/getfile.php?fileId=114580','kbhkilder','10000');
 
 INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES
     (321, 1, 'test unit 321',1000);
