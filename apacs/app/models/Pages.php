@@ -24,7 +24,7 @@ class Pages extends \Phalcon\Mvc\Model {
 	}
 
 	public function GetPageImagePath() {
-		return 's3://' . $this->s3_bucket . $this->s3_key;
+		return 's3://' . $this->s3_bucket . '/' . $this->s3_key;
 	}
 
 	public function GetPageImageData()
