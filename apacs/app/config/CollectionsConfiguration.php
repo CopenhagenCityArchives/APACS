@@ -21,6 +21,11 @@
  *
  */
 
+ // Use local variable $url, otherwise default value
+if(!isset($url)){
+	throw new Exception("url is not set, cannot set collection settings!");
+}
+ $api_url = $url;
 // For custom collections the CDN is always kbhkilder.kbharkiv.dk
 $cdnUrl = 'https://kbhkilder.kbharkiv.dk/';
 
