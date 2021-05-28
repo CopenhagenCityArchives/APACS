@@ -54,7 +54,7 @@ services:
        - "8080:80"
 
   solr:
-    image: library/solr:6.6.3
+    image: library/solr:8.7
     container_name: solr
     ports:
       - "8989:8983"

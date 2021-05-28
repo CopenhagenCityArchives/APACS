@@ -5,8 +5,8 @@ Copenhagen City Archives' configurable backend system used to present and crowds
 # Services
 The system consists of several services:
 
-* A PHP-FPM server with Phalcon installed. This server executes the PHP code and exposes a JSON-based REST API.
-* An nginx server used in front of the PHP-FPM server.
+* A PHP-FPM server with Phalcon installed. This server executes the PHP code and exposes a JSON-based REST API. The service is based on the Phalcon base image
+* An nginx server used in front of the PHP-FPM server
 * A MySQL database having all metadata and data for collections and indexed informations
 * A SOLR database that exposes all indexed persons locally or through a proxy in the API service
 * An indexer that feeds data to SOLR running Python
@@ -19,6 +19,13 @@ There are several docker-compose-files:
 * ``docker-compose-ci-apacs-tests.yml``: Used to run tests before deployment in Travis
 * ``docker-compose-index.dev.yml``: Used development and deployment of the Solr server as well as the indexation scripts
 * ``docker-compose-index.prod.yml``: Used when deploying the indexing services (Solr and indexer) in a remote docker-machine. In this file the local code is copied to the docker images being used, and no drive mapping occurs.
+
+## Building the Phalcon-base image
+When changes are necessary to the Phalcon base image, it must be built and pushed manually.
+This is necessary when requirements to PHP extensions changes or upgrades to the Phalcon library is required.
+* docker build -f ./infrastructure/phalcon-base/Dockerfile -t phalcon-base .
+* docker tag phalcon-base 282251075226.dkr.ecr.eu-west-1.amazonaws.com/phalcon-base:latest
+* docker push 282251075226.dkr.ecr.eu-west-1.amazonaws.com/phalcon-base:latest
 
 
 # Config
@@ -64,31 +71,10 @@ Use the new environment: ``eb use apacs-test-environtment-name``
 
 Changes to the application are deployed using ``eb deploy``
 
-NOTE that this environment runs on the production database!
+NOTE that this environment runs on the production database! Change the AWS Beanstalk environment variables to use another database.
 
 ## Indexing script and Solr
-The services are declared in *docker-compose-index.prod.yml*.
-
-Use the following docker-machine (running at AWS): ``apacs-persons``
-
-Get machine env:
-``docker-machine env apacs-persons``
-``& "C:\Program Files\Docker\Docker\Resources\bin\docker-machine.exe" env apacs-persons | Invoke-Expression``
-
-The index service is deployed to AWS using this command:
-``docker-compose -f docker-compose-index.prod.yml up -d --force-recreate --build indexer``
-
-### Update Solr schema
-It is sometimes necessary to add new fields to the Solr service.
-
-Instead of recreating the Solr container, it is enough to update the core schema.
-Connect to docker machine and run this command:
-
-* ``docker cp ./infrastructure/solr/solr_conf/apacs_core/conf/schema.xml solr:/opt/solr/server/solr/mycores/apacs_core/conf/schema.xml``
-
-This will replace the schema file on the server.
- 
-Remember to reload the core in Solr admin.
+Indexing are done using the repository https://github.com/copenhagencityarchives/APACS-solr
 
 # Tests
 
