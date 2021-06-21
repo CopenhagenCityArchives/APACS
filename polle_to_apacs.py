@@ -215,7 +215,7 @@ def generate_apacs_items(mysql, task_id, unit):
 
             yield EntryInfo(task_id, post, row['id'])
 
-            if row['filnavn2']:
+            if row['filnavn2'] == "noback":
                 back = PageInfo(unit, page_number,
                                 "collections/registerblade"
                                 f"/{row['station_nummer']}"
