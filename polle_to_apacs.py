@@ -49,7 +49,7 @@ class PageInfo:
             raise Exception("Must save unit before page")
 
         with mysql.cursor() as cursor:
-            cursor.execute(f"INSERT INTO `apacs_pages` (`unit_id`, `page_number`, `s3`, `s3_key`, `s3_bucket`) VALUES ('{self.unit.unit_id}', '{self.page_number}', '1', '{self.s3_key}', 'kbhkilder');")
+            cursor.execute(f"INSERT INTO `apacs_pages` (`unit_id`, `page_number`, `s3`, `s3_key`, `s3_bucket`) VALUES ('{self.unit.unit_id}', '{self.page_number}', '1', '{self.s3_key}.jpg', 'kbhkilder');")
             self.page_id = cursor.lastrowid
     
 
