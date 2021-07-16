@@ -206,7 +206,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                     'entityKeyName' => 'referenceField',
                     'type' => 'array',
                     'fields' => [
-                        [ 'fieldName' => 'field1' ]
+                        [ 'fieldName' => 'field1', 'formFieldType' => 'string'  ]
                     ]
                 ],
                 [
@@ -215,7 +215,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                     'entityKeyName' => 'referenceField',
                     'type' => 'object',
                     'fields' => [
-                        [ 'fieldName' => 'field2' ]
+                        [ 'fieldName' => 'field2', 'formFieldType' => 'string' ]
                     ]
                 ]
             ]
@@ -315,7 +315,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                     'entityKeyName' => 'referenceField',
                     'type' => 'array',
                     'fields' => [
-                        [ 'fieldName' => 'field1' ]
+                        [ 'fieldName' => 'field1', 'formFieldType' => 'string' ]
                     ],
                     'entities' => [
                         [
@@ -324,7 +324,7 @@ class ConcreteEntriesSaveTest extends \UnitTestCase {
                             'entityKeyName' => 'referenceField',
                             'type' => 'array',
                             'fields' => [
-                                [ 'fieldName' => 'field2' ]
+                                [ 'fieldName' => 'field2', 'formFieldType' => 'string' ]
                             ]
                         ]
                     ]

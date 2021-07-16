@@ -21,12 +21,12 @@ class ConfigurationEntity implements IEntity {
 
 	public function __construct(Array $entity) {
 		$this->primaryTableName = $entity['primaryTableName'];
-		$this->isPrimaryEntity = $entity['isPrimaryEntity'];
+		$this->isPrimaryEntity = $entity['isPrimaryEntity'] ?? null;
 		$this->entityKeyName = $entity['entityKeyName'] ?? null;
 		$this->name = $entity['name'];
 		$this->guiName = $entity['guiName'] ?? null;
 		$this->type = $entity['type'];
-		$this->required = $entity['required'];
+		$this->required = $entity['required'] ?? null;
 		$this->includeInSOLR = $entity['includeInSOLR'] ?? 0;
 
 		$this->setFields($entity['fields']);

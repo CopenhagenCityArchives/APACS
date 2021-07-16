@@ -88,7 +88,7 @@ class FunctionalEntryTask1Test extends \UnitTestCase {
         $this->assertTrue(isset($loadedEntry['persons']['id']));
         
         // Is the person id set for child entities?
-        $this->assertEquals($inputData['persons']['id'], $loadedEntry['deathcauses'][0]['persons_id']);
+        $this->assertEquals($loadedEntry['persons']['id'], $loadedEntry['persons']['deathcauses'][0]['persons_id']);
     }
 
     public function test_SaveExistingEntry_UpdatesData(){

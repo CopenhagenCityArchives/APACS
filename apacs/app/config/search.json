@@ -671,6 +671,66 @@
             "sortable": true,
             "type": "typeahead",
             "view_name": "Protokol"
+        },
+        "prb_approved": {
+            "collections": [
+                17
+            ],
+            "name": "prb_approved",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "enum": [
+                {
+                    "label": "Korrekturlæst",
+                    "value": 1
+                },
+                {
+                    "label": "Ikke korrekturlæst",
+                    "value": 0
+                }
+            ],
+            "view_name": "Korrekturlæst"
+        },
+        "prb_complete": {
+            "collections": [
+                17
+            ],
+            "name": "prb_complete",
+            "searchable": true,
+            "sortable": true,
+            "type": "typeahead",
+            "enum": [
+                {
+                    "label": "Færdigmeldt",
+                    "value": 1
+                },
+                {
+                    "label": "Ikke færdigmeldt",
+                    "value": 0
+                }
+            ],
+            "view_name": "Færdigmeldt"
+        },
+        "prb_station": {
+            "collections": [
+                17
+            ],
+            "name": "prb_station",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Stationsnummer"
+        },
+        "prb_filmrulle": {
+            "collections": [
+                17
+            ],
+            "name": "prb_filmrulle",
+            "searchable": true,
+            "sortable": true,
+            "type": "string",
+            "view_name": "Filmrullenummer"
         }
     },
     "types": {

@@ -18,6 +18,8 @@ stages:
 before_install:
   # Stop travis mysql as we're using MySQL in an image
   - sudo service mysql stop
+  # log in to Docker to avoid toomanyrequest
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # Print Docker version for debugging purposes
   - docker --version
      
@@ -33,6 +35,7 @@ script:
   - sleep 30
   - docker-compose -f docker-compose-ci-apacs-tests.yml exec apacs /code/vendor/bin/phpunit
 
+before_deploy:
   # Add tag in Dockerrun.aws.json
   - sed -i "s/{image-tag}/${IMAGE_TAG}/g" Dockerrun.aws.json
 
@@ -49,7 +52,6 @@ script:
       sed "s/{image-tag}/${IMAGE_TAG}/g" docker-compose-apacs-beta.yml > docker-compose.yml
       mv .ebignore_beta .ebignore
     fi
-
 
 deploy:
   - provider: elasticbeanstalk

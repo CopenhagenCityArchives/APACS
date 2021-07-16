@@ -11,7 +11,7 @@
             <div class="row-fluid">
                 <div>
                     <div class="span9">
-                        <h2>api.kbharkiv.dk</h2>
+                        <h2><?php print(getenv('API_URL') ?? 'https://api.kbharkiv.dk'); ?></h2>
                         <p>api.kbharkiv.dk udgør den centrale indgang til Københavns Stadsarkivs digitaliserede kilder og deres metadata.</p>
                         <p>Disse data er tilgængelige gennem et JSON-baseret REST-API.</p>
                         <p>Herunder ses grundlæggende informationer om hver digitaliseret samling.</p>

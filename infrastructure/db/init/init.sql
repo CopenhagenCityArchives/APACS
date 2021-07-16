@@ -1,23 +1,29 @@
 CREATE TABLE `apacs_collections` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` char(250) COLLATE utf8_danish_ci NOT NULL,
-  `info` text COLLATE utf8_danish_ci NOT NULL,
+  `name` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci NOT NULL,
+  `description` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `url` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `info` text CHARACTER SET utf8 COLLATE utf8_danish_ci,
   `status` int(11) NOT NULL DEFAULT '0',
-  `num_of_filters` int(11) NOT NULL DEFAULT '0',
-  `level1_name` char(100) COLLATE utf8_danish_ci NOT NULL,
-  `level1_info` char(250) COLLATE utf8_danish_ci NOT NULL,
-  `level2_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level2_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level3_name` char(100) COLLATE utf8_danish_ci DEFAULT NULL,
-  `level3_info` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `link` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `link_text` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
-  `link_mouse_over` char(250) COLLATE utf8_danish_ci DEFAULT NULL,
+  `num_of_filters` int(11) DEFAULT '0',
+  `level1_name` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level1_info` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level1_example_value` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_name` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_info` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level2_example_value` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_name` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_info` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `level3_example_value` char(100) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `link` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `link_text` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
+  `link_mouse_over` char(250) CHARACTER SET utf8 COLLATE utf8_danish_ci DEFAULT NULL,
   `date_create` timestamp NULL DEFAULT NULL,
   `date_update` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_public` timestamp NULL DEFAULT NULL,
+  `archive_id` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 
 
@@ -281,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `apacs_users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=608 DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `Stats` (
+CREATE TABLE IF NOT EXISTS `stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collection` char(25) DEFAULT NULL,
   `file` char(200) DEFAULT NULL,

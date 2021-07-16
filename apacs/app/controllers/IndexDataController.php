@@ -178,6 +178,7 @@ class IndexDataController extends MainController {
 				throw new Exception("Could not find entity with name " . explode('.', $jsonData['entity'])[0]);
 			}
 
+			$user = Users::findFirst($entry->users_id);
 			$colInfo = $entry->GetContext();
 			$errors->users_id = $entry->users_id;
 			$errors->entries_id = $entry->id;
@@ -193,7 +194,7 @@ class IndexDataController extends MainController {
 			$errors->entity_name = $jsonData['entity'];
 			$errors->field_name = isset($jsonData['field']) ? $jsonData['field'] : null;
 			$errors->comment = $jsonData['comment'];
-			$errors->toSuperUser = 0;
+			$errors->toSuperUser = $user ? 0 : 1; // send directly to super users if user is not found
 			$errors->deleted = 0;
 
 			$errors->beforeSave();

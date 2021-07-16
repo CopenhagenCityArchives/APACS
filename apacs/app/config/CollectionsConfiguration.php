@@ -21,9 +21,12 @@
  *
  */
 
-/*
- * New structure
- */
+ // Use local variable $url, otherwise default value
+if(!isset($url)){
+	throw new Exception("url is not set, cannot set collection settings!");
+}
+$cdnUrlId = $url . 'file/';
+$cdnUrlPath = $url . 'file?path=';
 
 $collectionsSettings = array(
 
@@ -39,7 +42,7 @@ $collectionsSettings = array(
 		'long_name' => 'Politiets Mandtal for København 1866 - 1923',
 		'gui_required_fields_text' => 'Vælg minimum gade og år',
 		//How to link the data level objects to images
-		'objects_query' => 'select files.id, CONCAT(\'https://www.kbhkilder.dk/collections/mandtal\',path) as imageURL, year, month, name FROM files LEFT JOIN volumes ON files.volume_id = volumes.id LEFT JOIN streets on volumes.street_id = streets.id WHERE :query ORDER BY year, month, files.id',
+		'objects_query' => "select files.id, CONCAT('$cdnUrlPath', 'collections/mandtal',path) as imageURL, year, month, name FROM files LEFT JOIN volumes ON files.volume_id = volumes.id LEFT JOIN streets on volumes.street_id = streets.id WHERE :query ORDER BY year, month, files.id",
 		'primary_table_name' => 'files',
 		'starbas_field_name' => false,
 		'levels_type' => 'hierarchy',
@@ -58,6 +61,7 @@ $collectionsSettings = array(
 				'required_levels' => array('name', 'year'),
 				'gui_hide_name' => true,
 				'required' => false,
+				'example_value' => 'maj'
 			),
 			array(
 				'order' => 2,
@@ -73,6 +77,7 @@ $collectionsSettings = array(
 				'required' => false,
 				'searchable' => true,
 				'required_levels' => array('name'),
+				'example_value' => '1871'
 			),
 			array(
 				'order' => 1,
@@ -89,6 +94,7 @@ $collectionsSettings = array(
 				'required' => true,
 				'searchable' => true,
 				'required_levels' => false, //array('streetname')
+				'example_value' => 'Adelgade'
 			),
 		),
 		'error_intro' => 'Har du opdaget, at et billede er registreret forkert eller ikke passer ind, kan du give os besked. Når du fejlmelder et billede, fejlmelder du hele mandtallet. Tak for hjælpen.',
@@ -234,12 +240,11 @@ $collectionsSettings = array(
 		'gui_required_fields_text' => 'Vælg en skole for at fortsætte',
 		'primary_table_name' => 'kortteg_files',
 		//How to link the data level objects to images
-		// 'objects_query' => 'select tblSkoleKilde.id, CONCAT(\'/collections/kortteg/\',fileName) as imageURL from tblskoleprotokol_images WHERE :query',
-		'objects_query' => 'SELECT SkoleKildeOpslagId as id, Navn, Kildenavn, kilde.AarstalTil, kilde.AarstalFra, skole.SkoleId as skoleid, skole.navn as skole, opslag.Kildeid as kildeid, kilde.SkoleKildeID as SkoleKildeId, CONCAT(\'/collections/skoleprotokoller/\',FuldFilNavn) as imageURL
+		'objects_query' => "SELECT SkoleKildeOpslagId as id, Navn, Kildenavn, kilde.AarstalTil, kilde.AarstalFra, skole.SkoleId as skoleid, skole.navn as skole, opslag.Kildeid as kildeid, kilde.SkoleKildeID as SkoleKildeId, CONCAT('$cdnUrlPath', 'collections/skoleprotokoller/',FuldFilNavn) as imageURL
                         FROM tblSkoleKildeOpslag as opslag
                         LEFT JOIN tblSkoleKilde as kilde ON opslag.kildeid = kilde.SkoleKildeId
                         LEFT JOIN tblSkole as skole ON kilde.SkoleId = skole.SkoleId
-                        WHERE :query',
+                        WHERE :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Skole id
@@ -340,11 +345,11 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
-                        WHERE volumetype_id = 1 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
+                        WHERE volumetype_id = 1 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -421,10 +426,10 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
+                        WHERE volumetype_id = 2 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Periode, søgebar
@@ -518,10 +523,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, riv_1, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 4 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number',
+                        WHERE volumetype_id = 4 AND is_public = 1 AND :query ORDER BY apacs_pages.page_number",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -583,10 +588,10 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'select DISTINCT apacs_pages.id, riv_1, apacs_pages.starbas_id, nicetitle, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select DISTINCT apacs_pages.id, riv_1, apacs_pages.starbas_id, nicetitle, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 3 AND is_public = 1 AND :query ORDER BY page_number',
+                        WHERE volumetype_id = 3 AND is_public = 1 AND :query ORDER BY page_number",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -664,10 +669,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 6 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 6 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -730,10 +735,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 5 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 5 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -796,10 +801,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 7 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 7 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Skole, søgebar
@@ -878,10 +883,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 8 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 8 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Protokol, søgebar
@@ -944,10 +949,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 9 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 9 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Protokol, søgebar
@@ -1010,10 +1015,10 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "select apacs_pages.id, creator_name, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 10 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 10 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Protokol, søgebar
@@ -1076,11 +1081,11 @@ $collectionsSettings = array(
 		'primary_table_name' => 'apacs_pages',
 		//   'starbas_field_name' => 'starbas_id',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "SELECT apacs_pages.id, year, nicetitle, apacs_pages.starbas_id, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
                         LEFT JOIN begrav_volume_years ON begrav_volume.id = begrav_volume_years.volume_id
-                        WHERE volumetype_id = 11 AND is_public = 1 AND :query ORDER BY page_number',
+                        WHERE volumetype_id = 11 AND is_public = 1 AND :query ORDER BY page_number",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//År, søgebar
@@ -1142,10 +1147,10 @@ $collectionsSettings = array(
 		'image_type' => 'image',
 		'primary_table_name' => 'apacs_pages',
 		//How to link the data level objects to images
-		'objects_query' => 'SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id) as imageURL
+		'objects_query' => "SELECT DISTINCT apacs_pages.id, riv_1, sex, apacs_pages.starbas_id, nicetitle, CONCAT('$cdnUrlId', apacs_pages.id) as imageURL
                         FROM apacs_pages
                         LEFT JOIN begrav_volume ON apacs_pages.volume_id = begrav_volume.id
-                        WHERE volumetype_id = 12 AND is_public = 1 AND :query',
+                        WHERE volumetype_id = 12 AND is_public = 1 AND :query",
 		'levels_type' => 'hierarchy',
 		'levels' => array(
 			//Køn, søgebar

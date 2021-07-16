@@ -22,24 +22,24 @@ class ConfigurationField{
     public function __construct(Array $field){
 
         $this->fieldName = $field['fieldName'];
-        $this->tableName = $field['tableName'];
+        $this->tableName = $field['tableName'] ?? null;
         
-        $this->decodeField = $field['decodeField'];
-        $this->decodeTable = $field['decodeTable'];
-        $this->hasDecode = $field['hasDecode'];
-        $this->codeAllowNewValue = $field['codeAllowNewValue'];
+        $this->decodeField = $field['decodeField'] ?? null;
+        $this->decodeTable = $field['decodeTable'] ?? null;
+        $this->hasDecode = $field['hasDecode'] ?? null;
+        $this->codeAllowNewValue = $field['codeAllowNewValue'] ?? null;
 
-        $this->includeInForm = isset($field['includeInForm']) ? $field['includeInForm'] : 1;
-        $this->formName = $field['formName'];
-        $this->formFieldType = $field['formFieldType'];
+        $this->includeInForm = $field['includeInForm'] ?? 1;
+        $this->formName = $field['formName'] ?? null;
+        $this->formFieldType = $field['formFieldType'] ?? "string";
 
-        $this->validationRegularExpression = $field['validationRegularExpression'];
-        $this->validationErrorMessage = $field['validationErrorMessage'];
+        $this->validationRegularExpression = $field['validationRegularExpression'] ?? null;
+        $this->validationErrorMessage = $field['validationErrorMessage'] ?? null;
 
-        $this->isRequired = $field['isRequired'];
+        $this->isRequired = $field['isRequired'] ?? null;
 
-        $this->includeInSOLR = isset($field['includeInSOLR']) ? $field['includeInSOLR'] : 0;
-        $this->SOLRFieldName = isset($field['SOLRFieldName']) ? $field['SOLRFieldName'] : "solrFieldNameNotGiven";
+        $this->includeInSOLR = $field['includeInSOLR'] ?? 0;
+        $this->SOLRFieldName = $field['SOLRFieldName'] ?? "solrFieldNameNotGiven";
     }
 
     public function toArray(){

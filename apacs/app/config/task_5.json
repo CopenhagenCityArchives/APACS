@@ -1,0 +1,719 @@
+{
+    "name": "Politiets Registerblade",
+    "description": "Rettelser i indtastninger af Politiets Registerblade",
+    "parentTask": null,
+    "entity": {
+        "name": "registerblad",
+        "isPrimaryEntity": 1,
+        "entityKeyName": "id",
+        "type": "object",
+        "required": 1,
+        "countPerEntry": 1,
+        "guiName": "Registerblad",
+        "primaryTableName": "PRB_registerblad",
+        "includeInSOLR": 0,
+        "allowNewValues": 1,
+        "fields": [
+            {
+                "formName": "Korrekturlæst",
+                "hasDecode": 0,
+                "includeInForm": 1,
+                "tableName": "PRB_registerblad",
+                "fieldName": "approved",
+                "formFieldType": "boolean",
+                "includeInSOLR": 0
+            },
+            {
+                "formName": "Færdigmeldt",
+                "hasDecode": 0,
+                "includeInForm": 1,
+                "tableName": "PRB_registerblad",
+                "fieldName": "complete",
+                "formFieldType": "boolean",
+                "includeInSOLR": 0
+            },
+            {
+                "tableName": "PRB_registerblad",
+                "fieldName": "saerlige_bemaerkninger",
+                "includeInForm": 1,
+                "formName": "Særlige bemærkninger",
+                "formFieldType": "string",
+                "maxLength": 250,
+                "formFieldOrder": 1,
+                "helpText": "Skriv særlige bemærkninger.",
+                "isRequired": 0
+            },
+            {
+                "tableName": "PRB_registerblad",
+                "fieldName": "udfyldelse_dag",
+                "includeInForm": 1,
+                "formName": "Udfyldelsesdag",
+                "formFieldType": "string",
+                "formFieldOrder": 1,
+                "helpText": "Skriv udfyldelsesdagen som et tal.",
+                "isRequired": 0,
+                "validationMessage": "En dag som tal, fra 1 til 31.",
+                "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])$/"
+            },
+            {
+                "tableName": "PRB_registerblad",
+                "fieldName": "udfyldelse_maaned",
+                "includeInForm": 1,
+                "formName": "Udfyldelsesmåned",
+                "formFieldType": "string",
+                "formFieldOrder": 1,
+                "helpText": "Skriv udfyldelsesmåneden som et tal.",
+                "isRequired": 0,
+                "validationMessage": "En måned som tal, fra 1 til 12.",
+                "validationRegularExpression": "/^(0?[1-9]|1[012])$/"
+            },
+            {
+                "tableName": "PRB_registerblad",
+                "fieldName": "udfyldelse_aar",
+                "includeInForm": 1,
+                "formName": "Udfyldelsesår",
+                "formFieldType": "string",
+                "formFieldOrder": 1,
+                "helpText": "Skriv udfyldelsesårstallet.",
+                "isRequired": 0,
+                "validationMessage": "Et årstal i fire cifre.",
+                "validationRegularExpression": "/^((17|18|19)[0-9][0-9])$/"
+            }
+        ],
+        "entities": [
+            {
+                "name": "personer",
+                "isPrimaryEntity": 0,
+                "entityKeyName": "registerblad_id",
+                "type": "array",
+                "countPerEntry": 1,
+                "guiName": "Personer",
+                "primaryTableName": "PRB_person",
+                "includeInSOLR": 0,
+                "fields": [
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "fornavne",
+                        "includeInForm": 1,
+                        "formName": "Fornavne",
+                        "formFieldType": "string",
+                        "maxLength": 80,
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv alle personens fornavne.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "efternavn",
+                        "includeInForm": 1,
+                        "formName": "Efternavne",
+                        "formFieldType": "string",
+                        "maxLength": 80,
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv personens efternavn.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "pigenavn",
+                        "includeInForm": 1,
+                        "formName": "Pigenavn",
+                        "type": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv pigenavnet.",
+                        "isRequired": 0,
+                        "validationMessage": "Undgå specialtegn.",
+                        "validationRegularExpression": "/^.+$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "koen",
+                        "includeInForm": 1,
+                        "formName": "Køn",
+                        "formFieldType": [
+                            "number",
+                            "string"
+                        ],
+                        "formFieldOrder": 1,
+                        "helpText": "Vælg et køn.",
+                        "isRequired": 0,
+                        "validationMessage": "Vælg et køn."
+                    },
+                    {
+                        "datasources_id": 38,
+                        "hasDecode": 1,
+                        "decodeTable": "PRB_foedested",
+                        "decodeField": "foedested",
+                        "codeAllowNewValue": 0,
+                        "tableName": "PRB_person",
+                        "fieldName": "foedested_id",
+                        "includeInForm": 1,
+                        "formName": "Fødested",
+                        "formFieldType": "typeahead",
+                        "maxLength": 100,
+                        "formFieldOrder": 1,
+                        "helpText": "Begynd at skrive for at vælge fødestedet fra listen.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "foedselsdag",
+                        "includeInForm": 1,
+                        "formName": "Fødselsdag",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv fødselsdagen som et tal.",
+                        "isRequired": 0,
+                        "validationMessage": "En dag som tal, fra 1 til 31.",
+                        "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "foedselsmaaned",
+                        "includeInForm": 1,
+                        "formName": "Fødselsmåned",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv fødselsmåneden som et tal.",
+                        "isRequired": 0,
+                        "validationMessage": "En måned som tal, fra 1 til 12.",
+                        "validationRegularExpression": "/^(0?[1-9]|1[012])$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "foedselsaar",
+                        "includeInForm": 1,
+                        "formName": "Fødselsår",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv fødselsårstallet.",
+                        "isRequired": 0,
+                        "validationMessage": "Et årstal i fire cifre.",
+                        "validationRegularExpression": "/^((17|18|19)[0-9][0-9])$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "gift",
+                        "includeInForm": 1,
+                        "formName": "Civilstatus - Gift",
+                        "formFieldType": "boolean",
+                        "formFieldOrder": 1,
+                        "helpText": "Vælg om personen er gift eller ej.",
+                        "isRequired": 0
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "afdoed_dag",
+                        "includeInForm": 1,
+                        "formName": "Dødsdag",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv dødsdagen som et tal.",
+                        "isRequired": 0,
+                        "validationMessage": "En dag som tal, fra 1 til 31.",
+                        "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "afdoed_maaned",
+                        "includeInForm": 1,
+                        "formName": "Dødsmåned",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv dødsmåneden som et tal.",
+                        "isRequired": 0,
+                        "validationMessage": "En måned som tal, fra 1 til 12.",
+                        "validationRegularExpression": "/^(0?[1-9]|1[012])$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "afdoed_aar",
+                        "includeInForm": 1,
+                        "formName": "Dødsår",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv dødsårstallet.",
+                        "isRequired": 0,
+                        "validationMessage": "Et årstal i fire cifre.",
+                        "validationRegularExpression": "/^((17|18|19)[0-9][0-9])$/"
+                    },
+                    {
+                        "tableName": "PRB_person",
+                        "fieldName": "person_type",
+                        "includeInForm": 1,
+                        "formName": "Persontype",
+                        "formFieldType": [
+                            "number",
+                            "string"
+                        ],
+                        "formFieldOrder": 1,
+                        "helpText": "Vælg en person type",
+                        "isRequired": 0
+                    }
+                ],
+                "entities": [
+                    {
+                        "name": "kommentarer",
+                        "isPrimaryEntity": 0,
+                        "entityKeyName": "person_id",
+                        "type": "array",
+                        "guiName": "Kommentarer",
+                        "primaryTableName": "PRB_kommentar",
+                        "fields": [
+                            {
+                                "formName": "Kommentar",
+                                "hasDecode": 0,
+                                "includeInForm": 1,
+                                "tableName": "PRB_kommentar",
+                                "fieldName": "kommentar",
+                                "formFieldType": "string",
+                                "includeInSOLR": 0
+                            }
+                        ]
+                    },
+                    {
+                        "name": "stillinger",
+                        "isPrimaryEntity": 0,
+                        "entityKeyName": "person_id",
+                        "type": "array",
+                        "guiName": "Stillinger",
+                        "primaryTableName": "PRB_person_stilling",
+                        "fields": [
+                            {
+                                "datasources_id": 39,
+                                "hasDecode": 1,
+                                "decodeTable": "PRB_stilling",
+                                "decodeField": "stilling",
+                                "codeAllowNewValue": 0,
+                                "tableName": "PRB_person_stilling",
+                                "fieldName": "stilling_id",
+                                "includeInForm": 1,
+                                "formName": "Stilling",
+                                "formFieldType": "typeahead",
+                                "maxLength": 70,
+                                "formFieldOrder": 1,
+                                "helpText": "Begynd at skrive for at vælge stillingen fra listen.",
+                                "isRequired": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "adresser",
+                "isPrimaryEntity": 0,
+                "entityKeyName": "registerblad_id",
+                "type": "array",
+                "guiName": "Adresser",
+                "primaryTableName": "PRB_adresse",
+                "fields": [
+                    {
+                        "datasources_id": 37,
+                        "hasDecode": 1,
+                        "decodeTable": "PRB_vej",
+                        "decodeField": "navn",
+                        "codeAllowNewValue": 0,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "vej_id",
+                        "includeInForm": 1,
+                        "formName": "Vej",
+                        "formFieldType": "typeahead",
+                        "maxLength": 65,
+                        "formFieldOrder": 1,
+                        "helpText": "Begynd at skrive for at vælge vejen fra listen.",
+                        "isRequired": 0,
+                        "validationRegularExpression": "/\\w{1,}/",
+                        "validationMessage": "Skal være ét ord"
+                    },
+                    {
+                        "formName": "Vejnummer",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "vejnummer",
+                        "formFieldType": "string",
+                        "validationRegularExpression": "/^[1-9]+[0-9]*$/",
+                        "validationMessage": "Skal være et tal",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Vejnummerbogstav",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "vejnummerbogstav",
+                        "formFieldType": "string",
+                        "validationRegularExpression": "/^[a-zA-Z.\\-½æøåÆØÅ]+$/",
+                        "validationMessage": "Må indeholde bogstaver, punktummer, og ½.",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Etage",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "etage",
+                        "formFieldType": "string",
+                        "validationRegularExpression": "/^([1-9][0-9]*\\.|[a-zA-ZæøåÆØÅ]+)+$/",
+                        "validationMessage": "Enten et tal efterfulgt af punktum, eller et ord der beskriver etagen.",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Sideangivelse",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "sideangivelse",
+                        "formFieldType": "string",
+                        "enum": [
+                            "",
+                            "mf.",
+                            "th.",
+                            "tv."
+                        ],
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Sted",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "sted",
+                        "formFieldType": "string",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Logerende eller i tjeneste hos",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "tjenesteLogerendeHos",
+                        "formFieldType": "string",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Fra note",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "fra_note",
+                        "formFieldType": "string",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Til note",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "til_note",
+                        "formFieldType": "string",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Frameldt",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "frameldt",
+                        "formFieldType": ["boolean",  "null"],
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "formName": "Opgang",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_adresse",
+                        "fieldName": "opgang",
+                        "formFieldType": "string",
+                        "includeInSOLR": 0
+                    },
+                    {
+                        "tableName": "PRB_adresse",
+                        "fieldName": "adresse_dag",
+                        "includeInForm": 1,
+                        "formName": "Dag",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv dagen som et tal.",
+                        "isRequired": 0,
+                        "validationMessage": "En dag som tal, fra 1 til 31.",
+                        "validationRegularExpression": "/^(0?[1-9]|[12][0-9]|3[01])$/"
+                    },
+                    {
+                        "tableName": "PRB_adresse",
+                        "fieldName": "adresse_maaned",
+                        "includeInForm": 1,
+                        "formName": "Måned",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv måneden som et tal.",
+                        "isRequired": 0,
+                        "validationMessage": "En måned som tal, fra 1 til 12.",
+                        "validationRegularExpression": "/^(0?[1-9]|1[012])$/"
+                    },
+                    {
+                        "tableName": "PRB_adresse",
+                        "fieldName": "adresse_aar",
+                        "includeInForm": 1,
+                        "formName": "År",
+                        "formFieldType": "string",
+                        "formFieldOrder": 1,
+                        "helpText": "Skriv årstallet.",
+                        "isRequired": 0,
+                        "validationMessage": "Et årstal i fire cifre.",
+                        "validationRegularExpression": "/^((17|18|19)[0-9][0-9])$/"
+                    }
+                ],
+                "entities": [
+                    {
+                        "name": "kommentarer",
+                        "isPrimaryEntity": 0,
+                        "entityKeyName": "adresse_id",
+                        "type": "array",
+                        "guiName": "Kommentarer",
+                        "primaryTableName": "PRB_kommentar",
+                        "fields": [
+                            {
+                                "formName": "Kommentar",
+                                "hasDecode": 0,
+                                "includeInForm": 1,
+                                "tableName": "PRB_kommentar",
+                                "fieldName": "kommentar",
+                                "formFieldType": "string",
+                                "includeInSOLR": 0
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "kommentarer",
+                "isPrimaryEntity": 0,
+                "entityKeyName": "registerblad_id",
+                "type": "array",
+                "guiName": "Kommentarer",
+                "primaryTableName": "PRB_kommentar",
+                "fields": [
+                    {
+                        "formName": "Kommentar",
+                        "hasDecode": 0,
+                        "includeInForm": 1,
+                        "tableName": "PRB_kommentar",
+                        "fieldName": "kommentar",
+                        "formFieldType": "string",
+                        "includeInSOLR": 0
+                    }
+                ]
+            }
+        ]
+    },
+    "steps": [
+        {
+            "name": "Registerbladet",
+            "description": "Selve registerbladet",
+            "fields": [
+                {
+                    "key": "registerblad.approved",
+                    "items": [
+                        {
+                            "value": true,
+                            "name": "Ja"
+                        },
+                        {
+                            "value": false,
+                            "name": "Nej"
+                        }
+                    ]
+                },
+                {
+                    "key": "registerblad.complete",
+                    "items": [
+                        {
+                            "value": true,
+                            "name": "Ja"
+                        },
+                        {
+                            "value": false,
+                            "name": "Nej"
+                        }
+                    ]
+                },
+                {
+                    "key": "registerblad.udfyldelse_dag"
+                },
+                {
+                    "key": "registerblad.udfyldelse_maaned"
+                },
+                {
+                    "key": "registerblad.udfyldelse_aar"
+                },
+                {
+                    "key": "registerblad.saerlige_bemaerkninger",
+                    "type": "textarea"
+                },
+                {
+                    "key": "registerblad.kommentarer",
+                    "items": [
+                        {
+                            "key": "registerblad.kommentarer[].kommentar",
+                            "type": "textarea"
+                        }
+                    ],
+                    "add": "Tilføj kommentar"
+                }
+            ]
+        },
+        {
+            "name": "Personer",
+            "description": "De registrerede personer",
+            "fields": [
+                {
+                    "key": "registerblad.personer",
+                    "items": [
+                        {
+                            "title": "Persontype",
+                            "key": "registerblad.personer[].person_type",
+                            "type": "select",
+                            "titleMap": [
+                                {
+                                    "value": 1,
+                                    "name": "Hovedperson"
+                                },
+                                {
+                                    "value": 2,
+                                    "name": "Ægtefælle"
+                                },
+                                {
+                                    "value": 3,
+                                    "name": "Barn"
+                                }
+                            ]
+                        },
+                        "registerblad.personer[].fornavne",
+                        "registerblad.personer[].efternavn",
+                        "registerblad.personer[].pigenavn",
+                        {
+                            "title": "Køn",
+                            "key": "registerblad.personer[].koen",
+                            "type": "select",
+                            "titleMap": [
+                                {
+                                    "value": 1,
+                                    "name": "Mand"
+                                },
+                                {
+                                    "value": 2,
+                                    "name": "Kvinde"
+                                },
+                                {
+                                    "value": 3,
+                                    "name": "Ukendt"
+                                }
+                            ]
+                        },
+                        "registerblad.personer[].foedested",
+                        "registerblad.personer[].foedselsdag",
+                        "registerblad.personer[].foedselsmaaned",
+                        "registerblad.personer[].foedselsaar",
+                        "registerblad.personer[].afdoed_dag",
+                        "registerblad.personer[].afdoed_maaned",
+                        "registerblad.personer[].afdoed_aar",
+                        {
+                            "key": "registerblad.personer[].gift",
+                            "type": "radios",
+                            "titleMap": [
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "registerblad.personer[].stillinger",
+                            "items": [
+                                {
+                                    "key": "registerblad.personer[].stillinger[].stilling"
+                                }
+                            ],
+                            "add": "Tilføj stilling"
+                        },
+                        {
+                            "key": "registerblad.personer[].kommentarer",
+                            "items": [
+                                {
+                                    "key": "registerblad.personer[].kommentarer[].kommentar",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "add": "Tilføj kommentar"
+                        }
+                    ],
+                    "add": "Tilføj person"
+                }
+            ]
+        },
+        {
+            "name": "Adresser",
+            "description": "De registrerede adresser",
+            "fields": [
+                {
+                    "key": "registerblad.adresser",
+                    "items": [
+                        "registerblad.adresser[].adresse_dag",
+                        "registerblad.adresser[].adresse_maaned",
+                        "registerblad.adresser[].adresse_aar",
+                        "registerblad.adresser[].navn",
+                        "registerblad.adresser[].vejnummer",
+                        "registerblad.adresser[].vejnummerbogstav",
+                        "registerblad.adresser[].etage",
+                        "registerblad.adresser[].sideangivelse",
+                        "registerblad.adresser[].opgang",
+                        "registerblad.adresser[].sted",
+                        "registerblad.adresser[].tjenesteLogerendeHos",
+                        "registerblad.adresser[].fra_note",
+                        "registerblad.adresser[].til_note",
+                        {
+                            "key": "registerblad.adresser[].frameldt",
+                            "type": "radios",
+                            "titleMap": [
+                                {
+                                    "value": null,
+                                    "name": "Ukendt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
+                            ]
+                        },
+                        {
+                            "key": "registerblad.adresser[].kommentarer",
+                            "items": [
+                                {
+                                    "key": "registerblad.adresser[].kommentarer[].kommentar",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "add": "Tilføj kommentar"
+                        }
+                    ],
+                    "add": "Tilføj adresse"
+                }
+            ]
+        }
+    ]
+}

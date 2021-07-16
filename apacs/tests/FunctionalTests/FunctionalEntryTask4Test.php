@@ -37,14 +37,18 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
                 "complaint" => [
                     "witnesses" => true,
                     "attachments_mentioned" => true,
-                    "verb" => "Verbum",
+                    "verbs" => [
+                        [ "verb" => "Verbum" ]
+                    ],
                     "subjects" => [
                         [
                             "subject_name" => "Emne",
                             "subject_category" => "Emnekategori",
                         ]
                     ],
-                    "purpose" => "Formål"
+                    "purposes" => [
+                        [ "purpose" => "Formål" ]
+                    ]
                 ],
                 "attachments" => [
                     [
@@ -118,17 +122,34 @@ class FunctionalEntryTask4Test extends \UnitTestCase {
         unset($complaintSubjects[0]['id']);
         unset($complaintSubjects[0]['complaints_id']);
         unset($case['complaint']['subjects']);
+
+        $complaintPurposes = $case['complaint']['purposes'];
+        unset($complaintPurposes[0]['id']);
+        unset($complaintPurposes[0]['complaints_id']);
+        unset($case['complaint']['purposes']);
+
+        $complaintVerbs = $case['complaint']['verbs'];
+        unset($complaintVerbs[0]['id']);
+        unset($complaintVerbs[0]['complaints_id']);
+        unset($case['complaint']['verbs']);
+
         $this->assertEquals([
             "witnesses" => true,
             "attachments_mentioned" => true,
-            "verb" => "Verbum",
-            "purpose" => "Formål"
         ], $case['complaint']);
 
         $this->assertEquals([
             "subject_name" => "Emne",
             "subject_category" => "Emnekategori"
         ], $complaintSubjects[0]);
+
+        $this->assertEquals([
+            "purpose" => "Formål"
+        ], $complaintPurposes[0]);
+
+        $this->assertEquals([
+            "verb" => "Verbum"
+        ], $complaintVerbs[0]);
 
         unset($case['attachments'][0]['id']);
         unset($case['attachments'][0]['cases_id']);

@@ -49,8 +49,16 @@ class ConcreteEntries {
 	 */
 	private function HandleLoadedEntry(IEntity $entity, Array $entry) {
 		foreach ($entity->getFields() as $field) {
-			if ($field->formFieldType == 'boolean' && isset($entry[$field->fieldName])) {
+			if ((is_array($field->formFieldType) && count(array_filter($field->formFieldType, function ($formFieldType) { return $formFieldType == 'boolean'; })) > 0 || $field->formFieldType == 'boolean') && isset($entry[$field->fieldName])) {
 				$entry[$field->fieldName] = $entry[$field->fieldName] ? true : false;
+			}
+
+			if ((is_array($field->formFieldType) && count(array_filter($field->formFieldType, function ($formFieldType) { return $formFieldType == 'number'; })) > 0 || $field->formFieldType == 'number')) {
+				if (is_numeric($entry[$field->fieldName])) {
+					$entry[$field->fieldName] = intval($entry[$field->fieldName]);
+				} else if (is_float($entry[$field->fieldName])) {
+					$entry[$field->fieldName] = floatval($entry[$field->fieldName]);
+				}
 			}
 
 			if ($field->formFieldType == 'date' && isset($entry[$field->fieldName])) {
@@ -310,7 +318,12 @@ class ConcreteEntries {
 							continue;
 						}
 
-						$this->DeleteRemovedArrayItems($childEntity, $oldEntry[$childEntity->name], $newCorresponding[$childEntity->name]);
+						$newValues = [];
+						if (array_key_exists($childEntity->name, $newCorresponding)) {
+							$newValues = $newCorresponding[$childEntity->name];
+						}
+
+						$this->DeleteRemovedArrayItems($childEntity, $oldEntry[$childEntity->name], $newValues);
 					}
 				}
 			}
@@ -370,7 +383,11 @@ class ConcreteEntries {
 		if (!is_null($oldData)) {
 			foreach ($dependingEntities as $dependingEntity) {
 				if (isset($oldData[$dependingEntity->name])) {
-					$this->DeleteRemovedArrayItems($dependingEntity, $oldData[$dependingEntity->name], $data[$dependingEntity->name]);
+					$newData = null;
+					if (array_key_exists($dependingEntity->name, $data)) {
+						$newData = $data[$dependingEntity->name];
+					}
+					$this->DeleteRemovedArrayItems($dependingEntity, $oldData[$dependingEntity->name], $newData);
 				}
 			}
 		}
@@ -512,7 +529,7 @@ class ConcreteEntries {
 			// The value is not defined, 
 			if (!isset($data[$fieldName])) {
 				if ($field['includeInForm'] == 1) {
-					$assoc[$fieldName] = null;
+					$result[$fieldName] = null;
 				}
 				continue;
 			}

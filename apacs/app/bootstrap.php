@@ -38,7 +38,7 @@ try {
 	//Setup the configuration service
 	$di->setShared('collectionsConfiguration', function () use ($di) {
 		//Loading the almighty configuration array
-		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php');
+		return new ConfigurationLoader('../../app/config/CollectionsConfiguration.php', $di);
 	});
 
 	//Setup the database service
@@ -141,6 +141,14 @@ try {
 
 	$app->mount($info);
 
+	$files = new MicroCollection();
+	$files->setHandler(new GetFileController());
+	
+	$files->get('/file/{id:[0-9]+}', 'GetFileById');
+	$files->get('/file', 'GetFileByPath'); // example: /file?path={pathToFile}
+
+	$app->mount($files);
+	
 	$users = new MicroCollection();
 	$users->setHandler(new UsersController());
 		

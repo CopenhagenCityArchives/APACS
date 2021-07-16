@@ -63,7 +63,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 			}else{
 				$newCol['stats'] = null;
 			}
-			$newCol['api_documentation_url'] = ConfigurationLoader::getCurrentApiUrl() . 'collections/' . $col->id . '/info';
+			$newCol['api_documentation_url'] = $this->getDI()->get('apiUrl') . 'collections/' . $col->id . '/info';
 			$cols[] = $newCol;
 
 			if(is_null($newCol['stats'])){
@@ -102,7 +102,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 
 		$i = 0;
 		foreach ($obj['levels'] as $level) {
-			$obj['levels'][$i]['url'] = ConfigurationLoader::getCurrentApiUrl() . 'metadata/' . $obj['id'] . '/' . $level['name'];
+			$obj['levels'][$i]['url'] = $this->getDI()->get('apiUrl') . 'metadata/' . $obj['id'] . '/' . $level['name'];
 			$obj['levels'][$i]['required_levels_url'] = '';
 			if ($level['required_levels']) {
 				$url = '?';
@@ -121,7 +121,7 @@ class MetadataLevelsController extends \Phalcon\Mvc\Controller {
 		$obj['data_filters'] = $configuration->getAllFilters($collectionId);
 
 		$i = 0;
-		$url = ConfigurationLoader::getCurrentApiUrl() . 'data/' . $obj['id'] . '?';
+		$url = $this->getDI()->get('apiUrl') . 'data/' . $obj['id'] . '?';
 		foreach ($obj['data_filters'] as $level) {
 			$obj['data_filters'][$i] = $configuration->getMetadataLevels($collectionId, $level['name']);
 			if ($obj['data_filters'][$i] && $level['name'] != 'starbas_id') {

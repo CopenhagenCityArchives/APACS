@@ -45,10 +45,11 @@ class TaskSchemaMappingTest extends UnitTestCase {
 
     public function test_setRequiredFields_skipNotRequired_setFieldNameAsRequired() {
         $schema = [
+            'type' => 'notarray',
             'fields' => [
-                0 => [ 'isRequired' => 0, 'fieldName' => 'Field1' ],
-                1 => [ 'isRequired' => 1, 'fieldName' => 'Field2' ],
-                2 => [ 'isRequired' => 0, 'fieldName' => 'Field3' ]
+                0 => [ 'isRequired' => 0, 'fieldName' => 'Field1', 'decodeField' => null ],
+                1 => [ 'isRequired' => 1, 'fieldName' => 'Field2', 'decodeField' => null  ],
+                2 => [ 'isRequired' => 0, 'fieldName' => 'Field3', 'decodeField' => null  ]
             ]
         ];
 
@@ -61,6 +62,7 @@ class TaskSchemaMappingTest extends UnitTestCase {
 
     public function test_setRequiredFields_skipNotRequired_setDecodeFieldAsRequired() {
         $schema = [
+            'type' => 'notarray',
             'fields' => [
                 0 => [ 'isRequired' => 0, 'fieldName' => 'Field1' ],
                 1 => [ 'isRequired' => 1, 'fieldName' => 'Field2', 'decodeField' => 'DecodeField1' ],

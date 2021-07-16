@@ -54,20 +54,6 @@ $di->setShared('cipConfig', function () {
 	];
 });
 
-$di->setShared('pageImageLocation', function () {
-	if(getenv('APACS_IMAGE_PATH') == 'local'){
-		return [
-			'path' => $_SERVER['DOCUMENT_ROOT'].'/../collections/',
-			'type' => getenv('APACS_IMAGE_PROTOCOL')
-		];
-	}
-	
-	return [
-		'path' => getenv('APACS_IMAGE_PATH'),
-		'type' => getenv('APACS_IMAGE_PROTOCOL'),
-	];
-});
-
 $di->setShared('auth0Config', function () {
 	return [
 		'client_id' => getenv('AUTH0_CLIENT_ID'),
@@ -91,4 +77,23 @@ $di->setShared('AccessController', function () use ($di) {
 	}
 
 	return new $className($di);
+});
+
+$di->setShared('s3Config', function () {
+	return [
+		'region' => 'eu-west-1',
+		'version' => '2006-03-01',
+		// credentials are loaded from environment
+		'credentials' => [
+			'key'    => getenv('AWS_S3_ACCESS_KEY_ID'),
+			'secret' => getenv('AWS_S3_SECRET_ACCESS_KEY')
+		],
+	];
+});
+
+$di->setShared('apiUrl', function () {
+	$protocol = strpos($_SERVER['HTTP_HOST'], 'localhost') === 0 ? 'http://' : 'https://';
+	$subDir = str_replace('public/', '', str_replace('index.php', '', $_SERVER['PHP_SELF']));
+
+	return $protocol . $_SERVER['HTTP_HOST'] . $subDir;
 });

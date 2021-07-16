@@ -8,9 +8,14 @@ class ConfigurationLoader {
 	private $_configurationLoaded;
 	private $_configurationCache;
 	private $_configFileLocation;
+	private $_apiUrl;
 
-	public function __construct($filePath) {
+	public function __construct($filePath, $di) {
 		$this->_configFileLocation = $filePath;
+		
+		//$url variable is needed to set apiUrl in config. See CollectionsConfiguration.php line 25 for details
+		$url = $this->_apiUrl = $di->get('apiUrl');
+		//die($url);
 		$this->loadConfig(require ($filePath));
 	}
 
@@ -113,8 +118,8 @@ class ConfigurationLoader {
 		$conf['primary_table_name'] = 'apacs_pages';
 
 		$conf['objects_query'] = 'select apacs_pages.id as id, apacs_collections.name, apacs_units.id as units_id, apacs_units.level1_value, apacs_units.level2_value, apacs_units.level3_value, 
-			
-			IF(s3 = 1, apacs_pages.image_url, CONCAT(\'https://www.kbhkilder.dk/getfile.php?fileId=\', apacs_pages.id)) as imageURL,
+
+			CONCAT(\'' . $this->_apiUrl . 'file/\', apacs_pages.id) as imageURL,
 			
 			apacs_units.id as starbas_id, apacs_pages.s3
 
@@ -124,7 +129,7 @@ class ConfigurationLoader {
             WHERE apacs_collections.id = ' . $collectionId . ' AND :query AND apacs_units.is_public = 1 ORDER BY apacs_pages.page_number';
 		//apacs_collections.is_public = 1 AND
 
-		$conf['api_documentation_url'] = self::getCurrentApiUrl() . 'collections/' . $collectionId . '/info';
+		$conf['api_documentation_url'] = $this->_apiUrl . 'collections/' . $collectionId . '/info';
 
 		$conf['levels_type'] = 'hierarchy';
 
@@ -283,7 +288,7 @@ class ConfigurationLoader {
 			//	throw new Exception('Invalid configuration format. GUI type \'preset\' requires data to have content.');
 			//}
 
-			$collectionConfig['api_documentation_url'] =  self::getCurrentApiUrl()  . 'collections/' . $collectionConfig['id'] . '/info';
+			$collectionConfig['api_documentation_url'] =  $this->_apiUrl  . 'collections/' . $collectionConfig['id'] . '/info';
 			$i++;
 		}
 
@@ -535,15 +540,5 @@ class ConfigurationLoader {
 		}
 
 		throw new Exception('Could not load configuration for entity id ' . $entityId);
-	}
-
-	/**
-	*	Returns the API base url for the current location
-	*/
-	public static function getCurrentApiUrl(){
-		$protocol = 'https://';
-		$subDir = str_replace('public/', '', str_replace('index.php', '', $_SERVER['PHP_SELF']));
-
-		return $protocol . $_SERVER['HTTP_HOST'] . $subDir;
 	}
 }

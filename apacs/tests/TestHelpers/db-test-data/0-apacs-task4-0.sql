@@ -18,9 +18,9 @@ INSERT INTO `apacs_tasks` (`id`, `name`, `description`, `collection_id`, `primar
 INSERT INTO `apacs_collections` (`id`,`name`) VALUES (147,'resolutions collection name');
 
 INSERT INTO `apacs_units` (`id`,`collections_id`,`description`,`pages`) VALUES (1471, 147, 'test unit for resolutions', 2);
-INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`filename`,`filename_converted`,`relative_filename`,`relative_filename_converted`,`found`,`image_url`,`md5`,`s3`) VALUES 
-    (14711,NULL,1471,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015131.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0),
-    (14712,NULL,1471,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015132.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0);
+INSERT INTO `apacs_pages` (`id`,`volume_id`,`unit_id`,`page_number`,`starbas_id`,`filename`,`filename_converted`,`relative_filename`,`relative_filename_converted`,`found`,`image_url`,`md5`,`s3`,`s3_bucket`,`s3_key`) VALUES 
+    (14711,NULL,1471,1,12345,'resolution_1.jpg','resolution_1.jpg','resolution_1.jpg','resolution_1.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015131.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0,'kbhkilder','10000'),
+    (14712,NULL,1471,2,12345,'resolution_2.jpg','resolution_2.jpg','resolution_2.jpg','resolution_2.jpg',NULL,'https://kbhkilder.s3-eu-west-1.amazonaws.com/1015132.jpg','dcd7274be88ada5f4e1a4ff785ddfff5',0,'kbhkilder','10000');
 INSERT INTO `apacs_tasks_pages` (`id`,`tasks_id`,`pages_id`,`units_id`,`is_done`,`last_activity`) VALUES
     (14711,4,14711,1471,0,NULL),
     (14712,4,14712,1471,0,NULL);
@@ -40,10 +40,10 @@ INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `incl
   ('20', 'person_sexes', 'SELECT id, sex, CASE WHEN sex LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_sexes ORDER BY prio DESC, sex LIMIT 75;', NULL, 'sex', '0', 'sex', '1'),
   ('21', 'person_relations', 'SELECT id, relation, CASE WHEN relation LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_relations ORDER BY prio DESC, relation LIMIT 75;', NULL, 'relation', '0', 'relation', '1'),
   ('22', 'person_roles', 'SELECT id, role, CASE WHEN role LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_roles ORDER BY prio DESC, role LIMIT 75;', NULL, 'role', '0', 'role', '1'),
-  ('23', 'complaint_verbs', 'SELECT id, verb, CASE WHEN verb LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_verbs ORDER BY prio DESC, verb LIMIT 75;', NULL, 'verb', '0', 'verb', '1'),
+  ('23', 'complaint_verbs', 'SELECT id, verb, CASE WHEN verb LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_verb_types ORDER BY prio DESC, verb LIMIT 75;', NULL, 'verb', '0', 'verb', '1'),
   ('24', 'complaint_subjects', 'SELECT id, subject_name, CASE WHEN subject_name LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subject_names ORDER BY prio DESC, subject_name LIMIT 75;', NULL, 'subject_name', '0', 'subject_name', '1'),
   ('25', 'complaint_subject_cats', 'SELECT id, subject_category, CASE WHEN subject_category LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_subject_categories ORDER BY prio DESC, subject_category LIMIT 75;', NULL, 'subject_category', '0', 'subject_category', '1'),
-  ('26', 'complaint_purposes', 'SELECT id, purpose, CASE WHEN purpose LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_purposes ORDER BY prio DESC, purpose LIMIT 75;', NULL, 'purpose', '0', 'purpose', '1'),
+  ('26', 'complaint_purposes', 'SELECT id, purpose, CASE WHEN purpose LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_complaint_purpose_types ORDER BY prio DESC, purpose LIMIT 75;', NULL, 'purpose', '0', 'purpose', '1'),
   ('27', 'occupation_types', 'SELECT id, occupation_type, CASE WHEN occupation_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_types ORDER BY prio DESC, occupation_type LIMIT 75;', NULL, 'occupation_type', '0', 'occupation_type', '1'),
   ('28', 'occupation_relations', 'SELECT id, relation, CASE WHEN relation LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_relations ORDER BY prio DESC, relation LIMIT 75;', NULL, 'relation', '0', 'relation', '1'),
   ('29', 'occupation_categories', 'SELECT id, category, CASE WHEN category LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_person_occupation_categories ORDER BY prio DESC, category LIMIT 75;', NULL, 'category', '0', 'category', '1'),
@@ -53,7 +53,6 @@ INSERT INTO `apacs_datasources` (`id`, `name`, `sql`, `url`, `valueField`, `incl
   ('33', 'comment_types', 'SELECT id, comment_type, CASE WHEN comment_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_comment_types ORDER BY prio DESC, comment_type LIMIT 75;', NULL, 'comment_type', '0', 'comment_type', '1'),
   ('34', 'resolution_hoods', 'SELECT id, neighbourhood, CASE WHEN neighbourhood LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_place_neighbourhoods ORDER BY prio DESC, neighbourhood LIMIT 75;', NULL, 'neighbourhood', '0', 'neighbourhood', '1'),
   ('35', 'place_type', 'SELECT id, place_type, CASE WHEN place_type LIKE \":query%\" THEN 5 ELSE 0 END as prio FROM resolutions_place_types ORDER BY prio DESC, place_type LIMIT 75;', NULL, 'place_type', '0', 'place_type', '1');
-
 
 /* data structure */
 CREATE TABLE `resolutions_cases` (
@@ -112,21 +111,27 @@ CREATE TABLE `resolutions_comment_types` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `resolutions_complaint_purposes` (
+CREATE TABLE `resolutions_complaint_purpose_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `purpose` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
+CREATE TABLE `resolutions_complaint_purposes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `complaints_id` int(11) NOT NULL,
+  `complaint_purpose_types_id` int(11) NOT NULL,
+  `order` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `complaints_id` (`complaints_id`),
+  KEY `complaint_purpose_types_id` (`complaint_purpose_types_id`)
+) ENGINE=InnoDB;
+
 CREATE TABLE `resolutions_complaints` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `complaint_verbs_id` int(11) NULL,
-  `complaint_purposes_id` int(11) NULL,
   `witnesses` bit(1) NULL,
   `attachments_mentioned` bit(1) NULL,
-  PRIMARY KEY (`id`),
-  INDEX (`complaint_verbs_id`),
-  INDEX (`complaint_purposes_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
 CREATE TABLE `resolutions_complaint_subjects` (
@@ -153,11 +158,21 @@ CREATE TABLE `resolutions_complaint_subject_names` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
 
-CREATE TABLE `resolutions_complaint_verbs` (
+CREATE TABLE `resolutions_complaint_verb_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `verb` varchar(50) COLLATE utf8_danish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_danish_ci;
+
+CREATE TABLE `apacs`.`resolutions_complaint_verbs` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `complaints_id` INT(11) NOT NULL,
+  `complaint_verb_types_id` INT(11) NOT NULL,
+  `order` INT(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `complaints_id` (`complaints_id`),
+  KEY `complaint_verb_types_id` (`complaint_verb_types_id`)
+) ENGINE=InnoDB;
 
 CREATE TABLE `resolutions_person_occupation_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

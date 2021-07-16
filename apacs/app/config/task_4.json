@@ -208,54 +208,6 @@
                 "allowNewValues": 1,
                 "fields": [
                     {
-                        "datasources_id": 23,
-                        "tableName": "resolutions_complaints",
-                        "fieldName": "complaint_verbs_id",
-                        "hasDecode": 1,
-                        "decodeTable": "resolutions_complaint_verbs",
-                        "decodeField": "verb",
-                        "codeAllowNewValue": 1,
-                        "includeInForm": 1,
-                        "formName": "Verbum",
-                        "formFieldType": "typeahead",
-                        "minimumInputLength": 0,
-                        "maxLength": 50,
-                        "formFieldOrder": 1,
-                        "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
-                        "placeholder": null,
-                        "isRequired": 0,
-                        "validationRegularExpression": "/\\w{1,}/",
-                        "validationMessage": "Skal være ét ord",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "complaint_verb",
-                        "SOLRFacet": 0,
-                        "SOLRResult": 0
-                    },
-                    {
-                        "datasources_id": 26,
-                        "tableName": "resolutions_complaints",
-                        "fieldName": "complaint_purposes_id",
-                        "hasDecode": 1,
-                        "decodeTable": "resolutions_complaint_purposes",
-                        "decodeField": "purpose",
-                        "codeAllowNewValue": 1,
-                        "includeInForm": 1,
-                        "formName": "Formål med klagen",
-                        "formFieldType": "typeahead",
-                        "minimumInputLength": 0,
-                        "maxLength": 50,
-                        "formFieldOrder": 1,
-                        "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
-                        "placeholder": null,
-                        "isRequired": 0,
-                        "validationRegularExpression": "/(\\w+)( \\w+)*/",
-                        "validationMessage": "Må kun være med mellemrum.",
-                        "includeInSOLR": 0,
-                        "SOLRFieldName": "complaint_subject_category",
-                        "SOLRFacet": 0,
-                        "SOLRResult": 0
-                    },
-                    {
                         "datasources_id": null,
                         "tableName": "resolutions_complaints",
                         "fieldName": "witnesses",
@@ -266,7 +218,7 @@
                         "includeInForm": 1,
                         "formName": "Er der vidner?",
                         "default": null,
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean", "null"],
                         "formFieldOrder": 1,
                         "helpText": "Vælg ja, hvis der er vidner, vælg nej hvis der ikke er vidner. Lad være tom hvis det er uvist.",
                         "placeholder": null,
@@ -289,7 +241,7 @@
                         "includeInForm": 1,
                         "formName": "Nævnte bilag?",
                         "default": null,
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean", "null"],
                         "formFieldOrder": 1,
                         "helpText": "Vælg ja, hvis der er nævnte bilag, vælg nej hvis der ikke er. Lad være tom hvis det er uvist.",
                         "placeholder": null,
@@ -313,7 +265,6 @@
                         "guiName": "Emner",
                         "primaryTableName": "resolutions_complaint_subjects",
                         "includeInSOLR": 0,
-                        "allowNewValues": 1,
                         "fields": [
                             {
                                 "datasources_id": 24,
@@ -360,6 +311,80 @@
                                 "validationMessage": "Skal være ét ord",
                                 "includeInSOLR": 0,
                                 "SOLRFieldName": "complaint_subject_categories",
+                                "SOLRFacet": 0,
+                                "SOLRResult": 0
+                            }
+                        ]
+                    },
+                    {
+                        "name": "purposes",
+                        "isPrimaryEntity": 0,
+                        "entityKeyName": "complaints_id",
+                        "type": "array",
+                        "required": 0,
+                        "countPerEntry": 1,
+                        "guiName": "Formål",
+                        "primaryTableName": "resolutions_complaint_purposes",
+                        "includeInSOLR": 0,
+                        "fields": [
+                            {
+                                "datasources_id": 26,
+                                "tableName": "resolutions_complaint_purposes",
+                                "fieldName": "complaint_purpose_types_id",
+                                "hasDecode": 1,
+                                "decodeTable": "resolutions_complaint_purpose_types",
+                                "decodeField": "purpose",
+                                "codeAllowNewValue": 1,
+                                "includeInForm": 1,
+                                "formName": "Formål med klagen",
+                                "formFieldType": "typeahead",
+                                "minimumInputLength": 0,
+                                "maxLength": 50,
+                                "formFieldOrder": 1,
+                                "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
+                                "placeholder": null,
+                                "isRequired": 0,
+                                "validationRegularExpression": "/(\\w+)( \\w+)*/",
+                                "validationMessage": "Må kun være med mellemrum.",
+                                "includeInSOLR": 0,
+                                "SOLRFieldName": "complaint_subject_category",
+                                "SOLRFacet": 0,
+                                "SOLRResult": 0
+                            }
+                        ]
+                    },
+                    {
+                        "name": "verbs",
+                        "isPrimaryEntity": 0,
+                        "entityKeyName": "complaints_id",
+                        "type": "array",
+                        "required": 0,
+                        "countPerEntry": 1,
+                        "guiName": "Verber",
+                        "primaryTableName": "resolutions_complaint_verbs",
+                        "includeInSOLR": 0,
+                        "fields": [
+                            {
+                                "datasources_id": 23,
+                                "tableName": "resolutions_complaint_verbs",
+                                "fieldName": "complaint_verb_types_id",
+                                "hasDecode": 1,
+                                "decodeTable": "resolutions_complaint_verb_types",
+                                "decodeField": "verb",
+                                "codeAllowNewValue": 1,
+                                "includeInForm": 1,
+                                "formName": "Verbum",
+                                "formFieldType": "typeahead",
+                                "minimumInputLength": 0,
+                                "maxLength": 50,
+                                "formFieldOrder": 1,
+                                "helpText": "Begynd at skrive for at fremsøge værdier, eller tilføje en ny værdi.",
+                                "placeholder": null,
+                                "isRequired": 0,
+                                "validationRegularExpression": "/\\w{1,}/",
+                                "validationMessage": "Skal være ét ord",
+                                "includeInSOLR": 0,
+                                "SOLRFieldName": "complaint_verb",
                                 "SOLRFacet": 0,
                                 "SOLRResult": 0
                             }
@@ -874,7 +899,7 @@
                         "includeInForm": 1,
                         "default": null,
                         "formName": "Er sagen genoptaget?",
-                        "formFieldType": "boolean",
+                        "formFieldType": ["boolean", "null"],
                         "formFieldOrder": 3,
                         "helpText": "Vælg ja, hvis sagen er genoptaget, vælg nej hvis sagen ikke er genoptaget. Lad være tom hvis det er uvist.",
                         "placeholder": null,
@@ -947,7 +972,6 @@
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
-                    
                 ],
                 "entities": null
             },
@@ -1010,7 +1034,6 @@
                         "SOLRFacet": 0,
                         "SOLRResult": 0
                     }
-                    
                 ],
                 "entities": [
                     {
@@ -1120,7 +1143,6 @@
                             "add": "Tilføj erhverv"
                         }
                     ],
-
                     "add": "Tilføj person"
                 }
             ]
@@ -1146,30 +1168,56 @@
         {
             "name": "Klagen",
             "description": "Den klage der har udløst sagen",
-            "fields": [                
+            "fields": [
                 {
                     "key": "cases.complaint",
                     "items": [
-                        "cases.complaint.verb",
+                        {
+                            "key":  "cases.complaint.verbs",
+                            "add": "Tilføj verbum"
+                        },
                         {
                             "key": "cases.complaint.subjects",
                             "add": "Tilføj emne"
                         },
-                        "cases.complaint.purpose",
+                        {
+                            "key":  "cases.complaint.purposes",
+                            "add": "Tilføj formål"
+                        },
                         {
                             "key": "cases.complaint.witnesses",
                             "type": "radios",
                             "titleMap": [
-                              { "value": true, "name": "Ja" },
-                              { "value": false, "name": "Nej" }
+                                {
+                                    "value": null,
+                                    "name": "Ikke udfyldt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
                             ]
                         },
                         {
                             "key": "cases.complaint.attachments_mentioned",
                             "type": "radios",
                             "titleMap": [
-                              { "value": true, "name": "Ja" },
-                              { "value": false, "name": "Nej" }
+                                {
+                                    "value": null,
+                                    "name": "Ikke udfyldt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
                             ]
                         }
                     ]
@@ -1187,12 +1235,22 @@
                         "cases.resolutions[].party_reaction",
                         "cases.resolutions[].resolution_type",
                         "cases.resolutions[].date",
-                        { 
+                        {
                             "key": "cases.resolutions[].case_reopened",
                             "type": "radios",
                             "titleMap": [
-                              { "value": true, "name": "Ja" },
-                              { "value": false, "name": "Nej" }
+                                {
+                                    "value": null,
+                                    "name": "Ikke udfyldt"
+                                },
+                                {
+                                    "value": true,
+                                    "name": "Ja"
+                                },
+                                {
+                                    "value": false,
+                                    "name": "Nej"
+                                }
                             ]
                         }
                     ],

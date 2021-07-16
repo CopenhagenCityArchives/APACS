@@ -47,25 +47,33 @@
         ]
     },
     "17": {
-        "task_id": 2,
+        "task_id": 5,
         "collection_id": 17,
-        "add_metadata": false,
+        "add_metadata": true,
         "error_reports": [
             {
-                "label": "Person (navn, fødselsdato, fødested)",
-                "entity": "person"
+                "label": "Navn (hovedperson)",
+                "entity": "registerblad.personer"
             },
             {
-                "label": "Biperson",
-                "entity": "relative"
+                "label": "Adresser (hovedperson)",
+                "entity": "registerblad.adresser"
             },
             {
-                "label": "Adresser",
-                "entity": "address"
+                "label": "Andet, fx erhverv, fødested, fødselsdato (hovedperson)",
+                "entity": "registerblad.personer"
             },
             {
-                "label": "Stillinger",
-                "entity": "position"
+                "label": "Navn (biperson)",
+                "entity": "registerblad.personer"
+            },
+            {
+                "label": "Andet, fx erhverv, fødested (biperson)",
+                "entity": "registerblad.personer"
+            },
+            {
+                "label": "Om registerbladet",
+                "entity": "registerblad"
             }
         ]
     },
