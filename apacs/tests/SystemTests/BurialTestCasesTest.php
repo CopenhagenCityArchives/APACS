@@ -71,7 +71,7 @@ class BurialTestCasesTest extends \UnitTestCase
     }
 
     public function test_SaveLoadLookupEditSearch_1a_3a_4() {
-        $this->solr->request('GET', 'update?stream.body=<delete><query>*:*</query></delete>&commit=true');
+        //$this->solr->request('GET', 'update?stream.body=<delete><query>*:*</query></delete>&commit=true');
 
         /* Get the page data with the next post information */
         $pagesResponse = $this->http->request('GET', 'pages', [
